@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -198,7 +198,7 @@ public class TestSObjectToCSV {
 	}
 	
 	private void  saveToBucket(OutboundEvent outboundEvent, File file) {
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(file.length());

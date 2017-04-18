@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -140,6 +141,67 @@ public class Schedule {
 				month, 
 				dayOfWeek, 
 				year);
+	}
+	
+	public static Schedule runWhenSubmitted() {
+		return new Schedule(
+				Date.from(Instant.now()),
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null);
+	}
+	
+	public static Schedule runOnce(Date runAt) {
+		return new Schedule(
+				runAt,
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null);
+		
+	}
+	
+	public static Schedule runOnSchedule() {
+		return new Schedule(
+				null,
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null);
+	}
+	
+	public static Schedule runOnSpecficDays() {
+		return new Schedule(
+				null,
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null, 
+				null);
 	}
 
 	public Date getRunAt() {

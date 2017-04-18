@@ -33,16 +33,14 @@
                 <table class="table">
                     <thead>
                         <th>${labels["job.name"]}</th>
-                        <th>${labels["run.at"]}</th>
                         <th>${labels["started.on"]}</th>
                         <th>${labels["status"]}</th>
                         <th class="text-right">${labels["number.executions"]}</th>
                     </thead>
                     <tbody>
                         <#list jobList?sort_by( "createdOn") as job>
-                            <tr >
-                                <td>${job.jobName}</td>
-                                <td>${(job.schedule.runAt?date?string.long)!} ${(job.schedule.runAt?time?string.medium)!}</td>
+                            <tr>
+                                <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
                                 <td>${(job.schedule.start?date?string.long)!} ${(job.schedule.start?time?string.medium)!}</td>
                                 <td>${job.status}</td>
                                 <td class="text-right">${job.numberOfExecutions}</td>

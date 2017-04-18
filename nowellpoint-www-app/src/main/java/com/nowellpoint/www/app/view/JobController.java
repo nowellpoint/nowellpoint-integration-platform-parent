@@ -19,6 +19,8 @@ public class JobController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs-list.html");
+		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs-view.html");
+		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs-outputs.html");
 	}
 	
 	public static String listJobs(Configuration configuration, Request request, Response response) {
@@ -35,7 +37,18 @@ public class JobController extends AbstractStaticController {
 	}
 	
 	public static String viewJob(Configuration configuration, Request request, Response response) {
-		return null;
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		Job job = new NowellpointClientOrig(token)
+			.job()
+			.get(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("job", job);
+		
+		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
 	}
 	
 	public static String createJob(Configuration configuration, Request request, Response response) {
@@ -78,6 +91,21 @@ public class JobController extends AbstractStaticController {
 		}
 		
 		return "";
+	}
+	
+	public static String viewOutputs(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		Job job = new NowellpointClientOrig(token)
+			.job()
+			.get(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("jobId", id);
+		model.put("job", job);
+		return render(JobController.class, configuration, request, response, model, Template.JOBS_OUTPUTS);
 	}
 	
 	public static String updateJob(Configuration configuration, Request request, Response response) {

@@ -1,0 +1,35 @@
+<#import "template.html" as t>
+
+    <@t.page>
+        
+        <div>
+            <a href="${links['jobs']}/${jobId}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.job"]}
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["outputs"]}</h2>
+            </div>
+
+        </div>
+
+        <br>
+        <div class="content table-responsive">
+            <table class="table">
+                <thead>
+                    <th>${labels["type"]}</th>
+                    <th>${labels["file.name"]}</th>
+                    <th>${labels["file.size"]}</th>
+                    <th class="text-right">${labels["download"]}</th>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+
+
+    </@t.page>

@@ -1,0 +1,155 @@
+<#import "template.html" as t>
+
+    <@t.page>
+        <div>
+            <a href="${links['jobs']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.jobs.list"]}
+        </div>
+        <br>
+        <div class="flextable p-t">
+            <div class="flextable-item flextable-primary">
+                <div class="dashhead-titles">
+                    <h3 class="dashhead-title">${labels["job.detail"]}</h3>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="btn-toolbar" role="toolbar">
+            <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#schedule-dialog">${labels["edit"]}</button>&nbsp;
+            <button type="button" id="run" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
+        </div>
+
+        <br>
+
+        <div class="row">
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["owner"]}</dt>
+                    <dd>${(job.owner.name)!}</dd>
+                    <hr>
+                    <dt>${labels["source.type"]}</dt>
+                    <dd>${(job.source.type)!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["notification.email"]}</dt>
+                    <dd>${(job.notificationEmail)!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["status"]}</dt>
+                    <!--  <#if job.status == "Stopped"> -->
+                    <dd class="text-danger">
+                        <!-- </#if> -->
+                        <!--  <#if job.status == "Scheduled"> -->
+                        <dd class="text-success">
+                            <!-- </#if> -->
+                            ${(job.status)!}&emsp;
+                        </dd>
+                        <hr>
+                </dl>
+            </div>
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["next.run.date"]}</dt>
+                    <dd>${(job.nextFireTime?date?string.iso)!} ${(job.nextFireTime?time?string["HH:mm"])!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["schedule.option"]}</dt>
+                    <dd>${job.scheduleOption}</dd>
+                    <hr>
+                    <dt>${labels["last.run.date"]}</dt>
+                    <dd>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["number.of.executions"]}</dt>
+                    <dd>${job.numberOfExecutions}</dd>
+                    <hr>
+                </dl>
+            </div>
+
+            <div class="col-md-6">
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["description"]}</dt>
+                    <dd>${job.description!}&emsp;</dd>
+                    <hr>
+                </dl>
+
+            </div>
+
+            <div class="col-md-6">
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${job.createdBy.id}">${job.createdBy.name}</a>, ${job.createdOn?date?string.long!} ${job.createdOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-3">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["last.updated.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${job.lastUpdatedBy.id}">${job.lastUpdatedBy.name}</a>, ${job.lastUpdatedOn?date?string.long!} ${job.lastUpdatedOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-6">
+
+            </div>
+
+        </div>
+
+        <br>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="job-executions" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["job.executions"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>${labels["fire.instance.id"]}</th>
+                            <th>${labels['fire.time']}</th>
+                            <th>${labels["status"]}</th>
+                            <th>${labels["job.run.time"]}</th>
+                            <th class="text-right">${labels["outputs"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list job.jobExecutions?sort_by( "fireTime") as jobExecution>
+                                <tr id="${jobExecution.fireInstanceId}">
+                                    <td>${jobExecution.fireInstanceId}</td>
+                                    <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
+                                    <td>${jobExecution.status} ${(jobExecution.failureMessage)!}</td>
+                                    <td>${jobExecution.jobRunTime}</td>
+                                    <td class="text-right"><a href="${links['jobs']}/${job.id}/executions/${jobExecution.fireInstanceId}/outputs"><span class="icon icon-folder"></span></a></td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </@t.page>

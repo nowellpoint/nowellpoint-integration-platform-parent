@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -17,10 +18,12 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import com.nowellpoint.api.rest.JobResource;
+import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
+import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
@@ -129,18 +132,19 @@ public class JobResourceImpl implements JobResource {
 		
 		UserInfo user = UserInfo.of(securityContext.getUserPrincipal().getName());
 		
-		Schedule schedule = Schedule.of(
-				runDate,
-				startDate, 
-				endDate, 
-				timeZone, 
-				seconds, 
-				minutes, 
-				hours, 
-				dayOfMonth, 
-				month, 
-				dayOfWeek, 
-				year);
+		Schedule schedule = null;
+		
+		if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
+			schedule = Schedule.runWhenSubmitted();
+		} else if (Job.ScheduleOptions.ONCE.equals(scheduleOption)) {
+			schedule = Schedule.runOnce(runDate);
+		} else if (Job.ScheduleOptions.SCHEDULE.equals(scheduleOption)) {	
+			schedule = Schedule.runOnSchedule();
+		} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(scheduleOption)) {		
+			schedule = Schedule.runOnSpecficDays();
+		} else {
+			throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", scheduleOption));
+		}
 		
 		Source source = Source.of(salesforceConnector);
 
@@ -187,8 +191,24 @@ public class JobResourceImpl implements JobResource {
 
 	@Override
 	public Response getJob(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Job job = jobService.findById(id);
+		
+		if (job == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Job.class.getSimpleName(), id ) );
+		}
+		
+		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+				.path(SalesforceConnectorResource.class)
+				.path("/{id}")
+				.build(job.getId());
+		
+		Meta meta = new Meta();
+		meta.setHref(uri.toString());
+		
+		job.setMeta(meta);
+		
+		return Response.ok(job).build();
 	}
 
 	@Override
