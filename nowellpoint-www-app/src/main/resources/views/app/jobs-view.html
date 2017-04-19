@@ -143,7 +143,7 @@
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
                                     <td>${jobExecution.status} ${(jobExecution.failureMessage)!}</td>
                                     <td>${jobExecution.jobRunTime}</td>
-                                    <td class="text-right"><a href="${links['jobs']}/${job.id}/executions/${jobExecution.fireInstanceId}/outputs"><span class="icon icon-folder"></span></a></td>
+                                    <td class="text-right"><a href="${links['jobs']}/${job.id}/job-executions/${jobExecution.fireInstanceId}/outputs"><span class="icon icon-folder"></span></a></td>
                                 </tr>
                             </#list>
                         </tbody>

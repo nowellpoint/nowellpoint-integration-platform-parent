@@ -21,6 +21,7 @@ package com.nowellpoint.api.rest.domain;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -278,6 +279,23 @@ public class Job extends AbstractResource {
 
 	public void setJobExecutions(Set<JobExecution> jobExecutions) {
 		this.jobExecutions = jobExecutions;
+	}
+	
+	public JobExecution getJobExecution(String fireInstanceId) {
+		
+		if (jobExecutions == null) {
+			jobExecutions = new HashSet<>();
+		}
+		
+		Optional<JobExecution> optional = jobExecutions.stream()
+				.filter(s -> fireInstanceId.equals(s.getFireInstanceId()))
+				.findFirst();
+		
+		if (! optional.isPresent()) {
+			throw new IllegalArgumentException(String.format("Fire Instance Id: %s does not exist", fireInstanceId));
+		}
+		
+		return optional.get();
 	}
 
 	@Override

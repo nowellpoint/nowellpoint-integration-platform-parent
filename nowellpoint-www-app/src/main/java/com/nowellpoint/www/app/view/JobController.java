@@ -7,6 +7,7 @@ import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Job;
+import com.nowellpoint.client.model.JobExecution;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.JobRequest;
 import com.nowellpoint.client.model.Token;
@@ -49,6 +50,21 @@ public class JobController extends AbstractStaticController {
 		model.put("job", job);
 		
 		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
+	}
+	
+	public static String downloadOutputFile(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String fireInstanceId = request.params(":fireInstanceId");
+		String filename = request.params(":filename");
+		
+		String content = new NowellpointClientOrig(token)
+				.job()
+				.jobExecution()
+				.downloadOutputFile(id, fireInstanceId, filename);
+		
+		return content;
 	}
 	
 	public static String createJob(Configuration configuration, Request request, Response response) {
@@ -97,14 +113,16 @@ public class JobController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
+		String fireInstanceId = request.params(":fireInstanceId");
 		
-		Job job = new NowellpointClientOrig(token)
+		JobExecution jobExecution = new NowellpointClientOrig(token)
 			.job()
-			.get(id);
+			.jobExecution()
+			.get(id, fireInstanceId);
 		
 		Map<String, Object> model = getModel();
 		model.put("jobId", id);
-		model.put("job", job);
+		model.put("jobExecution", jobExecution);
 		return render(JobController.class, configuration, request, response, model, Template.JOBS_OUTPUTS);
 	}
 	

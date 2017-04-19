@@ -3,6 +3,7 @@ package com.nowellpoint.client.resource;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Job;
+import com.nowellpoint.client.model.JobExecution;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.JobRequest;
 import com.nowellpoint.client.model.Token;
@@ -98,4 +99,62 @@ public class JobResource extends AbstractResource {
     	return result;
 	}
 	
+	public JobExecutionResource jobExecution() {
+		return new JobExecutionResource(token);
+	}
+	
+	public class JobExecutionResource extends AbstractResource {
+
+		public JobExecutionResource(Token token) {
+			super(token);
+		}
+		
+		public JobExecution get(String id, String fireInstanceId) {
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+	    			.path(id)
+	    			.path("job-executions")
+	    			.path(fireInstanceId)
+	    			.execute();
+			
+			JobExecution resource = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				resource = httpResponse.getEntity(JobExecution.class);
+	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+	    	}
+	    	
+	    	return resource;
+		}
+		
+		public String downloadOutputFile(String id, String fireInstanceId, String filename) {
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+	    			.path(id)
+	    			.path("job-executions")
+	    			.path(fireInstanceId)
+	    			.path("file")
+	    			.path(filename)
+	    			.execute();
+			
+			String resource = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				resource = httpResponse.getAsString();
+	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+				throw new NotFoundException(httpResponse.getAsString());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+	    	}
+	    	
+	    	return resource;
+		}
+	}
 }

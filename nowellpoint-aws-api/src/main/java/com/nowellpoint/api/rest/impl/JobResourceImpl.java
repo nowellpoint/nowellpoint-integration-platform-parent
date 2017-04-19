@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.impl;
 
+import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +10,9 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -21,6 +24,7 @@ import com.nowellpoint.api.rest.JobResource;
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
@@ -56,6 +60,28 @@ public class JobResourceImpl implements JobResource {
 	public Response findAllByOwner() {
 		JobList jobList = jobService.findAllByOwner(securityContext.getUserPrincipal().getName());
 		return Response.ok(jobList).build();
+	}
+	
+	@Override
+	public Response getJobExecution(String id, String fireInstanceId) {
+		JobExecution jobExecution = jobService.findByFireInstanceId(id, fireInstanceId);
+		return Response.ok(jobExecution).build();
+	}
+	
+	@Override
+	public Response getOutputFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename) {
+		
+		String content;
+		try {
+			content = jobService.getOutputFile(id, fireInstanceId, filename);
+		} catch (IOException e) {
+			throw new BadRequestException(e.getMessage());
+		}
+		
+		return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"%s.json\"", filename))
+				.entity(content)
+				.build();
 	}
 	
 	@Override

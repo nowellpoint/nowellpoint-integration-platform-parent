@@ -1,7 +1,13 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class JobExecution {
 
@@ -84,5 +90,51 @@ public class JobExecution {
 
 	public void setJobOutputs(Set<JobOutput> jobOutputs) {
 		this.jobOutputs = jobOutputs;
+	}
+	
+	public JobOutput getJobOutput(String filename) {
+		
+		if (jobOutputs == null) {
+			jobOutputs = new HashSet<>();
+		}
+		
+		Optional<JobOutput> optional = jobOutputs.stream()
+				.filter(s -> filename.equals(s.getFilename()))
+				.findFirst();
+		
+		if (! optional.isPresent()) {
+			throw new IllegalArgumentException(String.format("Filename: %s does not exist", filename));
+		}
+		
+		return optional.get();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+				.append(this.fireInstanceId)
+		        .toHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) { 
+			return false;
+		}
+		if (obj == this) { 
+			return true;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		JobExecution jobExecution = (JobExecution) obj;
+		return new EqualsBuilder()
+				.append(this.fireInstanceId, jobExecution.fireInstanceId)
+				.isEquals();
 	}
 }

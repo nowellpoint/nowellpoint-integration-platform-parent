@@ -22,6 +22,16 @@ public interface JobResource {
     @Produces(MediaType.APPLICATION_JSON)
 	public Response getJob(@PathParam("id") String id);
 	
+	@GET
+	@Path("{id}/job-executions/{fireInstanceId}")
+    @Produces(MediaType.APPLICATION_JSON)
+	public Response getJobExecution(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId);
+	
+	@GET
+	@Path("{id}/job-executions/{fireInstanceId}/file/{filename}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public Response getOutputFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename);
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -68,4 +78,5 @@ public interface JobResource {
 	@Path("{id}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action);
+
 }
