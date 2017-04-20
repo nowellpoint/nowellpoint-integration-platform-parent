@@ -204,11 +204,10 @@ public abstract class HttpRequest {
 			if (HttpMethod.POST.equals(httpMethod)) {
 				HttpPost post = new HttpPost(uri);
 				post.setHeaders(addHeaders());
-				if (! Optional.ofNullable(post.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
-					throw new IOException("Missing content type header");
+				if (Optional.ofNullable(post.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
+					HttpEntity entity = addBody(post.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
+			        post.setEntity(entity);
 				}
-		        HttpEntity entity = addBody(post.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
-		        post.setEntity(entity);
 		        httpResponse = httpClient.execute(post);
 			} else if (HttpMethod.PUT.equals(httpMethod)) {
 				HttpPut put = new HttpPut(uri);

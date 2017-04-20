@@ -151,5 +151,30 @@
                 </div>
             </div>
         </div>
+        
+        <script>
+        $("#run").click(function(e) {
+                e.preventDefault();
+
+
+                $.ajax({
+                    method: 'POST',
+                    url: "${links['jobs']}/${job.id!}/run",
+                    dataType: "html",
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+        </script>
 
     </@t.page>
