@@ -62,6 +62,30 @@ public class JobResource extends AbstractResource {
     	return resource;
 	}
 	
+	public Job run(String id) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("actions")
+    			.path("run")
+    			.path("invoke")
+    			.execute();
+		
+		Job resource = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(Job.class);
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
+    	
+    	return resource;
+	}
+	
 	public CreateResult<Job> create(JobRequest request) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
@@ -135,7 +159,7 @@ public class JobResource extends AbstractResource {
 		public String downloadOutputFile(String id, String fireInstanceId, String filename) {
 			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
-					.accept(MediaType.APPLICATION_JSON)
+					.accept(MediaType.TEXT_PLAIN)
 					.path(RESOURCE_CONTEXT)
 	    			.path(id)
 	    			.path("job-executions")

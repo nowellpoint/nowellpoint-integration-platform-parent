@@ -63,6 +63,10 @@ public class AbstractJobService extends AbstractCacheService {
 		jobEvent.fire(job);
 	}
 	
+	protected void run(Job job) {
+		jobEvent.fire(job);
+	}
+	
 	protected void update(Job job) {
 		MongoDocument document = job.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();

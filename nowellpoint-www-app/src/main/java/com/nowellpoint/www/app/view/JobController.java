@@ -52,6 +52,21 @@ public class JobController extends AbstractStaticController {
 		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
 	}
 	
+	public static String runJob(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		Job job = new NowellpointClientOrig(token)
+				.job()
+				.run(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("job", job);
+		
+		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
+	}
+	
 	public static String downloadOutputFile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		

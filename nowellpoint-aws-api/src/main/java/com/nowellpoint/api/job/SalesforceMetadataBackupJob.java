@@ -133,7 +133,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	// add Backup reference to Job
 	    	//
 	    	
-	    	jobOutputs.add(new JobOutput("DescribeGlobal", keyName, result.getMetadata().getContentLength()));
+	    	jobOutputs.add(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
 	    	
 	    	//
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
@@ -163,7 +163,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    	// add Backup reference to ScheduledJobRequest
 		    	//
 
-		    	jobOutputs.add(new JobOutput("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
+		    	jobOutputs.add(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
 		    	
 		    	//
 		    	// add theme
@@ -187,7 +187,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    	// add Backup reference to ScheduledJobRequest
 		    	//
 
-		    	jobOutputs.add(new JobOutput("Theme", keyName, result.getMetadata().getContentLength()));
+		    	jobOutputs.add(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
 	    		
 	    	}
 	    	

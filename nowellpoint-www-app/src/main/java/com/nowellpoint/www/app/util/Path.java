@@ -50,6 +50,7 @@ public class Path {
 		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs/:id/job-executions/:fireInstanceId/outputs");
 		public static final String JOBS_OUTPUT_FILE_DOWNLOAD = String.format(APPLICATION_CONTEXT, "jobs/:id/job-executions/:fireInstanceId/download/:filename");
 		public static final String JOBS_EDIT = String.format(APPLICATION_CONTEXT, "jobs/:id/edit");
+		public static final String JOBS_RUN = String.format(APPLICATION_CONTEXT, "jobs/:id/run");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 	}
 }

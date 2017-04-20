@@ -18,6 +18,8 @@ public interface JobService {
 	
 	void updateJob(Job job);
 	
+	void runJob(Job job);
+	
 	JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
 	String getOutputFile(String id, String fireInstanceId, String filename) throws IOException;

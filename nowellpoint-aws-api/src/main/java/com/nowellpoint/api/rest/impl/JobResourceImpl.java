@@ -12,7 +12,6 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -69,7 +68,7 @@ public class JobResourceImpl implements JobResource {
 	}
 	
 	@Override
-	public Response getOutputFile(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId, @PathParam("filename") String filename) {
+	public Response getOutputFile(String id, String fireInstanceId, String filename) {
 		
 		String content;
 		try {
@@ -239,8 +238,17 @@ public class JobResourceImpl implements JobResource {
 
 	@Override
 	public Response invokeAction(String id, String action) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Job job = jobService.findById(id);
+		
+		if ("run".equals(action)) {
+			job.setSchedule(Schedule.runWhenSubmitted());
+			jobService.runJob(job);
+		}
+		
+		return Response.ok()
+				.entity(job)
+				.build();
 	}
 
 }

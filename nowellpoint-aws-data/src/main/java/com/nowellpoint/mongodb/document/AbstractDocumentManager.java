@@ -1,5 +1,6 @@
 package com.nowellpoint.mongodb.document;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -531,8 +532,10 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	protected <T> T instantiate(Class<T> type) {		
 		try {
-			return type.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			Constructor<T> constructor = type.getDeclaredConstructor();
+	        constructor.setAccessible(true);
+			return constructor.newInstance();
+		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
 			throw new DocumentManagerException(e);
 		}
 	}

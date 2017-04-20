@@ -11,11 +11,10 @@ import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
+import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.service.JobService;
 
 public class JobServiceImpl extends AbstractJobService implements JobService {
-	
-	private static final String BUCKET_NAME = "nowellpoint-metadata-backups";
 
 	@Override
 	public JobList findAllByOwner(String ownerId) {
@@ -46,7 +45,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
-		GetObjectRequest getObjectRequest = new GetObjectRequest(BUCKET_NAME, jobOutput.getFilename());
+		GetObjectRequest getObjectRequest = new GetObjectRequest(jobOutput.getBucket(), jobOutput.getKey());
     	
     	S3Object s3Object = s3client.getObject(getObjectRequest);
     	
@@ -62,5 +61,10 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	@Override
 	public void updateJob(Job job) {
 		super.update(job);
+	}
+	
+	@Override
+	public void runJob(Job job) {
+		super.run(job);
 	}
 }

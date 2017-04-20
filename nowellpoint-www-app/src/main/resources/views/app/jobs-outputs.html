@@ -22,7 +22,7 @@
                 <thead>
                     <th>${labels["type"]}</th>
                     <th>${labels["file.name"]}</th>
-                    <th>${labels["file.size"]}</th>
+                    <th class="text-right">${labels["file.size"]}</th>
                     <th class="text-right">${labels["download"]}</th>
                 </thead>
                 <tbody>
@@ -30,8 +30,8 @@
                         <tr>
                             <td>${jobOutput.type}</td>
                             <td>${jobOutput.filename}</td>
-                            <td>${jobOutput.filesize}</td>
-                            <td class="text-right"><a href="${links['jobs']}/${jobId}/job-executions/${jobExecution.fireInstanceId}/download/${jobOutput.filename}" download="${jobOutput.filename}.json"><span class="icon icon-download"></span></a></td>
+                            <td class="text-right">${jobOutput.filesize}</td>
+                            <td class="text-right"><a href="${links['jobs']}/${jobId}/job-executions/${jobExecution.fireInstanceId}/download/${jobOutput.filename}" download="${jobOutput.filename}"><span class="icon icon-download"></span></a></td>
                         </tr>    
                     </#list>    
                 </tbody>

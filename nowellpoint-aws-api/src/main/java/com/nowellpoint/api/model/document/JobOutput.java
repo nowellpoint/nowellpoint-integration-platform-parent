@@ -26,14 +26,22 @@ public class JobOutput {
 	
 	private Long filesize;
 	
-	public JobOutput() {
+	private String bucket;
+	
+	private String key;
+	
+	private JobOutput() {
 		
 	}
 	
-	public JobOutput(String type, String filename, Long filesize) {
+	private JobOutput(String type, String filename, Long filesize, String bucket, String key) {
 		this.type = type;
 		this.filename = filename;
 		this.filesize = filesize;
+	}
+	
+	public static JobOutput of(String type, Long filesize, String bucket, String key) {
+		return new JobOutput(type, key.replace("/", "_").concat(".json"), filesize, bucket, key);
 	}
 
 	public String getType() {
@@ -58,5 +66,21 @@ public class JobOutput {
 
 	public void setFilesize(Long filesize) {
 		this.filesize = filesize;
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public void setBucket(String bucket) {
+		this.bucket = bucket;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 }
