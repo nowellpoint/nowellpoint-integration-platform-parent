@@ -1,21 +1,13 @@
 <#import "template.html" as t>
 
     <@t.page>
-
         <div class="dashhead m-t-md">
             <div class="dashhead-titles">
                 <h3 class="dashhead-title">${labels["edit.salesforce.connector"]}</h3>
             </div>
         </div>
         <div class="hr-divider"></div>
-        <#if errorMessage??>
-            <div id="alert" class="alert alert-danger">
-                <a class="close" data-dismiss="alert">×</a>
-                <div class="text-center">${errorMessage}</div>
-            </div>
-        </#if>
         <br>
-
         <form class="form-vertical" role="form" method="post" action="${links['salesforce.connector']}/${(salesforceConnector.id)!}">
             <div class="row">
                 <div class="form-group col-md-2">

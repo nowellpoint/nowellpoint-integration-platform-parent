@@ -133,7 +133,7 @@
                             <th>${labels["fire.instance.id"]}</th>
                             <th>${labels['fire.time']}</th>
                             <th>${labels["status"]}</th>
-                            <th>${labels["job.run.time"]}</th>
+                            <th class="text-right">${labels["job.run.time"]}</th>
                             <th class="text-right">${labels["outputs"]}</th>
                         </thead>
                         <tbody>
@@ -142,7 +142,7 @@
                                     <td>${jobExecution.fireInstanceId}</td>
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
                                     <td>${jobExecution.status} ${(jobExecution.failureMessage)!}</td>
-                                    <td>${jobExecution.jobRunTime}</td>
+                                    <td class="text-right">${jobExecution.jobRunTime}</td>
                                     <td class="text-right"><a href="${links['jobs']}/${job.id}/job-executions/${jobExecution.fireInstanceId}/outputs"><span class="icon icon-folder"></span></a></td>
                                 </tr>
                             </#list>
@@ -155,7 +155,6 @@
         <script>
         $("#run").click(function(e) {
                 e.preventDefault();
-
 
                 $.ajax({
                     method: 'POST',

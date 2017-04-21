@@ -11,6 +11,7 @@ import com.nowellpoint.client.model.JobExecution;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.JobRequest;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -57,14 +58,15 @@ public class JobController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		Job job = new NowellpointClientOrig(token)
+		UpdateResult<Job> updateResult = new NowellpointClientOrig(token)
 				.job()
 				.run(id);
 		
-		Map<String, Object> model = getModel();
-		model.put("job", job);
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
 		
-		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
+		return responseBody(updateResult);
 	}
 	
 	public static String downloadOutputFile(Configuration configuration, Request request, Response response) {

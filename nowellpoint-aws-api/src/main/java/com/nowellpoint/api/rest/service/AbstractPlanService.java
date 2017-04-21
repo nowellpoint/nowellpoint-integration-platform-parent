@@ -31,15 +31,22 @@ public class AbstractPlanService extends AbstractCacheService {
 			throw new IllegalArgumentException("Missing language query parameter");
 		}
 		
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		PlanList resources = get(PlanList.class, locale.concat(":").concat(language));
 		
-		Set<com.nowellpoint.api.model.document.Plan> documents = documentManager.find(
-				com.nowellpoint.api.model.document.Plan.class, and ( 
-						eq ( "isActive", Boolean.TRUE ), 
-						eq ( "localeSidKey", locale ), 
-						eq ( "languageSidKey", language ) ) );
-		
-		PlanList resources = new PlanList(documents);
+		if (Assert.isNull(resources)) {
+			
+			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+			
+			Set<com.nowellpoint.api.model.document.Plan> documents = documentManager.find(
+					com.nowellpoint.api.model.document.Plan.class, and ( 
+							eq ( "isActive", Boolean.TRUE ), 
+							eq ( "localeSidKey", locale ), 
+							eq ( "languageSidKey", language ) ) );
+			
+			resources = new PlanList(documents);
+			
+			set(locale.concat(":").concat(language), resources);
+		}
 		
 		return resources;
 	}

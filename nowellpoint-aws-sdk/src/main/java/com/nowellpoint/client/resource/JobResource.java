@@ -7,6 +7,7 @@ import com.nowellpoint.client.model.JobExecution;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.JobRequest;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.http.HttpResponse;
@@ -62,7 +63,7 @@ public class JobResource extends AbstractResource {
     	return resource;
 	}
 	
-	public Job run(String id) {
+	public UpdateResult<Job> run(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -73,17 +74,18 @@ public class JobResource extends AbstractResource {
     			.path("invoke")
     			.execute();
 		
-		Job resource = null;
+		UpdateResult<Job> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			resource = httpResponse.getEntity(Job.class);
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			Job resource = httpResponse.getEntity(Job.class);
+			result = new UpdateResultImpl<Job>(resource);
+    	} else {
+    		Error error = httpResponse.getEntity(Error.class);
+    		result = new UpdateResultImpl<Job>(error);
 			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
+		} 
     	
-    	return resource;
+    	return result;
 	}
 	
 	public CreateResult<Job> create(JobRequest request) {

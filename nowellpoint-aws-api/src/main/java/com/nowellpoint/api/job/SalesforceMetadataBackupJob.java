@@ -37,7 +37,6 @@ import com.nowellpoint.api.rest.service.VaultEntryServiceImpl;
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.aws.data.AbstractCacheService;
-import com.nowellpoint.aws.data.CacheManager;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
 import com.nowellpoint.client.sforce.DescribeSobjectRequest;
@@ -86,6 +85,8 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		job.setStatus("Running");
 		
 		documentManager.replaceOne(job);
+		
+		set(job.getId().toString(), job);
 		
 		VaultEntryService vaultEntryService = new VaultEntryServiceImpl();
 		
@@ -220,11 +221,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		documentManager.replaceOne(job);
 		
-		//
-		//
-		//
-		
-		CacheManager.del(job.getId().toString());
+		set(job.getId().toString(), job);
 		
 		//
 		// compile and send notification
