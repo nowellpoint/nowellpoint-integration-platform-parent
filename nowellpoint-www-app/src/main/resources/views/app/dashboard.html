@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <div class="statcard p-3">
-                    <h3 class="statcard-number">${jobSpecificationList?size}</h3>
+                    <h3 class="statcard-number">${salesforceConnectorsList?size}</h3>
                     <span class="statcard-desc">${labels["connectors"]}</span>
                 </div>
             </div>
@@ -17,42 +17,42 @@
             <div class="col">
                 <div class="card">
                     <div class="card-block">
-                        <h4 class="card-title">${labels["salesforce.metadata.backups"]}</h4>
+                        <h4 class="card-title">${labels["scheduled.jobs"]}</h4>
                         <br>
                         <div class="content table-responsive">
                             <table id="salesforce-metadata-backup-status" class="table">
                                 <thead>
-                                    <th class="col-xs-2 text-center">${labels["status"]}</th>
-                                    <th class="col-xs-6">${labels["instance"]}</th>
+                                    <th class="col-xs-2">${labels["status"]}</th>
+                                    <th class="col-xs-6">${labels["job.type"]}</th>
                                     <th class="col-xs-4 text-right">${labels["run.date"]}</th>
                                 </thead>
                                 <tbody>
-                                    <#if jobSpecificationList?size==0>
+                                    <#if jobList?size==0>
                                         <tr>
                                             <td class="text-center" colspan="3">&nbsp;</td>
                                         </tr>
                                     </#if>
-                                    <#list jobSpecificationList as jobSpecification>
+                                    <#list jobList as job>
                                         <tr>
-                                            <td class="text-center">
-                                                <!--  <#if jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Success"> -->
+                                            <td>&emsp;
+                                                <!--  <#if job.status?? && job.status == "Complete"> -->
                                                 <i class="fa fa-circle text-success"></i>
-                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Failure"> -->
+                                                <!--  <#elseif job.status?? && job.status == "Failure"> -->
                                                 <i class="fa fa-circle text-danger"></i>
-                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Stopped"> -->
+                                                <!--  <#elseif job.status?? && job.status == "Stopped"> -->
                                                 <i class="fa fa-circle text-warning"></i>
-                                                <!--  <#elseif jobSpecification.lastRunStatus?? && jobSpecification.lastRunStatus == "Terminated"> -->
+                                                <!--  <#elseif job.status?? && job.status == "Terminated"> -->
                                                 <i class="fa fa-circle text-info"></i>
                                                 <!-- <#else> -->
                                                 <i class="fa fa-circle text-muted"></i>
                                                 <!-- </#if> -->
                                             </td>
                                             <td>
-                                                <a href="${scheduledJobPath}/${jobSpecification.id}">${jobSpecification.connector.instance.name}</a>
+                                                <a href="${links['jobs']}/${job.id}">${job.jobName}</a>
                                             </td>
                                             <td class="text-right">
-                                                <!--  <#if jobSpecification.lastRunDate??> -->
-                                                ${(jobSpecification.lastRunDate?date?string.iso)!} ${(jobSpecification.lastRunDate?time?string["HH:mm"])!}
+                                                <!--  <#if job.fireTime??> -->
+                                                ${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}
                                                 <!-- </#if> -->
                                             </td>
                                         </tr>
@@ -63,7 +63,7 @@
                         <hr>
                         <div class="stats">
                             <i class="fa fa-circle text-muted"></i>&nbsp;${labels["not.run"]}&emsp;
-                            <i class="fa fa-circle text-success"></i>&nbsp;${labels["success"]}&emsp;
+                            <i class="fa fa-circle text-success"></i>&nbsp;${labels["complete"]}&emsp;
                             <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
                             <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
                             <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}

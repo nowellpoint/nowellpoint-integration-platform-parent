@@ -1,5 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JobOutput {
@@ -15,6 +17,8 @@ public class JobOutput {
 	
 	@JsonIgnore
 	private String key;
+	
+	private Date addedOn;
 	
 	public JobOutput() {
 		
@@ -58,5 +62,13 @@ public class JobOutput {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
 	}
 }

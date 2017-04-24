@@ -18,6 +18,9 @@
 
 package com.nowellpoint.api.model.document;
 
+import java.time.Instant;
+import java.util.Date;
+
 public class JobOutput {
 	
 	private String type;
@@ -30,6 +33,8 @@ public class JobOutput {
 	
 	private String key;
 	
+	private Date addedOn;
+	
 	private JobOutput() {
 		
 	}
@@ -38,10 +43,13 @@ public class JobOutput {
 		this.type = type;
 		this.filename = filename;
 		this.filesize = filesize;
+		this.bucket = bucket;
+		this.key = key;
+		this.addedOn = Date.from(Instant.now());
 	}
 	
 	public static JobOutput of(String type, Long filesize, String bucket, String key) {
-		return new JobOutput(type, key.replace("/", "_").concat(".json"), filesize, bucket, key);
+		return new JobOutput(type, key.substring(key.indexOf("/") + 1).concat(".json"), filesize, bucket, key);
 	}
 
 	public String getType() {
@@ -82,5 +90,13 @@ public class JobOutput {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
 	}
 }

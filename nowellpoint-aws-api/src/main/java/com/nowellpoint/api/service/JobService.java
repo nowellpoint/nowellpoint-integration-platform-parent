@@ -22,5 +22,5 @@ public interface JobService {
 	
 	JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
-	String getOutputFile(String id, String fireInstanceId, String filename) throws IOException;
+	String getOutputFile(String id, String filename) throws IOException;
 }

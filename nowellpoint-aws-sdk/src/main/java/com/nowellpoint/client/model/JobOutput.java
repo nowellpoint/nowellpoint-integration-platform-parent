@@ -1,5 +1,7 @@
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class JobOutput {
 	
 	private String type;
@@ -7,6 +9,8 @@ public class JobOutput {
 	private String filename;
 	
 	private Long filesize;
+	
+	private Date addedOn;
 	
 	public JobOutput() {
 		
@@ -34,5 +38,13 @@ public class JobOutput {
 
 	public void setFilesize(Long filesize) {
 		this.filesize = filesize;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
 	}
 }

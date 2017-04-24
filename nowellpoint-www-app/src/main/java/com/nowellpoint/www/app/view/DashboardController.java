@@ -1,12 +1,11 @@
 package com.nowellpoint.www.app.view;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.model.JobList;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -22,7 +21,18 @@ public class DashboardController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
+		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
+				.salesforceConnector()
+				.getSalesforceConnectors();    	
+		
+		JobList jobList = new NowellpointClientOrig(token)
+				.job()
+				.getJobs();
+		
 		Map<String, Object> model = getModel();
+		model.put("salesforceConnectorsList", salesforceConnectors.getItems());
+		model.put("jobList", jobList.getItems());
+		
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};
 }

@@ -66,6 +66,8 @@ public class Job extends AbstractResource {
 	private Integer numberOfExecutions;
 	
 	private Set<JobExecution> jobExecutions = new HashSet<>();
+	
+	private Set<JobOutput> jobOutputs = new HashSet<>();
 
 	private Job() {
 		
@@ -293,6 +295,33 @@ public class Job extends AbstractResource {
 		
 		if (! optional.isPresent()) {
 			throw new IllegalArgumentException(String.format("Fire Instance Id: %s does not exist", fireInstanceId));
+		}
+		
+		return optional.get();
+	}
+	
+	public Set<JobOutput> getJobOutputs() {
+		return jobOutputs;
+	}
+
+	public void setJobOutputs(Set<JobOutput> jobOutputs) {
+		this.jobOutputs = jobOutputs;
+	}
+	
+	public JobOutput getJobOutput(String filename) {
+		
+		if (jobOutputs == null) {
+			jobOutputs = new HashSet<>();
+		}
+		
+		Optional<JobOutput> optional = jobOutputs.stream()
+				.filter(s -> filename.equals(s.getFilename()))
+				.findFirst();
+		
+		System.out.println(filename + " " + optional.isPresent());
+		
+		if (! optional.isPresent()) {
+			throw new IllegalArgumentException(String.format("Filename: %s does not exist", filename));
 		}
 		
 		return optional.get();

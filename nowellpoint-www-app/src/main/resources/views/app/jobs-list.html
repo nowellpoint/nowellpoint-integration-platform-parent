@@ -33,17 +33,19 @@
                 <table class="table">
                     <thead>
                         <th>${labels["job.name"]}</th>
-                        <th>${labels["started.on"]}</th>
+                        <th>${labels["last.run.date"]}</th>
                         <th>${labels["status"]}</th>
                         <th class="text-right">${labels["number.executions"]}</th>
+                        <th class="text-right">${labels["job.outputs"]}</th>
                     </thead>
                     <tbody>
                         <#list jobList?sort_by( "createdOn") as job>
                             <tr>
                                 <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
-                                <td>${(job.schedule.start?date?string.long)!} ${(job.schedule.start?time?string.medium)!}</td>
+                                <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
                                 <td>${job.status}</td>
                                 <td class="text-right">${job.numberOfExecutions}</td>
+                                <td class="text-right"><a href="${links['jobs']}/${job.id}/outputs"><span class="icon icon-folder"></span></a></td>
                             </tr>
                         </#list>
                     </tbody>

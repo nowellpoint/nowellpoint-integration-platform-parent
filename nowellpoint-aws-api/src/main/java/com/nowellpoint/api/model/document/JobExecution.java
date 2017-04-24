@@ -20,9 +20,6 @@ package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
-
-import com.nowellpoint.mongodb.annotation.EmbedMany;
 
 public class JobExecution implements Serializable {
 
@@ -37,9 +34,6 @@ public class JobExecution implements Serializable {
 	private String status;
 	
 	private String failureMessage;
-	
-	@EmbedMany
-	private Set<JobOutput> jobOutputs;
 	
 	public JobExecution() {
 		
@@ -83,13 +77,5 @@ public class JobExecution implements Serializable {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
-	}
-	
-	public Set<JobOutput> getJobOutputs() {
-		return jobOutputs;
-	}
-
-	public void setJobOutputs(Set<JobOutput> jobOutputs) {
-		this.jobOutputs = jobOutputs;
 	}
 }

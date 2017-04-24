@@ -1,7 +1,6 @@
 package com.nowellpoint.client.model;
 
 import java.util.Date;
-import java.util.List;
 
 public class JobExecution {
 
@@ -14,8 +13,6 @@ public class JobExecution {
 	private String status;
 	
 	private String failureMessage;
-	
-	private List<JobOutput> jobOutputs;
 	
 	public JobExecution() {
 		
@@ -59,13 +56,5 @@ public class JobExecution {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
-	}
-
-	public List<JobOutput> getJobOutputs() {
-		return jobOutputs;
-	}
-
-	public void setJobOutputs(List<JobOutput> jobOutputs) {
-		this.jobOutputs = jobOutputs;
 	}
 }

@@ -68,11 +68,13 @@ public class JobResourceImpl implements JobResource {
 	}
 	
 	@Override
-	public Response getOutputFile(String id, String fireInstanceId, String filename) {
+	public Response getOutputFile(String id, String filename) {
+		
+		System.out.println(filename);
 		
 		String content;
 		try {
-			content = jobService.getOutputFile(id, fireInstanceId, filename);
+			content = jobService.getOutputFile(id, filename);
 		} catch (IOException e) {
 			throw new BadRequestException(e.getMessage());
 		}

@@ -51,6 +51,8 @@ public class Job extends AbstractResource {
 	private Integer numberOfExecutions;
 	
 	private List<JobExecution> jobExecutions;
+	
+	private List<JobOutput> jobOutputs;
 
 	public Job() {
 		jobExecutions = new ArrayList<>();
@@ -166,5 +168,13 @@ public class Job extends AbstractResource {
 
 	public void setJobExecutions(List<JobExecution> jobExecutions) {
 		this.jobExecutions = jobExecutions;
+	}
+	
+	public List<JobOutput> getJobOutputs() {
+		return jobOutputs;
+	}
+
+	public void setJobOutputs(List<JobOutput> jobOutputs) {
+		this.jobOutputs = jobOutputs;
 	}
 }

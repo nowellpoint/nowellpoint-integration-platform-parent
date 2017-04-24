@@ -1,9 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -20,8 +17,6 @@ public class JobExecution {
 	private String status;
 	
 	private String failureMessage;
-	
-	private Set<JobOutput> jobOutputs;
 	
 	private JobExecution() {
 		
@@ -82,31 +77,6 @@ public class JobExecution {
 
 	public void setFailureMessage(String failureMessage) {
 		this.failureMessage = failureMessage;
-	}
-
-	public Set<JobOutput> getJobOutputs() {
-		return jobOutputs;
-	}
-
-	public void setJobOutputs(Set<JobOutput> jobOutputs) {
-		this.jobOutputs = jobOutputs;
-	}
-	
-	public JobOutput getJobOutput(String filename) {
-		
-		if (jobOutputs == null) {
-			jobOutputs = new HashSet<>();
-		}
-		
-		Optional<JobOutput> optional = jobOutputs.stream()
-				.filter(s -> filename.equals(s.getFilename()))
-				.findFirst();
-		
-		if (! optional.isPresent()) {
-			throw new IllegalArgumentException(String.format("Filename: %s does not exist", filename));
-		}
-		
-		return optional.get();
 	}
 	
 	@Override

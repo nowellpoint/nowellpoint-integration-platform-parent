@@ -125,6 +125,29 @@ public class JobResource extends AbstractResource {
     	return result;
 	}
 	
+	public String downloadOutputFile(String id, String filename) {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.TEXT_PLAIN)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("download")
+    			.queryParameter("filename", filename)
+    			.execute();
+		
+		String resource = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getAsString();
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
+    	
+    	return resource;
+	}
+	
 	public JobExecutionResource jobExecution() {
 		return new JobExecutionResource(token);
 	}
@@ -149,31 +172,6 @@ public class JobResource extends AbstractResource {
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
 				resource = httpResponse.getEntity(JobExecution.class);
-	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
-	    	
-	    	return resource;
-		}
-		
-		public String downloadOutputFile(String id, String fireInstanceId, String filename) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.accept(MediaType.TEXT_PLAIN)
-					.path(RESOURCE_CONTEXT)
-	    			.path(id)
-	    			.path("job-executions")
-	    			.path(fireInstanceId)
-	    			.path("file")
-	    			.path(filename)
-	    			.execute();
-			
-			String resource = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				resource = httpResponse.getAsString();
 	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {

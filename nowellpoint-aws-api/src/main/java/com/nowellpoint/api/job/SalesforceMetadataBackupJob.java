@@ -6,9 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,7 +79,10 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
-		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail().getKey().getName()));
+		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
+				.getKey()
+				.getName()));
+		
 		job.setStatus("Running");
 		
 		documentManager.replaceOne(job);
@@ -95,8 +96,6 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		SalesforceConnectionString salesforceConnectionString = SalesforceConnectionString.of(vaultEntry.getValue());
 		
 		SalesforceService salesforceService = new SalesforceServiceImpl();
-		
-		Set<JobOutput> jobOutputs = new HashSet<>();
 		
 		try {
 			
@@ -134,7 +133,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	// add Backup reference to Job
 	    	//
 	    	
-	    	jobOutputs.add(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
+	    	job.addJobOutput(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
 	    	
 	    	//
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
@@ -164,7 +163,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    	// add Backup reference to ScheduledJobRequest
 		    	//
 
-		    	jobOutputs.add(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
+		    	job.addJobOutput(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
 		    	
 		    	//
 		    	// add theme
@@ -188,7 +187,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    	// add Backup reference to ScheduledJobRequest
 		    	//
 
-		    	jobOutputs.add(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
+		    	job.addJobOutput(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
 	    		
 	    	}
 	    	
@@ -211,7 +210,6 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		jobExecution.setFireTime(context.getFireTime());
 		jobExecution.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		jobExecution.setStatus(job.getStatus());
-		jobExecution.setJobOutputs(jobOutputs);
 		
 		job.addJobExecution(jobExecution);
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);

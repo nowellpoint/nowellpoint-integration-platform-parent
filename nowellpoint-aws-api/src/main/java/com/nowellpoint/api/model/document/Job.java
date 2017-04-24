@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -76,7 +77,11 @@ public class Job extends MongoDocument {
 	
 	private Integer numberOfExecutions;
 	
+	@EmbedMany
 	private Set<JobExecution> jobExecutions = new HashSet<>();
+	
+	@EmbedMany
+	private Set<JobOutput> jobOutputs = new HashSet<>();
 
 	public Job() {
 		
@@ -237,6 +242,14 @@ public class Job extends MongoDocument {
 		}
 	}
 
+	public Set<JobOutput> getJobOutputs() {
+		return jobOutputs;
+	}
+
+	public void setJobOutputs(Set<JobOutput> jobOutputs) {
+		this.jobOutputs = jobOutputs;
+	}
+
 	public void addJobExecution(JobExecution jobExecution) {
 		if (Assert.isNull(this.jobExecutions)) {
 			this.jobExecutions = new HashSet<>();
@@ -245,6 +258,13 @@ public class Job extends MongoDocument {
 		if (this.jobExecutions.size() > 45) {
 			this.jobExecutions = limit(this.jobExecutions);
 		}
+	}
+	
+	public void addJobOutput(JobOutput jobOutput) {
+		if (Assert.isNull(this.jobOutputs)) {
+			this.jobOutputs = new HashSet<>();
+		}
+		this.jobOutputs.add(jobOutput);
 	}
 	
 	private Set<JobExecution> limit(Set<JobExecution> jobExecutions) {

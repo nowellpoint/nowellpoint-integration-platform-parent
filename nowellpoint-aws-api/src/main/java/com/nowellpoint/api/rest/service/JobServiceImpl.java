@@ -11,7 +11,6 @@ import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
-import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.service.JobService;
 
 public class JobServiceImpl extends AbstractJobService implements JobService {
@@ -38,10 +37,9 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
-	public String getOutputFile(String id, String fireInstanceId, String filename) throws IOException {
+	public String getOutputFile(String id, String filename) throws IOException {
 		Job job = findById(id);
-		JobExecution jobExecution = job.getJobExecution(fireInstanceId);
-		JobOutput jobOutput = jobExecution.getJobOutput(filename);
+		JobOutput jobOutput = job.getJobOutput(filename);
 		
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
