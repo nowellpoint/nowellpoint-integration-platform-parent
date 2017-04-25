@@ -96,12 +96,14 @@ public class JobResourceImpl implements JobResource {
 			String dayOfWeek,
 			String description,
 			String hours,
-			String end,
+			String endAt,
 			String minutes,
 			String month,
 			String seconds,
-			String start,
+			String startAt,
 			String timeZone,
+			String timeUnit,
+			String timeInterval,
 			String year) {
 		
 		List<String> errors = new ArrayList<>();
@@ -109,7 +111,7 @@ public class JobResourceImpl implements JobResource {
 		Date startDate = null;
 		
 		try {
-			startDate = dateTimeFormat.parse(start);
+			startDate = dateTimeFormat.parse(startAt);
 		} catch (ParseException e) {
 			errors.add("Invalid date format for field: start. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		}
@@ -117,7 +119,7 @@ public class JobResourceImpl implements JobResource {
 		Date endDate = null;
 		
 		try {
-			endDate = dateTimeFormat.parse(end);
+			endDate = dateTimeFormat.parse(endAt);
 		} catch (ParseException e) {
 			errors.add("Invalid date format for parameter: end. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		}
@@ -166,7 +168,7 @@ public class JobResourceImpl implements JobResource {
 		} else if (Job.ScheduleOptions.ONCE.equals(scheduleOption)) {
 			schedule = Schedule.runOnce(runDate);
 		} else if (Job.ScheduleOptions.SCHEDULE.equals(scheduleOption)) {	
-			schedule = Schedule.runOnSchedule();
+			schedule = Schedule.runOnSchedule(startDate, endDate, timeZone, timeUnit, Integer.valueOf(timeInterval));
 		} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(scheduleOption)) {		
 			schedule = Schedule.runOnSpecficDays();
 		} else {

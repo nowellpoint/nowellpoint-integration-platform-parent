@@ -46,12 +46,14 @@ public interface JobResource {
 			@FormParam("dayOfWeek") String dayOfWeek,
 			@FormParam("description") String description,
 			@FormParam("hours") String hours,
-			@FormParam("end") String end,
+			@FormParam("endAt") String endAt,
 			@FormParam("minutes") String minutes,
 			@FormParam("month") String month,
 			@FormParam("seconds") String seconds,
-			@FormParam("start") String start,
+			@FormParam("startAt") String startAt,
 			@FormParam("timeZone") String timeZone,
+			@FormParam("timeUnit") String timeUnit,
+			@FormParam("timeInterval") String timeInterval,
 			@FormParam("year") String year);
 	
 	@POST

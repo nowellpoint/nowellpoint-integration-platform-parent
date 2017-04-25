@@ -1,7 +1,11 @@
 package com.nowellpoint.api.job;
 
+import org.quartz.CalendarIntervalScheduleBuilder;
+import org.quartz.DateBuilder.IntervalUnit;
+
 import java.sql.Date;
 import java.time.Instant;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -74,61 +78,42 @@ public class JobOperator  {
 		    		.withIdentity(jobKey)
 		    		.build();
 		    
-		    Trigger trigger = TriggerBuilder
-					.newTrigger()
-					.startAt(job.getSchedule().getRunAt())
-					.build();
-		    
-		    if (job.getSchedule().getRunAt().after(Date.from(Instant.now()))) {
-		    	job.setStatus("Scheduled");
-		    } else {
-		    	job.setStatus("Submitted");
-		    }
+		    Trigger trigger = null;
 			
-//			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption())) {
-//				
-//				trigger = TriggerBuilder
-//						.newTrigger()
-//						.startNow()
-//						.build();
-//				
-//				job.getSchedule().setRunAt(Date.from(Instant.now()));
-//				job.setStatus("Submitted");
-//				
-//			} else if (Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
-//				
-//				if (job.getSchedule().getRunAt().before(Date.from(Instant.now().plusSeconds(5)))) {
-//					
-//					trigger = TriggerBuilder
-//							.newTrigger()
-//							.startNow()
-//							.build();
-//					
-//					job.setStatus("Submitted");
-//					
-//				} else {
-//					
-//					trigger = TriggerBuilder
-//							.newTrigger()
-//							.startAt(job.getSchedule().getRunAt())
-//							.build();
-//					
-//					job.setStatus("Scheduled");
-//				}
-//				
-//			} else if (Job.ScheduleOptions.SCHEDULE.equals(job.getScheduleOption())) {
-//				
-//			} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(job.getScheduleOption())) {
-//				
-//			} else {
-//				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", job.getScheduleOption()));
-//			}
+			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
+				
+				trigger = TriggerBuilder
+						.newTrigger()
+						.startAt(job.getSchedule().getRunAt())
+						.build();
+				
+			} else if (Job.ScheduleOptions.SCHEDULE.equals(job.getScheduleOption())) {
+				
+				trigger = TriggerBuilder.newTrigger()
+						.startAt(job.getSchedule().getStartAt())
+						.endAt(job.getSchedule().getEndAt())
+						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
+								.withInterval(job.getSchedule().getTimeInterval(), IntervalUnit.valueOf(job.getSchedule().getTimeUnit()))
+								.inTimeZone(TimeZone.getTimeZone(job.getSchedule().getTimeZone())))
+						.build();
+				
+			} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(job.getScheduleOption())) {
+				
+			} else {
+				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", job.getScheduleOption()));
+			}
 			
 			if (Assert.isNotNull(trigger)) {
 				scheduler.scheduleJob(jobDetail, trigger);
 				scheduler.getListenerManager().addJobListener(
 						new SalesforceMetadataBackupListener(), 
 						KeyMatcher.keyEquals(jobKey));
+			}
+			
+			if (trigger.getStartTime().after(Date.from(Instant.now()))) {
+				job.setStatus("Scheduled");
+			} else {
+				job.setStatus("Submitted");
 			}
 			
 		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {

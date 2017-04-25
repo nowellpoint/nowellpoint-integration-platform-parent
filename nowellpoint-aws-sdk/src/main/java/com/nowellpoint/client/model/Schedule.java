@@ -6,11 +6,15 @@ public class Schedule {
 	
 	private Date runAt;
 	
-	private Date start;
+	private Date startAt;
 	
-	private Date end;
+	private Date endAt;
 	
 	private String timeZone;
+	
+	private String timeUnit;
+	
+	private Integer timeInterval;
 	
 	private String seconds;
 	
@@ -38,20 +42,36 @@ public class Schedule {
 		this.runAt = runAt;
 	}
 
-	public Date getStart() {
-		return start;
+	public Date getStartAt() {
+		return startAt;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setStartAt(Date startAt) {
+		this.startAt = startAt;
 	}
 
-	public Date getEnd() {
-		return end;
+	public Date getEndAt() {
+		return endAt;
 	}
 
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndAt(Date endAt) {
+		this.endAt = endAt;
+	}
+
+	public String getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	public Integer getTimeInterval() {
+		return timeInterval;
+	}
+
+	public void setTimeInterval(Integer timeInterval) {
+		this.timeInterval = timeInterval;
 	}
 
 	public String getTimeZone() {

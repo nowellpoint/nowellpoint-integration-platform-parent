@@ -105,8 +105,10 @@ public class JobController extends AbstractStaticController {
 		String description = request.queryParams("description");
 		String scheduleOption = request.queryParams("scheduleOption");
 		String runAt = request.queryParams("runAt");
-		String start = request.queryParams("start");
-		String end = request.queryParams("end");
+		String startAt = request.queryParams("startAt");
+		String endAt = request.queryParams("endAt");
+		String timeInterval = request.queryParams("timeInterval");
+		String timeUnit = request.queryParams("timeUnit");
 		
 		try {
 
@@ -117,8 +119,10 @@ public class JobController extends AbstractStaticController {
 					.withTimeZone(identity.getTimeZoneSidKey())
 					.withNotificationEmail(notificationEmail)
 					.withScheduleOption(scheduleOption)
-					.withStart(start)
-					.withEnd(end);
+					.withStartAt(startAt)
+					.withEndAt(endAt)
+					.withTimeUnit(timeUnit)
+					.withTimeInterval(timeInterval);
 			
 			CreateResult<Job> createRequest = new NowellpointClientOrig(token)
 					.job()

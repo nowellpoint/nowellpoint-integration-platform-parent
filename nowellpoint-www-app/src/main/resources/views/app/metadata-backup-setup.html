@@ -34,39 +34,50 @@
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="scheduleOption" id="once" value="ONCE"> ${labels["once"]}</label>
+                        <input type="radio" name="scheduleOption" id="once" value="RUN_ONCE"> ${labels["once"]}</label>
                 </div>
-                <div class="radio disabled">
+                <div class="radio">
                     <label>
-                        <input type="radio" name="scheduleOption" id="schedule" value="SCHEDULE"> ${labels["schedule"]}</label>
+                        <input type="radio" name="scheduleOption" id="schedule" value="RUN_ON_SCHEDULE"> ${labels["schedule"]}</label>
                 </div>
-                <div class="radio disabled">
+                <div class="radio">
                     <label>
                         <input type="radio" name="scheduleOption" id="specificDays" value="SPECIFIC_DAYS"> ${labels["specific.days"]}</label>
                 </div>
-                
+
                 <br>
 
                 <div id="once-form" class="row collapse">
                     <div class="form-group col-md-3">
                         <label class="control-label" for="runAt">${labels["run.at"]}*</label>
-                            <input type="text" id="runAt" name="runAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
-                            <div class="form-text">${labels["date.time.format"]}</div>
+                        <input type="text" id="runAt" name="runAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
+                        <div class="form-text">${labels["date.time.format"]}</div>
                     </div>
                 </div>
-                
-                <div id="schedule-form" class="row collapse">
+
+                <div id="run-on-schedule-form" class="row collapse">
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="start">${labels["start"]}*</label>
-                            <input type="text" id="start" name="start" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
-                            <div class="form-text">${labels["date.time.format"]}</div>
+                        <label class="control-label" for="startAt">${labels["start.at"]}*</label>
+                        <input type="text" id="startAt" name="startAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
+                        <div class="form-text">${labels["date.time.format"]}</div>
                     </div>
                     <div class="form-group col-md-3">
-                        <label class="control-label" for="start">${labels["start"]}*</label>
-                        <div class="input-group">
-                            <input type="text" id="end" name="end" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
-                            <span class="input-group-addon">${labels["date.time.format"]}</span>
-                        </div>
+                        <label class="control-label" for="endAt">${labels["end.at"]}*</label>
+                        <input type="text" id="endAt" name="endAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control">
+                        <div class="form-text">${labels["date.time.format"]}</div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="timeInterval">${labels["rerun.every"]}*</label>
+                        <input type="text" id="timeInterval" name="timeInterval" value="60" class="form-control">
+                    </div>
+                    <div class="form-group col-md-3">
+                    <select id="timeUnit" name="timeUnit" class="form-control" required>
+                        <option value="minutes" selected="selected">Minutes(s)</option>
+                        <option value="hours">Hour(s)</option>
+                        <option value="days">Day(s)</option>
+                        <option value="weeks">Week(s)</option>
+                        <option value="months">Month(s)</option>
+                    </select>
                     </div>
                 </div>
 
@@ -154,18 +165,21 @@
                 $('#runWhenSubmitted').click(function() {
                     if (this.checked) {
                         $("#once-form").hide();
+                        $("#run-on-schedule-form").hide();
                     }
                 });
 
                 $('#once').click(function() {
                     if (this.checked) {
                         $("#once-form").show();
+                        $("#run-on-schedule-form").hide();
                     }
                 });
 
                 $('#schedule').click(function() {
                     if (this.checked) {
-                        $("#schedule-form").show();
+                        $("#once-form").hide();
+                        $("#run-on-schedule-form").show();
                     }
                 });
 

@@ -23,11 +23,15 @@ public class JobRequest {
 	
 	private Date runAt;
 	
-	private Date start;
+	private Date startAt;
 	
-	private Date end;
+	private Date endAt;
 	
 	private String timeZone;
+	
+	private String timeUnit;
+	
+	private Integer timeInterval;
 	
 	private String jobTypeId;
 	
@@ -83,20 +87,20 @@ public class JobRequest {
 		this.runAt = runAt;
 	}
 
-	public Date getStart() {
-		return start;
+	public Date getStartAt() {
+		return startAt;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setStartAt(Date startAt) {
+		this.startAt = startAt;
 	}
 
-	public Date getEnd() {
-		return end;
+	public Date getEndAt() {
+		return endAt;
 	}
 
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndAt(Date endAt) {
+		this.endAt = endAt;
 	}
 
 	public String getTimeZone() {
@@ -105,6 +109,22 @@ public class JobRequest {
 
 	public void setTimeZone(String timeZone) {
 		this.timeZone = timeZone;
+	}
+
+	public String getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	public Integer getTimeInterval() {
+		return timeInterval;
+	}
+
+	public void setTimeInterval(Integer timeInterval) {
+		this.timeInterval = timeInterval;
 	}
 
 	public String getJobTypeId() {
@@ -206,32 +226,47 @@ public class JobRequest {
 		return this;
 	}
 	
-	public JobRequest withStart(Date start) {
-		setStart(start);
+	public JobRequest withStartAt(Date startAt) {
+		setStartAt(startAt);
 		return this;
 	}
 	
-	public JobRequest withStart(String start) throws ParseException {
-		if (Assert.isNotNullOrEmpty(start)) {
-			setStart(dateTimeFormat.parse(start));
+	public JobRequest withStartAt(String startAt) throws ParseException {
+		if (Assert.isNotNullOrEmpty(startAt)) {
+			setStartAt(dateTimeFormat.parse(startAt));
 		}
 		return this;
 	}
 	
-	public JobRequest withEnd(Date end) {
-		setEnd(end);
+	public JobRequest withEndAt(Date end) {
+		setEndAt(endAt);
 		return this;
 	}
 	
-	public JobRequest withEnd(String end) throws ParseException {
-		if (Assert.isNotNullOrEmpty(end)) {
-			setEnd(dateTimeFormat.parse(end));
+	public JobRequest withEndAt(String endAt) throws ParseException {
+		if (Assert.isNotNullOrEmpty(endAt)) {
+			setEndAt(dateTimeFormat.parse(endAt));
 		}
 		return this;
 	}
 	
 	public JobRequest withTimeZone(String timeZone) {
 		setTimeZone(timeZone);
+		return this;
+	}
+	
+	public JobRequest withTimeUnit(String timeUnit) {
+		setTimeUnit(timeUnit);
+		return this;
+	}
+	
+	public JobRequest withTimeInterval(Integer timeInterval) {
+		setTimeInterval(timeInterval);
+		return this;
+	}
+	
+	public JobRequest withTimeInterval(String timeInterval) {
+		setTimeInterval(Integer.valueOf(timeInterval));
 		return this;
 	}
 	

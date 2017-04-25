@@ -1,11 +1,9 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nowellpoint.util.Assert;
 
 public class Schedule {
 	
@@ -13,12 +11,16 @@ public class Schedule {
 	private Date runAt;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date start;
+	private Date startAt;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date end;
+	private Date endAt;
 	
 	private String timeZone;
+	
+	private String timeUnit;
+	
+	private Integer timeInterval;
 	
 	private String seconds;
 	
@@ -40,9 +42,11 @@ public class Schedule {
 	
 	private Schedule(
 			Date runAt,
-			Date start, 
-			Date end, 
+			Date startAt, 
+			Date endAt, 
 			String timeZone, 
+			String timeUnit,
+			Integer timeInterval,
 			String seconds, 
 			String minutes, 
 			String hours, 
@@ -55,92 +59,15 @@ public class Schedule {
 		this.dayOfMonth = dayOfMonth;
 		this.dayOfWeek = dayOfWeek;
 		this.hours = hours;
-		this.end = end;
+		this.endAt = endAt;
+		this.timeUnit = timeUnit;
+		this.timeInterval = timeInterval;
 		this.minutes = minutes;
 		this.month = month;
 		this.seconds = seconds;
-		this.start = start;
+		this.startAt = startAt;
 		this.timeZone = timeZone;
 		this.year = year;
-	}
-	
-	public static Schedule of(Date runAt, Date start, Date end, String timeZone, Calendar calendar) {
-		String seconds = String.valueOf(calendar.get(Calendar.SECOND));
-		String minutes = String.valueOf(calendar.get(Calendar.MINUTE));
-		String hours = String.valueOf(calendar.get(Calendar.HOUR));
-		String month = String.valueOf(calendar.get(Calendar.MONTH));
-		String dayOfMonth = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
-		String year = String.valueOf(calendar.get(Calendar.YEAR));
-		String dayOfWeek = String.valueOf(calendar.get(Calendar.DAY_OF_WEEK));
-		
-		if (Assert.isEmpty(seconds)) {
-			seconds = null;
-		}
-		
-		if (Assert.isEmpty(minutes)) {
-			minutes = null;
-		}
-		
-		if (Assert.isEmpty(hours)) {
-			hours = null;
-		}
-		
-		if (Assert.isEmpty(month)) {
-			month = null;
-		}
-		
-		if (Assert.isEmpty(dayOfMonth)) {
-			dayOfMonth = null;
-		}
-		
-		if (Assert.isEmpty(year)) {
-			year = null;
-		}
-		
-		if (Assert.isEmpty(dayOfWeek)) {
-			dayOfWeek = null;
-		}
-		
-		return new Schedule(
-				runAt,
-				start, 
-				end, 
-				timeZone, 
-				seconds, 
-				minutes, 
-				hours, 
-				dayOfMonth, 
-				month, 
-				dayOfWeek, 
-				year);
-		
-	}
-	
-	public static Schedule of(
-			Date runAt,
-			Date start, 
-			Date end, 
-			String timeZone, 
-			String seconds, 
-			String minutes, 
-			String hours, 
-			String dayOfMonth, 
-			String month, 
-			String dayOfWeek, 
-			String year) {
-		
-		return new Schedule(
-				runAt,
-				start, 
-				end, 
-				timeZone, 
-				seconds, 
-				minutes, 
-				hours, 
-				dayOfMonth, 
-				month, 
-				dayOfWeek, 
-				year);
 	}
 	
 	public static Schedule runWhenSubmitted() {
@@ -150,6 +77,8 @@ public class Schedule {
 				null, 
 				null, 
 				null, 
+				null,
+				null,
 				null, 
 				null, 
 				null, 
@@ -165,6 +94,8 @@ public class Schedule {
 				null, 
 				null, 
 				null, 
+				null,
+				null,
 				null, 
 				null, 
 				null, 
@@ -174,12 +105,14 @@ public class Schedule {
 		
 	}
 	
-	public static Schedule runOnSchedule() {
+	public static Schedule runOnSchedule(Date startAt, Date endAt, String timeZone, String timeUnit, Integer timeInterval) {
 		return new Schedule(
 				null,
-				null, 
-				null, 
-				null, 
+				startAt, 
+				endAt, 
+				timeZone, 
+				timeUnit,
+				timeInterval,
 				null, 
 				null, 
 				null, 
@@ -195,6 +128,8 @@ public class Schedule {
 				null, 
 				null, 
 				null, 
+				null,
+				null,
 				null, 
 				null, 
 				null, 
@@ -212,20 +147,20 @@ public class Schedule {
 		this.runAt = runAt;
 	}
 
-	public Date getStart() {
-		return start;
+	public Date getStartAt() {
+		return startAt;
 	}
 
-	public void setStart(Date start) {
-		this.start = start;
+	public void setStartAt(Date startAt) {
+		this.startAt = startAt;
 	}
 
-	public Date getEnd() {
-		return end;
+	public Date getEndAt() {
+		return endAt;
 	}
 
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndAt(Date endAt) {
+		this.endAt = endAt;
 	}
 
 	public String getTimeZone() {
@@ -234,6 +169,22 @@ public class Schedule {
 
 	public void setTimeZone(String timeZone) {
 		this.timeZone = timeZone;
+	}
+
+	public String getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	public Integer getTimeInterval() {
+		return timeInterval;
+	}
+
+	public void setTimeInterval(Integer timeInterval) {
+		this.timeInterval = timeInterval;
 	}
 
 	public String getSeconds() {

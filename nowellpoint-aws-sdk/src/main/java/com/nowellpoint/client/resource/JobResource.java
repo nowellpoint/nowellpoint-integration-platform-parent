@@ -101,7 +101,7 @@ public class JobResource extends AbstractResource {
     			.parameter("runAt", formatDateTime(request.getRunAt()))
     			.parameter("description", request.getDescription())
     			.parameter("hours", request.getHours())
-    			.parameter("end", formatDateTime(request.getEnd()))
+    			.parameter("endAt", formatDateTime(request.getEndAt()))
     			.parameter("minutes", request.getMinutes())
     			.parameter("month", request.getMonth())
     			.parameter("notificationEmail", request.getNotificationEmail())
@@ -109,7 +109,9 @@ public class JobResource extends AbstractResource {
     			.parameter("seconds", request.getSeconds())
     			.parameter("timeZone", request.getTimeZone())
     			.parameter("year", request.getYear())
-    			.parameter("start", formatDateTime(request.getStart()))
+    			.parameter("timeUnit", request.getTimeUnit())
+    			.parameter("timeInterval", String.valueOf(request.getTimeInterval()))
+    			.parameter("startAt", formatDateTime(request.getStartAt()))
     			.execute();
 		
 		CreateResult<Job> result = null;
