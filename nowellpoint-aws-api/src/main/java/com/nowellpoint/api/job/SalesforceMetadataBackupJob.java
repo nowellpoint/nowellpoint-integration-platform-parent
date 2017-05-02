@@ -25,6 +25,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.model.document.Job;
 import com.nowellpoint.api.model.document.JobExecution;
 import com.nowellpoint.api.model.document.JobOutput;
@@ -47,6 +48,10 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -83,7 +88,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 				.getKey()
 				.getName()));
 		
-		job.setStatus("Running");
+		job.setStatus("RUNNING");
 		
 		documentManager.replaceOne(job);
 		
@@ -192,16 +197,16 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	}
 	    	
 	    	if (Assert.isNull(context.getNextFireTime())) {
-				job.setStatus("Complete");
+				job.setStatus("COMPLETE");
 			} else {
-				job.setStatus("Scheduled");
+				job.setStatus("SCHEDULED");
 			}
 			
 		} catch (OauthException e) {
-			job.setStatus("Error");
+			job.setStatus("ERROR");
 			job.setFailureMessage(e.getError());
 		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
-			job.setStatus("Error");
+			job.setStatus("ERROR");
 			job.setFailureMessage(e.getMessage());
 		}
 		
@@ -225,24 +230,41 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		// compile and send notification
 		//
 		
+		String format = "%s%1s%n";
+		
+		String message = new StringBuilder()
+				.append(String.format(format, "Scheduled Job:", job.getJobName()))
+				.append(String.format(format, "Completion Date:", Date.from(Instant.now()).toString()))
+				.append(String.format(format, "Status:", job.getStatus()))
+				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception:", job.getFailureMessage()) : "")
+				.toString();
+		
 		if (Assert.isNotNull(job.getNotificationEmail())) {
-			
-			String format = "%-20s%s%n";
     		
-    		String subject = String.format("[%s] Scheduled Job Request Complete", "");
-    		
-    		String message = new StringBuilder()
-    				.append(String.format(format, "Scheduled Job:", job.getJobName()))
-    				.append(String.format(format, "Completion Date:", Date.from(Instant.now()).toString()))
-    				.append(String.format(format, "Status:", job.getStatus()))
-    				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception:", job.getFailureMessage()) : "")
-    				.toString();
+    		String subject = String.format("[%s] Scheduled Job Request Complete", salesforceConnectionString.getOrganizationId());
     		
     		try {
 				sendNotification(job.getNotificationEmail(), subject, message);
 			} catch (IOException e) {
 				LOGGER.error("Unable to send email: " + e.getMessage());
 			}
+		}
+		
+		if (Assert.isNotNull(job.getSlackWebhookUrl())) {
+			
+			ObjectNode payload = new ObjectMapper().createObjectNode()
+					.put("text", message)
+					.put("username", "Nowellpoint Notification Service");
+			
+			HttpResponse httpResponse = RestResource.post(job.getSlackWebhookUrl())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.body(payload)
+					.execute();
+			
+			if (httpResponse.getStatusCode() != Status.OK) {
+				LOGGER.error(httpResponse.getAsString());
+			}			
 		}
 	}
 	

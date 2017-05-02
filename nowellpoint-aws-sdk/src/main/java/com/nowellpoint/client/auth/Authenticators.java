@@ -48,7 +48,7 @@ public class Authenticators {
 	    		} else if (error.getCode() == 7101) {
 					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
 	    		} else {
-	    			throw new ServiceUnavailableException(error.getMessage());
+	    			throw new ServiceUnavailableException(error.getErrorMessage());
 	    		}
 	    		
 	    	} else {
@@ -86,7 +86,7 @@ public class Authenticators {
 	    		} else if (error.getCode() == 7101) {
 					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
 	    		} else {
-	    			throw new ServiceUnavailableException(error.getMessage());
+	    			throw new ServiceUnavailableException(error.getErrorMessage());
 	    		}
 	    		
 	    	} else {
@@ -107,7 +107,7 @@ public class Authenticators {
 	    	
 	    	if (statusCode != 204) {
 	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getMessage());
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	}
 		}
 	}

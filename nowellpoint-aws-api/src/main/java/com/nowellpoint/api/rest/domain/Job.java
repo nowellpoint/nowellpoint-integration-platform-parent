@@ -42,6 +42,8 @@ public class Job extends AbstractResource {
 	
 	private String notificationEmail;
 	
+	private String slackWebhookUrl;
+	
 	private String scheduleOption;
 	
 	private String jobName;
@@ -79,6 +81,7 @@ public class Job extends AbstractResource {
 			Schedule schedule,
 			String description,
 			String notificationEmail,
+			String slackWebhookUrl,
 			String scheduleOption,
 			UserInfo owner,
 			Date createdOn,
@@ -94,6 +97,7 @@ public class Job extends AbstractResource {
 		this.groupName = jobType.getGroup();
 		this.className = jobType.getClassName();
 		this.notificationEmail = notificationEmail;
+		this.slackWebhookUrl = slackWebhookUrl;
 		this.scheduleOption = scheduleOption;
 		this.owner = owner;
 		this.createdOn = createdOn;
@@ -110,10 +114,19 @@ public class Job extends AbstractResource {
 			UserInfo userInfo,
 			String description,
 			String notificationEmail,
+			String slackWebhookUrl,
 			String scheduleOption) {
 		
 		if (Assert.isEmpty(description)) {
 			description = null;
+		}
+		
+		if (Assert.isEmpty(notificationEmail)) {
+			notificationEmail = null;
+		}
+		
+		if (Assert.isEmpty(slackWebhookUrl)) {
+			slackWebhookUrl = null;
 		}
 		
 		return new Job(
@@ -122,6 +135,7 @@ public class Job extends AbstractResource {
 				schedule,
 				description,
 				notificationEmail,
+				slackWebhookUrl,
 				scheduleOption,
 				userInfo,
 				Date.from(Instant.now()),
@@ -185,6 +199,14 @@ public class Job extends AbstractResource {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getSlackWebhookUrl() {
+		return slackWebhookUrl;
+	}
+
+	public void setSlackWebhookUrl(String slackWebhookUrl) {
+		this.slackWebhookUrl = slackWebhookUrl;
 	}
 
 	public String getScheduleOption() {
@@ -318,8 +340,6 @@ public class Job extends AbstractResource {
 				.filter(s -> filename.equals(s.getFilename()))
 				.findFirst();
 		
-		System.out.println(filename + " " + optional.isPresent());
-		
 		if (! optional.isPresent()) {
 			throw new IllegalArgumentException(String.format("Filename: %s does not exist", filename));
 		}
@@ -333,15 +353,17 @@ public class Job extends AbstractResource {
 	}
 	
 	public class Statuses {
-		public static final String SCHEDULED = "Scheduled"; 
-		public static final String STOPPED = "Stopped";
-		public static final String TERMINATED = "Terminated";
+		public static final String SCHEDULED = "SCHEDULED"; 
+		public static final String STOPPED = "STOPPED";
+		public static final String SUBMITTED = "SUBMITTED";
+		public static final String TERMINATED = "TERMINATED";
+		public static final String ERROR = "ERROR";
 	}
 	
 	public class ScheduleOptions {
 		public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
-		public static final String ONCE = "ONCE";
-		public static final String SCHEDULE = "SCHEDULE";
-		public static final String SPECIFIC_DAYS = "SPECIFIC_DAYS";
+		public static final String RUN_ONCE = "RUN_ONCE";
+		public static final String RUN_ON_SCHEDULE = "RUN_ON_SCHEDULE";
+		public static final String RUN_ON_SPECIFIC_DAYS = "RUN_ON_SPECIFIC_DAYS";
 	}
 }

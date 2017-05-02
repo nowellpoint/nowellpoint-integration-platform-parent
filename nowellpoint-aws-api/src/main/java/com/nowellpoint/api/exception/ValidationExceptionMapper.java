@@ -32,9 +32,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 	@Override
 	public Response toResponse(ValidationException exception) {
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		Error error = new Error();
-		error.setCode(1000);
-		error.setMessage(exception.getMessage());
+		Error error = new Error(1000, exception.getMessage());
 		builder.entity(error);
 		return builder.build();
 	}

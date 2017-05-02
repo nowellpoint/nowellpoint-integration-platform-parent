@@ -32,6 +32,8 @@ public class Job extends AbstractResource {
 	
 	private String notificationEmail;
 	
+	private String slackWebhookUrl;
+	
 	private String scheduleOption;
 	
 	private Schedule schedule;
@@ -56,6 +58,7 @@ public class Job extends AbstractResource {
 
 	public Job() {
 		jobExecutions = new ArrayList<>();
+		jobOutputs = new ArrayList<>();
 	}
 
 	public Source getSource() {
@@ -88,6 +91,14 @@ public class Job extends AbstractResource {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getSlackWebhookUrl() {
+		return slackWebhookUrl;
+	}
+
+	public void setSlackWebhookUrl(String slackWebhookUrl) {
+		this.slackWebhookUrl = slackWebhookUrl;
 	}
 
 	public String getScheduleOption() {

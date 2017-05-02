@@ -90,6 +90,7 @@ public class JobResourceImpl implements JobResource {
 			String connectorId,
 			String jobTypeId,
 			String notificationEmail,
+			String slackWebhookUrl,
 			String scheduleOption,
 			String runAt,
 			String dayOfMonth,
@@ -145,7 +146,7 @@ public class JobResourceImpl implements JobResource {
 		}
 		
 		if (Assert.isNullOrEmpty(scheduleOption)) {
-			errors.add("Missing scheduleOption parameter. Must provide a value of RUN_WHEN_SUBMITTED, ONCE, SCHEDULE or SPECIFIC_DAYS");
+			errors.add("Missing scheduleOption parameter. Must provide a value of RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS");
 		}
 		
 		if (! errors.isEmpty()) {
@@ -165,14 +166,14 @@ public class JobResourceImpl implements JobResource {
 		
 		if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
 			schedule = Schedule.runWhenSubmitted();
-		} else if (Job.ScheduleOptions.ONCE.equals(scheduleOption)) {
+		} else if (Job.ScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
 			schedule = Schedule.runOnce(runDate);
-		} else if (Job.ScheduleOptions.SCHEDULE.equals(scheduleOption)) {	
+		} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {	
 			schedule = Schedule.runOnSchedule(startDate, endDate, timeZone, timeUnit, Integer.valueOf(timeInterval));
-		} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(scheduleOption)) {		
+		} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(scheduleOption)) {		
 			schedule = Schedule.runOnSpecficDays();
 		} else {
-			throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", scheduleOption));
+			throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", scheduleOption));
 		}
 		
 		Source source = Source.of(salesforceConnector);
@@ -184,6 +185,7 @@ public class JobResourceImpl implements JobResource {
 				user,
 				description, 
 				notificationEmail, 
+				slackWebhookUrl,
 				scheduleOption);
 		
 		jobService.createJob(job);

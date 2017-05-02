@@ -8,25 +8,72 @@
         </div>
         <br>
         <div id="error"></div>
+        <br>
         <div>
             <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
 
                 <input type="hidden" class="form-control" name="jobTypeId" id="jobTypeId" value="${service.serviceId}" />
 
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="notificationEmail">${labels["notification.email"]}*</label>
-                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" required autofocus="" />
-                    </div>
-                </div>
 
                 <div class="row">
                     <div class="form-group col-md-3">
                         <label class="control-label" for="description">${labels["description"]}</label>
-                        <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                        <textarea class="form-control" name="description" id="description" rows="3" autofocus=""></textarea>
                     </div>
-
                 </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <div class="hr-divider"></div>
+                    </div>
+                </div>
+
+                <div id="alerts" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["alerts"]}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
+                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="slackWebhookUrl">${labels["webhook.url"]}</label>
+                        <input type="text" class="form-control" name="slackWebhookUrl" id="slackWebhookUrl" value="" />
+                    </div>
+                </div>
+
+                <br>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <div class="hr-divider"></div>
+                    </div>
+                </div>
+
+                <div id="alerts" class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["schedule"]}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br>
 
                 <div class="radio">
                     <label>
@@ -42,7 +89,7 @@
                 </div>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="scheduleOption" id="specificDays" value="SPECIFIC_DAYS"> ${labels["specific.days"]}</label>
+                        <input type="radio" name="scheduleOption" id="specificDays" value="RUN_ON_SPECIFIC_DAYS"> ${labels["specific.days"]}</label>
                 </div>
 
                 <br>
@@ -71,13 +118,13 @@
                         <input type="text" id="timeInterval" name="timeInterval" value="60" class="form-control">
                     </div>
                     <div class="form-group col-md-3">
-                    <select id="timeUnit" name="timeUnit" class="form-control" required>
-                        <option value="minutes" selected="selected">Minutes(s)</option>
-                        <option value="hours">Hour(s)</option>
-                        <option value="days">Day(s)</option>
-                        <option value="weeks">Week(s)</option>
-                        <option value="months">Month(s)</option>
-                    </select>
+                        <select id="timeUnit" name="timeUnit" class="form-control" required>
+                            <option value="minutes" selected="selected">Minutes(s)</option>
+                            <option value="hours">Hour(s)</option>
+                            <option value="days">Day(s)</option>
+                            <option value="weeks">Week(s)</option>
+                            <option value="months">Month(s)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -155,9 +202,14 @@
 -->
             </form>
         </div>
-        <div>
-            <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services">${labels["cancel"]}</a>
-            <button name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
+
+        <div class="row">
+            <div class="form-group col-md-3">
+                <div class="pull-right">
+                    <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                    <button name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
+                </div>
+            </div>
         </div>
 
         <script>

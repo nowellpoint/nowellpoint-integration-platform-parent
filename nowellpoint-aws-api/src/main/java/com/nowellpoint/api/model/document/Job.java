@@ -54,6 +54,8 @@ public class Job extends MongoDocument {
 	
 	private String notificationEmail;
 	
+	private String slackWebhookUrl;
+	
 	private String scheduleOption;
 	
 	@EmbedOne
@@ -141,6 +143,14 @@ public class Job extends MongoDocument {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getSlackWebhookUrl() {
+		return slackWebhookUrl;
+	}
+
+	public void setSlackWebhookUrl(String slackWebhookUrl) {
+		this.slackWebhookUrl = slackWebhookUrl;
 	}
 
 	public String getScheduleOption() {

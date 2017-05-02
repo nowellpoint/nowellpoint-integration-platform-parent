@@ -40,6 +40,7 @@ public interface JobResource {
 			@FormParam("connectorId") String connectorId,
 			@FormParam("jobTypeId") String jobTypeId,
 			@FormParam("notificationEmail") String notificationEmail,
+			@FormParam("slackWebhookUrl") String slackWebhookUrl,
 			@FormParam("scheduleOption") String scheduleOption,
 			@FormParam("runAt") String runAt,
 			@FormParam("dayOfMonth") String dayOfMonth,

@@ -14,7 +14,7 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#schedule-dialog">${labels["edit"]}</button>&nbsp;
+            <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
             <button type="button" id="run" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
         </div>
 
@@ -31,9 +31,6 @@
                     <dt>${labels["source.type"]}</dt>
                     <dd>${(job.source.type)!}&emsp;</dd>
                     <hr>
-                    <dt>${labels["notification.email"]}</dt>
-                    <dd>${(job.notificationEmail)!}&emsp;</dd>
-                    <hr>
                     <dt>${labels["status"]}</dt>
                     <!--  <#if job.status == "Stopped"> -->
                     <dd class="text-danger">
@@ -43,6 +40,9 @@
                             <!-- </#if> -->
                             ${(job.status)!}&emsp;
                         </dd>
+                        <hr>
+                        <dt>${labels["notification.email"]}</dt>
+                        <dd>${(job.notificationEmail)!}&emsp;</dd>
                         <hr>
                 </dl>
             </div>
@@ -76,6 +76,9 @@
             <div class="col-md-6">
 
                 <dl class="dl-vertical">
+                    <dt>${labels["webhook.url"]}</dt>
+                    <dd>${(job.slackWebhookUrl)!}&emsp;</dd>
+                    <hr>
                     <dt>${labels["description"]}</dt>
                     <dd>${job.description!}&emsp;</dd>
                     <hr>
@@ -184,6 +187,48 @@
                             </#list>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="job-dialog" tabindex="-1" role="dialog" aria-labelledby="edit-job-dialog-title" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="edit-job-dialog-title">${labels["edit.job"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="">
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="description">${labels["description"]}</label>
+                                    <textarea class="form-control" name="description" id="description" rows="6" autofocus="">${job.description!}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
+                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="webhookUrl">${labels["webhook.url"]}</label>
+                                    <input type="text" class="form-control" name="webhookUrl" id="webhookUrl" value="" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="button" id="update-job" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
                 </div>
             </div>
         </div>

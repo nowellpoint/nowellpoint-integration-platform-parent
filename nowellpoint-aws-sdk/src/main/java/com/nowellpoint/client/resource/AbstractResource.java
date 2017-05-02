@@ -116,7 +116,7 @@ public abstract class AbstractResource {
 		public ResultImpl(Error error) {
 			this.isSuccess = Boolean.FALSE;
 			this.error = error.getCode();
-			this.errorMessage = error.getMessage();
+			this.errorMessage = error.getErrorMessage();
 		}
 
 		@Override

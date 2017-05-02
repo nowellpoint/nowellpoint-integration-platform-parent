@@ -80,14 +80,14 @@ public class JobOperator  {
 		    
 		    Trigger trigger = null;
 			
-			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.ONCE.equals(job.getScheduleOption())) {
+			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
 				
 				trigger = TriggerBuilder
 						.newTrigger()
 						.startAt(job.getSchedule().getRunAt())
 						.build();
 				
-			} else if (Job.ScheduleOptions.SCHEDULE.equals(job.getScheduleOption())) {
+			} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption())) {
 				
 				trigger = TriggerBuilder.newTrigger()
 						.startAt(job.getSchedule().getStartAt())
@@ -97,7 +97,7 @@ public class JobOperator  {
 								.inTimeZone(TimeZone.getTimeZone(job.getSchedule().getTimeZone())))
 						.build();
 				
-			} else if (Job.ScheduleOptions.SPECIFIC_DAYS.equals(job.getScheduleOption())) {
+			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
 				
 			} else {
 				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", job.getScheduleOption()));
@@ -111,14 +111,14 @@ public class JobOperator  {
 			}
 			
 			if (trigger.getStartTime().after(Date.from(Instant.now()))) {
-				job.setStatus("Scheduled");
+				job.setStatus(Job.Statuses.SCHEDULED);
 			} else {
-				job.setStatus("Submitted");
+				job.setStatus(Job.Statuses.SUBMITTED);
 			}
 			
 		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {
 			LOGGER.error(e.getMessage());
-			job.setStatus("Not Submitted");
+			job.setStatus(Job.Statuses.ERROR);
 			job.setFailureMessage(e.getMessage());
 		}
 		

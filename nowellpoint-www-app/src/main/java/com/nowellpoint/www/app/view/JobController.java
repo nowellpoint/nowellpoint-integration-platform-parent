@@ -102,6 +102,7 @@ public class JobController extends AbstractStaticController {
 		String connectorId = request.params(":connectorId");
 		String jobTypeId = request.queryParams("jobTypeId");
 		String notificationEmail = request.queryParams("notificationEmail");
+		String slackWebhookUrl = request.queryParams("slackWebhookUrl");
 		String description = request.queryParams("description");
 		String scheduleOption = request.queryParams("scheduleOption");
 		String runAt = request.queryParams("runAt");
@@ -118,6 +119,7 @@ public class JobController extends AbstractStaticController {
 					.withDescription(description)
 					.withTimeZone(identity.getTimeZoneSidKey())
 					.withNotificationEmail(notificationEmail)
+					.withSlackWebhookUrl(slackWebhookUrl)
 					.withScheduleOption(scheduleOption)
 					.withStartAt(startAt)
 					.withEndAt(endAt)

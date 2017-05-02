@@ -17,6 +17,8 @@ public class JobRequest {
 	
 	private String notificationEmail;
 	
+	private String slackWebhookUrl;
+	
 	private String scheduleOption;
 	
 	private String description;
@@ -61,6 +63,14 @@ public class JobRequest {
 
 	public void setNotificationEmail(String notificationEmail) {
 		this.notificationEmail = notificationEmail;
+	}
+
+	public String getSlackWebhookUrl() {
+		return slackWebhookUrl;
+	}
+
+	public void setSlackWebhookUrl(String slackWebhookUrl) {
+		this.slackWebhookUrl = slackWebhookUrl;
 	}
 
 	public String getScheduleOption() {
@@ -201,6 +211,11 @@ public class JobRequest {
 	
 	public JobRequest withNotificationEmail(String notificationEmail) {
 		setNotificationEmail(notificationEmail);
+		return this;
+	}
+	
+	public JobRequest withSlackWebhookUrl(String slackWebhookUrl) {
+		setSlackWebhookUrl(slackWebhookUrl);
 		return this;
 	}
 	

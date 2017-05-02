@@ -33,6 +33,8 @@ public class DashboardController extends AbstractStaticController {
 		model.put("salesforceConnectorsList", salesforceConnectors.getItems());
 		model.put("jobList", jobList.getItems());
 		
+		
+		
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};
 }

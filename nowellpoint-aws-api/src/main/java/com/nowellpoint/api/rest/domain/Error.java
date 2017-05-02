@@ -8,8 +8,6 @@ public class Error {
 	
 	private Integer code;
 	
-	private String message;
-	
 	private String[] messages;
 	
 	public Error() {
@@ -18,7 +16,7 @@ public class Error {
 	
 	public Error(Integer code, String message) {
 		setCode(code);
-		setMessage(message);
+		setMessages(new String[] {message});
 	}
 	
 	public Error(Integer code, String[] messages) {
@@ -31,14 +29,6 @@ public class Error {
 
 	public void setCode(Integer code) {
 		this.code = code;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
 	}
 	
 	public String[] getMessages() {
