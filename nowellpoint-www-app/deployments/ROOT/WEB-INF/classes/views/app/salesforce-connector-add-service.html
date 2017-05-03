@@ -1,0 +1,60 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div>
+            <a href="${links['salesforce.connector']}/${salesforceConnector.id}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="error"></div>
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["service.catalog"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div class="flexgrid">
+            <#list jobTypeList?sort_by( "createdOn") as jobType>
+                <div class="card" style="width: 500px;">
+                    <form method="post" action="${links['salesforce.connector']}/${salesforceConnector.id}/service/${jobType.id}">
+                        <div class="card-block">
+                            <div class="media">
+                                <span class="d-flex mr-3 icon icon-clock fa fa-4x text-primary"></span>
+                                <div class="media-body">
+                                    <h4 class="mt-0">${jobType.name}</h4>
+                                    <p class="text-muted">${jobType.description}</p>
+                                    <div class="pull-right"><button type="submit" name="submit" id="submit" class="btn btn-primary add-service" data-href="${links['salesforce.connector']}/${salesforceConnector.id}/services/${jobType.id}">${labels["add.service"]}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </#list>
+        </div>
+        
+        <script>
+            $(".add-service").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: "post",
+                    url: $(this).attr("data-href"),
+                    dataType: "html",
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+        </script>
+        
+    </@t.page>

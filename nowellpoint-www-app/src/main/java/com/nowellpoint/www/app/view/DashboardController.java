@@ -14,7 +14,7 @@ import spark.Response;
 public class DashboardController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
+		public static final String DASHBOARD = secureTemplate("dashboard.html");
 	}
 	
 	public static String showDashboard(Configuration configuration, Request request, Response response) {
@@ -32,8 +32,6 @@ public class DashboardController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("salesforceConnectorsList", salesforceConnectors.getItems());
 		model.put("jobList", jobList.getItems());
-		
-		
 		
     	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
 	};

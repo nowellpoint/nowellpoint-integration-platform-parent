@@ -32,6 +32,10 @@ public class AbstractStaticController {
 	
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
+	protected static final String TOKEN = "com.nowellpoint.auth.token";
+	protected static final String IDENTITY = "com.nowellpoint.auth.identity";
+	protected static final String LOCALE = "com.nowellpoint.default.locale";
+	protected static final String TIME_ZONE = "com.nowellpoint.default.timezone";
 	
 	private static String buildTemplate(Configuration configuration, Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
@@ -49,25 +53,29 @@ public class AbstractStaticController {
 		return output.toString();
 	}
 	
+	protected static String secureTemplate(String templateName) {
+		return String.format(APPLICATION_CONTEXT, templateName);
+	}
+	
 	protected static Map<String, Object> getModel() {
 		Map<String, Object> model = new HashMap<>();
 		return model;
 	}
 	
 	protected static Token getToken(Request request) {
-		return request.attribute("com.nowellpoint.auth.token");
+		return request.attribute(TOKEN);
 	}
 	
 	protected static Identity getIdentity(Request request) {
-		return request.attribute("com.nowellpoint.auth.identity");
+		return request.attribute(IDENTITY);
 	}
 	
 	protected static Locale getLocale(Request request) {
-		return request.attribute("com.nowellpoint.default.locale") != null ? request.attribute("com.nowellpoint.default.locale") : Locale.getDefault();
+		return request.attribute(LOCALE) != null ? request.attribute(LOCALE) : Locale.getDefault();
 	}
 	
 	protected static TimeZone getTimeZone(Request request) {		
-		return request.attribute("com.nowellpoint.default.timezone") != null ? request.attribute("com.nowellpoint.default.timezone") : TimeZone.getDefault();
+		return request.attribute(TIME_ZONE) != null ? request.attribute(TIME_ZONE) : TimeZone.getDefault();
 	}
 	
 	protected static String getLabel(Class<?> controllerClass, Request request, String key) {
@@ -89,12 +97,7 @@ public class AbstractStaticController {
 		if (result.isSuccess()) {
 			return "";
 		}
-		return div().withId("error").withClass("alert alert-danger")
-				.with(a().withClass("close").withData("dismiss", "alert")
-						.with(new UnescapedText("&times;")))
-				.with(div().withClass("text-center")
-						.with(strong().withText(result.getErrorMessage())))
-				.render();
+		return showError(result.getErrorMessage());
 	}
 	
 	protected static String showError(String errorMessage) {

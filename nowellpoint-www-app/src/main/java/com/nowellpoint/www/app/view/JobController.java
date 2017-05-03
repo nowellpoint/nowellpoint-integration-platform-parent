@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.text.ParseException;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClientOrig;
@@ -11,6 +10,7 @@ import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.JobRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.www.app.util.TemplateBuilder;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -34,7 +34,15 @@ public class JobController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
     	model.put("jobList", jobList.getItems());
     	
-    	return render(JobController.class, configuration, request, response, model, Template.JOBS_LIST);
+    	return TemplateBuilder.instance()
+				.withConfiguration(configuration)
+				.withControllerClass(JobController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.JOBS_LIST)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	public static String viewJob(Configuration configuration, Request request, Response response) {
@@ -49,11 +57,20 @@ public class JobController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("job", job);
 		
-		return render(JobController.class, configuration, request, response, model, Template.JOBS_VIEW);
+		return TemplateBuilder.instance()
+				.withConfiguration(configuration)
+				.withControllerClass(JobController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.JOBS_VIEW)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	public static String viewOutputs(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
+		Identity identity = getIdentity(request);
 		
 		String id = request.params(":id");
 		
@@ -63,7 +80,16 @@ public class JobController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
 		model.put("job", job);
-		return render(JobController.class, configuration, request, response, model, Template.JOBS_OUTPUTS);
+		
+		return TemplateBuilder.instance()
+				.withConfiguration(configuration)
+				.withControllerClass(JobController.class)
+				.withIdentity(identity)
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.JOBS_OUTPUTS)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	public static String runJob(Configuration configuration, Request request, Response response) {
@@ -111,33 +137,26 @@ public class JobController extends AbstractStaticController {
 		String timeInterval = request.queryParams("timeInterval");
 		String timeUnit = request.queryParams("timeUnit");
 		
-		try {
-
-			JobRequest jobRequest = new JobRequest().withConnectorId(connectorId)
-					.withRunAt(runAt)
-					.withJobTypeId(jobTypeId)
-					.withDescription(description)
-					.withTimeZone(identity.getTimeZoneSidKey())
-					.withNotificationEmail(notificationEmail)
-					.withSlackWebhookUrl(slackWebhookUrl)
-					.withScheduleOption(scheduleOption)
-					.withStartAt(startAt)
-					.withEndAt(endAt)
-					.withTimeUnit(timeUnit)
-					.withTimeInterval(timeInterval);
-			
-			CreateResult<Job> createRequest = new NowellpointClientOrig(token)
-					.job()
-					.create(jobRequest);
-			
-			if (! createRequest.isSuccess()) {
-				response.status(400);
-				return showError(createRequest.getErrorMessage());
-			}
+		JobRequest jobRequest = new JobRequest().withConnectorId(connectorId)
+				.withRunAt(runAt)
+				.withJobTypeId(jobTypeId)
+				.withDescription(description)
+				.withTimeZone(identity.getTimeZoneSidKey())
+				.withNotificationEmail(notificationEmail)
+				.withSlackWebhookUrl(slackWebhookUrl)
+				.withScheduleOption(scheduleOption)
+				.withStartAt(startAt)
+				.withEndAt(endAt)
+				.withTimeUnit(timeUnit)
+				.withTimeInterval(timeInterval);
 		
-		} catch (ParseException e) {
+		CreateResult<Job> createRequest = new NowellpointClientOrig(token)
+				.job()
+				.create(jobRequest);
+		
+		if (! createRequest.isSuccess()) {
 			response.status(400);
-			return showError(e.getLocalizedMessage());
+			return showError(createRequest.getErrorMessage());
 		}
 		
 		return "";

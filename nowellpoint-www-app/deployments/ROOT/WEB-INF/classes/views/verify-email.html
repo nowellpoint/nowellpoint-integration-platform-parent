@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>${messages["application.title"]}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+</head>
+
+<body>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <br>
+                <br>
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <#if successMessage??>
+                        <div id="success" class="alert alert-success">
+                            <div class="text-center">${successMessage}</div>
+                            <div class="text-center"><a href="/login">${labels["login"]}</a></div>
+                        </div>
+                    </#if>
+                    <#if errorMessage??>
+                        <div id="error" class="alert alert-danger">
+                            <a class="close" data-dismiss="alert">×</a>
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

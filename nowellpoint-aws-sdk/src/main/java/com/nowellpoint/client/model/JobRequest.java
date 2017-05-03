@@ -1,19 +1,11 @@
 package com.nowellpoint.client.model;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.nowellpoint.util.Assert;
 
 public class JobRequest {
 	
 	private final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
-	public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
-	public static final String ONCE = "ONCE";
-	public static final String SCHEDULE = "SCHEDULE";
-	public static final String SPECIFIC_DAYS = "SPECIFIC_DAYS";
 	
 	private String notificationEmail;
 	
@@ -23,11 +15,11 @@ public class JobRequest {
 	
 	private String description;
 	
-	private Date runAt;
+	private String runAt;
 	
-	private Date startAt;
+	private String startAt;
 	
-	private Date endAt;
+	private String endAt;
 	
 	private String timeZone;
 	
@@ -89,27 +81,27 @@ public class JobRequest {
 		this.description = description;
 	}
 
-	public Date getRunAt() {
+	public String getRunAt() {
 		return runAt;
 	}
 
-	public void setRunAt(Date runAt) {
+	public void setRunAt(String runAt) {
 		this.runAt = runAt;
 	}
 
-	public Date getStartAt() {
+	public String getStartAt() {
 		return startAt;
 	}
 
-	public void setStartAt(Date startAt) {
+	public void setStartAt(String startAt) {
 		this.startAt = startAt;
 	}
 
-	public Date getEndAt() {
+	public String getEndAt() {
 		return endAt;
 	}
 
-	public void setEndAt(Date endAt) {
+	public void setEndAt(String endAt) {
 		this.endAt = endAt;
 	}
 
@@ -225,14 +217,12 @@ public class JobRequest {
 	}
 	
 	public JobRequest withRunAt(Date runAt) {
-		setRunAt(runAt);
+		setRunAt(dateTimeFormat.format(runAt));
 		return this;
 	}
 	
-	public JobRequest withRunAt(String runAt) throws ParseException {
-		if (Assert.isNotNullOrEmpty(runAt)) {
-			setRunAt(dateTimeFormat.parse(runAt));
-		}
+	public JobRequest withRunAt(String runAt) {
+		setRunAt(runAt);
 		return this;
 	}
 	
@@ -242,26 +232,22 @@ public class JobRequest {
 	}
 	
 	public JobRequest withStartAt(Date startAt) {
+		setStartAt(dateTimeFormat.format(startAt));
+		return this;
+	}
+	
+	public JobRequest withStartAt(String startAt) {
 		setStartAt(startAt);
 		return this;
 	}
 	
-	public JobRequest withStartAt(String startAt) throws ParseException {
-		if (Assert.isNotNullOrEmpty(startAt)) {
-			setStartAt(dateTimeFormat.parse(startAt));
-		}
+	public JobRequest withEndAt(Date endAt) {
+		setEndAt(dateTimeFormat.format(endAt));
 		return this;
 	}
 	
-	public JobRequest withEndAt(Date end) {
+	public JobRequest withEndAt(String endAt) {
 		setEndAt(endAt);
-		return this;
-	}
-	
-	public JobRequest withEndAt(String endAt) throws ParseException {
-		if (Assert.isNotNullOrEmpty(endAt)) {
-			setEndAt(dateTimeFormat.parse(endAt));
-		}
 		return this;
 	}
 	
