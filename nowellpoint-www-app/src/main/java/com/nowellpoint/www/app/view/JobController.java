@@ -34,7 +34,7 @@ public class JobController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
     	model.put("jobList", jobList.getItems());
     	
-    	return TemplateBuilder.instance()
+    	return TemplateBuilder.template()
 				.withConfiguration(configuration)
 				.withControllerClass(JobController.class)
 				.withIdentity(getIdentity(request))
@@ -57,7 +57,7 @@ public class JobController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("job", job);
 		
-		return TemplateBuilder.instance()
+		return TemplateBuilder.template()
 				.withConfiguration(configuration)
 				.withControllerClass(JobController.class)
 				.withIdentity(getIdentity(request))
@@ -70,7 +70,6 @@ public class JobController extends AbstractStaticController {
 	
 	public static String viewOutputs(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		Identity identity = getIdentity(request);
 		
 		String id = request.params(":id");
 		
@@ -81,10 +80,10 @@ public class JobController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("job", job);
 		
-		return TemplateBuilder.instance()
+		return TemplateBuilder.template()
 				.withConfiguration(configuration)
 				.withControllerClass(JobController.class)
-				.withIdentity(identity)
+				.withIdentity(getIdentity(request))
 				.withLocale(getLocale(request))
 				.withModel(model)
 				.withTemplateName(Template.JOBS_OUTPUTS)

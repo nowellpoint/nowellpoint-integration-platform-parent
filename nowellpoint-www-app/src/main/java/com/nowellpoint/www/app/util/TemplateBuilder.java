@@ -20,8 +20,6 @@ import spark.ModelAndView;
 
 public class TemplateBuilder {
 	
-	private static final TemplateBuilder INSTANCE = new TemplateBuilder();
-	
 	private Identity identity;
 	private Locale locale;
 	private TimeZone timeZone;
@@ -34,8 +32,8 @@ public class TemplateBuilder {
 		
 	}
 	
-	public static TemplateBuilder instance() {
-		return INSTANCE;
+	public static TemplateBuilder template() {
+		return new TemplateBuilder();
 	}
 	
 	public TemplateBuilder withIdentity(Identity identity) {

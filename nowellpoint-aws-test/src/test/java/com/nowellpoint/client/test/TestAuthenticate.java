@@ -67,5 +67,7 @@ public class TestAuthenticate {
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+		
+		
 	}
 }

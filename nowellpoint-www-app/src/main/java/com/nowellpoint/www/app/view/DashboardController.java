@@ -6,6 +6,7 @@ import com.nowellpoint.client.NowellpointClientOrig;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.www.app.util.TemplateBuilder;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -33,6 +34,14 @@ public class DashboardController extends AbstractStaticController {
 		model.put("salesforceConnectorsList", salesforceConnectors.getItems());
 		model.put("jobList", jobList.getItems());
 		
-    	return render(DashboardController.class, configuration, request, response, model, Template.DASHBOARD);
+		return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(DashboardController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.DASHBOARD)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	};
 }
