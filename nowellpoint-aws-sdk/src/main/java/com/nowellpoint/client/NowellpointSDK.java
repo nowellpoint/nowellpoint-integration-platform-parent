@@ -16,27 +16,22 @@ import com.nowellpoint.client.resource.SalesforceResource;
 
 @Value.Immutable
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
-abstract class NowellpointSDK {
-	abstract Token getToken();
-	abstract IdentityResource identity();
-	abstract PlanResource plan();
-	abstract JobResource job();
-	abstract SalesforceConnectorResource salesforceConnector();
-	abstract JobTypeResource scheduledJobType();
-	abstract AccountProfileResource accountProfile();
-	abstract SalesforceResource salesforce();
-	
-	public static class Builder extends ImmutableNowellpointSDK.Builder {}
+public abstract class NowellpointSDK {
+	abstract Token token();
+//	abstract IdentityResource identity();
+//	abstract PlanResource plan();
+//	abstract JobResource job();
+//	abstract SalesforceConnectorResource salesforceConnector();
+//	abstract JobTypeResource scheduledJobType();
+//	abstract AccountProfileResource accountProfile();
+//	abstract SalesforceResource salesforce();
 	
 	public static Builder builder() {
-		return new Builder();
+		return ImmutableNowellpointSDK.builder();
 	}
 	
-	public void logout() {
-		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setToken(getToken())
-				.build();
-		
-		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);	
+	public interface Builder {
+		Builder token(Token token);
+		NowellpointSDK build();
 	}
 }

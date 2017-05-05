@@ -2,7 +2,12 @@ package com.nowellpoint.client.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.client.auth.Authenticators;
+import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,7 +44,7 @@ public class Token implements Serializable {
 		return environment_url;
 	}
 
-	public void setEnvironment_url(String environmentUrl) {
+	public void setEnvironmentUrl(String environmentUrl) {
 		this.environment_url = environmentUrl;
 	}
 
@@ -74,11 +79,24 @@ public class Token implements Serializable {
 	public void setExpiresIn(Long expiresIn) {
 		this.expires_in = expiresIn;
 	}
+	
+	public void logout() {
+		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
+				.setToken(this)
+				.build();
+		
+		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);	
+		
+		setId(null);
+		setEnvironmentUrl(null);
+		setAccessToken(null);
+		setRefreshToken(null);
+		setTokenType(null);
+		setExpiresIn(null);
+	}
 
 	@Override
 	public String toString() {
-		return "Token [access_token=" + access_token + ", refresh_token="
-				+ refresh_token + ", token_type=" + token_type
-				+ ", expires_in=" + expires_in + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

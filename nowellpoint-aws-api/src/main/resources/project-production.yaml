@@ -1,0 +1,8 @@
+logger:
+    level: INFO
+swarm:
+    https:
+        certificate:
+            generate: true
+propertyStore:
+    name: production  

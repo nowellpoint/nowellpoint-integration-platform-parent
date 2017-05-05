@@ -29,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly.swarm>2017.1.1</version.wildfly.swarm>
+		<version.wildfly.swarm>2017.5.0</version.wildfly.swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>swagger</artifactId>
-			<version>2017.1.1</version>
+			<version>2017.5.0</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->

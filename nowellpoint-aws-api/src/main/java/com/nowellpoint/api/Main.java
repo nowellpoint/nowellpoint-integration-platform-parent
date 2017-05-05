@@ -51,7 +51,7 @@ public class Main {
         // set system properties from configuration
         //
 
-        Properties.loadProperties(container.stageConfig()
+        Properties.loadProperties(container.configView()
                 .resolve("propertyStore.name")
                 .getValue());
         
