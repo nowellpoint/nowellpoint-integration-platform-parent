@@ -13,10 +13,11 @@ import com.nowellpoint.client.resource.JobTypeResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
-public abstract class NowellpointSDK {
+public abstract class NowellpointSDK  {
 	abstract Token token();
 //	abstract IdentityResource identity();
 //	abstract PlanResource plan();
@@ -33,5 +34,13 @@ public abstract class NowellpointSDK {
 	public interface Builder {
 		Builder token(Token token);
 		NowellpointSDK build();
+	}
+	
+	public IdentityResource identity() {
+		return new IdentityResource(token());
+	}
+	
+	public PlanResource plan() {
+		return new PlanResource(token());
 	}
 }

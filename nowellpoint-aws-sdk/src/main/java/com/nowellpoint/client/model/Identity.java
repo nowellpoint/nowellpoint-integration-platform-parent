@@ -10,7 +10,7 @@ public class Identity {
 	
 	private String name;
 	
-	private String planName;
+	private Subscription subscription;
 	
 	private String timeZoneSidKey;
 	
@@ -60,12 +60,12 @@ public class Identity {
 		this.name = name;
 	}
 
-	public String getPlanName() {
-		return planName;
+	public Subscription getSubscription() {
+		return subscription;
 	}
 
-	public void setPlanName(String planName) {
-		this.planName = planName;
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 
 	public String getTimeZoneSidKey() {

@@ -14,7 +14,7 @@ public class Identity {
 	
 	private String name;
 	
-	private String planName;
+	private Subscription subscription;
 	
 	private String timeZoneSidKey;
 	
@@ -33,7 +33,7 @@ public class Identity {
 		this.firstName = accountProfile.getFirstName();
 		this.lastName = accountProfile.getLastName();
 		this.name = accountProfile.getName();
-		this.planName = accountProfile.getSubscription().getPlanName();
+		this.subscription = accountProfile.getSubscription();
 		this.address = accountProfile.getAddress();
 		this.languageSidKey = accountProfile.getLanguageSidKey();
 		this.localeSidKey = accountProfile.getLocaleSidKey();
@@ -62,8 +62,8 @@ public class Identity {
 		return name;
 	}
 
-	public String getPlanName() {
-		return planName;
+	public Subscription getSubscription() {
+		return subscription;
 	}
 
 	public String getTimeZoneSidKey() {

@@ -9,6 +9,7 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 
 public class TestImmutables {
@@ -29,6 +30,13 @@ public class TestImmutables {
 		NowellpointSDK sdk = NowellpointSDK.builder()
 				.token(token)
 				.build();
+		
+		Identity identity = sdk.identity().get(token.getId());
+		
+		System.out.println(identity.getName());
+		System.out.println(identity.getSubscription().getPlanName());
+		
+		//Plan plan = sdk.plan().get(identity.get)
 		
 		assertNotNull(token.getAccessToken());
 		assertNotNull(token.getEnvironmentUrl());
