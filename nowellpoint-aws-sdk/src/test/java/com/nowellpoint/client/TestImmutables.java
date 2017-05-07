@@ -27,22 +27,21 @@ public class TestImmutables {
 		
 		Token token = response.getToken();
 		
+		assertNotNull(token.getAccessToken());
+		assertNotNull(token.getEnvironmentUrl());
+		assertNotNull(token.getExpiresIn());
+		assertNotNull(token.getId());
+		assertNotNull(token.getTokenType());
+		
 		NowellpointSDK sdk = NowellpointSDK.builder()
 				.token(token)
 				.build();
 		
 		Identity identity = sdk.identity().get(token.getId());
 		
-		System.out.println(identity.getName());
-		System.out.println(identity.getSubscription().getPlanName());
-		
-		//Plan plan = sdk.plan().get(identity.get)
-		
-		assertNotNull(token.getAccessToken());
-		assertNotNull(token.getEnvironmentUrl());
-		assertNotNull(token.getExpiresIn());
-		assertNotNull(token.getId());
-		assertNotNull(token.getTokenType());
+		assertNotNull(identity.getSubscription());
+		assertNotNull(identity.getSubscription().getPlanId());
+		assertNotNull(identity.getSubscription().getPlanName());
 		
 		token.logout();
 		
