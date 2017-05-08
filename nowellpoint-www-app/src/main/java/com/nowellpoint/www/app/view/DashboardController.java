@@ -2,7 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import java.util.Map;
 
-import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.Token;
@@ -22,11 +22,11 @@ public class DashboardController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		SalesforceConnectorList salesforceConnectors = new NowellpointClientOrig(token)
+		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();    	
 		
-		JobList jobList = new NowellpointClientOrig(token)
+		JobList jobList = NowellpointClient.defaultClient(token)
 				.job()
 				.getJobs();
 		

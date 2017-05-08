@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -41,7 +41,7 @@ public class TestAccountProfile {
 	@Test
 	public void testCreditCard() {
 		
-		Identity identity = new NowellpointClientOrig(token)
+		Identity identity = NowellpointClient.defaultClient(token)
 				.identity()
 				.get(token.getId());
 		
@@ -61,7 +61,7 @@ public class TestAccountProfile {
 				.withFirstName("John")
 				.withLastName("Herson");
 		
-		CreateResult<CreditCard> createResult = new NowellpointClientOrig(token)
+		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
 				.accountProfile()
 				.creditCard()
 				.add(createCreditCardRequest);
@@ -84,14 +84,14 @@ public class TestAccountProfile {
 				.withFirstName("John")
 				.withLastName("Herson");
 		
-		UpdateResult<CreditCard> updateResult = new NowellpointClientOrig(token)
+		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
 				.accountProfile()
 				.creditCard()
 				.update(udpateCreditCardRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
 		
-		DeleteResult deleteResult = new NowellpointClientOrig(token)
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
 				.accountProfile()
 				.creditCard()
 				.delete(identity.getId(), updateResult.getTarget().getToken());

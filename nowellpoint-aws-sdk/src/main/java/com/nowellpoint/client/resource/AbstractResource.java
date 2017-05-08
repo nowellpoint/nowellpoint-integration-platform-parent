@@ -9,7 +9,6 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Result;
 
-import com.nowellpoint.client.model.SignUpResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.util.Assert;
@@ -75,25 +74,6 @@ public abstract class AbstractResource {
 		public UpdateResultImpl(Error error) {
 			super(error);
 		}	
-		
-		@Override
-		public T getTarget() {
-			return target;
-		}
-	}	
-	
-	class SignUpResultImpl<T> extends ResultImpl implements SignUpResult<T> {
-		
-		private T target;
-		
-		public SignUpResultImpl(T target) {
-			super();
-			this.target = target;
-		}
-		
-		public SignUpResultImpl(Error error) {
-			super(error);
-		}
 		
 		@Override
 		public T getTarget() {

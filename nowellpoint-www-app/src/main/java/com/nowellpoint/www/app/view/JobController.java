@@ -2,7 +2,7 @@ package com.nowellpoint.www.app.view;
 
 import java.util.Map;
 
-import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Job;
@@ -27,7 +27,7 @@ public class JobController extends AbstractStaticController {
 	public static String listJobs(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		JobList jobList = new NowellpointClientOrig(token)
+		JobList jobList = NowellpointClient.defaultClient(token)
 				.job()
 				.getJobs();
 		
@@ -50,7 +50,7 @@ public class JobController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		Job job = new NowellpointClientOrig(token)
+		Job job = NowellpointClient.defaultClient(token)
 			.job()
 			.get(id);
 		
@@ -73,7 +73,7 @@ public class JobController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		Job job = new NowellpointClientOrig(token)
+		Job job = NowellpointClient.defaultClient(token)
 			.job()
 			.get(id);
 		
@@ -96,7 +96,7 @@ public class JobController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		UpdateResult<Job> updateResult = new NowellpointClientOrig(token)
+		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
 				.job()
 				.run(id);
 		
@@ -113,7 +113,7 @@ public class JobController extends AbstractStaticController {
 		String id = request.params(":id");
 		String filename = request.queryParams("filename");
 		
-		String content = new NowellpointClientOrig(token)
+		String content = NowellpointClient.defaultClient(token)
 				.job()
 				.downloadOutputFile(id, filename);
 		
@@ -149,7 +149,7 @@ public class JobController extends AbstractStaticController {
 				.withTimeUnit(timeUnit)
 				.withTimeInterval(timeInterval);
 		
-		CreateResult<Job> createRequest = new NowellpointClientOrig(token)
+		CreateResult<Job> createRequest = NowellpointClient.defaultClient(token)
 				.job()
 				.create(jobRequest);
 		

@@ -44,20 +44,20 @@
 
                         <h3>${labels["account"]}</h3>
 
-                        <input type="hidden" name="planId" value="${signUpRequest.planId!}" />
+                        <input type="hidden" name="planId" value="${planId!}" />
 
                         <p class="form-group">
-                            <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${signUpRequest.firstName!}" autofocus class="field">
+                            <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${firstName!}" autofocus class="field">
                         </p>
                         <p class="form-group">
-                            <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${signUpRequest.lastName!}" required data-msg="${messages['last.name.required']}" class="field">
+                            <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${lastName!}" required data-msg="${messages['last.name.required']}" class="field">
                         </p>
                         <p class="form-group">
-                            <input type="email" name="email" id="email" placeholder="${labels['email']}" value="${signUpRequest.email!}" required class="field">
+                            <input type="email" name="email" id="email" placeholder="${labels['email']}" value="${email!}" required class="field">
                         </p>
 
                         <p class="form-group">
-                            <input type="password" name="password" id="password" placeholder="${labels['password']}" value="${signUpRequest.password!}" required autocomplete="off" class="field">
+                            <input type="password" name="password" id="password" placeholder="${labels['password']}" value="${password!}" required autocomplete="off" class="field">
                         </p>
                         <p class="form-group">
                             <input type="password" name="confirmPassword" id="confirmPassword" placeholder="${labels['retype.password']}" required autocomplete="off" class="field">
@@ -65,10 +65,10 @@
                         <p class="form-group">
                             <select id="countryCode" name="countryCode" required>
                                 <#list countryList as country>
-                                    <#if country.code==signUpRequest.countryCode>
+                                    <#if country.code==countryCode>
                                         <option value="${country.code}" selected="selected">${country.name}</option>
                                     </#if>
-                                    <#if country.code !=signUpRequest.countryCode>
+                                    <#if country.code !=countryCode>
                                         <option value="${country.code}">${country.name}</option>
                                     </#if>
                                 </#list>

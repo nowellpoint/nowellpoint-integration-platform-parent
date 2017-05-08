@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
-import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.SalesforceConnector;
@@ -32,7 +32,7 @@ public class SalesforceOauthController extends AbstractStaticController {
 	public static String oauth(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		String oauthRedirect = new NowellpointClientOrig(token)
+		String oauthRedirect = NowellpointClient.defaultClient(token)
 				.salesforce()
 				.getOauthRedirect();
 		
@@ -71,7 +71,7 @@ public class SalesforceOauthController extends AbstractStaticController {
     public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
     	Token token = getToken(request);
     	
-    	OauthToken oauthToken = new NowellpointClientOrig(token)
+    	OauthToken oauthToken = NowellpointClient.defaultClient(token)
     			.salesforce()
     			.getOauthToken(request.queryParams("code"));
     	
@@ -81,7 +81,7 @@ public class SalesforceOauthController extends AbstractStaticController {
     			.withInstanceUrl(oauthToken.getInstanceUrl())
     			.withRefreshToken(oauthToken.getRefreshToken());
     	
-    	CreateResult<SalesforceConnector> createResult = new NowellpointClientOrig(token)
+    	CreateResult<SalesforceConnector> createResult = NowellpointClient.defaultClient(token)
     			.salesforceConnector()
     			.create(createSalesforceConnectorRequest);
     	

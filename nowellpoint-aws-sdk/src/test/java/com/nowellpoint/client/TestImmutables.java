@@ -33,11 +33,9 @@ public class TestImmutables {
 		assertNotNull(token.getId());
 		assertNotNull(token.getTokenType());
 		
-		NowellpointSDK sdk = NowellpointSDK.builder()
-				.token(token)
-				.build();
-		
-		Identity identity = sdk.identity().get(token.getId());
+		Identity identity = NowellpointClient.defaultClient(token)
+				.identity()
+				.get(token.getId());
 		
 		assertNotNull(identity.getSubscription());
 		assertNotNull(identity.getSubscription().getPlanId());

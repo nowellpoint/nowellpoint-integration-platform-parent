@@ -16,7 +16,7 @@ import javax.ws.rs.InternalServerErrorException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.NowellpointClientOrig;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
@@ -61,7 +61,7 @@ public class AuthenticationController extends AbstractStaticController {
     		
     		request.attribute(AUTH_TOKEN, token);
 
-    		Identity identity = new NowellpointClientOrig(token)
+    		Identity identity = NowellpointClient.defaultClient(token)
     				.identity()
     				.get(token.getId());
     		
