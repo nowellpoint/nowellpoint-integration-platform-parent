@@ -12,7 +12,8 @@
 
     <title>${messages["application.title"]}</title>
 
-    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
     <link rel="stylesheet" href="css/media.css" type="text/css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
 
@@ -22,24 +23,28 @@
 </head>
 
 <body>
-    
-    <div class="DesignHolder">
-        <div class="LayoutFrame">
-    
-    <div id="container">
-                <div class="About_sec" id="about">
-                    <div class="Center">
-                            <div class="leftside">
-                                <h1 class="success">${labels["welcome"]}</h1>
-                                <h4 class="success">${labels["account.success"]}</h4>
-                                <a href="/login">${labels["login"]}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                </div>
+
+
+    <div class="login_container">
+        <div class="login_section" id="signup">
+            <div class="center">
+                
             </div>
-        </div> 
+            
+            <br>
+            <br>
+
+            <h1 class="success">${labels["almost"]}</h1>
+            <h4 class="success">${labels["check.email"]}: ${email}</h4>
+            <br>
+
+            <div class="mid">
+
+                
+            </div>
+        </div>
+    </div>
+
 
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>

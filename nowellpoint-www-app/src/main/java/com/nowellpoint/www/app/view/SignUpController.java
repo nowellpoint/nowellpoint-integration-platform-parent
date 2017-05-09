@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.BadRequestException;
+
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
@@ -33,6 +35,7 @@ public class SignUpController extends AbstractStaticController {
 	public static class Template {
 		public static final String PLANS = "plans.html";
 		public static final String SIGN_UP = "signup.html";
+		public static final String SIGN_UP_CONFIRM = "signup-confirm.html";
 		public static final String VERIFY_EMAIL = "verify-email.html";
 	}
 	
@@ -48,7 +51,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("locale", "en_US")
+				.queryParameter("locale", Locale.getDefault().toString())
 				.queryParameter("language", "en_US")
 				.execute();
 		
@@ -66,6 +69,7 @@ public class SignUpController extends AbstractStaticController {
 				.collect(Collectors.toList());
 		
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("countryCode", Locale.getDefault().getCountry());
 		model.put("planList", plans);
 		
 		return render(SignUpController.class, configuration, request, response, model, Template.PLANS);
@@ -83,7 +87,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("locale", "en_US")
+				.queryParameter("locale", Locale.getDefault().toString())
 				.queryParameter("language", "en_US")
 				.execute();
 		
@@ -95,7 +99,7 @@ public class SignUpController extends AbstractStaticController {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 		}
 		
-		Optional<Plan> freePlan = planList.getItems()
+		Optional<Plan> optional = planList.getItems()
 				.stream()
 				.filter(plan -> plan.getPlanCode().equals("FREE"))
 				.findFirst();
@@ -106,8 +110,9 @@ public class SignUpController extends AbstractStaticController {
 		creditCard.setBillingContact(new Contact());
 		
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("planId", freePlan.get().getId());
-		model.put("countryCode", "US");
+		model.put("planId", optional.get().getId());
+		model.put("plan", optional.get());
+		model.put("countryCode", Locale.getDefault().getCountry());
 		model.put("creditCard", creditCard);
 		model.put("action", "createAccount");
 		
@@ -136,6 +141,17 @@ public class SignUpController extends AbstractStaticController {
 		
 		if (planId != null) {
 			
+			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+					.path("plans")
+					.path(planId)
+					.execute();
+			
+			if (httpResponse.getStatusCode() != Status.OK) {
+				throw new BadRequestException(httpResponse.getAsString());
+			}
+			
+			Plan plan = httpResponse.getEntity(Plan.class);
+			
 			CreditCard creditCard = new CreditCard();
 			creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
 			creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
@@ -143,7 +159,8 @@ public class SignUpController extends AbstractStaticController {
 			
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("planId", planId);
-			model.put("countryCode", "US");
+			model.put("plan", plan);
+			model.put("countryCode", Locale.getDefault().getCountry());
 			model.put("creditCard", creditCard);
 			model.put("action", "createAccount");
 			
@@ -161,7 +178,7 @@ public class SignUpController extends AbstractStaticController {
 			
 			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 					.path("plans")
-					.queryParameter("locale", "en_US")
+					.queryParameter("locale", Locale.getDefault().toString())
 					.queryParameter("language", "en_US")
 					.execute();
 			
@@ -240,18 +257,36 @@ public class SignUpController extends AbstractStaticController {
 	    		
 	    		Error error = httpResponse.getEntity(Error.class);
 	    		
+	    		httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+						.path("plans")
+						.path(planId)
+						.execute();
+	    		
+	    		Plan plan = httpResponse.getEntity(Plan.class);
+	    		
 	    		model.put("action", "createAccount");
 	    		model.put("firstName", firstName);
+	    		model.put("lastName", lastName);
 	    		model.put("email", email);
 	    		model.put("password", password);
 	    		model.put("countryCode", countryCode);
 	    		model.put("planId", planId);
+	    		model.put("plan", plan);
 	    		model.put("errorMessage", error.getErrorMessage());
 	    		
 	    	} else {
 	    		
-	    		model.put("action", "signUpSuccess");
-	        	model.put("successMessage", MessageProvider.getMessage(Locale.US, "signUpConfirm"));   
+	    		model.put("email", email);
+	        	
+	        	return TemplateBuilder.template()
+	    				.withConfiguration(configuration)
+	    				.withControllerClass(SignUpController.class)
+	    				.withIdentity(getIdentity(request))
+	    				.withLocale(getLocale(request))
+	    				.withModel(model)
+	    				.withTemplateName(Template.SIGN_UP_CONFIRM)
+	    				.withTimeZone(getTimeZone(request))
+	    				.build();
 	    	}
 	    	
 		} catch (UnsupportedEncodingException e) {

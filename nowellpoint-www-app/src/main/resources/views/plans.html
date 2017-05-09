@@ -63,29 +63,29 @@
                                 <h2><sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice?string["0.00"]}</h2>
                             </div>
 
-                            <#list plan.services?sort_by( "sortOrder") as service>
+                            <#list plan.features?sort_by( "sortOrder") as features>
 
-                                <#if service.code=="SALESFORCE_ORGANIZATIONS">
+                                <#if features.code=="SALESFORCE_ORGANIZATIONS">
                                     <div class="Band">
-                                        <p>${service.quantity} <span>${labels["organizations"]}</span></p>
+                                        <p>${features.quantity} <span>${labels["organizations"]}</span></p>
                                     </div>
                                 </#if>
 
-                                <#if service.code=="SALESFORCE_SANDBOXES">
+                                <#if features.code=="SALESFORCE_SANDBOXES">
                                     <div class="Band">
-                                        <p>${service.quantity} <span>${labels["sandboxes"]}</span></p>
+                                        <p>${features.quantity} <span>${labels["sandboxes"]}</span></p>
                                     </div>
                                 </#if>
 
-                                <#if service.code=="USERS">
+                                <#if features.code=="USERS">
                                     <div class="Band">
-                                        <p>${service.quantity} <span>${labels["users"]}</span></p>
+                                        <p>${features.quantity} <span>${labels["users"]}</span></p>
                                     </div>
                                 </#if>
 
-                                <#if service.code=="DISK_SPACE">
+                                <#if features.code=="DISK_SPACE">
                                     <div class="Band">
-                                        <p>${service.quantity} <span>${labels["disk.space"]}</span></p>
+                                        <p>${features.quantity} <span>${labels["disk.space"]}</span></p>
                                     </div>
                                 </#if>
 
