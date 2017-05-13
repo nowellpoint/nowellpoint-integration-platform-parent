@@ -4,6 +4,7 @@ import static com.nowellpoint.aws.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.data.CacheManager.serialize;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -260,16 +261,6 @@ public abstract class AbstractCacheService {
 		}
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param key
-	 * @param type
-	 * @return
-	 * 
-	 * 
-	 */
-	
 	protected <T> Set<T> hscan(Class<T> type, String key) {
 		Jedis jedis = CacheManager.getCache();
 		ScanParams params = new ScanParams();
@@ -295,6 +286,26 @@ public abstract class AbstractCacheService {
 		}
 		
 		return results;
+	}
+	
+	protected Set<String> hkeys(String key) {
+		Jedis jedis = CacheManager.getCache();
+		Set<byte[]> fields = null;
+		try {
+			fields = jedis.hkeys(key.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
+		} finally {
+			jedis.close();
+		}
+		
+		Set<String> results = new HashSet<String>();
+		fields.stream().forEach(field -> {
+			results.add(new String(field, Charset.forName("UTF-8")));
+		});
+		
+		return results;
+		
 	}
 	
 	/**
