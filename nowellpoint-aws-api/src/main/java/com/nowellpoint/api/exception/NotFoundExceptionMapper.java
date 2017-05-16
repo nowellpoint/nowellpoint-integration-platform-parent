@@ -21,16 +21,20 @@ package com.nowellpoint.api.exception;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import com.nowellpoint.api.rest.domain.Error;
 
 @Provider
 public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
 
 	@Override
 	public Response toResponse(NotFoundException exception) {
-		ResponseBuilder builder = Response.status(Response.Status.NOT_FOUND);
-		builder.entity(exception.getMessage());
+		Error error = new Error(5000, exception.getMessage());
+		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
+		builder.entity(error);
 		return builder.build();
 	}
 }

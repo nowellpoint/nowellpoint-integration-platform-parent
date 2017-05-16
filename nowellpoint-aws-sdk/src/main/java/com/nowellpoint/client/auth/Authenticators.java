@@ -1,13 +1,10 @@
 package com.nowellpoint.client.auth;
 
-import java.util.Locale;
-
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.client.util.MessageProvider;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -40,17 +37,8 @@ public class Authenticators {
 		    	return response;
 		    	
 	    	} else if (statusCode == Status.BAD_REQUEST) {
-	    		
 	    		Error error = httpResponse.getEntity(Error.class);
-	    		
-	    		if (error.getCode() == 7100) {
-					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "login.error"));
-	    		} else if (error.getCode() == 7101) {
-					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
-	    		} else {
-	    			throw new ServiceUnavailableException(error.getErrorMessage());
-	    		}
-	    		
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -78,17 +66,8 @@ public class Authenticators {
 		    	return response;
 		    	
 	    	} else if (statusCode == Status.BAD_REQUEST) {
-	    		
 	    		Error error = httpResponse.getEntity(Error.class);
-	    		
-	    		if (error.getCode() == 7100) {
-					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "login.error"));
-	    		} else if (error.getCode() == 7101) {
-					throw new OauthException(error.getCode(), MessageProvider.getMessage(Locale.US, "disabled.account"));
-	    		} else {
-	    			throw new ServiceUnavailableException(error.getErrorMessage());
-	    		}
-	    		
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}

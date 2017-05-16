@@ -18,7 +18,6 @@
 
 package com.nowellpoint.api;
 
-import java.util.Optional;
 import java.util.TimeZone;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -39,16 +38,9 @@ public class Main {
 		//
 		
         Swarm container = new Swarm(args);
-		
-		//
-		// set default system properties
-		//
-		
-		System.setProperty("swarm.http.port", getHttpPort());
-		System.setProperty("swarm.https.port", getHttpsPort());
         
 		//
-        // set system properties from configuration
+        // dynamically set secure system properties based configuration
         //
 
         Properties.loadProperties(container.configView()
@@ -88,12 +80,4 @@ public class Main {
         container.start().deploy(deployment);
 
     }
-	
-	public static String getHttpPort() {
-		return Optional.ofNullable(System.getenv().get("PORT")).orElse("5000");
-	}
-	
-	public static String getHttpsPort() {
-		return String.valueOf(Integer.valueOf(getHttpPort()) + 100);
-	}
 }

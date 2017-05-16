@@ -45,9 +45,9 @@ public class TestSignUp {
 	public static void beforeClass() {
 		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
 		
-		mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
-		mongoClient = new MongoClient(mongoClientURI);	
-		mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
+		//mongoClientURI = new MongoClientURI("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
+		//mongoClient = new MongoClient(mongoClientURI);	
+		//mongoDatabase = mongoClient.getDatabase(mongoClientURI.getDatabase());
 		
 		gateway = new BraintreeGateway(
 				Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
@@ -70,7 +70,7 @@ public class TestSignUp {
 	
 	@AfterClass
 	public static void afterClass() {
-		mongoClient.close();
+		//mongoClient.close();
 	}
 
 	@Test

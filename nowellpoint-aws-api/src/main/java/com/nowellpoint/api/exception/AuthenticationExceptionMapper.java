@@ -25,17 +25,21 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.api.rest.domain.AuthenticationException;
 
 @Provider
 public class AuthenticationExceptionMapper implements ExceptionMapper<AuthenticationException> {
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
-		ObjectNode error = JsonNodeFactory.instance.objectNode();
-		error.put("error", exception.getError());
-		error.put("error_description", exception.getErrorDescription());
+//		ObjectNode error = JsonNodeFactory.instance.objectNode();
+//		error.put("error", exception.getError());
+//		error.put("error_description", exception.getErrorDescription());
+
+		
+		
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
+		builder.entity(exception);
 		return builder.build();
 	}
 }

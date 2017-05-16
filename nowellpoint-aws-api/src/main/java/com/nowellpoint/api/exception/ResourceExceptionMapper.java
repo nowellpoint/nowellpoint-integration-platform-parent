@@ -18,6 +18,8 @@
 
 package com.nowellpoint.api.exception;
 
+import java.util.Locale;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -25,6 +27,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.util.MessageProvider;
 import com.stormpath.sdk.resource.ResourceException;
 
 @Provider
@@ -32,7 +35,18 @@ public class ResourceExceptionMapper implements ExceptionMapper<ResourceExceptio
 
 	@Override
 	public Response toResponse(ResourceException exception) {
-		Error error = new Error(exception.getCode(), exception.getDeveloperMessage());
+		
+		String errorMessage = null;
+		
+		if (exception.getCode() == 7100) {
+			errorMessage = MessageProvider.getMessage(Locale.US, "login.error");
+		} else if (exception.getCode() == 7101) {
+			errorMessage = MessageProvider.getMessage(Locale.US, "disabled.account");
+		} else {
+			errorMessage = exception.getDeveloperMessage();
+		}
+		
+		Error error = new Error(exception.getCode(), errorMessage);
 		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 		builder.entity(error);
 		return builder.build();

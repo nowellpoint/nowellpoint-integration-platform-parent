@@ -14,6 +14,7 @@ import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.www.app.util.TemplateBuilder;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
@@ -60,7 +61,15 @@ public class IndexController extends AbstractStaticController {
 		Map<String,Object> model = getModel();
 		model.put("planList", plans);
 		
-		return render(IndexController.class, configuration, request, response, model, Template.INDEX);
+		return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(IndexController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.INDEX)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	/**

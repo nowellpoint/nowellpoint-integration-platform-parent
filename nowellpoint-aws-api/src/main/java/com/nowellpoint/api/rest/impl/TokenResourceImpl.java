@@ -15,10 +15,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.exception.AuthenticationException;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
+import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.IdentityProviderService;

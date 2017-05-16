@@ -24,13 +24,16 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import com.nowellpoint.api.rest.domain.Error;
+
 @Provider
 public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthorizedException> {
 
 	@Override
 	public Response toResponse(NotAuthorizedException exception) {
+		Error error = new Error(4000, exception.getMessage());
 		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(exception.getMessage());
+		builder.entity(error);
 		return builder.build();
 	}
 }
