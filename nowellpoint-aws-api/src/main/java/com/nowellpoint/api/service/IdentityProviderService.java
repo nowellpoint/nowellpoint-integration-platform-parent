@@ -1,7 +1,10 @@
 package com.nowellpoint.api.service;
 
 import java.util.Base64;
+import java.util.Locale;
 
+import com.nowellpoint.api.rest.domain.AuthenticationException;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
 import com.stormpath.sdk.account.AccountList;
@@ -22,6 +25,7 @@ import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
 import com.stormpath.sdk.oauth.OAuthPasswordGrantRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRefreshTokenRequestAuthentication;
 import com.stormpath.sdk.oauth.OAuthRequests;
+import com.stormpath.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -64,11 +68,27 @@ public class IdentityProviderService {
 				.setApiKeySecret(apiKey.getSecret())
 				.build();
 		
-		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
-				.forApplication(application)
-				.authenticate(request);
-		
-		return result;
+		try {
+			
+			OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
+					.forApplication(application)
+					.authenticate(request);
+			
+			return result;
+			
+		} catch (ResourceException e) {
+			String errorMessage = null;
+			
+			if (e.getCode() == 7100) {
+				errorMessage = MessageProvider.getMessage(Locale.US, "login.error");
+			} else if (e.getCode() == 7101) {
+				errorMessage = MessageProvider.getMessage(Locale.US, "disabled.account");
+			} else {
+				errorMessage = e.getDeveloperMessage();
+			}
+			
+			throw new AuthenticationException("invalid_credentials", errorMessage);
+		}
 	}
 	
 	/**
@@ -84,12 +104,28 @@ public class IdentityProviderService {
 				.setLogin(username)
                 .setPassword(password)
                 .build();
-
-        OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_PASSWORD_GRANT_REQUEST_AUTHENTICATOR
-        		.forApplication(application)
-        		.authenticate(request);
-        
-        return result;
+		
+		try {
+			
+			OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_PASSWORD_GRANT_REQUEST_AUTHENTICATOR
+	        		.forApplication(application)
+	        		.authenticate(request);
+	        
+	        return result;
+			
+		} catch (ResourceException e) {
+			String errorMessage = null;
+			
+			if (e.getCode() == 7100) {
+				errorMessage = MessageProvider.getMessage(Locale.US, "login.error");
+			} else if (e.getCode() == 7101) {
+				errorMessage = MessageProvider.getMessage(Locale.US, "disabled.account");
+			} else {
+				errorMessage = e.getDeveloperMessage();
+			}
+			
+			throw new AuthenticationException("invalid_credentials", errorMessage);
+		}
 	}
 	
 	/**

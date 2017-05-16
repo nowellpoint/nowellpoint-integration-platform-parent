@@ -1,8 +1,8 @@
 package com.nowellpoint.client.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.http.HttpResponse;
@@ -36,9 +36,9 @@ public class Authenticators {
 		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 		    	return response;
 		    	
-	    	} else if (statusCode == Status.BAD_REQUEST) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
+	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
+	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
+	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -65,9 +65,9 @@ public class Authenticators {
 		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 		    	return response;
 		    	
-	    	} else if (statusCode == Status.BAD_REQUEST) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
+	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
+	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
+	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -84,9 +84,9 @@ public class Authenticators {
 	    	
 	    	int statusCode = httpResponse.getStatusCode();
 	    	
-	    	if (statusCode != 204) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
+	    	if (statusCode != Status.NO_CONTENT) {
+	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
+	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
 	    	}
 		}
 	}

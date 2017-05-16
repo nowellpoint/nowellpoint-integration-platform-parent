@@ -73,6 +73,18 @@ public class TestAuthenticate {
 	}
 	
 	@Test(expected=com.nowellpoint.client.auth.impl.OauthException.class)
+	public void testUsernamePasswordAuthenticationException() {
+		
+		PasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
+				.setUsername(System.getenv("STORMPATH_USERNAME"))
+				.setPassword("STORMPATH_PASSWORD")
+				.build();
+		
+		Authenticators.PASSWORD_GRANT_AUTHENTICATOR.authenticate(request);
+	}
+	
+	@Test(expected=com.nowellpoint.client.auth.impl.OauthException.class)
 	public void testClientCredentialsAuthenticationException() {
 		
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
@@ -82,6 +94,6 @@ public class TestAuthenticate {
 				.build();
 		
 		Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR.authenticate(request);
-		
+
 	}
 }

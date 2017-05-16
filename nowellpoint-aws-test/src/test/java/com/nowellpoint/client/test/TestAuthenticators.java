@@ -211,8 +211,8 @@ public class TestAuthenticators {
 //			client.logout();
 			
 		} catch (OauthException e) {
-			System.out.println(e.getCode());
-			System.out.println(e.getMessage());
+			System.out.println(e.getError());
+			System.out.println(e.getErrorDescription());
 		}
 	}
 	
