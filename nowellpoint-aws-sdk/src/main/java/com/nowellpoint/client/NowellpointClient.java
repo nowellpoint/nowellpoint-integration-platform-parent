@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
+import com.nowellpoint.client.resource.CommunicationResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.JobTypeResource;
@@ -57,5 +58,9 @@ public abstract class NowellpointClient  {
 	
 	public SalesforceResource salesforce() {
 		return new SalesforceResource(token());
+	}
+	
+	public CommunicationResource communications() {
+		return new CommunicationResource(token());
 	}
 }

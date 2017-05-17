@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.model.document.AccountProfile;
 import com.nowellpoint.api.model.document.CreditCard;
 import com.nowellpoint.api.model.document.Transaction;
+import com.nowellpoint.api.rest.service.SendGridEmailService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.aws.data.CacheManager;
 import com.nowellpoint.aws.data.QueueListener;
@@ -33,7 +34,7 @@ public class PaymentGatewayInboundListener implements MessageListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(PaymentGatewayInboundListener.class);
 	
-	private EmailService emailService = new EmailService();
+	private EmailService emailService = new SendGridEmailService();
 
 	@Override
 	public void onMessage(Message message) {

@@ -233,10 +233,10 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		String format = "%s%1s%n";
 		
 		String message = new StringBuilder()
-				.append(String.format(format, "Scheduled Job:", job.getJobName()))
-				.append(String.format(format, "Completion Date:", Date.from(Instant.now()).toString()))
-				.append(String.format(format, "Status:", job.getStatus()))
-				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception:", job.getFailureMessage()) : "")
+				.append(String.format(format, "Scheduled Job: ", job.getJobName()))
+				.append(String.format(format, "Completion Date: ", Date.from(Instant.now()).toString()))
+				.append(String.format(format, "Status: ", job.getStatus()))
+				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception: ", job.getFailureMessage()) : "")
 				.toString();
 		
 		if (Assert.isNotNull(job.getNotificationEmail())) {
