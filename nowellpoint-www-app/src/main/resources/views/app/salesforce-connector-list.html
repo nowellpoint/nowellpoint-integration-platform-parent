@@ -1,56 +1,52 @@
-<#import "template.html" as t>
-
-    <@t.page>
-
-        <div class="dashhead">
-            <div class="dashhead-titles">
-                <h4 class="dashhead-subtitle">&nbsp;</h4>
-                <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
-            </div>
-            <#if salesforceConnectorsList?size gt 0>
-                <div class="dashhead-toolbar">
-                    <p class="pull-right">
-                        <a href="${links['salesforce.connector']}/new" class="btn btn-outline-primary" role="button">${labels["add.salesforce.connector"]}</a>
-                    </p>
-                </div>
-            </#if>
+<div class="dashhead">
+    <div class="dashhead-titles">
+        <h4 class="dashhead-subtitle">&nbsp;</h4>
+        <h2 class="dashhead-title">${labels["salesforce.connectors"]}</h2>
+    </div>
+    <#if salesforceConnectorsList?size gt 0>
+        <div class="dashhead-toolbar">
+            <p class="pull-right">
+                <a href="${links['salesforce.connector']}/new" class="btn btn-outline-primary" role="button">${labels["add.salesforce.connector"]}</a>
+            </p>
         </div>
-        <#if salesforceConnectorsList?size==0>
-            <br>
-            <br>
-            <br>
-            <p class="text-center">
-                <span class="icon icon-database fa fa-4x"></span>
-            </p>
-            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
-            <p class="text-center">
-                <a href="${links['salesforce.connector']}/new" class="btn btn-lg btn-outline-primary" role="button">${labels["add.salesforce.connector"]}</a>
-            </p>
-        </#if>
-        <#if salesforceConnectorsList?size gt 0>
-            <br>
-            <div class="content table-responsive">
-                <table class="table">
-                    <thead>
-                        <th>${labels["connector.name"]}</th>
-                        <th class="text-center">${labels["valid"]}</th>
-                        <th>${labels["organization.name"]}</th>
-                        <th>${labels["instance.name"]}</th>
-                        <th class="text-right">${labels["action"]}</th>
-                    </thead>
-                    <tbody>
-                        <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
-                            <tr id="${salesforceConnector.id}">
-                                <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
-                                <td class="text-center"><h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></td>
-                                <td>${salesforceConnector.organization.name}</td>
-                                <td>${salesforceConnector.organization.instanceName}</td>
-                                <td class="text-right"><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a>
-                                <a href="${links['salesforce.connector']}/${salesforceConnector.id!}/services" data-toggle="tooltip" title="${labels['add.service']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-cog fa-1x"></span></a></td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </table>
-            </div>
-        </#if>
-    </@t.page>
+    </#if>
+</div>
+<#if salesforceConnectorsList?size==0>
+    <br>
+    <br>
+    <br>
+    <p class="text-center">
+        <span class="icon icon-database fa fa-4x"></span>
+    </p>
+    <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+    <p class="text-center">
+        <a href="${links['salesforce.connector']}/new" class="btn btn-lg btn-outline-primary" role="button">${labels["add.salesforce.connector"]}</a>
+    </p>
+</#if>
+<#if salesforceConnectorsList?size gt 0>
+    <br>
+    <div class="content table-responsive">
+        <table class="table">
+            <thead>
+                <th>${labels["connector.name"]}</th>
+                <th class="text-center">${labels["valid"]}</th>
+                <th>${labels["organization.name"]}</th>
+                <th>${labels["instance.name"]}</th>
+                <th class="text-right">${labels["action"]}</th>
+            </thead>
+            <tbody>
+                <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
+                    <tr id="${salesforceConnector.id}">
+                        <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
+                        <td class="text-center">
+                            <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></td>
+                        <td>${salesforceConnector.organization.name}</td>
+                        <td>${salesforceConnector.organization.instanceName}</td>
+                        <td class="text-right"><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                            <a href="${links['salesforce.connector']}/${salesforceConnector.id!}/services" data-toggle="tooltip" title="${labels['add.service']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-cog fa-1x"></span></a></td>
+                    </tr>
+                </#list>
+            </tbody>
+        </table>
+    </div>
+</#if>

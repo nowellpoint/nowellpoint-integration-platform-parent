@@ -19,9 +19,22 @@ import spark.Response;
 public class JobController extends AbstractStaticController {
 	
 	public static class Template {
+		public static final String JOBS_MAIN = String.format(APPLICATION_CONTEXT, "jobs-main.html");
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs-list.html");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs-view.html");
 		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs-outputs.html");
+	}
+	
+	public static String routeToJobs(Configuration configuration, Request request, Response response) {
+		return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(JobController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(getModel())
+				.withTemplateName(Template.JOBS_MAIN)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	public static String listJobs(Configuration configuration, Request request, Response response) {

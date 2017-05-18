@@ -24,7 +24,8 @@ public class Path {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
 		public static final String CONNECTORS_SALESFORCE_NEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/new");
-		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
+		public static final String CONNECTORS_SALESFORCE_MAIN = String.format(APPLICATION_CONTEXT, "connectors/salesforce");
+		public static final String CONNECTORS_SALESFORCE_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/list/all");
 		public static final String CONNECTORS_SALESFORCE_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
 		public static final String CONNECTORS_SALESFORCE_EDIT = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/edit");
 		public static final String CONNECTORS_SALESFORCE_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id");
@@ -45,7 +46,8 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "account-profile/:id/address");
 		public static final String ACCOUNT_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "account-profile/:id/payment-methods");
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
-		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
+		public static final String JOBS_MAIN = String.format(APPLICATION_CONTEXT, "jobs");
+		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs/list/all");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs/:id/outputs");
 		public static final String JOBS_OUTPUTS_DOWNLOAD = String.format(APPLICATION_CONTEXT, "jobs/:id/download");

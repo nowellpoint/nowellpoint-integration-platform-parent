@@ -20,6 +20,7 @@ import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.Icon;
 import com.nowellpoint.client.model.sforce.ThemeItem;
 import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.www.app.util.TemplateBuilder;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -28,6 +29,7 @@ import spark.Response;
 public class SalesforceConnectorController extends AbstractStaticController {
 	
 	public static class Template {
+		public static final String SALESFORCE_CONNECTOR_MAIN = String.format(APPLICATION_CONTEXT, "salesforce-connector-main.html");
 		public static final String SALESFORCE_CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-view.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
@@ -36,6 +38,26 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-view.html");
 		public static final String SALESFORCE_CONNECTOR_ADD_SERVICE = String.format(APPLICATION_CONTEXT, "salesforce-connector-add-service.html");
 	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+
+	public static String routeToSalesforceConnectors(Configuration configuration, Request request, Response response) {	    	
+		return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(SalesforceConnectorController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(getModel())
+				.withTemplateName(Template.SALESFORCE_CONNECTOR_MAIN)
+				.withTimeZone(getTimeZone(request))
+				.build();
+	};
 	
 	/**
 	 * 
@@ -126,14 +148,14 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnector", salesforceConnector);
     	
     	if (view != null && view.equals("1")) {
-			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_LIST);
+			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_MAIN);
 		} else {
 			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		}
 		
     	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_EDIT);
 	};
-
+	
 	/**
 	 * 
 	 * @param configuration
@@ -141,20 +163,27 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	 * @param response
 	 * @return
 	 */
-
+	
 	public static String listSalesforceConnectors(Configuration configuration, Request request, Response response) {	
 		Token token = getToken(request);
 		
-		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
+		SalesforceConnectorList salesforceConnectorList = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
 		Map<String, Object> model = getModel();
-    	model.put("salesforceConnectorsList", salesforceConnectors.getItems());
+    	model.put("salesforceConnectorsList", salesforceConnectorList.getItems());
     	
-    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_LIST);
-    	
-	};
+    	return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(SalesforceConnectorController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.SALESFORCE_CONNECTOR_LIST)
+				.withTimeZone(getTimeZone(request))
+				.build();
+	}
 
 	/**
 	 * 

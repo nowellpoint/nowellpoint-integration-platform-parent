@@ -178,6 +178,7 @@ public class Application implements SparkApplication {
 		// salesforce connector routes
 		//
 		
+		get(Path.Route.CONNECTORS_SALESFORCE_MAIN, (request, response) -> SalesforceConnectorController.routeToSalesforceConnectors(configuration, request, response));
 		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController.listSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController.newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController.viewSalesforceConnector(configuration, request, response));
@@ -201,6 +202,7 @@ public class Application implements SparkApplication {
         // jobs routes
         //
         
+        get(Path.Route.JOBS_MAIN, (request, response) -> JobController.routeToJobs(configuration, request, response));
         get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
         get(Path.Route.JOBS_VIEW, (request, response) -> JobController.viewJob(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS, (request, response) -> JobController.viewOutputs(configuration, request, response));

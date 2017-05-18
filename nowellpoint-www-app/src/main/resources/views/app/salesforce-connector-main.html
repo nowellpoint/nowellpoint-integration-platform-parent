@@ -1,0 +1,18 @@
+<#import "template-sidebar.html" as t>
+
+    <@t.page>
+        <script>
+            $(document).ready(function() {
+                $.ajax({
+                    method: 'GET',
+                    url: "${links['salesforce.connector']}/list/all",
+                    dataType: "html",
+                    complete: function(response) {
+                        var html = response.responseText;
+                        $("#content").append(html);
+                    }
+                });
+            });
+        </script>
+
+    </@t.page>
