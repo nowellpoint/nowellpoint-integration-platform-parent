@@ -77,7 +77,9 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["webhook.url"]}</dt>
-                    <dd>${(job.slackWebhookUrl)!}&emsp;<a href="${links['jobs']}">Test</a></dd>
+                    <dd>${(job.slackWebhookUrl)!}&emsp;
+                        <#if (job.slackWebhookUrl)??>
+                        &emsp;&emsp;<div class="pull-right"><button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm"><span class="icon icon-flash fa fa-1x"></span></button></div></#if></dd>
                     <hr>
                     <dt>${labels["description"]}</dt>
                     <dd>${job.description!}&emsp;</dd>
@@ -247,6 +249,28 @@
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
                                     location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+            
+            $("#test-webhook").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: "${links['jobs']}/${job.id!}/webhook-test",
+                    complete: function(response) {
+                        
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    
                                 });
                             }, 1000);
                         } else {

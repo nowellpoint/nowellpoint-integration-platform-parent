@@ -35,13 +35,13 @@
                                     <#list jobList as job>
                                         <tr>
                                             <td>&emsp;
-                                                <!--  <#if job.status?? && job.status == "Complete"> -->
+                                                <!--  <#if job.status?? && job.status == "COMPLETE"> -->
                                                 <i class="fa fa-circle text-success"></i>
-                                                <!--  <#elseif job.status?? && job.status == "Failure"> -->
+                                                <!--  <#elseif job.status?? && job.status == "FAILURE"> -->
                                                 <i class="fa fa-circle text-danger"></i>
-                                                <!--  <#elseif job.status?? && job.status == "Stopped"> -->
+                                                <!--  <#elseif job.status?? && job.status == "STOPPED"> -->
                                                 <i class="fa fa-circle text-warning"></i>
-                                                <!--  <#elseif job.status?? && job.status == "Terminated"> -->
+                                                <!--  <#elseif job.status?? && job.status == "TERMINATED"> -->
                                                 <i class="fa fa-circle text-info"></i>
                                                 <!-- <#else> -->
                                                 <i class="fa fa-circle text-muted"></i>

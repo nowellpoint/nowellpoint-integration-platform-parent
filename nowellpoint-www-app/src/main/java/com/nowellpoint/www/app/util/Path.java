@@ -51,6 +51,7 @@ public class Path {
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs/:id/outputs");
 		public static final String JOBS_OUTPUTS_DOWNLOAD = String.format(APPLICATION_CONTEXT, "jobs/:id/download");
+		public static final String JOBS_WEBHOOK_URL_TEST = String.format(APPLICATION_CONTEXT, "jobs/:id/webhook-test");
 		public static final String JOBS_EDIT = String.format(APPLICATION_CONTEXT, "jobs/:id/edit");
 		public static final String JOBS_RUN = String.format(APPLICATION_CONTEXT, "jobs/:id/run");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");

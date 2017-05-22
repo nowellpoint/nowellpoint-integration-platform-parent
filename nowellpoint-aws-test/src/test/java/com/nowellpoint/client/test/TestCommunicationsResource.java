@@ -8,7 +8,10 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.model.Job;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.util.Assert;
 
 public class TestCommunicationsResource {
 
@@ -25,6 +28,9 @@ public class TestCommunicationsResource {
 		
 		Token token = response.getToken();
 		
-		NowellpointClient.defaultClient(token).communications().test("https://hooks.slack.com/services/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");
+		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
+				.job()
+				.testWebHookUrl("");
+		
 	}
 }

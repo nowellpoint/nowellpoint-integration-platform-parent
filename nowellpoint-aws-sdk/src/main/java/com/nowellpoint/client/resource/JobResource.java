@@ -88,6 +88,32 @@ public class JobResource extends AbstractResource {
     	return result;
 	}
 	
+	public UpdateResult<Job> testWebHookUrl(String id) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("actions")
+    			.path("test-webhook-url")
+    			.path("invoke")
+    			.execute();
+		
+		UpdateResult<Job> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Job resource = httpResponse.getEntity(Job.class);
+			result = new UpdateResultImpl<Job>(resource);
+    	} else {
+    		Error error = httpResponse.getEntity(Error.class);
+    		result = new UpdateResultImpl<Job>(error);
+			throw new NotFoundException(httpResponse.getAsString());
+		} 
+    	
+    	return result;
+		
+	}
+	
 	public CreateResult<Job> create(JobRequest request) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())

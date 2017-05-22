@@ -16,10 +16,11 @@ public class SlackCommunicationService implements CommunicationService {
 
 	@Override
 	public void sendMessage(String webhookUrl, String username, String message)  {
-		System.out.println(webhookUrl);
 		ObjectNode payload = new ObjectMapper().createObjectNode()
 				.put("text", message)
+				.put("icon_url", "https://www.nowellpoint.com/images/nowellpoint.jpg")
 				.put("username", username);
+		
 		
 		HttpResponse httpResponse = RestResource.post(webhookUrl)
 				.contentType(MediaType.APPLICATION_JSON)

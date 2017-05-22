@@ -31,6 +31,7 @@ import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
@@ -48,6 +49,9 @@ public class JobResourceImpl implements JobResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
+	
+	@Inject
+	private CommunicationService communicationService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -69,8 +73,6 @@ public class JobResourceImpl implements JobResource {
 	
 	@Override
 	public Response getOutputFile(String id, String filename) {
-		
-		System.out.println(filename);
 		
 		String content;
 		try {
@@ -250,6 +252,10 @@ public class JobResourceImpl implements JobResource {
 		if ("run".equals(action)) {
 			job.setSchedule(Schedule.runWhenSubmitted());
 			jobService.runJob(job);
+		} else if ("test-webhook-url".equals(action)) {
+			if (Assert.isNotNull(job.getSlackWebhookUrl())) {
+				communicationService.sendMessage(job.getSlackWebhookUrl(), "Nowellpoint Notification Service", "Test to ensure external communication service functions as expected");
+			}
 		}
 		
 		return Response.ok()

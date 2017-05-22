@@ -104,6 +104,21 @@ public class JobController extends AbstractStaticController {
 				.build();
 	}
 	
+	public static String testWebhookUrl(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
+				.job()
+				.testWebHookUrl(id);
+		
+		System.out.println(updateResult.isSuccess());
+		
+		response.status(204);
+		return "";
+	}
+	
 	public static String runJob(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		

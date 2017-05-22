@@ -9,10 +9,12 @@ $(document).ready(function () {
 
 $(document)
     .ajaxStart(function () {
+        $('#overlay').show();
         $('#spinner').show();
     })
     .ajaxStop(function () {
         $('#spinner').hide();
+        $('#overlay').hide();
     });
 
 $(document).ready(function () {
