@@ -8,72 +8,44 @@
         </div>
         <br>
         <div id="error"></div>
-        <br>
-        <div>
-            <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
+        <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
 
-                <input type="hidden" class="form-control" name="jobTypeId" id="jobTypeId" value="${service.serviceId}" />
+            <input type="hidden" class="form-control" name="jobTypeId" id="jobTypeId" value="${service.serviceId}" />
 
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="description">${labels["description"]}</label>
+                    <input type="text" class="form-control" name="description" id="description" autofocus="" />
+                </div>
+            </fieldset>
 
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="description">${labels["description"]}</label>
-                        <textarea class="form-control" name="description" id="description" rows="3" autofocus=""></textarea>
-                    </div>
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
+
+            <fieldset>
+                <legend>${labels["alerts"]}</legend>
+
+                <div class="form-group">
+                    <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
+                    <input type="text" class="form-control col-md-6" name="notificationEmail" id="notificationEmail" value="" />
                 </div>
 
-                <br>
-
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <div class="hr-divider"></div>
-                    </div>
+                <div class="form-group">
+                    <label class="control-label" for="slackWebhookUrl">${labels["webhook.url"]}</label>
+                    <input type="text" class="form-control col-md-9" name="slackWebhookUrl" id="slackWebhookUrl" value="" aria-describedby="slackWebhookUrlHelp" />
+                    <p id="slackWebhookUrlHelp" class="form-text text-muted">
+                        ${labels["configure.webook.instructions"]}
+                    </p>
                 </div>
+            </fieldset>
 
-                <div id="alerts" class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="flextable">
-                            <div class="flextable-item flextable-primary">
-                                <h3 class="dashhead-title">${labels["alerts"]}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
 
-                <br>
-
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
-                        <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="slackWebhookUrl">${labels["webhook.url"]}</label>
-                        <input type="text" class="form-control" name="slackWebhookUrl" id="slackWebhookUrl" value="" />
-                    </div>
-                </div>
-
-                <br>
-                <div class="row">
-                    <div class="form-group col-md-3">
-                        <div class="hr-divider"></div>
-                    </div>
-                </div>
-
-                <div id="alerts" class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="flextable">
-                            <div class="flextable-item flextable-primary">
-                                <h3 class="dashhead-title">${labels["schedule"]}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <br>
+            <fieldset>
+                <legend>${labels["schedule"]}</legend>
 
                 <div class="radio">
                     <label>
@@ -94,41 +66,56 @@
 
                 <br>
 
-                <div id="once-form" class="row collapse">
-                    <div class="form-group col-md-3">
+                <div id="once-form" class="collapse">
+                    <div class="form-group">
                         <label class="control-label" for="runAt">${labels["run.at"]}*</label>
-                        <input type="text" id="runAt" name="runAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
-                        <div class="form-text">${labels["date.time.format"]}</div>
+                        <input type="text" id="runAt" name="runAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control col-md-4" aria-describedby="dateTimeFormat" required>
+                        <p id="dateTimeFormat" class="form-text text-muted">
+                            ${labels["date.time.format"]}
+                        </p>
                     </div>
                 </div>
 
-                <div id="run-on-schedule-form" class="row collapse">
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="startAt">${labels["start.at"]}*</label>
-                        <input type="text" id="startAt" name="startAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control" required>
-                        <div class="form-text">${labels["date.time.format"]}</div>
+                <div id="run-on-schedule-form" class="collapse">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="startAt">${labels["start.at"]}*</label>
+                            <input type="text" id="startAt" name="startAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control col-md-8" aria-describedby="dateTimeFormat" required>
+                            <p id="dateTimeFormat" class="form-text text-muted">
+                                ${labels["date.time.format"]}
+                            </p>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="endAt">${labels["end.at"]}*</label>
+                            <input type="text" id="endAt" name="endAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" aria-describedby="dateTimeFormat" class="form-control col-md-8">
+                            <p id="dateTimeFormat" class="form-text text-muted">
+                                ${labels["date.time.format"]}
+                            </p>
+                        </div>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="endAt">${labels["end.at"]}*</label>
-                        <input type="text" id="endAt" name="endAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control">
-                        <div class="form-text">${labels["date.time.format"]}</div>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="control-label" for="timeInterval">${labels["rerun.every"]}*</label>
-                        <input type="text" id="timeInterval" name="timeInterval" value="60" class="form-control">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <select id="timeUnit" name="timeUnit" class="form-control" required>
-                            <option value="minutes" selected="selected">Minutes(s)</option>
-                            <option value="hours">Hour(s)</option>
-                            <option value="days">Day(s)</option>
-                            <option value="weeks">Week(s)</option>
-                            <option value="months">Month(s)</option>
-                        </select>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="timeInterval">${labels["rerun.every"]}*</label>
+                            <input type="text" id="timeInterval" name="timeInterval" value="60" class="form-control col-md-8">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="timeInterval">&nbsp;</label>
+                            <select id="timeUnit" name="timeUnit" class="form-control col-md-8" required>
+                                <option value="minutes" selected="selected">Minutes(s)</option>
+                                <option value="hours">Hour(s)</option>
+                                <option value="days">Day(s)</option>
+                                <option value="weeks">Week(s)</option>
+                                <option value="months">Month(s)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
+            </fieldset>
 
-                <!--
+            <!--
 
                 <div class="row">
                     <div class="form-group col-md-3">
@@ -200,17 +187,19 @@
                     </div>
                 </div>
 -->
-            </form>
-        </div>
 
-        <div class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
+
+            <div class="form-group">
                 <div class="pull-right">
                     <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
                     <button name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
                 </div>
             </div>
-        </div>
+
+        </form>
 
         <script>
             $(document).ready(function() {
