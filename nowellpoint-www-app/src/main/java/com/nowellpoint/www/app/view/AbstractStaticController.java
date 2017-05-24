@@ -87,6 +87,7 @@ public class AbstractStaticController {
 		Locale locale = getLocale(request);
 		TimeZone timeZone = getTimeZone(request);
 		model.put("identity", identity);
+		model.put("returnUrl", request.cookie("com.nowellpoint.return.url"));
         model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
         model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app;
 
+import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
@@ -53,10 +54,6 @@ public class Application implements SparkApplication {
     public static void main(String[] args) throws Exception {
     	new Application();
     }
-    
-    public Application() {
-    	init();
-    }
 
 	@Override
 	public void init() {
@@ -92,6 +89,10 @@ public class Application implements SparkApplication {
 		//
 		
 		before("/app/*", (request, response) -> AuthenticationController.verify(request, response));
+		after("/app/*", (request, response) -> {
+			response.removeCookie("/", "com.nowellpoint.return.url");
+			response.cookie("/", "com.nowellpoint.return.url", request.pathInfo(), 3600, true, true);
+		});
 		
 		//
 		// index routes

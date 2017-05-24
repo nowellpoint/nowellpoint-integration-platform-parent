@@ -1,5 +1,9 @@
 package com.nowellpoint.client.test;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
+
 import org.junit.Test;
 
 import com.nowellpoint.client.Environment;
@@ -9,9 +13,9 @@ import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.model.Job;
+import com.nowellpoint.client.model.JobList;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.util.Assert;
 
 public class TestCommunicationsResource {
 
@@ -28,9 +32,20 @@ public class TestCommunicationsResource {
 		
 		Token token = response.getToken();
 		
-		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
+		JobList jobList = NowellpointClient.defaultClient(token)
 				.job()
-				.testWebHookUrl("");
+				.getJobs();
 		
+		Optional<Job> optional = jobList.getItems().stream().filter(j -> j.getSlackWebhookUrl() != null).findFirst();
+		
+		if (optional.isPresent()) {
+			
+			UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
+					.job()
+					.testWebHookUrl(optional.get().getSlackWebhookUrl());
+			
+			assertTrue(updateResult.isSuccess());
+			
+		}
 	}
 }

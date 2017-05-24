@@ -25,7 +25,7 @@
 
         <!-- Font Awesome Icons -->
         <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
-        
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
@@ -46,7 +46,15 @@
             <div class="container-fluid">
                 <div id="page-content-wrapper">
                     <div class="row">
-                        <div class="w-100">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+                                <a href="${returnUrl}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back"]}
+                            </div>
+                        </div>  
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="container">
                             <div id="error"></div>
                             <#nested/>
                         </div>
@@ -54,7 +62,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script src="/js/common.js"></script>
 
     </body>

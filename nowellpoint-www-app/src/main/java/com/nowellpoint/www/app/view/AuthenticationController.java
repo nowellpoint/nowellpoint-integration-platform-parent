@@ -3,7 +3,6 @@ package com.nowellpoint.www.app.view;
 import static spark.Spark.halt;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
@@ -81,7 +80,6 @@ public class AuthenticationController extends AbstractStaticController {
 	 * @param request
 	 * @param response
 	 * @return
-	 * @throws UnsupportedEncodingException 
 	 */
 	
 	public static String serveLoginPage(Configuration configuration, Request request, Response response) {
