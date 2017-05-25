@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app;
 
-import static spark.Spark.after;
 import static spark.Spark.before;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
@@ -89,10 +88,6 @@ public class Application implements SparkApplication {
 		//
 		
 		before("/app/*", (request, response) -> AuthenticationController.verify(request, response));
-		after("/app/*", (request, response) -> {
-			response.removeCookie("/", "com.nowellpoint.return.url");
-			response.cookie("/", "com.nowellpoint.return.url", request.pathInfo(), 3600, true, true);
-		});
 		
 		//
 		// index routes
@@ -183,6 +178,7 @@ public class Application implements SparkApplication {
 		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController.listSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController.newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController.viewSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_FLOW_NEW, (request, response) -> SalesforceConnectorController.newFlow(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> SalesforceConnectorController.updateSalesforceConnector(configuration, request, response));
         delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController.deleteSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));

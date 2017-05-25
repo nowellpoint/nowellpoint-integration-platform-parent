@@ -80,7 +80,7 @@ public class Token implements Serializable {
 		this.expires_in = expiresIn;
 	}
 	
-	public void logout() {
+	public void delete() {
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
 				.setToken(this)
 				.build();

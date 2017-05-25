@@ -37,6 +37,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-view.html");
 		public static final String SALESFORCE_CONNECTOR_ADD_SERVICE = String.format(APPLICATION_CONTEXT, "salesforce-connector-add-service.html");
+		public static final String SALESFORCE_CONNECTOR_FLOW_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-flow-new.html");
 	}
 	
 	/**
@@ -339,7 +340,8 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		String sobjectName = request.params(":sobjectName");
 		
 		SObject sobject = NowellpointClient.defaultClient(token)
-				.salesforceConnector().sobject()
+				.salesforceConnector()
+				.sobject()
 				.get(id, sobjectName);
 		
 		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
@@ -349,6 +351,29 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("sobject", sobject);
 
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
+	}
+	
+	public static String newFlow(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		SalesforceConnector salesforceConnector = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.get(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+		
+		return TemplateBuilder.template()
+				.withConfiguration(configuration)
+				.withControllerClass(SalesforceConnectorController.class)
+				.withIdentity(getIdentity(request))
+				.withLocale(getLocale(request))
+				.withModel(model)
+				.withTemplateName(Template.SALESFORCE_CONNECTOR_FLOW_NEW)
+				.withTimeZone(getTimeZone(request))
+				.build();
 	}
 	
 	/**
@@ -373,7 +398,6 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("salesforceConnector", new SalesforceConnector(id));
     	model.put("jobTypeList", jobTypeList.getItems());
-
 
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_ADD_SERVICE);
 	}

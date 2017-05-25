@@ -20,7 +20,6 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
-import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
@@ -169,25 +168,18 @@ public class AuthenticationController extends AbstractStaticController {
 	
     public static String logout(Configuration configuration, Request request, Response response) {
 		
-		Optional<String> cookie = Optional.ofNullable(request.cookie("com.nowellpoint.auth.token"));
+		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
     	
     	if (cookie.isPresent()) {
     		
-    		Token token = null;
-    		
     		try {
-    			token = objectMapper.readValue(cookie.get(), Token.class);
+    			Token token = objectMapper.readValue(cookie.get(), Token.class);
+    			token.delete();
     		} catch (IOException e) {
-        		throw new InternalServerErrorException(e);
+        		LOGGER.error(e.getMessage());
         	}
-    		
-    		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-					.setToken(token)
-					.build();
-			
-			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
 
-        	response.removeCookie(AUTH_TOKEN); 
+        	response.removeCookie(AUTH_TOKEN);
     	}
     	
     	request.session().invalidate();

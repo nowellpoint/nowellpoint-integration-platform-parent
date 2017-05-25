@@ -41,7 +41,7 @@ public class TestImmutables {
 		assertNotNull(identity.getSubscription().getPlanId());
 		assertNotNull(identity.getSubscription().getPlanName());
 		
-		token.logout();
+		token.delete();
 		
 		assertNull(token.getAccessToken());
 		assertNull(token.getEnvironmentUrl());
