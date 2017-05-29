@@ -12,6 +12,7 @@ import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.client.sforce.model.Token;
 
 public class SalesforceConnector extends AbstractResource {
 	
@@ -50,7 +51,6 @@ public class SalesforceConnector extends AbstractResource {
 	}
 	
 	private SalesforceConnector(
-			String id,
 			String name, 
 			UserInfo createdBy, 
 			UserInfo lastUpdatedBy, 
@@ -62,10 +62,8 @@ public class SalesforceConnector extends AbstractResource {
 			String connectionString, 
 			Boolean isValid, 
 			String serviceEndpoint,
-			String status,
 			Date lastTestedOn) {
 		
-		this.id = id;
 		this.name = name;
 		this.createdBy = createdBy;
 		this.lastUpdatedBy = lastUpdatedBy;
@@ -77,70 +75,32 @@ public class SalesforceConnector extends AbstractResource {
 		this.connectionString = connectionString;
 		this.isValid = isValid;
 		this.serviceEndpoint = serviceEndpoint;
-		this.status = status;
 		this.lastTestedOn = lastTestedOn;
 	}
 	
 	public static SalesforceConnector createSalesforceConnector(
-			String createdById,
-			String ownerId, 
+			UserInfo createdBy,
 			Identity identity, 
 			Organization organization, 
 			VaultEntry connectionEntry, 
-			Boolean isValid, 
-			String serviceEndpoint,
-			String status,
-			Date lastTestedOn) {
+			Token token) {
 		
 		String name = organization.getName().concat(":").concat(organization.getId());
 		Date now = Date.from(Instant.now());
 		
 		return new SalesforceConnector(
-				null, 
 				name, 
-				new UserInfo(createdById), 
-				new UserInfo(createdById), 
-				new UserInfo(ownerId), 
+				createdBy, 
+				createdBy, 
+				createdBy, 
 				now, 
 				now, 
 				identity, 
 				organization, 
 				connectionEntry.getToken(), 
-				isValid, 
-				serviceEndpoint, 
-				status,
-				lastTestedOn);
-	}
-	
-	public static SalesforceConnector createSalesforceConnector(
-			String name, 
-			String createdById,
-			String ownerId, 
-			Identity identity, 
-			Organization organization, 
-			VaultEntry connectionEntry, 
-			Boolean isValid, 
-			String serviceEndpoint,
-			String status,
-			Date lastTestedOn) {
-		
-		Date now = Date.from(Instant.now());
-
-		return new SalesforceConnector(
-				null, 
-				name, 
-				new UserInfo(createdById), 
-				new UserInfo(createdById), 
-				new UserInfo(ownerId), 
-				now, 
-				now, 
-				identity, 
-				organization, 
-				connectionEntry.getToken(), 
-				isValid, 
-				serviceEndpoint, 
-				status,
-				lastTestedOn);
+				Boolean.TRUE, 
+				token.getInstanceUrl(),
+				new Date(new Long(token.getIssuedAt())));
 	}
 	
 	private <T> SalesforceConnector(T document) {

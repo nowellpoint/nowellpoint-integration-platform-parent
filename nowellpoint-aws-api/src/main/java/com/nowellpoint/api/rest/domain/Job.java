@@ -18,6 +18,7 @@
 
 package com.nowellpoint.api.rest.domain;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.DateUtil;
 
 public class Job extends AbstractResource {
 	
@@ -87,8 +89,19 @@ public class Job extends AbstractResource {
 			Date createdOn,
 			UserInfo createdBy,
 			Date lastUpdatedOn,
-			UserInfo lastUpdatedBy,
-			Integer numberOfExecutions) {
+			UserInfo lastUpdatedBy) {
+		
+		if (Assert.isNotNull(description) && Assert.isEmpty(description)) {
+			description = null;
+		}
+		
+		if (Assert.isNotNull(notificationEmail) && Assert.isEmpty(notificationEmail)) {
+			notificationEmail = null;
+		}
+		
+		if (Assert.isNotNull(slackWebhookUrl) && Assert.isEmpty(slackWebhookUrl)) {
+			slackWebhookUrl = null;
+		}
 		
 		this.source = source;
 		this.description = description;
@@ -105,44 +118,50 @@ public class Job extends AbstractResource {
 		this.lastUpdatedOn = lastUpdatedOn;
 		this.lastUpdatedBy = lastUpdatedBy;
 		this.numberOfExecutions = 0;
+		this.status = Job.Statuses.SCHEDULED;
 	}
 	
-	public static Job of(
-			Source source,
-			JobType jobType,
-			Schedule schedule,
-			UserInfo userInfo,
-			String description,
-			String notificationEmail,
-			String slackWebhookUrl,
-			String scheduleOption) {
+	public static Job of(CreateJobRequest jobRequest, UserInfo userInfo) {
 		
-		if (Assert.isEmpty(description)) {
-			description = null;
-		}
+		Schedule schedule = null;
 		
-		if (Assert.isEmpty(notificationEmail)) {
-			notificationEmail = null;
-		}
+		try {
+			
+			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(jobRequest.getScheduleOption())) {
+				schedule = Schedule.of(RunWhenSubmitted.builder().build());
+			} else if (Job.ScheduleOptions.RUN_ONCE.equals(jobRequest.getScheduleOption())) {
+				schedule = Schedule.of(RunOnce.builder().runDate(DateUtil.iso8601(jobRequest.getRunAt().get())).build());
+			} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(jobRequest.getScheduleOption())) {
+				schedule = Schedule.of(RunOnSchedule.builder()
+						.endAt(DateUtil.iso8601(jobRequest.getEndAt().get()))
+						.startAt(DateUtil.iso8601(jobRequest.getStartAt().get()))
+						.timeInterval(Integer.valueOf(jobRequest.getTimeInterval().get()))
+						.timeUnit(jobRequest.getTimeUnit().get())
+						.timeZone(jobRequest.getTimeZone().get())
+						.build());
+			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(jobRequest.getScheduleOption())) {		
+				schedule = Schedule.of(RunOnSpecificDays.builder().build());
+			} else {
+				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", jobRequest.getScheduleOption()));
+			}
 		
-		if (Assert.isEmpty(slackWebhookUrl)) {
-			slackWebhookUrl = null;
+		} catch(ParseException e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 		
 		return new Job(
-				source,
-				jobType,
+				jobRequest.getSource(),
+				jobRequest.getJobType(),
 				schedule,
-				description,
-				notificationEmail,
-				slackWebhookUrl,
-				scheduleOption,
+				jobRequest.getDescription().isPresent() ? jobRequest.getDescription().get() : null,
+				jobRequest.getNotificationEmail().isPresent() ? jobRequest.getNotificationEmail().get() : null,
+				jobRequest.getSlackWebhookUrl().isPresent() ? jobRequest.getSlackWebhookUrl().get() : null,
+				jobRequest.getScheduleOption(),
 				userInfo,
 				Date.from(Instant.now()),
 				userInfo,
 				Date.from(Instant.now()),
-				userInfo,
-				0);
+				userInfo);
 	}
 	
 	private <T> Job(T document) {

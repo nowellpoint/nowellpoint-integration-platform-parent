@@ -22,6 +22,11 @@ public class JobTypeServiceImpl extends AbstractJobTypeService implements JobTyp
 	}
 	
 	@Override
+	public JobType findByCode(String code) {
+		return super.findOne( Filters.eq ( "code", code ) ); 
+	}
+	
+	@Override
 	public JobTypeList findByLanguage(String languageSidKey) {
 		return super.query( Filters.eq ( "languageSidKey", languageSidKey ) ); 
 	}

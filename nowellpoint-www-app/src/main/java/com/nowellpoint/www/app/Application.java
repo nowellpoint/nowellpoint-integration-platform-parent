@@ -37,7 +37,6 @@ import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
-import com.nowellpoint.www.app.view.ServiceSetupController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
 
@@ -174,7 +173,6 @@ public class Application implements SparkApplication {
 		// salesforce connector routes
 		//
 		
-		get(Path.Route.CONNECTORS_SALESFORCE_MAIN, (request, response) -> SalesforceConnectorController.routeToSalesforceConnectors(configuration, request, response));
 		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController.listSalesforceConnectors(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController.newSalesforceConnector(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController.viewSalesforceConnector(configuration, request, response));
@@ -184,22 +182,13 @@ public class Application implements SparkApplication {
         get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_TEST, (request, response) -> SalesforceConnectorController.testSalesforceConnector(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController.buildSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP, (request, response) -> SalesforceConnectorController.metadataBackup(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
-        get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_LIST, (request, response) -> SalesforceConnectorController.listServices(configuration, request, response));
-        post(Path.Route.CONNECTORS_SALESFORCE_SERVICE_ADD, (request, response) -> SalesforceConnectorController.addService(configuration, request, response));
-        
-        //
-        // service setup routes
-        //
-        
-        get(Path.Route.CONNECTORS_SALESFORCE_SERVICE_SETUP, (request, response) -> ServiceSetupController.setupService(configuration, request, response));
         
         //
         // jobs routes
         //
         
-        get(Path.Route.JOBS_MAIN, (request, response) -> JobController.routeToJobs(configuration, request, response));
         get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
         get(Path.Route.JOBS_VIEW, (request, response) -> JobController.viewJob(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS, (request, response) -> JobController.viewOutputs(configuration, request, response));

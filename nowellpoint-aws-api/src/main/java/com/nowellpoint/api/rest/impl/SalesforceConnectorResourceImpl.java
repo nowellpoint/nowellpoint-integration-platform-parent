@@ -13,10 +13,8 @@ import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
-import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
 
@@ -101,53 +99,26 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.build(); 
 	}
 	
-	public Response deleteSalesforceConnector(String id) {		
+	public Response deleteSalesforceConnector(String id) {	
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
 
-		salesforceConnectorService.deleteSalesforceConnector(id);
+		salesforceConnectorService.deleteSalesforceConnector(salesforceConnector);
 
 		return Response.ok()
-				.build(); 
-	}
-	
-	public Response addService(String id, String serviceId) {
-		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.addService(id, serviceId);
-		
-		return Response.ok()
-				.entity(salesforceConnector)
-				.build(); 
-	}
-	
-	public Response getService(String id, String serviceId) {
-		
-		Service service = salesforceConnectorService.getService(id, serviceId);
-		
-		return Response.ok()
-				.entity(service)
-				.build();
-	}
-	
-	public Response getSObjectDetails(String id, String sobjectName) {		
-		
-		SObjectDetail sobjectDetail = salesforceConnectorService.findSObjectDetail(id, sobjectName);
-		
-		if (sobjectDetail == null) {
-			throw new NotFoundException(String.format("SObject for name %s was not found", sobjectName));
-		}
-		
-		return Response.ok()
-				.entity(sobjectDetail)
 				.build(); 
 	}
 	
 	public Response invokeAction(String id, String action) {
 		
-		SalesforceConnector salesforceConnector = null;
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById(id);
 		
 		if ("build".equalsIgnoreCase(action)) {
-			salesforceConnector = salesforceConnectorService.build(id);
+			salesforceConnectorService.build(salesforceConnector);
 		} else if ("test".equalsIgnoreCase(action)) {
-			salesforceConnector = salesforceConnectorService.test(id);
+			salesforceConnectorService.test(salesforceConnector);
+		} else if ("metadata-backup".equalsIgnoreCase(action)) {
+			salesforceConnectorService.metadataBackup(salesforceConnector);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}

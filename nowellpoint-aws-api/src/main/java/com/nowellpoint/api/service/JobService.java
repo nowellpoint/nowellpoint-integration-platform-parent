@@ -2,6 +2,7 @@ package com.nowellpoint.api.service;
 
 import java.io.IOException;
 
+import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
@@ -14,7 +15,7 @@ public interface JobService {
 	
 	Job findById(String id);
 	
-	void createJob(Job job);
+	Job createJob(CreateJobRequest createJobRequest);
 	
 	void updateJob(Job job);
 	

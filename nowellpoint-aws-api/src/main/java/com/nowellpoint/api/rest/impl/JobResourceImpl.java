@@ -2,11 +2,7 @@ package com.nowellpoint.api.rest.impl;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -17,20 +13,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 import com.nowellpoint.api.rest.JobResource;
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
+import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
-import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
@@ -109,88 +104,34 @@ public class JobResourceImpl implements JobResource {
 			String timeInterval,
 			String year) {
 		
-		List<String> errors = new ArrayList<>();
-		
-		Date startDate = null;
-		
-		try {
-			startDate = dateTimeFormat.parse(startAt);
-		} catch (ParseException e) {
-			errors.add("Invalid date format for field: start. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		}
-		
-		Date endDate = null;
-		
-		try {
-			endDate = dateTimeFormat.parse(endAt);
-		} catch (ParseException e) {
-			errors.add("Invalid date format for parameter: end. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		}
-		
-		Date runDate = null;
-		
-		try {
-			runDate = dateTimeFormat.parse(runAt);
-		} catch (ParseException e) {
-			errors.add("Invalid date format for parameter: run at. Use the following format: yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-		}
-		
-		if (runDate == null) {
-			System.out.println("run date is null");
-		}
-		
-		if (Assert.isNullOrEmpty(connectorId)) {
-			errors.add("Missing connectorId parameter. Must provide a valid Salesforce Connector Id");
-		}
-		
-		if (Assert.isNullOrEmpty(jobTypeId)) {
-			errors.add("Missing jobTypeId parameter. Must provide a valid Job Type Id");
-		}
-		
-		if (Assert.isNullOrEmpty(scheduleOption)) {
-			errors.add("Missing scheduleOption parameter. Must provide a value of RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS");
-		}
-		
-		if (! errors.isEmpty()) {
-			Error error = new Error(3000, errors.toArray(new String[errors.size()]));
-			ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-			builder.entity(error);
-			return builder.build();
-		}
-
 		JobType jobType = jobTypeService.findById(jobTypeId);
 		
 		SalesforceConnector salesforceConnector = salesforceConnectorService.findById(connectorId);
 		
-		UserInfo user = UserInfo.of(securityContext.getUserPrincipal().getName());
-		
-		Schedule schedule = null;
-		
-		if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
-			schedule = Schedule.runWhenSubmitted();
-		} else if (Job.ScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
-			schedule = Schedule.runOnce(runDate);
-		} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {	
-			schedule = Schedule.runOnSchedule(startDate, endDate, timeZone, timeUnit, Integer.valueOf(timeInterval));
-		} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(scheduleOption)) {		
-			schedule = Schedule.runOnSpecficDays();
-		} else {
-			throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", scheduleOption));
-		}
-		
 		Source source = Source.of(salesforceConnector);
-
-		Job job = Job.of(
-				source,
-				jobType,
-				schedule,
-				user,
-				description, 
-				notificationEmail, 
-				slackWebhookUrl,
-				scheduleOption);
 		
-		jobService.createJob(job);
+		CreateJobRequest createJobRequest = CreateJobRequest.builder()
+				.dayOfMonth(dayOfMonth)
+				.dayOfWeek(dayOfWeek)
+				.description(description)
+				.endAt(endAt)
+				.hours(hours)
+				.minutes(minutes)
+				.month(month)
+				.notificationEmail(notificationEmail)
+				.runAt(runAt)
+				.scheduleOption(scheduleOption)
+				.seconds(seconds)
+				.slackWebhookUrl(slackWebhookUrl)
+				.startAt(startAt)
+				.timeInterval(timeInterval)
+				.timeUnit(timeUnit)
+				.year(year)
+				.jobType(jobType)
+				.source(source)
+				.build();
+		
+		Job job = jobService.createJob(createJobRequest);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(JobResource.class)
@@ -250,7 +191,7 @@ public class JobResourceImpl implements JobResource {
 		Job job = jobService.findById(id);
 		
 		if ("run".equals(action)) {
-			job.setSchedule(Schedule.runWhenSubmitted());
+			job.setSchedule(Schedule.of(RunWhenSubmitted.builder().build()));
 			jobService.runJob(job);
 		} else if ("test-webhook-url".equals(action)) {
 			if (Assert.isNotNull(job.getSlackWebhookUrl())) {

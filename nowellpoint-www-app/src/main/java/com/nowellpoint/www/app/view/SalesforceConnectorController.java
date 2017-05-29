@@ -8,13 +8,9 @@ import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.JobTypeList;
-import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
-import com.nowellpoint.client.model.ServiceRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.Icon;
@@ -29,7 +25,6 @@ import spark.Response;
 public class SalesforceConnectorController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String SALESFORCE_CONNECTOR_MAIN = String.format(APPLICATION_CONTEXT, "salesforce-connector-main.html");
 		public static final String SALESFORCE_CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-view.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
@@ -39,26 +34,6 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		public static final String SALESFORCE_CONNECTOR_ADD_SERVICE = String.format(APPLICATION_CONTEXT, "salesforce-connector-add-service.html");
 		public static final String SALESFORCE_CONNECTOR_FLOW_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-flow-new.html");
 	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-
-	public static String routeToSalesforceConnectors(Configuration configuration, Request request, Response response) {	    	
-		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SalesforceConnectorController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(getModel())
-				.withTemplateName(Template.SALESFORCE_CONNECTOR_MAIN)
-				.withTimeZone(getTimeZone(request))
-				.build();
-	};
 	
 	/**
 	 * 
@@ -149,7 +124,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnector", salesforceConnector);
     	
     	if (view != null && view.equals("1")) {
-			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_MAIN);
+			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_LIST);
 		} else {
 			model.put("cancel", Path.Route.CONNECTORS_SALESFORCE_VIEW.replace(":id", id));
 		}
@@ -310,6 +285,30 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	 * @return
 	 */
 	
+	public static String metadataBackup(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.metadataBackup(id);
+		
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	public static String listSObjects(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -323,34 +322,6 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnector", salesforceConnector);
 
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_LIST);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String viewSObject(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String sobjectName = request.params(":sobjectName");
-		
-		SObject sobject = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.sobject()
-				.get(id, sobjectName);
-		
-		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
-    	model.put("sobject", sobject);
-
-		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
 	}
 	
 	public static String newFlow(Configuration configuration, Request request, Response response) {
@@ -374,60 +345,5 @@ public class SalesforceConnectorController extends AbstractStaticController {
 				.withTemplateName(Template.SALESFORCE_CONNECTOR_FLOW_NEW)
 				.withTimeZone(getTimeZone(request))
 				.build();
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String listServices(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		String id = request.params(":id");
-		
-		JobTypeList jobTypeList = NowellpointClient.defaultClient(token)
-				.scheduledJobType()
-				.getScheduledJobTypesByLanguage(identity.getLanguageSidKey());
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", new SalesforceConnector(id));
-    	model.put("jobTypeList", jobTypeList.getItems());
-
-		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_ADD_SERVICE);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String addService(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String serviceId = request.params(":serviceId");
-		
-		ServiceRequest serviceRequest = new ServiceRequest().withId(id)
-				.withServiceId(serviceId);
-		
-		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.service()
-				.addService(serviceRequest);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
 	}
 }

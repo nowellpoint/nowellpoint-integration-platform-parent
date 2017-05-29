@@ -332,7 +332,6 @@ body {
     display: block;
     text-align: center;
     background: rgba(200,200,200,0.5);
-    display: none;
 }
 
 .spinner {

@@ -15,6 +15,14 @@ public interface JobTypeService {
 	
 	/**
 	 * 
+	 * @param code
+	 * @return
+	 */
+	
+	JobType findByCode(String code);
+	
+	/**
+	 * 
 	 * 
 	 * 
 	 */

@@ -7,14 +7,16 @@ $(document).ready(function () {
     $('.dropdown-toggle').dropdown();
 });
 
+$(document).ready(function() {
+    $('#overlay').hide();
+});
+
 $(document)
     .ajaxStart(function () {
         $('#overlay').show();
-        $('#spinner').show();
     })
     .ajaxStop(function () {
         $('#spinner').hide();
-        $('#overlay').hide();
     });
 
 $(document).ready(function () {

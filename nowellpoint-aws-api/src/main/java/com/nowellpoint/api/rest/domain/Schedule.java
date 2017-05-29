@@ -36,7 +36,7 @@ public class Schedule {
 	
 	private String year;
 	
-	public Schedule() {
+	private Schedule() {
 		
 	}
 	
@@ -70,7 +70,7 @@ public class Schedule {
 		this.year = year;
 	}
 	
-	public static Schedule runWhenSubmitted() {
+	public static Schedule of(RunWhenSubmitted runWhenSubmitted) {
 		return new Schedule(
 				Date.from(Instant.now()),
 				null, 
@@ -87,9 +87,9 @@ public class Schedule {
 				null);
 	}
 	
-	public static Schedule runOnce(Date runAt) {
+	public static Schedule of(RunOnce runOnce) {
 		return new Schedule(
-				runAt,
+				runOnce.getRunDate(),
 				null, 
 				null, 
 				null, 
@@ -102,17 +102,16 @@ public class Schedule {
 				null, 
 				null, 
 				null);
-		
 	}
 	
-	public static Schedule runOnSchedule(Date startAt, Date endAt, String timeZone, String timeUnit, Integer timeInterval) {
+	public static Schedule of(RunOnSchedule runOnSchedule) {
 		return new Schedule(
 				null,
-				startAt, 
-				endAt, 
-				timeZone, 
-				timeUnit,
-				timeInterval,
+				runOnSchedule.getStartAt(), 
+				runOnSchedule.getEndAt(), 
+				runOnSchedule.getTimeZone(), 
+				runOnSchedule.getTimeUnit(),
+				runOnSchedule.getTimeInterval(),
 				null, 
 				null, 
 				null, 
@@ -122,7 +121,7 @@ public class Schedule {
 				null);
 	}
 	
-	public static Schedule runOnSpecficDays() {
+	public static Schedule of(RunOnSpecificDays runOnSpecificDays) {
 		return new Schedule(
 				null,
 				null, 

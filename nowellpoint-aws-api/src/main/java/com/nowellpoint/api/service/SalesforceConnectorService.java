@@ -1,9 +1,7 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
-import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.client.sforce.model.Token;
 
 /**
@@ -22,17 +20,13 @@ public interface SalesforceConnectorService {
 	
 	SalesforceConnector updateSalesforceConnector(String id, String name, String tag, String ownerId);
 	
-	void deleteSalesforceConnector(String id);
+	void deleteSalesforceConnector(SalesforceConnector salesforceConnector);
 	
 	SalesforceConnector findById(String id);
 	
-	SalesforceConnector test(String id);
+	void test(SalesforceConnector salesforceConnector);
 	
-	SalesforceConnector build(String id);
+	void build(SalesforceConnector salesforceConnector);
 	
-	SObjectDetail findSObjectDetail(String id, String sobjectName);
-	
-	SalesforceConnector addService(String id, String serviceId);
-	
-	Service getService(String id, String serviceId);
+	void metadataBackup(SalesforceConnector salesforceConnector);
 }

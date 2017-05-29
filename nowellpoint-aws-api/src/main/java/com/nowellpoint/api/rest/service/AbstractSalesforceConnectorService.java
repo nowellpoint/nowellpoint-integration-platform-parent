@@ -8,8 +8,6 @@ import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 
-import com.mongodb.client.model.Filters;
-import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.aws.data.AbstractCacheService;
@@ -61,27 +59,6 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.deleteOne(document);
 		del(salesforceConnector.getId());
-	}
-	
-	protected void deleteSObjectDetail(String connectorId) {
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.deleteMany(com.nowellpoint.api.model.document.SObjectDetail.class, Filters.eq ( "connectorId", new ObjectId( connectorId )));
-	}
-	
-	protected void create(SObjectDetail sobjectDetail) {
-		MongoDocument document = sobjectDetail.toDocument();
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.insertOne(document);
-		sobjectDetail.fromDocument(document);
-	}
-	
-	protected SObjectDetail findSObjectDetail(String id, String sobjectName) {
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.SObjectDetail document = documentManager.findOne(com.nowellpoint.api.model.document.SObjectDetail.class, Filters.and ( 
-				Filters.eq ( "connectorId", new ObjectId( id )), 
-				Filters.eq("result.name", sobjectName)));
-		SObjectDetail sobjectDetail = SObjectDetail.of( document );
-		return sobjectDetail;
 	}
 	
 	protected SalesforceConnector findById(String id) {		

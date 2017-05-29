@@ -8,12 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.ValidationException;
@@ -27,15 +24,16 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
+import com.nowellpoint.api.rest.domain.CreateJobRequest;
+import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobType;
-import com.nowellpoint.api.rest.domain.SObjectDetail;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.Service;
+import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
@@ -43,9 +41,7 @@ import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.client.sforce.Client;
-import com.nowellpoint.client.sforce.CountRequest;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
-import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthException;
@@ -56,8 +52,6 @@ import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
-import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 import com.sforce.ws.ConnectionException;
@@ -80,6 +74,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Inject
 	private VaultEntryService vaultEntryService;
+	
+	@Inject
+	private Event<CreateJobRequest> jobRequestEvent; 
 	
 	private static final AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 	
@@ -133,16 +130,14 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		VaultEntry vaultEntry = vaultEntryService.store(connectString.get());
 		
+		UserInfo createdBy = new UserInfo(UserContext.getPrincipal().getName());
+		
 		SalesforceConnector salesforceConnector = SalesforceConnector.createSalesforceConnector( 
-				UserContext.getPrincipal().getName(),
-				UserContext.getPrincipal().getName(), 
+				createdBy,
 				identity, 
 				organization, 
 				vaultEntry, 
-				Boolean.TRUE, 
-				token.getInstanceUrl(),
-				token.getIssuedAt(),
-				Date.from(Instant.now()));
+				token);
 		
 		create(salesforceConnector);
 		
@@ -169,8 +164,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public void deleteSalesforceConnector(String id) {
-		SalesforceConnector salesforceConnector = findById( id );
+	public void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
 				
 		String token = SalesforceConnectionString.of(salesforceConnector.getConnectionString()).getCredentials();
 		
@@ -185,8 +179,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest("nowellpoint-profile-photos").withKeys(keys);
 
 		s3Client.deleteObjects(deleteObjectsRequest);
-		
-		deleteSObjectDetail(salesforceConnector.getId());
 		
 		delete(salesforceConnector);
 	}
@@ -207,9 +199,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public SalesforceConnector test(String id) {	
-		
-		SalesforceConnector salesforceConnector = findById( id );
+	public void test(SalesforceConnector salesforceConnector) {	
 		
 		try {
 			Token token = connect(salesforceConnector.getConnectionString());
@@ -228,14 +218,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			salesforceConnector.setLastTestedOn(Date.from(Instant.now()));
 			update(salesforceConnector);
 		}
-		
-		return salesforceConnector;
 	}
 	
 	@Override
-	public SalesforceConnector build(String id) {
-		
-		SalesforceConnector salesforceConnector = findById( id );
+	public void build(SalesforceConnector salesforceConnector) {
 		
 		try {
 			Token token = connect(salesforceConnector.getConnectionString());
@@ -247,15 +233,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			Theme theme = getTheme(token.getAccessToken(), salesforceConnector.getIdentity().getUrls().getRest());
 			
 			salesforceConnector.setTheme(theme);
-			
-			deleteSObjectDetail(salesforceConnector.getId());
-			
-			describeSobjects(
-					salesforceConnector.getId(), 
-					token.getAccessToken(), 
-					salesforceConnector.getIdentity().getUrls().getSobjects(), 
-					salesforceConnector.getIdentity().getUrls().getQuery(), 
-					describeGlobalSobjectsResult);
 			
 			salesforceConnector.setIsValid(Boolean.TRUE);
 			salesforceConnector.setStatus(token.getIssuedAt());
@@ -269,13 +246,23 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 			salesforceConnector.setLastTestedOn(Date.from(Instant.now()));
 			update(salesforceConnector);
 		}
-		
-		return salesforceConnector;
 	}
 	
 	@Override
-	public SObjectDetail findSObjectDetail(String id, String sobjectName) {
-		return super.findSObjectDetail(id, sobjectName);
+	public void metadataBackup(SalesforceConnector salesforceConnector) {
+		
+		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		
+		Source source = Source.of(salesforceConnector);
+		
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
+				.scheduleOption(Job.ScheduleOptions.RUN_WHEN_SUBMITTED)
+				.jobType(jobType)
+				.source(source)
+				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.build();
+		
+		jobRequestEvent.fire(jobRequest);
 	}
 	
 	/**
@@ -374,52 +361,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		return theme;
 		
-	}
-	
-	private void describeSobjects(String connectorId, String accessToken, String sobjectsUrl, String queryUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult) throws InterruptedException, ExecutionException, JsonProcessingException {
-		
-		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
-		
-		final Client client = new Client();
-		
-		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			executor.submit(() -> {
-				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-						.withAccessToken(accessToken)
-						.withSobjectsUrl(sobjectsUrl)
-						.withSobject(sobject.getName());
-
-				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
-				
-				CountRequest countRequest = new CountRequest()
-						.withAccessToken(accessToken)
-						.withQueryUrl(queryUrl)
-						.withSobject(sobject.getName());
-				
-				Long totalSize = client.getCount(countRequest);
-
-				Date now = Date.from(Instant.now());
-				
-				UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
-
-				SObjectDetail sobjectDetail = new SObjectDetail();
-				sobjectDetail.setCreatedOn(now);
-				sobjectDetail.setCreatedBy(userInfo);
-				sobjectDetail.setLastUpdatedBy(userInfo);
-				sobjectDetail.setLastUpdatedOn(now);
-				sobjectDetail.setConnectorId(connectorId);
-				sobjectDetail.setTotalSize(totalSize);
-				sobjectDetail.setResult(describeSobjectResult);
-				create(sobjectDetail);
-				
-				if (sobject.getName().equals("Vote")) {
-					System.out.println( "Vote 4");
-				}
-			});
-		}
-		
-		executor.shutdown();
-		executor.awaitTermination(30, TimeUnit.SECONDS);
 	}
 	
 	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectionStatus) {

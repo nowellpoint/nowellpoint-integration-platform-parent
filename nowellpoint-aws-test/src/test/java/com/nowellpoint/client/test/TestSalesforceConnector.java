@@ -1,5 +1,7 @@
 package com.nowellpoint.client.test;
 
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -9,7 +11,6 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
-import com.nowellpoint.client.model.SObject;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.Token;
@@ -34,6 +35,22 @@ public class TestSalesforceConnector {
 	}
 	
 	@Test
+	public void testSalesforceConnectorMetadataBackup() {
+		
+		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.getSalesforceConnectors();
+		
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
+		
+		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.metadataBackup(salesforceConnector.getId());
+		
+		Assert.assertTrue(updateResult.isSuccess());
+	}
+	
+	@Test
 	public void testSalesforceConnectorTest() {
 		
 		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
@@ -46,8 +63,7 @@ public class TestSalesforceConnector {
 				.salesforceConnector()
 				.test(salesforceConnector.getId());
 		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getTarget().getStatus());
+		Assert.assertTrue(updateResult.isSuccess());
 	}
 	
 	@Test
@@ -63,14 +79,11 @@ public class TestSalesforceConnector {
 				.salesforceConnector()
 				.build(salesforceConnector.getId());
 		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getTarget().getStatus());
-		
-		SObject sobject = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.sobject()
-				.get(salesforceConnector.getId(), salesforceConnector.getSobjects().get(0).getName());
-		
-		System.out.println(sobject.getId());
+		Assert.assertTrue(updateResult.isSuccess());
+	}
+	
+	@AfterClass
+	public static void close() {
+		token.delete();
 	}
 }

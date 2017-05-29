@@ -45,22 +45,6 @@ public interface SalesforceConnectorResource {
 	@Path("{id}")
 	public Response deleteSalesforceConnector(@PathParam(value="id") String id);
 	
-	@GET
-	@Path("{id}/sobject/{sobjectName}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSObjectDetails(@PathParam(value="id") String id, @PathParam(value="sobjectName") String sobjectName);
-	
-	@POST
-	@Path("{id}/services")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response addService(@PathParam(value="id") String id, @FormParam(value="serviceId") String serviceId);
-	
-	@GET
-	@Path("{id}/services/{serviceId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getService(@PathParam(value="id") String id, @PathParam(value="serviceId") String serviceId);
-	
 	@POST
 	@Path("{id}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)

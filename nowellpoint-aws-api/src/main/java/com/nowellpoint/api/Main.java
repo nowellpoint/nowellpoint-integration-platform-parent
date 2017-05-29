@@ -72,12 +72,11 @@ public class Main {
         final SwaggerArchive archive = deployment.as(SwaggerArchive.class);
         archive.setResourcePackages("com.nowellpoint.api.rest");
         archive.setPrettyPrint(Boolean.TRUE);
-        
+
         //
         // start the container and deploy the archive
         //
         
-        container.start().deploy(deployment);
-
+        container.start(deployment);
     }
 }
