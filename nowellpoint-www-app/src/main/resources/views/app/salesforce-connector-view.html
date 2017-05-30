@@ -18,8 +18,8 @@
         <br>
         <div class="btn-toolbar" role="toolbar">
             <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&nbsp;
-            <button type="button" id="test-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&nbsp;
-            <button type="button" id="build-salesforce-connector" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&nbsp;
+            <button type="button" id="test" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&nbsp;
+            <button type="button" id="build" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&nbsp;
             <button type="button" id="metadata-backup" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/metadata-backup">${labels["backup.metadata"]}</button>&nbsp;
        </div>
         <#if ! salesforceConnector.isValid>
@@ -192,7 +192,7 @@
         </div>
 
         <script>
-            $("#test-salesforce-connector").click(function(e) {
+            $("#test").click(function(e) {
                 e.preventDefault();
 
                 $.ajax({
@@ -236,7 +236,7 @@
                 });
             });
 
-            $("#build-salesforce-connector").click(function(e) {
+            $("#build").click(function(e) {
                 e.preventDefault();
 
                 $.ajax({

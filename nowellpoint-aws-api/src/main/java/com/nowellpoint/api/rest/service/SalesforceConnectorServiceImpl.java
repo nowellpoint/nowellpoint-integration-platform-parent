@@ -141,6 +141,23 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		create(salesforceConnector);
 		
+		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		
+		Source source = Source.of(salesforceConnector);
+		
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
+				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
+				.jobType(jobType)
+				.source(source)
+				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.startAt("")
+				.hours("3")
+				.minutes("00")
+				.seconds("00")
+				.build();
+		
+		jobRequestEvent.fire(jobRequest);
+		
 		return salesforceConnector;
 	}
 	
