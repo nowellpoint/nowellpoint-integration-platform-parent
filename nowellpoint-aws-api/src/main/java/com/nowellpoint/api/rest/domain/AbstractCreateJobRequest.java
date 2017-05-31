@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
-@Value.Style(typeImmutable = "*")
+@Value.Style(typeImmutable = "*", deepImmutablesDetection = true)
 public abstract class AbstractCreateJobRequest {
 	public abstract Optional<String> getNotificationEmail();
 	public abstract Optional<String> getSlackWebhookUrl();
@@ -21,7 +21,7 @@ public abstract class AbstractCreateJobRequest {
 	public abstract Optional<String> getStartAt();
 	public abstract Optional<String> getTimeZone();
 	public abstract Optional<String> getTimeUnit();
-	public abstract Optional<String> getTimeInterval();
+	public abstract Optional<Integer> getTimeInterval();
 	public abstract Optional<String> getYear();
 	public abstract String getScheduleOption();
 	public abstract JobType getJobType();

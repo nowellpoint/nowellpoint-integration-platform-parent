@@ -7,7 +7,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
@@ -151,9 +153,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				.source(source)
 				.notificationEmail(salesforceConnector.getIdentity().getEmail())
 				.startAt("")
-				.hours("3")
-				.minutes("00")
-				.seconds("00")
+				.timeInterval(1)
+				.timeZone(TimeZone.getTimeZone("UTC").getID())
+				.timeUnit(TimeUnit.DAYS.name())
 				.build();
 		
 		jobRequestEvent.fire(jobRequest);

@@ -5,6 +5,9 @@
             <a href="${links['jobs']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.jobs.list"]}
         </div>
         <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="error"></div>
         <div class="flextable p-t">
             <div class="flextable-item flextable-primary">
                 <div class="dashhead-titles">
@@ -17,12 +20,12 @@
             <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
             <button type="button" id="run" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
         </div>
-
         <br>
-
+        <div class="hr-divider"></div>
+        <br>
         <div class="row">
 
-            <div class="col-md-3">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["owner"]}</dt>
@@ -47,7 +50,7 @@
                 </dl>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["next.run.date"]}</dt>
@@ -65,15 +68,11 @@
                 </dl>
             </div>
 
-            <div class="col-md-6">
-
-            </div>
-
         </div>
 
         <div class="row">
 
-            <div class="col-md-6">
+            <div class="col-8">
 
                 <dl class="dl-vertical">
                     <dt>${labels["webhook.url"]}</dt>
@@ -88,15 +87,11 @@
 
             </div>
 
-            <div class="col-md-6">
-
-            </div>
-
         </div>
 
         <div class="row">
 
-            <div class="col-md-3">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["created.by"]}</dt>
@@ -104,16 +99,12 @@
                 </dl>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["last.updated.by"]}</dt>
                     <dd><a href="${links['account.profile']}/${job.lastUpdatedBy.id}">${job.lastUpdatedBy.name}</a>, ${job.lastUpdatedOn?date?string.long!} ${job.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
-            </div>
-
-            <div class="col-md-6">
-
             </div>
 
         </div>

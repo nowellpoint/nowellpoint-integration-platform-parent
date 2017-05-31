@@ -6,18 +6,17 @@
                 <h3 class="input-with-icon dashhead-title">${labels["current.plan"]}</h3>
             </div>
         </div>
-        <br>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
                 <a href="${links['account.profile']}/${accountProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
             </div>
         </div>
-
         <br>
-
+        <div class="hr-divider"></div>
+        <br>
         <div class="row">
 
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["plan.name"]}</dt>
@@ -28,12 +27,11 @@
                     <hr>
                     <dt>${labels["billed"]}&emsp;</dt>
                     <dd>${(accountProfile.subscription.billingFrequency)!}
-                        <hr>
                 </dl>
 
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["next.billing.date"]}&emsp;</dt>
@@ -45,18 +43,13 @@
                             <dt>&emsp;</dt>
                             <dd>&emsp;</dd>
                 </dl>
-
-            </div>
-
-            <div class="col-md-6">
-
             </div>
         </div>
-
         <br>
-
+        <div class="hr-divider"></div>
+        <br>
         <div id="transactions" class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-12">
                 <div class="flextable">
                     <div class="flextable-item flextable-primary">
                         <h3 class="dashhead-title">${labels["transactions"]}</h3>

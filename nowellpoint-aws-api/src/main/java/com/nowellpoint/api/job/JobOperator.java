@@ -21,6 +21,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -82,8 +83,7 @@ public class JobOperator  {
 			
 			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
 				
-				trigger = TriggerBuilder
-						.newTrigger()
+				trigger = TriggerBuilder.newTrigger()
 						.startAt(job.getSchedule().getRunAt())
 						.build();
 				

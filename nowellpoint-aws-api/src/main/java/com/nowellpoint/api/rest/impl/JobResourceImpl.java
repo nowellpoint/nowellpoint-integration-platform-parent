@@ -124,7 +124,7 @@ public class JobResourceImpl implements JobResource {
 				.seconds(seconds)
 				.slackWebhookUrl(slackWebhookUrl)
 				.startAt(startAt)
-				.timeInterval(timeInterval)
+				.timeInterval(Integer.valueOf(timeInterval))
 				.timeUnit(timeUnit)
 				.year(year)
 				.jobType(jobType)

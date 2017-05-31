@@ -22,11 +22,11 @@
                 <input type="hidden" name="primary" id="primary" value="${(creditCard.primary?c)!}">
 
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="cardholderName">${labels['name.on.card']}</label>
                         <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" tabindex="1" placeholder="${labels['name.on.card']}" />
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="country">${labels['country']}</label>
                         <select class="form-control" id="countryCode" name="countryCode" tabindex="8" required>
                             <option value="">${labels["select.one"]}</option>
@@ -48,11 +48,11 @@
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-2">
                         <label class="control-label" for="number">${labels['number']}</label>
                         <p class="form-control-static">${(creditCard.lastFour)!}</p>
                     </div>
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-1">
                         <label class="control-label" for="month">${labels['month']}</label>
                         <select class="form-control" name="expirationMonth" id="expirationMonth" tabindex="3">
                             <#assign x=12 />
@@ -66,7 +66,7 @@
                             </#list>
                         </select>
                     </div>
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-1">
                         <label class="control-label" for="year">${labels['year']}</label>
                         <select class="form-control" name="expirationYear" id="expirationYear" tabindex="4">
                             <#assign x=.now?string[ "yyyy"]?number + 19/>
@@ -80,40 +80,40 @@
                             </#list>
                         </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="street">${labels['street']}</label>
                         <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="firstName">${labels['first.name']}</label>
                         <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" tabindex="6" />
 
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="city">${labels['city']}</label>
                         <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="lastName">${labels['last.name']}</label>
                         <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" tabindex="7" />
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="state">${labels['state']}</label>
                         <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         &nbsp;
                     </div>    
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-4">
                         <label class="control-label" for="postalCode">${labels['zip.postal.code']}</label>
                         <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" value="${(creditCard.billingAddress.postalCode)!}" tabindex="12" />
                     </div>
@@ -122,7 +122,7 @@
             </form>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-8">
                     <div class="pull-right">
                         <a href="${links['account.profile']}/${accountProfile.id}#payment-methods" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
                         <button type="button" id="save" class="btn btn-primary">${labels["save"]}</button>
@@ -137,7 +137,7 @@
             <br>
             
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-4">
                     <dl class="dl-vertical">
                         <dt>${labels["name.on.card"]}</dt>
                         <dd>${creditCard.cardholderName}&emsp;</dd>
@@ -160,7 +160,7 @@
                         <dd>${(creditCard.addedOn?date?string.iso)!} ${creditCard.addedOn?time?string.medium!}</dd>
                     </dl>
                 </div>
-                <div class="col-md-3">
+                <div class="col-4">
                     <dl class="dl-vertical">
                         <dt>${labels["primary"]}</dt>
                         <dd>${(creditCard.primary?then(labels["yes"], labels["no"]))!}&emsp;</dd>
@@ -185,7 +185,7 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-8">
                     <div class="pull-right">
                         <a href="${links['account.profile']}/${accountProfile.id}#payment-methods" class="btn btn-secondary" role="button">${labels["back"]}</a>
                         <a href="${links['account.profile']}/${accountProfile.id}/payment-methods/${creditCard.token}/edit" class="btn btn-secondary" role="button">${labels["edit"]}</a>
@@ -195,9 +195,7 @@
                         </#if>
                     </div>
                 </div>
-
             </div>
-            <div class="col-md-6"></div>
 
             <!-- Modal Dialog -->
             <div class="modal fade" id="confirm-dialog" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
@@ -219,8 +217,6 @@
             </div>
 
         </#if>
-
-        <#include "spinner.html"/>
 
         <script>
             $('#save').click(function(e) {
