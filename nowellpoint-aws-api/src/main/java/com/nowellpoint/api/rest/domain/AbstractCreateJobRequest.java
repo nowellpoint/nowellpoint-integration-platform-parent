@@ -21,9 +21,10 @@ public abstract class AbstractCreateJobRequest {
 	public abstract Optional<String> getStartAt();
 	public abstract Optional<String> getTimeZone();
 	public abstract Optional<String> getTimeUnit();
-	public abstract Optional<Integer> getTimeInterval();
+	public abstract Optional<String> getTimeInterval();
 	public abstract Optional<String> getYear();
-	public abstract String getScheduleOption();
+	public abstract Optional<String> getScheduleOption();
 	public abstract JobType getJobType();
 	public abstract Source getSource();
+	public abstract Optional<AbstractSchedule> getSchedule();
 }

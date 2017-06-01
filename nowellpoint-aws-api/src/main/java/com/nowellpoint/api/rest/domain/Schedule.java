@@ -2,6 +2,8 @@ package com.nowellpoint.api.rest.domain;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,9 +18,9 @@ public class Schedule {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date endAt;
 	
-	private String timeZone;
+	private TimeZone timeZone;
 	
-	private String timeUnit;
+	private TimeUnit timeUnit;
 	
 	private Integer timeInterval;
 	
@@ -44,8 +46,8 @@ public class Schedule {
 			Date runAt,
 			Date startAt, 
 			Date endAt, 
-			String timeZone, 
-			String timeUnit,
+			TimeZone timeZone, 
+			TimeUnit timeUnit,
 			Integer timeInterval,
 			String seconds, 
 			String minutes, 
@@ -68,6 +70,20 @@ public class Schedule {
 		this.startAt = startAt;
 		this.timeZone = timeZone;
 		this.year = year;
+	}
+	
+	public static Schedule of(AbstractSchedule schedule) {
+		if (schedule instanceof RunWhenSubmitted) {
+			return of(schedule.getSchedule(RunWhenSubmitted.class));
+		} else if (schedule instanceof RunOnce) {
+			return of(schedule.getSchedule(RunOnce.class));
+		} else if (schedule instanceof RunOnSchedule) {
+			return of(schedule.getSchedule(RunOnSchedule.class));
+		} else if (schedule instanceof RunOnSpecificDays) {
+			return of(schedule.getSchedule(RunOnSpecificDays.class));
+		} else {
+			return null;
+		}
 	}
 	
 	public static Schedule of(RunWhenSubmitted runWhenSubmitted) {
@@ -108,7 +124,7 @@ public class Schedule {
 		return new Schedule(
 				null,
 				runOnSchedule.getStartAt(), 
-				runOnSchedule.getEndAt(), 
+				runOnSchedule.getEndAt().get(), 
 				runOnSchedule.getTimeZone(), 
 				runOnSchedule.getTimeUnit(),
 				runOnSchedule.getTimeInterval(),
@@ -162,19 +178,19 @@ public class Schedule {
 		this.endAt = endAt;
 	}
 
-	public String getTimeZone() {
+	public TimeZone getTimeZone() {
 		return timeZone;
 	}
 
-	public void setTimeZone(String timeZone) {
+	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
 	}
 
-	public String getTimeUnit() {
+	public TimeUnit getTimeUnit() {
 		return timeUnit;
 	}
 
-	public void setTimeUnit(String timeUnit) {
+	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
 	}
 

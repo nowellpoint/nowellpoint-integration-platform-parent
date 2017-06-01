@@ -1,6 +1,9 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
+import java.util.Optional;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import org.immutables.value.Value;
 
@@ -8,9 +11,9 @@ import org.immutables.value.Value;
 @Value.Style(typeImmutable = "*")
 public abstract class AbstractRunOnSchedule implements AbstractSchedule {
 	public abstract Date getStartAt();
-	public abstract Date getEndAt();
-	public abstract String getTimeZone();
-	public abstract String getTimeUnit();
+	public abstract Optional<Date> getEndAt();
+	public abstract TimeZone getTimeZone();
+	public abstract TimeUnit getTimeUnit();
 	public abstract Integer getTimeInterval();
 	
 	@Override

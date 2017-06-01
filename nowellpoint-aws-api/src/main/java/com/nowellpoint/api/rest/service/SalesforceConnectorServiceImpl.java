@@ -31,6 +31,8 @@ import com.nowellpoint.api.rest.domain.ConnectionString;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobType;
+import com.nowellpoint.api.rest.domain.RunOnSchedule;
+import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
@@ -152,10 +154,12 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				.jobType(jobType)
 				.source(source)
 				.notificationEmail(salesforceConnector.getIdentity().getEmail())
-				.startAt("")
-				.timeInterval(1)
-				.timeZone(TimeZone.getTimeZone("UTC").getID())
-				.timeUnit(TimeUnit.DAYS.name())
+				.schedule(RunOnSchedule.builder()
+						.startAt(Date.from(Instant.now()))
+						.timeInterval(1)
+						.timeZone(TimeZone.getTimeZone("UTC"))
+						.timeUnit(TimeUnit.DAYS)
+						.build())
 				.build();
 		
 		jobRequestEvent.fire(jobRequest);
@@ -275,7 +279,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		Source source = Source.of(salesforceConnector);
 		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
-				.scheduleOption(Job.ScheduleOptions.RUN_WHEN_SUBMITTED)
+				.schedule(RunWhenSubmitted.builder().build())
 				.jobType(jobType)
 				.source(source)
 				.notificationEmail(salesforceConnector.getIdentity().getEmail())

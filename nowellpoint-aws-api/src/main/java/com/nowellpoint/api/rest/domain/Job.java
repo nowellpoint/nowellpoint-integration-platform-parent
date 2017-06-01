@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -127,24 +129,28 @@ public class Job extends AbstractResource {
 		
 		try {
 			
-			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(jobRequest.getScheduleOption())) {
-				schedule = Schedule.of(RunWhenSubmitted.builder().build());
-			} else if (Job.ScheduleOptions.RUN_ONCE.equals(jobRequest.getScheduleOption())) {
-				schedule = Schedule.of(RunOnce.builder().runDate(DateUtil.iso8601(jobRequest.getRunAt().get())).build());
-			} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(jobRequest.getScheduleOption())) {
-				schedule = Schedule.of(RunOnSchedule.builder()
-						.endAt(DateUtil.iso8601(jobRequest.getEndAt().get()))
-						.startAt(DateUtil.iso8601(jobRequest.getStartAt().get()))
-						.timeInterval(Integer.valueOf(jobRequest.getTimeInterval().get()))
-						.timeUnit(jobRequest.getTimeUnit().get())
-						.timeZone(jobRequest.getTimeZone().get())
-						.build());
-			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(jobRequest.getScheduleOption())) {		
-				schedule = Schedule.of(RunOnSpecificDays.builder().build());
+			if (jobRequest.getSchedule().isPresent()) {
+				schedule = Schedule.of(jobRequest.getSchedule().get());
 			} else {
-				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", jobRequest.getScheduleOption()));
+				String scheduleOption = jobRequest.getScheduleOption().get();
+				if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
+					schedule = Schedule.of(RunWhenSubmitted.builder().build());
+				} else if (Job.ScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
+					schedule = Schedule.of(RunOnce.builder().runDate(DateUtil.iso8601(jobRequest.getRunAt().get())).build());
+				} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {
+					schedule = Schedule.of(RunOnSchedule.builder()
+							.endAt(DateUtil.iso8601(jobRequest.getEndAt().get()))
+							.startAt(DateUtil.iso8601(jobRequest.getStartAt().get()))
+							.timeInterval(Integer.valueOf(jobRequest.getTimeInterval().get()))
+							.timeUnit(TimeUnit.valueOf(jobRequest.getTimeUnit().get()))
+							.timeZone(TimeZone.getTimeZone(jobRequest.getTimeZone().get()))
+							.build());
+				} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(scheduleOption)) {		
+					schedule = Schedule.of(RunOnSpecificDays.builder().build());
+				} else {
+					throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", jobRequest.getScheduleOption().get()));
+				}
 			}
-		
 		} catch(ParseException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -156,7 +162,7 @@ public class Job extends AbstractResource {
 				jobRequest.getDescription().isPresent() ? jobRequest.getDescription().get() : null,
 				jobRequest.getNotificationEmail().isPresent() ? jobRequest.getNotificationEmail().get() : null,
 				jobRequest.getSlackWebhookUrl().isPresent() ? jobRequest.getSlackWebhookUrl().get() : null,
-				jobRequest.getScheduleOption(),
+				jobRequest.getSchedule().isPresent() ? jobRequest.getSchedule().get().getScheduleOption() : jobRequest.getScheduleOption().get(),
 				userInfo,
 				Date.from(Instant.now()),
 				userInfo,

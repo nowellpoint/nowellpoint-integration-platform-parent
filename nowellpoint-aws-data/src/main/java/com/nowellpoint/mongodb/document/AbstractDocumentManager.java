@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
@@ -78,6 +79,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		mappedClasses.add(Calendar.class);
 		mappedClasses.add(URL.class);
 		mappedClasses.add(ObjectId.class);
+		mappedClasses.add(TimeZone.class);
+		mappedClasses.add(TimeUnit.class);
 	}
  
 	public AbstractDocumentManager(DocumentManagerFactory documentManagerFactory) {
@@ -456,19 +459,25 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 		
 		try {	
 		    Object value = method.invoke(object, new Object[] {});
-            if (field.getType().isAssignableFrom(Locale.class)) {            	
-		    	value = String.valueOf(value);
-		    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
-		    	value = String.valueOf(value);
-		    } else if (field.getType().isAssignableFrom(Currency.class)) {
-		    	value = String.valueOf(value);
-		    } else if (field.getType().isAssignableFrom(URL.class)) {
-		    	value = String.valueOf(value);
-		    } else if (field.getType().isAssignableFrom(ObjectId.class)) {
+		    if (field.getType().isAssignableFrom(ObjectId.class)) {
 		    	if (value == null) {
 		    		value = new ObjectId();
 		    	} else {
 		    		value = new ObjectId(String.valueOf(value));
+		    	}
+		    } else {
+		    	if (value != null) {
+		    		if (field.getType().isAssignableFrom(Locale.class)) {            	
+				    	value = String.valueOf(value);
+				    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
+				    	value = String.valueOf(value);
+				    } else if (field.getType().isAssignableFrom(Currency.class)) {
+				    	value = String.valueOf(value);
+				    } else if (field.getType().isAssignableFrom(URL.class)) {
+				    	value = String.valueOf(value);
+				    } else if (field.getType().isAssignableFrom(TimeUnit.class)) {
+				    	value = String.valueOf(value);
+				    }
 		    	}
 		    }
             return value;
@@ -511,6 +520,8 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			    	value = new URL(value.toString());
 			    } else if (field.getType().isAssignableFrom(ObjectId.class)) {
 			    	value = new ObjectId(value.toString());
+			    } else if (field.getType().isAssignableFrom(TimeUnit.class)) {
+			    	value = TimeUnit.valueOf(value.toString());
 			    }
 			    method.invoke(object, new Object[] {value});
 			} catch (IllegalArgumentException e) {

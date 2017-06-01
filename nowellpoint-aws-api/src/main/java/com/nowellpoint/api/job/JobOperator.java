@@ -5,7 +5,6 @@ import org.quartz.DateBuilder.IntervalUnit;
 
 import java.sql.Date;
 import java.time.Instant;
-import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -21,7 +20,6 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
@@ -93,8 +91,8 @@ public class JobOperator  {
 						.startAt(job.getSchedule().getStartAt())
 						.endAt(job.getSchedule().getEndAt())
 						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
-								.withInterval(job.getSchedule().getTimeInterval(), IntervalUnit.valueOf(job.getSchedule().getTimeUnit()))
-								.inTimeZone(TimeZone.getTimeZone(job.getSchedule().getTimeZone())))
+								.withInterval(job.getSchedule().getTimeInterval(), IntervalUnit.valueOf(job.getSchedule().getTimeUnit().name()))
+								.inTimeZone(job.getSchedule().getTimeZone()))
 						.build();
 				
 			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {

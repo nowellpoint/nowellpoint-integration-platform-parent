@@ -2,6 +2,8 @@ package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class Schedule implements Serializable {
 
@@ -13,9 +15,9 @@ public class Schedule implements Serializable {
 	
 	private Date endAt;
 	
-	private String timeZone;
+	private TimeZone timeZone;
 	
-	private String timeUnit;
+	private TimeUnit timeUnit;
 	
 	private Integer timeInterval;
 	
@@ -61,19 +63,19 @@ public class Schedule implements Serializable {
 		this.endAt = endAt;
 	}
 
-	public String getTimeZone() {
+	public TimeZone getTimeZone() {
 		return timeZone;
 	}
 
-	public void setTimeZone(String timeZone) {
+	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
 	}
 
-	public String getTimeUnit() {
+	public TimeUnit getTimeUnit() {
 		return timeUnit;
 	}
 
-	public void setTimeUnit(String timeUnit) {
+	public void setTimeUnit(TimeUnit timeUnit) {
 		this.timeUnit = timeUnit;
 	}
 

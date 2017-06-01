@@ -77,7 +77,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 			errors.add("Missing Job Type. Create Job must include a Job Type");
 		}
 		
-		if (Assert.isNullOrEmpty(jobRequest.getScheduleOption())) {
+		if (Assert.isNull(jobRequest.getSchedule()) && ! jobRequest.getScheduleOption().isPresent()) {
 			errors.add("Missing scheduleOption parameter. Must provide a value of RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS");
 		}
 		
