@@ -218,7 +218,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		job.addJobExecution(jobExecution);
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
-		job.setJobRunTime(context.getJobRunTime());
+		job.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		job.setFireTime(context.getFireTime());
 		job.setNextFireTime(context.getNextFireTime());
 		
