@@ -124,7 +124,7 @@ public class Schedule {
 		return new Schedule(
 				null,
 				runOnSchedule.getStartAt(), 
-				runOnSchedule.getEndAt().get(), 
+				runOnSchedule.getEndAt().orElse(null), 
 				runOnSchedule.getTimeZone(), 
 				runOnSchedule.getTimeUnit(),
 				runOnSchedule.getTimeInterval(),

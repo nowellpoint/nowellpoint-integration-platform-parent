@@ -46,10 +46,6 @@
                     <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
                     <hr>
 
-                    <dt>${labels["division"]}</dt>
-                    <dd>${(salesforceConnector.organization.division)!}&emsp;</dd>
-                    <hr>
-
                     <dt>${labels["default.locale.sid.key"]}</dt>
                     <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
                     <hr>
@@ -70,8 +66,8 @@
                     <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
                     <hr>
 
-                    <dt>${labels["fiscal.year.start.month"]}</dt>
-                    <dd>${(salesforceConnector.organization.fiscalYearStartMonth)!}&emsp;</dd>
+                    <dt>${labels["sobject.count"]}</dt>
+                    <dd><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects">${sobjectCount}</a></dd>
                     <hr>
 
                     <dt>${labels["organization.id"]}</dt>
@@ -80,10 +76,6 @@
 
                     <dt>${labels["language.key"]}</dt>
                     <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
-                    <hr>
-
-                    <dt>${labels["phone"]}</dt>
-                    <dd>${(salesforceConnector.organization.phone)!}&emsp;</dd>
                     <hr>
 
                     <dt>${labels["tested.on"]}</dt>

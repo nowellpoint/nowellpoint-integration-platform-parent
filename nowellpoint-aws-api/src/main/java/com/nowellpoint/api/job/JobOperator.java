@@ -5,6 +5,7 @@ import org.quartz.DateBuilder.IntervalUnit;
 
 import java.sql.Date;
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -87,12 +88,25 @@ public class JobOperator  {
 				
 			} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption())) {
 				
+				IntervalUnit intervalUnit = null;
+				
+				if (job.getSchedule().getTimeUnit() == TimeUnit.DAYS) {
+					intervalUnit = IntervalUnit.DAY;
+				} else if (job.getSchedule().getTimeUnit() == TimeUnit.HOURS) {
+					intervalUnit = IntervalUnit.HOUR;
+				} else if (job.getSchedule().getTimeUnit() == TimeUnit.MINUTES) {
+					intervalUnit = IntervalUnit.MINUTE;
+				} else if (job.getSchedule().getTimeUnit() == TimeUnit.SECONDS) {
+					intervalUnit = IntervalUnit.SECOND;
+				}
+				
 				trigger = TriggerBuilder.newTrigger()
 						.startAt(job.getSchedule().getStartAt())
 						.endAt(job.getSchedule().getEndAt())
 						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
-								.withInterval(job.getSchedule().getTimeInterval(), IntervalUnit.valueOf(job.getSchedule().getTimeUnit().name()))
-								.inTimeZone(job.getSchedule().getTimeZone()))
+								.withInterval(job.getSchedule().getTimeInterval(), intervalUnit)
+								.inTimeZone(job.getSchedule().getTimeZone())
+								.preserveHourOfDayAcrossDaylightSavings(Boolean.TRUE))
 						.build();
 				
 			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {

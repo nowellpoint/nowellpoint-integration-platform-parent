@@ -5,8 +5,10 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -176,6 +178,28 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	@Override
 	public SalesforceConnector updateSalesforceConnector(String id, String name, String tag, String ownerId) {		
 		SalesforceConnector original = findById(id);
+		
+		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		
+		Source source = Source.of(original);
+		
+		Calendar startAt = getDefaultStartDate(original.getOrganization().getDefaultLocaleSidKey());
+		
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
+				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
+				.jobType(jobType)
+				.source(source)
+				.notificationEmail(original.getIdentity().getEmail())
+				.schedule(RunOnSchedule.builder()
+						.startAt(startAt.getTime())
+						.timeInterval(1)
+						.timeZone(startAt.getTimeZone())
+						.timeUnit(TimeUnit.DAYS)
+						.build())
+				.build();
+		
+		jobRequestEvent.fire(jobRequest);
+		
 		updateSalesforceConnector(original, name, tag, ownerId, null, null);
 		return original;
 	}
@@ -418,5 +442,19 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
 		
 		update(salesforceConnector);
+	}
+	
+	private Calendar getDefaultStartDate(String localeSidKey) {
+		Calendar calendar = Calendar.getInstance(Locale.forLanguageTag(localeSidKey));
+		calendar.set(Calendar.HOUR, 3);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.AM_PM, Calendar.AM);
+		
+		if (Calendar.getInstance(TimeZone.getDefault()).after(calendar)) {
+			calendar.roll(Calendar.DATE, 1);
+		}
+		
+		return calendar;
 	}
 }

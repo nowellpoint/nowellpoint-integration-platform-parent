@@ -93,6 +93,7 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
     	model.put("salesforceConnector", salesforceConnector);
+    	model.put("sobjectCount", salesforceConnector.getSobjects().size());
 		
     	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
 	};
