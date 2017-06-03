@@ -29,6 +29,10 @@ public interface JobResource {
 	public Response getJobExecution(@PathParam("id") String id, @PathParam("fireInstanceId") String fireInstanceId);
 	
 	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+	public Response getBySourceId(@QueryParam("sourceId") String sourceId);
+	
+	@GET
 	@Path("{id}/download")
 	@Produces(MediaType.TEXT_PLAIN)
 	public Response getOutputFile(@PathParam("id") String id, @QueryParam("filename") String filename);

@@ -8,6 +8,8 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -64,6 +66,12 @@ public class JobResourceImpl implements JobResource {
 	public Response getJobExecution(String id, String fireInstanceId) {
 		JobExecution jobExecution = jobService.findByFireInstanceId(id, fireInstanceId);
 		return Response.ok(jobExecution).build();
+	}
+	
+	@Override
+	public Response getBySourceId(@QueryParam("sourceId") String sourceId) {
+		JobList jobList = jobService.queryBySource(sourceId);
+		return Response.ok(jobList).build();
 	}
 	
 	@Override

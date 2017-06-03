@@ -16,18 +16,18 @@
 		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>value</artifactId>
-			<version>${version.immutables}</version>
+			<version>2.4.6</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>builder</artifactId>
-			<version>${version.immutables}</version>
+			<version>2.4.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>value-fixture</artifactId>
-			<version>${version.immutables}</version>
+			<version>2.4.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nowellpoint</groupId>

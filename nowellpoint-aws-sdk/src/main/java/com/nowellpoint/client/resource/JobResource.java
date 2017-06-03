@@ -18,7 +18,6 @@ import com.nowellpoint.http.Status;
 public class JobResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "jobs";
-	//private static final String START = "start";
 	
 	public JobResource(Token token) {
 		super(token);
@@ -54,6 +53,27 @@ public class JobResource extends AbstractResource {
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
 			resource = httpResponse.getEntity(Job.class);
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
+    	
+    	return resource;
+	}
+	
+	public JobList queryBySource(String sourceId) {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.queryParameter("sourceId", sourceId)
+    			.execute();
+		
+		JobList resource = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(JobList.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {

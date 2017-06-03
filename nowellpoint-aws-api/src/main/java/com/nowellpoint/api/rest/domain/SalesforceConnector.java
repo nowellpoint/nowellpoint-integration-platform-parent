@@ -42,6 +42,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Theme theme;
 	
+	private Set<Job> jobs = new HashSet<>();
+	
 	private Set<Service> services = new HashSet<>();
 	
 	private Set<Sobject> sobjects = new HashSet<>();
@@ -207,6 +209,14 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 	
+	public Set<Job> getJobs() {
+		return jobs;
+	}
+
+	public void setJobs(Set<Job> jobs) {
+		this.jobs = jobs;
+	}
+
 	public void addService(Service service) {
 		if (services == null) {
 			services = new HashSet<>();

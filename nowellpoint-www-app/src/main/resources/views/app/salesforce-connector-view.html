@@ -28,10 +28,6 @@
         <br>
         <div class="hr-divider"></div>
         <br>
-        <div class="flextable-item flextable-primary">
-            <h3 class="dashhead-title">${labels["details"]}</h3>
-        </div>
-        <br>
         <div id="detail" class="row">
 
             <div class="col-4">
@@ -186,6 +182,34 @@
 
         </div>
 
+        <br>
+        <br>
+        
+        
+        <div class="content table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>${labels["job.name"]}</th>
+                        <th>${labels["last.run.date"]}</th>
+                        <th>${labels["status"]}</th>
+                        <th class="text-right">${labels["number.executions"]}</th>
+                        <th class="text-right">${labels["job.outputs"]}</th>
+                    </thead>
+                    <tbody>
+                        <#list salesforceConnector.jobs?sort_by( "createdOn") as job>
+                            <tr>
+                                <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
+                                <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
+                                <td>${job.status}</td>
+                                <td class="text-right">${job.numberOfExecutions}</td>
+                                <td class="text-right"><a href="${links['jobs']}/${job.id}/outputs"><span class="icon icon-folder"></span></a></td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
+        
+        
         <br>
         <br>
 

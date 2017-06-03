@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -12,16 +13,22 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
+import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.util.Assert;
 
 public class SalesforceConnectorResourceImpl implements SalesforceConnectorResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
+	
+	@Inject
+	private JobService jobService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -59,12 +66,21 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.build(); 
 	}
 	
-	public Response getSalesforceConnector(String id) {		
+	public Response getSalesforceConnector(String id, String expand) {		
 		
 		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
 		
 		if (salesforceConnector == null){
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
+		}
+		
+		if (Assert.isNotNullOrEmpty(expand)) {
+			String[] elements = expand.split(",");
+			
+			if (Arrays.asList(elements).contains("jobs")) {
+				JobList jobList = jobService.queryBySource(salesforceConnector.getId());
+				salesforceConnector.setJobs(jobList.getItems());
+			}
 		}
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())

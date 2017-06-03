@@ -33,6 +33,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String tag;
 	
+	private List<Job> jobs;
+	
 	private List<Service> services;
 	
 	private List<Sobject> sobjects;
@@ -42,6 +44,7 @@ public class SalesforceConnector extends AbstractResource {
 	public SalesforceConnector() {
 		sobjects = new ArrayList<>();
 		services = new ArrayList<>();
+		jobs = new ArrayList<>();
 	}
 	
 	public SalesforceConnector(String id) {
@@ -126,6 +129,14 @@ public class SalesforceConnector extends AbstractResource {
 
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public List<Job> getJobs() {
+		return jobs;
+	}
+
+	public void setJobs(List<Job> jobs) {
+		this.jobs = jobs;
 	}
 
 	public List<Service> getServices() {

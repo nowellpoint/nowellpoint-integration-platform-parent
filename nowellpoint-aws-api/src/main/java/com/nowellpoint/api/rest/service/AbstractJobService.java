@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.rest.domain.Job;
@@ -50,6 +51,13 @@ public class AbstractJobService extends AbstractCacheService {
 		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find(
 				com.nowellpoint.api.model.document.Job.class,
 				eq ( "status", "Scheduled" ) );
+		JobList resources = new JobList(documents);
+		return resources;
+	}
+	
+	protected JobList query(Bson query) {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
+		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find( com.nowellpoint.api.model.document.Job.class, query );
 		JobList resources = new JobList(documents);
 		return resources;
 	}

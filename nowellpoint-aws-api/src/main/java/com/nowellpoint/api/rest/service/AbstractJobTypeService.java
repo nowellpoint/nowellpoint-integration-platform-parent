@@ -40,7 +40,7 @@ abstract class AbstractJobTypeService extends AbstractCacheService {
 	
 	protected JobTypeList query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		Set<com.nowellpoint.api.model.document.JobType> documents = documentManager.find(com.nowellpoint.api.model.document.JobType.class, query );
+		Set<com.nowellpoint.api.model.document.JobType> documents = documentManager.find( com.nowellpoint.api.model.document.JobType.class, query );
 		JobTypeList scheduledJobTypes = new JobTypeList( documents );
 		return scheduledJobTypes;
 	}

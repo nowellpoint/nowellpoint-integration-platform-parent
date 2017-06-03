@@ -15,6 +15,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
@@ -48,6 +49,11 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId) {
 		Job job = findById(id);
 		return job.getJobExecution(fireInstanceId);
+	}
+	
+	@Override
+	public JobList queryBySource(String sourceId) {
+		return super.query( Filters.eq ( "source.id", sourceId ) );
 	}
 	
 	@Override

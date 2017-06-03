@@ -15,6 +15,8 @@ public interface JobService {
 	
 	Job findById(String id);
 	
+	JobList queryBySource(String sourceId);
+	
 	Job createJob(CreateJobRequest createJobRequest);
 	
 	void updateJob(Job job);

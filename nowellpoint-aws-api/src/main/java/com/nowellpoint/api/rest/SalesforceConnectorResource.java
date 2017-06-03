@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -30,7 +31,7 @@ public interface SalesforceConnectorResource {
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSalesforceConnector(@PathParam(value="id") String id);
+	public Response getSalesforceConnector(@PathParam(value="id") String id, @QueryParam(value="expand") String expand);
 	
 	@POST
 	@Path("{id}")

@@ -72,6 +72,7 @@ public class SalesforceConnectorResource extends AbstractResource {
 				.header("Content-Type", MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
     			.path(id)
+    			.queryParameter("expand", "jobs")
     			.execute();
 		
 		SalesforceConnector resource = null;
