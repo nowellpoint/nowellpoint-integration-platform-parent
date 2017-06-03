@@ -62,27 +62,6 @@ public class JobResource extends AbstractResource {
     	return resource;
 	}
 	
-	public JobList queryBySource(String sourceId) {
-		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-				.queryParameter("sourceId", sourceId)
-    			.execute();
-		
-		JobList resource = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			resource = httpResponse.getEntity(JobList.class);
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return resource;
-	}
-	
 	public UpdateResult<Job> run(String id) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
