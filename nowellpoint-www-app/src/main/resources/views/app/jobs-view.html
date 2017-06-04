@@ -78,7 +78,12 @@
                     <dt>${labels["webhook.url"]}</dt>
                     <dd>${(job.slackWebhookUrl)!}&emsp;
                         <#if (job.slackWebhookUrl)??>
-                        &emsp;&emsp;<div class="pull-right"><button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm"><span class="icon icon-flash fa fa-1x"></span></button></div></#if></dd>
+                            &emsp;&emsp;
+                            <div class="pull-right">
+                                <button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm"><span class="icon icon-flash fa fa-1x"></span></button>
+                            </div>
+                        </#if>
+                    </dd>
                     <hr>
                     <dt>${labels["description"]}</dt>
                     <dd>${job.description!}&emsp;</dd>
@@ -193,40 +198,66 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="">
-
+                    <form class="form-vertical" name="job-form" id="job-form" role="form" method="post" action="">
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="description">${labels["description"]}</label>
-                                    <textarea class="form-control" name="description" id="description" rows="6" autofocus="">${job.description!}</textarea>
+                                    <input type="text" class="form-control" name="description" id="description" value="${(job.description)!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
-                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="" />
+                                    <input type="text" class="form-control" name="notificationEmail" id="notificationEmail" value="${(job.notificationEmail)!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="webhookUrl">${labels["webhook.url"]}</label>
-                                    <input type="text" class="form-control" name="webhookUrl" id="webhookUrl" value="" />
+                                    <input type="text" class="form-control" name="slackWebhookUrl" id="slackWebhookUrl" value="${(job.slackWebhookUrl)!}" />
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
-                        <button type="button" id="update-job" class="btn btn-primary">${labels["save"]}</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                            <button type="button" id="update" class="btn btn-primary">${labels["save"]}</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
         <script>
+            $("#update").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#job-form");
+                $dialog = $("#job-dialog");
+
+                $.ajax({
+                    method: 'POST',
+                    url: "${links['jobs']}/${job.id!}",
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+            });
 
             $("#run").click(function(e) {
                 e.preventDefault();
@@ -237,6 +268,7 @@
                     dataType: "html",
                     complete: function(response) {
                         if (response.status == 200) {
+                            $("#overlay").hide();
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
@@ -249,7 +281,7 @@
                     }
                 });
             });
-            
+
             $("#test-webhook").click(function(e) {
                 e.preventDefault();
 
@@ -257,12 +289,13 @@
                     method: 'POST',
                     url: "${links['jobs']}/${job.id!}/webhook-test",
                     complete: function(response) {
-                        
+
                         if (response.status == 200) {
+                            $("#overlay").hide();
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    
+
                                 });
                             }, 1000);
                         } else {

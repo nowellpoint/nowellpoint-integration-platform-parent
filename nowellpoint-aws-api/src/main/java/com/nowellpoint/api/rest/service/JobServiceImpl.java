@@ -1,7 +1,9 @@
 package com.nowellpoint.api.rest.service;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,6 +23,7 @@ import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
+import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.util.UserContext;
@@ -101,6 +104,24 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		return job;
 	}
 
+	@Override
+	public Job updateJob(@Observes UpdateJobRequest jobRequest) {
+		
+		Job job = findById(jobRequest.getId());
+		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		job.setLastUpdatedBy(userInfo);
+		job.setLastUpdatedOn(Date.from(Instant.now()));
+		job.setDescription(jobRequest.getDescription().orElse(null));
+		job.setNotificationEmail(jobRequest.getNotificationEmail().orElse(null));
+		job.setSlackWebhookUrl(jobRequest.getSlackWebhookUrl().orElse(null));
+		
+		updateJob(job);
+		
+		return job;
+	}
+	
 	@Override
 	public void updateJob(Job job) {
 		super.update(job);

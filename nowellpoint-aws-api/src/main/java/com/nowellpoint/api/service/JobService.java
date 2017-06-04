@@ -6,6 +6,7 @@ import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
+import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 
 public interface JobService {
 	
@@ -17,7 +18,9 @@ public interface JobService {
 	
 	public JobList queryBySource(String sourceId);
 	
-	public Job createJob(CreateJobRequest createJobRequest);
+	public Job createJob(CreateJobRequest jobRequest);
+	
+	public Job updateJob(UpdateJobRequest jobRequest);
 	
 	public void updateJob(Job job);
 	

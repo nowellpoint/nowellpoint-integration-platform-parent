@@ -80,8 +80,11 @@ public class Job extends AbstractResource {
 	}
 	
 	private Job(
+			String id,
 			Source source,
-			JobType jobType,
+			String jobName,
+			String groupName,
+			String className,
 			Schedule schedule,
 			String description,
 			String notificationEmail,
@@ -105,12 +108,13 @@ public class Job extends AbstractResource {
 			slackWebhookUrl = null;
 		}
 		
+		this.id = id;
 		this.source = source;
 		this.description = description;
 		this.schedule = schedule;
-		this.jobName = jobType.getName();
-		this.groupName = jobType.getGroup();
-		this.className = jobType.getClassName();
+		this.jobName = jobName;
+		this.groupName = groupName;
+		this.className = className;
 		this.notificationEmail = notificationEmail;
 		this.slackWebhookUrl = slackWebhookUrl;
 		this.scheduleOption = scheduleOption;
@@ -156,8 +160,11 @@ public class Job extends AbstractResource {
 		}
 		
 		return new Job(
+				null,
 				jobRequest.getSource(),
-				jobRequest.getJobType(),
+				jobRequest.getJobType().getName(),
+				jobRequest.getJobType().getGroup(),
+				jobRequest.getJobType().getClassName(),
 				schedule,
 				jobRequest.getDescription().orElse(null),
 				jobRequest.getNotificationEmail().orElse(null),

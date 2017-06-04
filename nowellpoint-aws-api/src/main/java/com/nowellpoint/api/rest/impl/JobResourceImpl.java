@@ -26,6 +26,7 @@ import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
+import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
@@ -110,7 +111,7 @@ public class JobResourceImpl implements JobResource {
 		
 		Source source = Source.of(salesforceConnector);
 		
-		CreateJobRequest createJobRequest = CreateJobRequest.builder()
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.dayOfMonth(dayOfMonth)
 				.dayOfWeek(dayOfWeek)
 				.description(description)
@@ -132,7 +133,7 @@ public class JobResourceImpl implements JobResource {
 				.source(source)
 				.build();
 		
-		Job job = jobService.createJob(createJobRequest);
+		Job job = jobService.createJob(jobRequest);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(JobResource.class)
@@ -146,22 +147,48 @@ public class JobResourceImpl implements JobResource {
 	
 	@Override
 	public Response updateJob(String id,
+			String notificationEmail,
+			String slackWebhookUrl,
+			String scheduleOption,
+			String runAt,
 			String dayOfMonth,
 			String dayOfWeek,
 			String description,
-			String runAt,
 			String hours,
-			String jobName,
-			String end,
+			String endAt,
 			String minutes,
 			String month,
-			String notificationEmail,
-			String scheduleOption,
 			String seconds,
-			String start,
+			String startAt,
 			String timeZone,
+			String timeUnit,
+			String timeInterval,
 			String year) {
-		return null;
+		
+		UpdateJobRequest jobRequest = UpdateJobRequest.builder()
+				.id(id)
+				.description(description)
+				.notificationEmail(notificationEmail)
+				.slackWebhookUrl(slackWebhookUrl)
+				//.dayOfMonth(dayOfMonth)
+				//.dayOfWeek(dayOfWeek)
+				//.endAt(endAt)
+				//.hours(hours)
+				//.minutes(minutes)
+				//.month(month)
+				//.runAt(runAt)
+				//.scheduleOption(scheduleOption)
+				//.seconds(seconds)
+				//.startAt(startAt)
+				//.timeInterval(timeInterval)
+				//.timeUnit(timeUnit)
+				//.timeZone(timeZone)
+				//.year(year)
+				.build();
+		
+		Job job = jobService.updateJob(jobRequest);
+		
+		return Response.ok(job).build();
 	}
 
 	@Override

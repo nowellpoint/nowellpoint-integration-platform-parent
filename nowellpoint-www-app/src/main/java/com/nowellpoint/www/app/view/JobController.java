@@ -164,19 +164,54 @@ public class JobController extends AbstractStaticController {
 				.withTimeUnit(timeUnit)
 				.withTimeInterval(timeInterval);
 		
-		CreateResult<Job> createRequest = NowellpointClient.defaultClient(token)
+		CreateResult<Job> createResult = NowellpointClient.defaultClient(token)
 				.job()
 				.create(jobRequest);
 		
-		if (! createRequest.isSuccess()) {
+		if (! createResult.isSuccess()) {
 			response.status(400);
-			return showError(createRequest.getErrorMessage());
+			return showError(createResult.getErrorMessage());
 		}
 		
 		return "";
 	}
 	
-	public static String updateJob(Configuration configuration, Request request, Response response) {
-		return null;
+	public static String updateJob(Configuration configuration, Request request, Response response) {		
+		Token token = getToken(request);
+		Identity identity = getIdentity(request);
+		
+		String id = request.params(":id");
+
+		String notificationEmail = request.queryParams("notificationEmail");
+		String slackWebhookUrl = request.queryParams("slackWebhookUrl");
+		String description = request.queryParams("description");
+		//String scheduleOption = request.queryParams("scheduleOption");
+		//String runAt = request.queryParams("runAt");
+		//String startAt = request.queryParams("startAt");
+		//String endAt = request.queryParams("endAt");
+		//String timeInterval = request.queryParams("timeInterval");
+		//String timeUnit = request.queryParams("timeUnit");
+		
+		JobRequest jobRequest = new JobRequest()
+				//.withRunAt(runAt)
+				.withDescription(description)
+				.withTimeZone(identity.getTimeZoneSidKey())
+				.withNotificationEmail(notificationEmail)
+				.withSlackWebhookUrl(slackWebhookUrl);
+				//.withScheduleOption(scheduleOption)
+				//.withStartAt(startAt)
+				//.withEndAt(endAt)
+				//.withTimeUnit(timeUnit)
+				//.withTimeInterval(timeInterval);
+		
+		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
+				.job()
+				.update(id, jobRequest);
+		
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
+		
+		return responseBody(updateResult);
 	}
 }

@@ -18,6 +18,8 @@ import com.nowellpoint.http.Status;
 public class JobResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "jobs";
+	private static final String RUN = "run";
+	private static final String TEST_WEBHOOK_URL = "test-webhook-url";
 	
 	public JobResource(Token token) {
 		super(token);
@@ -63,54 +65,11 @@ public class JobResource extends AbstractResource {
 	}
 	
 	public UpdateResult<Job> run(String id) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.path("actions")
-    			.path("run")
-    			.path("invoke")
-    			.execute();
-		
-		UpdateResult<Job> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			Job resource = httpResponse.getEntity(Job.class);
-			result = new UpdateResultImpl<Job>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Job>(error);
-			throw new NotFoundException(httpResponse.getAsString());
-		} 
-    	
-    	return result;
+    	return invokeAction(id, RUN);
 	}
 	
 	public UpdateResult<Job> testWebHookUrl(String id) {
-		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.path("actions")
-    			.path("test-webhook-url")
-    			.path("invoke")
-    			.execute();
-		
-		UpdateResult<Job> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			Job resource = httpResponse.getEntity(Job.class);
-			result = new UpdateResultImpl<Job>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Job>(error);
-			throw new NotFoundException(httpResponse.getAsString());
-		} 
-    	
-    	return result;
-		
+		return invokeAction(id, TEST_WEBHOOK_URL);
 	}
 	
 	public CreateResult<Job> create(JobRequest request) {
@@ -153,6 +112,33 @@ public class JobResource extends AbstractResource {
     	return result;
 	}
 	
+	public UpdateResult<Job> update(String id, JobRequest request) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+    			.parameter("description", request.getDescription())
+    			.parameter("notificationEmail", request.getNotificationEmail())
+    			.parameter("slackWebhookUrl", request.getSlackWebhookUrl())
+    			.execute();
+		
+		UpdateResult<Job> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Job resource = httpResponse.getEntity(Job.class);
+			result = new UpdateResultImpl<Job>(resource);
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Job>(error);
+		}
+    	
+    	return result;
+	}
+	
 	public String downloadOutputFile(String id, String filename) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
@@ -174,6 +160,32 @@ public class JobResource extends AbstractResource {
     	}
     	
     	return resource;
+	}
+	
+	private UpdateResult<Job> invokeAction(String id, String action) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("actions")
+    			.path(action)
+    			.path("invoke")
+    			.execute();
+		
+		UpdateResult<Job> result = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Job resource = httpResponse.getEntity(Job.class);
+			result = new UpdateResultImpl<Job>(resource);
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Job>(error);
+		}
+    	
+    	return result;
 	}
 	
 	public JobExecutionResource jobExecution() {

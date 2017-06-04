@@ -46,6 +46,7 @@ public class Path {
 		public static final String ACCOUNT_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile/:id/deactivate");
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
+		public static final String JOBS_UPDATE = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs/:id/outputs");
 		public static final String JOBS_OUTPUTS_DOWNLOAD = String.format(APPLICATION_CONTEXT, "jobs/:id/download");
 		public static final String JOBS_WEBHOOK_URL_TEST = String.format(APPLICATION_CONTEXT, "jobs/:id/webhook-test");

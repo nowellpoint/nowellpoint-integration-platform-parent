@@ -62,20 +62,22 @@ public interface JobResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateJob(@PathParam("id") String id,
+			@FormParam("notificationEmail") String notificationEmail,
+			@FormParam("slackWebhookUrl") String slackWebhookUrl,
+			@FormParam("scheduleOption") String scheduleOption,
+			@FormParam("runAt") String runAt,
 			@FormParam("dayOfMonth") String dayOfMonth,
 			@FormParam("dayOfWeek") String dayOfWeek,
 			@FormParam("description") String description,
-			@FormParam("runAt") String runAt,
 			@FormParam("hours") String hours,
-			@FormParam("jobName") String jobName,
-			@FormParam("end") String end,
+			@FormParam("endAt") String endAt,
 			@FormParam("minutes") String minutes,
 			@FormParam("month") String month,
-			@FormParam("notificationEmail") String notificationEmail,
-			@FormParam("scheduleOption") String scheduleOption,
 			@FormParam("seconds") String seconds,
-			@FormParam("start") String start,
+			@FormParam("startAt") String startAt,
 			@FormParam("timeZone") String timeZone,
+			@FormParam("timeUnit") String timeUnit,
+			@FormParam("timeInterval") String timeInterval,
 			@FormParam("year") String year);
 	
 	@POST

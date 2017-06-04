@@ -191,6 +191,7 @@ public class Application implements SparkApplication {
         
         get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
         get(Path.Route.JOBS_VIEW, (request, response) -> JobController.viewJob(configuration, request, response));
+        post(Path.Route.JOBS_UPDATE, (request, response) -> JobController.updateJob(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS, (request, response) -> JobController.viewOutputs(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS_DOWNLOAD, (request, response) -> JobController.downloadOutputFile(configuration, request, response));
         post(Path.Route.JOBS_RUN, (request, response) -> JobController.runJob(configuration, request, response));
