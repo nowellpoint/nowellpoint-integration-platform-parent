@@ -4,9 +4,9 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.PlanResource;
-import com.nowellpoint.api.rest.PlanService;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.PlanList;
+import com.nowellpoint.api.service.PlanService;
 
 public class PlanResourceImpl implements PlanResource {
 	

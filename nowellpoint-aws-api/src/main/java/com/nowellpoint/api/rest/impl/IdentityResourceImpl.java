@@ -7,10 +7,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Identity;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.util.Assert;
 
 public class IdentityResourceImpl implements IdentityResource {

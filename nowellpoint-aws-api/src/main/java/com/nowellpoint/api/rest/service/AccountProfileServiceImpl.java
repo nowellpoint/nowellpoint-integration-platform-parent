@@ -39,14 +39,14 @@ import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.annotation.Deactivate;
 import com.nowellpoint.api.model.document.Address;
-import com.nowellpoint.api.model.document.IsoCountry;
 import com.nowellpoint.api.model.document.Photos;
-import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
+import com.nowellpoint.api.rest.domain.IsoCountry;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.IsoCountryService;
 import com.nowellpoint.api.service.PaymentGatewayService;
@@ -120,7 +120,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			accountProfile.setTimeZoneSidKey(TimeZone.getDefault().getID());
 		}
 
-		IsoCountry isoCountry = isoCountryService.lookupByIso2Code(accountProfile.getAddress().getCountryCode(), "US");
+		IsoCountry isoCountry = isoCountryService.findByIso2CodeAndLanguage(accountProfile.getAddress().getCountryCode(), "US");
 
 		accountProfile.getAddress().setCountry(isoCountry.getDescription());
 
@@ -369,7 +369,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		if (isEqual(address.getCountryCode(), accountProfile.getAddress().getCountryCode())) {
 			address.setCountry(accountProfile.getAddress().getCountry());
 		} else {
-			IsoCountry isoCountry = isoCountryService.lookupByIso2Code(address.getCountryCode(), "US");
+			IsoCountry isoCountry = isoCountryService.findByIso2CodeAndLanguage(address.getCountryCode(), "US");
 			address.setCountry(isoCountry.getDescription());
 		}
 		

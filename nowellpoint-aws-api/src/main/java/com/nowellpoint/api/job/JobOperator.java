@@ -112,7 +112,7 @@ public class JobOperator  {
 			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
 				
 			} else {
-				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, ONCE, SCHEDULE and SPECIFIC_DAYS", job.getScheduleOption()));
+				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE and RUN_ON_SPECIFIC_DAYS", job.getScheduleOption()));
 			}
 			
 			if (Assert.isNotNull(trigger)) {

@@ -151,15 +151,17 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Source source = Source.of(salesforceConnector);
 		
+		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
+		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
 				.jobType(jobType)
 				.source(source)
 				.notificationEmail(salesforceConnector.getIdentity().getEmail())
 				.schedule(RunOnSchedule.builder()
-						.startAt(Date.from(Instant.now()))
+						.startAt(startAt.getTime())
 						.timeInterval(1)
-						.timeZone(TimeZone.getTimeZone("UTC"))
+						.timeZone(startAt.getTimeZone())
 						.timeUnit(TimeUnit.DAYS)
 						.build())
 				.build();
@@ -177,31 +179,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Override
 	public SalesforceConnector updateSalesforceConnector(String id, String name, String tag, String ownerId) {		
-		SalesforceConnector original = findById(id);
-		
-		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
-		
-		Source source = Source.of(original);
-		
-		Calendar startAt = getDefaultStartDate(original.getOrganization().getDefaultLocaleSidKey());
-		
-		CreateJobRequest jobRequest = CreateJobRequest.builder()
-				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
-				.jobType(jobType)
-				.source(source)
-				.notificationEmail(original.getIdentity().getEmail())
-				.schedule(RunOnSchedule.builder()
-						.startAt(startAt.getTime())
-						.timeInterval(1)
-						.timeZone(startAt.getTimeZone())
-						.timeUnit(TimeUnit.DAYS)
-						.build())
-				.build();
-		
-		jobRequestEvent.fire(jobRequest);
-		
-		updateSalesforceConnector(original, name, tag, ownerId, null, null);
-		return original;
+		SalesforceConnector salesforceConnector = findById(id);
+		updateSalesforceConnector(salesforceConnector, name, tag, ownerId, null, null);
+		return salesforceConnector;
 	}
 	
 	/**

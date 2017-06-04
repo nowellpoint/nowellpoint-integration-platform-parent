@@ -9,21 +9,21 @@ import com.nowellpoint.api.rest.domain.JobList;
 
 public interface JobService {
 	
-	JobList findAllByOwner(String ownerId);
+	public JobList findAllByOwner(String ownerId);
 	
-	JobList findAllScheduled();
+	public JobList findAllScheduled();
 	
-	Job findById(String id);
+	public Job findById(String id);
 	
-	JobList queryBySource(String sourceId);
+	public JobList queryBySource(String sourceId);
 	
-	Job createJob(CreateJobRequest createJobRequest);
+	public Job createJob(CreateJobRequest createJobRequest);
 	
-	void updateJob(Job job);
+	public void updateJob(Job job);
 	
-	void runJob(Job job);
+	public void runJob(Job job);
 	
-	JobExecution findByFireInstanceId(String id, String fireInstanceId);
+	public JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
-	String getOutputFile(String id, String filename) throws IOException;
+	public String getOutputFile(String id, String filename) throws IOException;
 }

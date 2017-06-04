@@ -11,17 +11,17 @@ import com.sforce.ws.ConnectionException;
 
 public interface SalesforceService {
 	
-	Token login(String authEndpoint, String username, String password, String securityToken) throws ConnectionException;
+	public Token login(String authEndpoint, String username, String password, String securityToken) throws ConnectionException;
 	
-	Token login(SalesforceConnectionString salesforceConnectionString) throws ConnectionException, OauthException;
+	public Token login(SalesforceConnectionString salesforceConnectionString) throws ConnectionException, OauthException;
 	
-	DescribeGlobalSobjectsResult describe(String id);
+	public DescribeGlobalSobjectsResult describe(String id);
 	
-	OauthAuthenticationResponse authenticate(String code);
+	public OauthAuthenticationResponse authenticate(String code);
 	
-	User getUser(String accessToken, String userId, String sobjectUrl);
+	public User getUser(String accessToken, String userId, String sobjectUrl);
 	
-	Organization getOrganization(String accessToken, String organizationId, String sobjectUrl);
+	public Organization getOrganization(String accessToken, String organizationId, String sobjectUrl);
 	
-	OauthAuthenticationResponse refreshToken(String refreshToken);
+	public OauthAuthenticationResponse refreshToken(String refreshToken);
 }

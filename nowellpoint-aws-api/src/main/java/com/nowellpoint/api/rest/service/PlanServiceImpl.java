@@ -1,8 +1,8 @@
 package com.nowellpoint.api.rest.service;
 
-import com.nowellpoint.api.rest.PlanService;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.PlanList;
+import com.nowellpoint.api.service.PlanService;
 
 public class PlanServiceImpl extends AbstractPlanService implements PlanService {
 

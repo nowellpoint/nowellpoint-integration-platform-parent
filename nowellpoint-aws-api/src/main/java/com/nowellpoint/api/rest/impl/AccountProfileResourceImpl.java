@@ -18,12 +18,12 @@ import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Contact;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.rest.AccountProfileResource;
-import com.nowellpoint.api.rest.AccountProfileService;
-import com.nowellpoint.api.rest.PlanService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
+import com.nowellpoint.api.service.AccountProfileService;
+import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.util.Assert;
 
 public class AccountProfileResourceImpl implements AccountProfileResource {

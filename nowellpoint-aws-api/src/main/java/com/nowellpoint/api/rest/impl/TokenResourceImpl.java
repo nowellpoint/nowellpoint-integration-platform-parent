@@ -15,12 +15,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.rest.AccountProfileService;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.rest.domain.Token;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.api.ApiKey;

@@ -5,51 +5,15 @@ import com.nowellpoint.api.rest.domain.JobTypeList;
 
 public interface JobTypeService {
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
+	public JobType findById(String id);
 	
-	JobType findById(String id);
+	public JobType findByCode(String code);
 	
-	/**
-	 * 
-	 * @param code
-	 * @return
-	 */
+	public JobTypeList findByLanguage(String languageSidKey);
 	
-	JobType findByCode(String code);
+	public void createScheduledJobType(JobType jobType);
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
+	public void updateScheduledJobType(String id, JobType jobType);
 	
-	JobTypeList findByLanguage(String languageSidKey);
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	
-	void createScheduledJobType(JobType jobType);
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	
-	void updateScheduledJobType(String id, JobType jobType);
-	
-	/**
-	 * 
-	 * 
-	 * 
-	 */
-	
-	void deleteScheduledJobType(String id);
+	public void deleteScheduledJobType(String id);
 }
