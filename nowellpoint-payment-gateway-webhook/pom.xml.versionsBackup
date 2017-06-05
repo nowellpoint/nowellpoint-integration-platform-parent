@@ -1,15 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+	
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>nowellpoint-aws-sforce</artifactId>
+	<artifactId>nowellpoint-payment-gateway-webhook</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint Salesforce Services</name>
-	<description>Nowellpoint Salesforce Services jar</description>
+	<name>Payment Gateway Webhook</name>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.3-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -19,32 +18,27 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.nowellpoint</groupId>
-			<artifactId>nowellpoint-aws-data</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-lambda-java-core</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
-			<scope>test</scope>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${version.junit}</version>
-			<scope>test</scope>
+			<groupId>com.braintreepayments.gateway</groupId>
+			<artifactId>braintree-java</artifactId>
+			<version>${version.braintree.sdk}</version>
 		</dependency>
 	</dependencies>
 
 	<profiles>
 		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>deploy</id>
 			<build>
+				<finalName>nowellpoint-payment-gateway-webhook</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -60,7 +54,16 @@
 									<goal>shade</goal>
 								</goals>
 								<configuration>
+<!-- 
 									<minimizeJar>true</minimizeJar>
+									<filters>
+										<filter>
+											<includes>
+												<include>**</include>
+											</includes>
+										</filter>
+									</filters>
+ -->
 								</configuration>
 							</execution>
 						</executions>
@@ -68,5 +71,5 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+		</profiles>
 </project>
