@@ -1,175 +1,224 @@
-a {
-    
-    color: black;
-    text-decoration: none;
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
 }
-
-a:focus, a:hover {
-    
-    color: #ee4137;
-    text-decoration: none;
-    transition: ease-in-out .15s;
-    
-}
-
-.form-control:focus {
- 
-    border-color: #ee4137;
-    outline: 0;
-    box-shadow: none;
-}
-
-.form-control {
-    
+html,
+body,
+div,
+span,
+fieldset,
+form {
     border: 0;
+    font-family: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    margin: 0;
     outline: 0;
-    background: transparent;
-    border-bottom: 2px solid #9E9E9E;
-    box-shadow: none;
-    border-radius: 0;
-    margin-top: 40px;
     padding: 0;
+    vertical-align: baseline;
 }
-
-.form-group {
-    
-    margin-bottom: 0;
-    
+body {
+    background: url(../img/Get-bg.jpg) no-repeat 50% 50% fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
 }
-
-.btn-primary {
-    
-    color: #ee4137;
-    background-color: #ee4137;
-    border-color: #ee4137;
-    transition: ease-in-out .15s
+.site-logo {
+    padding: 30px 0px 0px 0px;
+    max-width: 1100px;
+    margin: auto;
+    text-align: center;
+    transition: all 0.3s;
 }
-
-.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus,.open>.dropdown-toggle.btn-primary:hover {
-    
-    color: #ee4137;
-    background-color: #ee4137;
-    border-color: #ee4137;
+.site-logo h1 {
+    margin: 0px;
 }
-
-.btn-primary:focus {
-    
-    background-color: #ee4137;
-    border-color: #ee4137;
-}
-.btn-primary:hover {
-    
-    color: #ffffff;
-    background-color: #ee4137;
-    border-color: #ee4137;
-    
-    transition: ease-in-out .15s;
-   
-}
-
-.btn-primary:active {
-    
-    background-color: #ee4137;
-    border-color: #ee4137;
-}
-
-img {
-    margin-left:15px;
-    height:150px;
-}
-
-html {
-    
-    font-family: 'Open Sans'
-}
-
-body { 
-    
-    font-family: 'Open Sans'
-}
-
-.text-center {
-    
-    font-weight:500;
-}
-
-.btn {
-    
-    margin-right: 135px;
-    font-weight:500;
-    padding: 8px 22px;
-    font-size:16px;
-    margin-top:40px;
-    border: 2px solid #ee4137;
-    border-radius: 25px;
-    background-color: rgba(238, 81, 55, 0);
+.site-logo h1 a {
+    font-size: 49px;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    text-decoration: none;
     text-transform: uppercase;
+    text-shadow: rgb(3, 3, 3) 0px 2px 5px;
+    transition: all 0.7s ease;
 }
-
-label {
-    
-    font-weight:400;
-    margin-top: 5px;
+.login_container {}
+.login_container .center {
+    padding: 100px 0px 0px 0px;
+    max-width: 1100px;
+    margin: auto;
+    text-align: center;
 }
-
-@font-face {
-  font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?g3r0uw');
-  src:  url('../fonts/icomoon.eot?g3r0uw#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?g3r0uw') format('truetype'),
-    url('../fonts/icomoon.woff?g3r0uw') format('woff'),
-    url('../fonts/icomoon.svg?g3r0uw#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
+.login_container h2 {
+    font-size: 36px;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    text-transform: uppercase;
+    line-height: 60px;
 }
-
-[data-icon]:before, [class="icon-nav-bar-logo"]:before {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1.5;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.login_container h3 {
+    font-size: 24px;
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    line-height: 60px;
 }
-
-.icon-nav-bar-logo:before {
-  content: "\e900";
-    font-size: 35pt;
-    color: black;
+.login_container .success {
+    font-size: 20px;
+    color: #00ff00;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    line-height: 60px;
+    text-align: center;
 }
-
-
-
-.how-can-we-help {
-    border: 1px solid #9E9E9E;
-    border-radius: 4px;
-    padding: 6px;
+.login_container .error {
+    font-size: 20px;
+    color: #ff4d4d;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    margin: 0px;
+    line-height: 30px;
+    text-align: center;
 }
-
-.navbar-nav>li>a {
-    padding-top: 27px;
+.login_container p {
+    padding: 24px 0px 35px 0px;
+    font-size: 14px;
+    color: #ebebeb;
+    margin: 0px;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 25px;
+    font-weight: 400;
 }
-
-.navbar-default .navbar-nav>li>a:hover  {
-    color: #ee4137;
-    
+.login_container .line {
+    border: solid 1px #ff9408;
+    height: 2px;
+    width: 252px;
+    margin: auto;
+    margin-top: 18px;
+    margin-bottom: 18px;
 }
-
-.fa-3x {
-    color: #777;
+.login_section {
+    width: 100%;
+    height: 100%;
 }
-
-p {
-padding-top: 10px;
-    
+.login_section .mid {
+    padding: 0px 0px 95px 0px;
+    max-width: 400px;
+    margin: auto;
+    overflow: hidden;
 }
-
-.country-name {
-    border: 1px solid #9E9E9E;
+.login_section fieldset {
+    padding: 0px;
+    margin: 0px;
+}
+.login_section p {
+    padding: 0px;
+    margin: 0px 0px 25px 0px;
+}
+.login_section input.field {
+    padding: 15px 20px 14px 20px;
+    font-size: 14px;
+    color: #979797;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    border: 0px;
+    width: 100%;
+    box-shadow: 0px 2px 6px 0px #242424;
+    -webkit-box-shadow: 0px 2px 6px 0px #242424;
+    -moz-box-shadow: 0px 2px 6px 0px #242424;
+    -o-box-shadow: 0px 2px 6px 0px #242424;
+    border-radius: 8px;
+}
+.login_section input.number {
+    padding: 15px 20px 14px 20px;
+    font-size: 14px;
+    color: #979797;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    border: 0px;
+    width: 30%;
+    box-shadow: 0px 2px 6px 0px #242424;
+    -webkit-box-shadow: 0px 2px 6px 0px #242424;
+    -moz-box-shadow: 0px 2px 6px 0px #242424;
+    -o-box-shadow: 0px 2px 6px 0px #242424;
+    border-radius: 8px;
+}
+.login_section input.cvv {
+    padding: 15px 20px 14px 20px;
+    font-size: 14px;
+    color: #979797;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    border: 0px;
+    width: 38%;
+    box-shadow: 0px 2px 6px 0px #242424;
+    -webkit-box-shadow: 0px 2px 6px 0px #242424;
+    -moz-box-shadow: 0px 2px 6px 0px #242424;
+    -o-box-shadow: 0px 2px 6px 0px #242424;
+    border-radius: 8px;
+}
+.login_section input:focus {
+    outline: none;
+}
+.login_section select {
+    height: 48px;
+    font-size: 14px;
+    color: #979797;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    border: 0px;
+    width: 100%;
+    box-shadow: 0px 2px 6px 0px #242424;
+    -webkit-box-shadow: 0px 2px 6px 0px #242424;
+    -moz-box-shadow: 0px 2px 6px 0px #242424;
+    -o-box-shadow: 0px 2px 6px 0px #242424;
+    border-radius: 8px;
+}
+.login_section select:focus {
+    outline: none;
+}
+.login_section .button {
+    padding: 16px 0px 17px 0px;
+    margin-top: -3px;
+    font-size: 14px;
+    color: #e9ecee;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    background: #e2850a;
+    border: 0px;
+    text-transform: uppercase;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0px 2px 6px 0px #242424;
+    -webkit-box-shadow: 0px 2px 6px 0px #242424;
+    -moz-box-shadow: 0px 2px 6px 0px #242424;
+    -o-box-shadow: 0px 2px 6px 0px #242424;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.login_section .button:hover {
+    background: #2d2d2d;
+    color: #fff;
+}
+.login_section ul {
+    list-style: none;
+    margin: 0px;
+    padding: 27px 0px 0px 0px;
+}
+.login_section li {
+    padding: 0px;
+    text-align: center;
+}
+.login_section li a {
+    text-decoration: none;
+    color: #f88e04;
 }

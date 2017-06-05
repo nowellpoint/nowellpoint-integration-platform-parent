@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ClientProtocolException;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -28,7 +28,7 @@ import com.nowellpoint.sforce.model.OutboundMessageResult;
 
 public class OutboundMessageHandler {
 	
-	private static DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient());
+	private static DynamoDBMapper mapper = new DynamoDBMapper(AmazonDynamoDBClientBuilder.defaultClient());
 	
 	public String handleEvent(DynamodbEvent event, Context context) {
 		

@@ -4,7 +4,7 @@ public class IsoCountry extends AbstractResource {
 	
 	private String language;
 	
-	private String code;
+	private String iso2Code;
 	
 	private String name;
 	
@@ -22,12 +22,12 @@ public class IsoCountry extends AbstractResource {
 		this.language = language;
 	}
 
-	public String getCode() {
-		return code;
+	public String getIso2Code() {
+		return iso2Code;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setIso2Code(String iso2Code) {
+		this.iso2Code = iso2Code;
 	}
 
 	public String getName() {

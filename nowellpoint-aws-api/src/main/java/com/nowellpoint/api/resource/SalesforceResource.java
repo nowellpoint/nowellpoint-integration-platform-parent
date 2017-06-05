@@ -3,11 +3,11 @@ package com.nowellpoint.api.resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,7 +22,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.util.Properties;
-import com.nowellpoint.client.sforce.model.LoginResult;
+import com.sforce.ws.ConnectionException;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 
@@ -40,8 +40,7 @@ public class SalesforceResource {
 	
 	@GET
 	@Path("oauth")
-	@PermitAll
-	public Response oauth(@QueryParam(value="state") String state) {
+	public Response oauth() {
 		
 		String url = null;
 		try {
@@ -62,10 +61,8 @@ public class SalesforceResource {
 					.append("redirect_uri=")
 					.append(URLEncoder.encode(System.getProperty(Properties.SALESFORCE_REDIRECT_URI), "UTF-8"))
 					.append("&")
-					.append("scope=web%20api%20refresh_token")
-					.append("&")
-					.append("state=")
-					.append(URLEncoder.encode(state, "UTF-8"))
+					.append("scope=")
+					.append(URLEncoder.encode("web api refresh_token", "UTF-8"))
 					.toString();
 			
 		} catch (UnsupportedEncodingException e) {
@@ -101,9 +98,15 @@ public class SalesforceResource {
 			@FormParam(value="password") @NotEmpty String password,
 			@FormParam(value="securityToken") @NotEmpty String securityToken) {
 		
-		LoginResult result = salesforceService.login(authEndpoint, username, password, securityToken);
+		Token token = null;
 		
-		return Response.ok(result)
+		try {
+			token = salesforceService.login(authEndpoint, username, password, securityToken);
+		} catch (ConnectionException e) {
+			throw new NotAuthorizedException(e);
+		}
+		
+		return Response.ok(token)
 				.build();
 	}
 	

@@ -24,6 +24,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.util.Properties;
 
@@ -37,7 +38,7 @@ import redis.clients.jedis.Protocol;
 public class CacheManager implements ServletContextListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
-	private static final ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	
 	private static JedisPool jedisPool;
 	private static Cipher cipher;

@@ -1,0 +1,121 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div>
+            <p class="card-text"><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobjects"]}</p>
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div class="flextable p-t">
+            <div class="flextable-item flextable-primary">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${sobject.name}</h6>
+                        <h3 class="dashhead-title">${sobject.label}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="content">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td class="text-center">
+                            ${labels["query"]}
+                            <br>
+                            <p class="${sobject.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.queryable?then('icon-check', 'icon-cross')}"></span></p>
+                        </td>
+                        <td class="text-center">
+                            ${labels["create"]}
+                            <br>
+                            <p class="${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></p>
+                        </td>
+                        <td class="text-center">
+                            ${labels["update"]}
+                            <br>
+                            <p class="${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></p>
+                        </td>
+                        <td class="text-center">
+                            ${labels["delete"]}
+                            <br>
+                            <p class="${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></p>
+                        </td>
+                        <td class="text-center">
+                            ${labels["custom"]}
+                            <br>
+                            <span class="icon ${sobject.custom?then('icon-check', '')}"></span>
+                        </td>
+                        <td class="text-center">
+                            ${labels["record.count"]}
+                            <br> &nbsp;
+                        </td>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#fields" data-toggle="tab">${labels["fields"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#relationships" data-toggle="tab">${labels["relationships"]}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-block">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="fields">
+                        <table class="table">
+                            <thead>
+                                <th>${labels["name"]}</th>
+                                <th>${labels["label"]}</th>
+                                <th>${labels["type"]}</th>
+                                <th class="text-center">${labels["custom"]}</th>
+                                <th class="text-right">${labels["length"]}</th>
+                            </thead>
+                            <tbody>
+                                <#list sobject.fields as field>
+                                    <tr>
+                                        <td>${field.name}</td>
+                                        <td>${field.label}</td>
+                                        <td>${field.type}</td>
+                                        <td class="text-center"><span class="icon ${field.custom?then('icon-check', '')}"></span></td>
+                                        <td class="text-right">${field.length}</td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="relationships">
+                        <table class="table">
+                            <thead>
+                                <th>${labels["field"]}</th>
+                                <th>${labels["child.sobject"]}</th>
+                                <th>${labels["relationship.name"]}</th>
+                            </thead>
+                            <tbody>
+                                <#if sobject.childRelationships?size==0>
+                                    <tr>
+                                        <td colspan="3">${labels["no.relationships"]}</td>
+                                    </tr>
+                                </#if>
+                                <#if sobject.childRelationships?size gt 0>
+                                    <#list sobject.childRelationships as relationship>
+                                        <tr>
+                                            <td>${relationship.field}</td>
+                                            <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${(relationship.childSObject!)}">${relationship.childSObject}</a></td>
+                                            <td>${(relationship.relationshipName)!}</td>
+                                        </tr>
+                                    </#list>
+                                </#if>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </@t.page>

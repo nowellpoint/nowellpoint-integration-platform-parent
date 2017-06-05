@@ -6,7 +6,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
-import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
@@ -35,6 +34,13 @@ public class TestAutheticators {
 		try {
 			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
+			
+			System.out.println(response.getToken().getAccessToken());			
+			System.out.println(response.getToken().getId());
+			System.out.println(response.getToken().getInstanceUrl());
+			System.out.println(response.getToken().getIssuedAt());
+			System.out.println(response.getToken().getSignature());
+			System.out.println(response.getToken().getTokenType());
 			
 			assertNotNull(response.getToken());
 			assertNotNull(response.getIdentity());
@@ -70,13 +76,13 @@ public class TestAutheticators {
 			CountRequest countRequest = new CountRequest()
 					.withAccessToken(response.getToken().getAccessToken())
 					.withQueryUrl(response.getIdentity().getUrls().getQuery())
-					.withSobject("Opportunity");
+					.withSobject("Vote");
 			
-			Count count = client.getCount(countRequest);
+			Long count = client.getCount(countRequest);
 			
-			assertNotNull(count.getTotalSize());
+			assertNotNull(count);
 			
-			System.out.println(count.getRecords().get(0).getExpr0());
+			System.out.println(count);
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			

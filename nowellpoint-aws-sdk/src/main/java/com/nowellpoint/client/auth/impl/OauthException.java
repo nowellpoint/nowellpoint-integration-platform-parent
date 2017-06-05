@@ -1,5 +1,7 @@
 package com.nowellpoint.client.auth.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OauthException extends RuntimeException {
 	
 	/**
@@ -8,21 +10,31 @@ public class OauthException extends RuntimeException {
 	
 	private static final long serialVersionUID = 5043817691692313615L;
 
-	private Integer code;
+	@JsonProperty(value="error")
+	private String error;
 	
-	private String message;
+	@JsonProperty(value="error_description")
+	private String errorDescription;
 	
-	public OauthException(Integer code, String message) {
+	public OauthException(String error, String errorDescription) {
 		super();
-		this.code = code;
-		this.message = message;
+		this.error = error;
+		this.errorDescription = errorDescription;
 	}
 
-	public Integer getCode() {
-		return code;
+	public String getError() {
+		return error;
 	}
-	
-	public String getMessage() {
-		return message;
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public String getErrorDescription() {
+		return errorDescription;
+	}
+
+	public void setErrorDescription(String errorDescription) {
+		this.errorDescription = errorDescription;
 	}
 }

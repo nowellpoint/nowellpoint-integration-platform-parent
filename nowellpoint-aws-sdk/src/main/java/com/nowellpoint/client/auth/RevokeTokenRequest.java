@@ -1,7 +1,8 @@
 package com.nowellpoint.client.auth;
 
+import com.nowellpoint.client.model.Token;
+
 public interface RevokeTokenRequest {
 	
-	public String getAccessToken();
-
+	public Token getToken();
 }

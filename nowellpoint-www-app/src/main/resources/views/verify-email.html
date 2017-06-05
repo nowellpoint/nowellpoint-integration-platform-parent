@@ -12,37 +12,36 @@
 
     <title>${messages["application.title"]}</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/media.css" type="text/css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
 
 </head>
 
 <body>
 
-    <section>
-        <div class="container">
-            <div class="row">
-                <br>
-                <br>
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
-                    <#if successMessage??>
-                        <div id="success" class="alert alert-success">
-                            <div class="text-center">${successMessage}</div>
-                            <div class="text-center"><a href="/login">${labels["login"]}</a></div>
-                        </div>
-                    </#if>
-                    <#if errorMessage??>
-                        <div id="error" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
+    <div class="DesignHolder">
+        <div class="LayoutFrame">
+
+            <div id="container">
+                <div class="About_sec" id="about">
+                    <div class="Center">
+                        <h1 class="success">${labels["welcome"]}</h1>
+                        <h4 class="success">${labels["account.success"]}</h4>
+                        <a href="/login">${labels["login"]}</a>
+                    </div>
                 </div>
-                <div class="col-md-2"></div>
+                <div class="clear"></div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 
 </body>
 

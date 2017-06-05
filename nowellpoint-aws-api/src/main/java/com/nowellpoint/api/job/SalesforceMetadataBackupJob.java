@@ -1,63 +1,46 @@
 package com.nowellpoint.api.job;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-import static com.nowellpoint.util.Assert.isNotNull;
-import static com.sforce.soap.partner.Connector.newConnection;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.quartz.Job;
+import org.jboss.logging.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.DBRef;
-import com.nowellpoint.api.model.document.Backup;
-import com.nowellpoint.api.model.document.Environment;
-import com.nowellpoint.api.model.document.RunHistory;
-import com.nowellpoint.api.model.document.SalesforceConnector;
-import com.nowellpoint.api.model.document.ScheduledJob;
-import com.nowellpoint.api.model.document.ScheduledJobRequest;
-import com.nowellpoint.api.model.document.UserRef;
-import com.nowellpoint.api.model.dynamodb.UserProperties;
-import com.nowellpoint.api.model.dynamodb.UserProperty;
-import com.nowellpoint.util.Properties;
-import com.nowellpoint.client.sforce.Authenticators;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.nowellpoint.api.model.document.Job;
+import com.nowellpoint.api.model.document.JobExecution;
+import com.nowellpoint.api.model.document.JobOutput;
+import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
+import com.nowellpoint.api.rest.service.SalesforceServiceImpl;
+import com.nowellpoint.api.rest.service.VaultEntryServiceImpl;
+import com.nowellpoint.api.service.SalesforceService;
+import com.nowellpoint.api.service.VaultEntryService;
+import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
 import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.OauthRequests;
-import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
+import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Theme;
@@ -65,9 +48,15 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
-import com.nowellpoint.mongodb.document.MongoDatastore;
-import com.nowellpoint.mongodb.document.MongoDocumentService;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
+import com.nowellpoint.mongodb.Datastore;
+import com.nowellpoint.mongodb.DocumentManager;
+import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -75,13 +64,14 @@ import com.sendgrid.Method;
 import com.sendgrid.Personalization;
 import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
-import com.sforce.soap.partner.PartnerConnection;
-import com.sforce.soap.partner.fault.LoginFault;
 import com.sforce.ws.ConnectionException;
-import com.sforce.ws.ConnectorConfig;
 
-public class SalesforceMetadataBackupJob implements Job {
+public class SalesforceMetadataBackupJob extends AbstractCacheService implements org.quartz.Job {
 	
+	private static final Logger LOGGER = Logger.getLogger(SalesforceMetadataBackupJob.class);
+	
+	private DocumentManagerFactory documentManagerFactory;
+
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private static final String bucketName = "nowellpoint-metadata-backups";
@@ -90,291 +80,192 @@ public class SalesforceMetadataBackupJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
-		ScheduledJobService scheduledJobService = new ScheduledJobService();
-		ScheduledJobRequestService scheduledJobRequestService = new ScheduledJobRequestService();
-		SalesforceConnectorService salesforceConnectorService = new SalesforceConnectorService();
+		documentManagerFactory = Datastore.getCurrentSession();
 		
-		Set<ScheduledJobRequest> scheduledJobRequests = scheduledJobRequestService.getScheduledJobRequests();
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
-		if (scheduledJobRequests.size() > 0) {
-			ExecutorService executor = Executors.newFixedThreadPool(scheduledJobRequests.size());
+		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
+				.getKey()
+				.getName()));
+		
+		job.setStatus("RUNNING");
+		
+		documentManager.replaceOne(job);
+		
+		set(job.getId().toString(), job);
+		
+		VaultEntryService vaultEntryService = new VaultEntryServiceImpl();
+		
+		VaultEntry vaultEntry = vaultEntryService.retrive(job.getSource().getConnectionString());
+		
+		SalesforceConnectionString salesforceConnectionString = SalesforceConnectionString.of(vaultEntry.getValue());
+		
+		SalesforceService salesforceService = new SalesforceServiceImpl();
+		
+		try {
 			
-			scheduledJobRequests.stream().forEach(scheduledJobRequest -> {
-				
-		    	executor.submit(() -> {
-		    		
-		    		Date fireTime = Date.from(Instant.now());
-		    		
-		    		ScheduledJob scheduledJob = null;
-		    		
-		    		try {
-		    			
-		    			//
-		    			// update ScheduledJobRequest
-		    			//
-		    			
-		    			scheduledJobRequest.setStatus("Running");
-		    			scheduledJobRequest.setFireInstanceId(context.getFireInstanceId());
-		    			scheduledJobRequest.setGroupName(context.getJobDetail().getKey().getGroup());
-		    			scheduledJobRequest.setJobName(context.getJobDetail().getKey().getName());
-		    			scheduledJobRequestService.replace( scheduledJobRequest );
-		    			
-		    			//
-		    			// update ScheduledJob
-		    			//
-		    			
-		    			scheduledJob = scheduledJobService.findById(scheduledJobRequest.getScheduledJobId());
-		    			scheduledJob.setStatus(scheduledJobRequest.getStatus());
-		    			scheduledJobService.replace(scheduledJob);
-			    	
-			    		//
-			    		// get environment associated with the ScheduledJob
-			    		//
-			    		
-			    		Environment environment = salesforceConnectorService.getEnvironment(scheduledJobRequest.getConnectorId(), scheduledJobRequest.getEnvironmentKey());
-			    		
-			    		//
-			    		// get User Properties
-			    		//
-			    		
-			    		Map<String, UserProperty> properties = getUserProperties(environment.getKey());
-			    	
-			    		// 
-			    		// authenticate to the environment
-			    		//
-			    		
-			    		String accessToken = null;
-			    		
-			    		if ("password".equals(environment.getGrantType())) {
-			    			accessToken = authenticate(environment.getAuthEndpoint(), environment.getUsername(), properties.get("password").getValue(), properties.get("securityToken").getValue());
-			    		} else {
-			    			accessToken = authenticate(properties.get("refresh.token").getValue());
-			    		}
-			    		
-			    		//
-			    		// get the identity of the user associate to the environment
-			    		//
-			    		
-				    	Identity identity = getIdentity(accessToken, environment.getIdentityId());
-						
-				    	// 
-				    	// DescribeGlobal
-				    	//
-				    	
-						DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(accessToken, identity.getUrls().getSobjects());
-				    	
-						//
-						// create keyName
-						//
-						
-				    	String keyName = String.format("%s/DescribeGlobalResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-				    	
-				    	//
-						// write the result to S3
-						//
-				    	
-				    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
-				    	
-				    	//
-				    	// add Backup reference to ScheduledJobRequest
-				    	//
-				    	
-				    	scheduledJobRequest.addBackup(new Backup("DescribeGlobal", keyName, result.getMetadata().getContentLength()));
-				    	
-				    	//
-				    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
-				    	//
-				    	
-				    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(accessToken, identity.getUrls().getSobjects(), describeGlobalSobjectsResult, scheduledJob.getLastRunDate());
-				    	
-				    	//
-				    	// if describeSobjectResults is not empty then save to S3
-				    	//
-				    	
-				    	if (! describeSobjectResults.isEmpty()) {
-				    		
-				    		//
-					    	// create keyName
-					    	//
-					    	
-					    	keyName = String.format("%s/DescribeSobjectResult-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-					    	
-					    	//
-							// write the result to S3
-							//
-					    	
-					    	result = putObject(keyName, describeSobjectResults);
-					    	
-					    	//
-					    	// add Backup reference to ScheduledJobRequest
-					    	//
-					    	
-					    	scheduledJobRequest.addBackup(new Backup("DescribeSobjects", keyName, result.getMetadata().getContentLength()));
-				    		
-				    	}
-				    	
-				    	//
-				    	// add theme
-				    	//
-				    	
-				    	keyName = String.format("%s/Theme-%s", environment.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-				    	
-				    	//
-				    	// get theme
-				    	//
-				    	
-				    	Theme theme = getTheme(accessToken, identity.getUrls().getRest());
-				    	
-				    	// 
-				    	// write result to S3
-				    	//
-				    	
-				    	result = putObject(keyName, theme);
-				    	
-				    	//
-				    	// add Backup reference to ScheduledJobRequest
-				    	//
-				    	
-				    	scheduledJobRequest.addBackup(new Backup("Theme", keyName, result.getMetadata().getContentLength()));
-				    	
-				    	// 
-				    	// set status
-				    	//
-				    	
-				    	scheduledJobRequest.setStatus("Success");
-				    	
-				    	//
-				    	// udpate environment with lastest information
-				    	//
-				    	
-				    	environment.setTheme(theme);
-				    	environment.setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-				    	
-			    	} catch (Exception e) {
-			    		scheduledJobRequest.setStatus("Failure");
-			    		scheduledJobRequest.setFailureMessage(e.getMessage());
-			    	} 
-		    		
-		    		//
-		    		// compile and send notification
-		    		//
-		    		
-		    		if (Assert.isNotNull(scheduledJobRequest.getNotificationEmail())) {
-		    			
-		    			String format = "%-20s%s%n";
-			    		
-			    		String subject = String.format("[%s] Scheduled Job Request Complete", scheduledJobRequest.getEnvironmentName());
-			    		
-			    		String message = new StringBuilder()
-			    				.append(String.format(format, "Scheduled Job:", scheduledJobRequest.getJobTypeName()))
-			    				.append(String.format(format, "Completion Date:", Date.from(Instant.now()).toString()))
-			    				.append(String.format(format, "Status:", scheduledJobRequest.getStatus()))
-			    				.append(isNotNull(scheduledJobRequest.getFailureMessage()) ? String.format(format, "Exception:", scheduledJobRequest.getFailureMessage()) : "")
-			    				.toString();
-			    		
-			    		sendNotification(scheduledJobRequest.getNotificationEmail(), subject, message);
-		    		}
-		    		
-		    		//
-		    		// update ScheduledJobRequest
-		    		//
-		    		
-		    		scheduledJobRequest.setJobRunTime(System.currentTimeMillis() - fireTime.getTime());
-			    	scheduledJobRequestService.replace( scheduledJobRequest );
-			    	
-			    	//
-			    	// create and add RunHistory
-			    	//
-		    		
-		    		RunHistory runHistory = new RunHistory();
-			    	runHistory.setFireInstanceId(context.getFireInstanceId());
-			    	runHistory.setFireTime(fireTime);
-			    	runHistory.setStatus(scheduledJobRequest.getStatus());
-			    	runHistory.setBackups(scheduledJobRequest.getBackups());
-			    	runHistory.setFailureMessage(scheduledJobRequest.getFailureMessage());
-			    	runHistory.setJobRunTime(scheduledJobRequest.getJobRunTime());
-			    	
-			    	//
-			    	// update ScheduledJob
-			    	//
-			    	
-			    	if (scheduledJob.getRunHistories() == null) {
-						scheduledJob.setRunHistories(new HashSet<RunHistory>());
-					} else if (scheduledJob.getRunHistories().size() == 10) {
-						List<RunHistory> runHistories = scheduledJob.getRunHistories().stream().sorted((r1, r2) -> r1.getFireTime().compareTo(r2.getFireTime())).collect(Collectors.toList());
-						runHistories.remove(0);
-						scheduledJob.setRunHistories(new HashSet<RunHistory>(runHistories));
-					}
-			    	
-			    	scheduledJob.getRunHistories().add(runHistory);
-			    	
-			    	scheduledJob.setStatus("Scheduled");
-			    	scheduledJob.setScheduleDate(Date.from(ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC")).plusDays(1).toInstant()));
-			    	scheduledJob.setLastRunStatus(scheduledJobRequest.getStatus());
-		    		scheduledJob.setLastRunFailureMessage(scheduledJobRequest.getFailureMessage());
-			    	scheduledJob.setLastRunDate(fireTime);
-			    	scheduledJob.setSystemModifiedDate(Date.from(Instant.now()));		    	
-			    	scheduledJobService.replace(scheduledJob);
-			    	
-			    	//
-			    	// setup the next scheduled job
-			    	//			    	
-			    	
-			    	scheduledJobRequestService.create(setupNextScheduledJobRequest(scheduledJob));
-			    	
-			    	return null;
-		    	});
-		    });
-		    
-		    executor.shutdown();
-		    
-		    try {
-				executor.awaitTermination(30, TimeUnit.SECONDS);
-			} catch (InterruptedException e) {
-				throw new JobExecutionException(e.getMessage());
+			// 
+			// Authenticate
+			//
+			
+			Token token = salesforceService.login(salesforceConnectionString);
+			
+			//
+			// Get Identity
+			//
+			
+			Identity identity = getIdentity(token.getAccessToken(), token.getId());
+			
+			// 
+	    	// DescribeGlobal
+	    	//
+			
+			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(token.getAccessToken(), identity.getUrls().getSobjects());
+			
+			//
+			// create keyName
+			//
+
+	    	String keyName = String.format("%s/DescribeGlobalResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+	    	
+	    	//
+			// write the result to S3
+			//
+
+	    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
+	    	
+	    	//
+	    	// add Backup reference to Job
+	    	//
+	    	
+	    	job.addJobOutput(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
+	    	
+	    	//
+	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
+	    	//
+
+	    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, job.getFireTime());
+	    	
+	    	//
+	    	// if describeSobjectResults is not empty then save to S3
+	    	//
+	    	
+	    	if (! describeSobjectResults.isEmpty()) {
+	    		
+	    		//
+		    	// create keyName
+		    	//
+		    	
+		    	keyName = String.format("%s/DescribeSobjectResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+		    	
+		    	//
+				// write the result to S3
+				//
+
+		    	result = putObject(keyName, describeSobjectResults);
+		    	
+		    	//
+		    	// add Backup reference to ScheduledJobRequest
+		    	//
+
+		    	job.addJobOutput(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
+		    	
+		    	//
+		    	// add theme
+		    	//
+		    	
+		    	keyName = String.format("%s/Theme-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+		    	
+		    	//
+		    	// get theme
+		    	//
+
+		    	Theme theme = getTheme(token.getAccessToken(), identity.getUrls().getRest());
+		    	
+		    	// 
+		    	// write result to S3
+		    	//
+
+		    	result = putObject(keyName, theme);
+		    	
+		    	//
+		    	// add Backup reference to ScheduledJobRequest
+		    	//
+
+		    	job.addJobOutput(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
+	    		
+	    	}
+	    	
+	    	if (Assert.isNull(context.getNextFireTime())) {
+				job.setStatus("COMPLETE");
+			} else {
+				job.setStatus("SCHEDULED");
+			}
+			
+		} catch (OauthException e) {
+			job.setStatus("ERROR");
+			job.setFailureMessage(e.getError());
+		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
+			job.setStatus("ERROR");
+			job.setFailureMessage(e.getMessage());
+		}
+		
+		JobExecution jobExecution = new JobExecution();
+		jobExecution.setFireInstanceId(context.getFireInstanceId());
+		jobExecution.setFireTime(context.getFireTime());
+		jobExecution.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
+		jobExecution.setStatus(job.getStatus());
+		
+		job.addJobExecution(jobExecution);
+		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
+		job.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
+		job.setFireTime(context.getFireTime());
+		job.setNextFireTime(context.getNextFireTime());
+		
+		documentManager.replaceOne(job);
+		
+		set(job.getId().toString(), job);
+		
+		//
+		// compile and send notification
+		//
+		
+		String format = "%s%1s%n";
+		
+		String message = new StringBuilder()
+				.append(String.format(format, "Scheduled Job: ", job.getJobName()))
+				.append(String.format(format, "Completion Date: ", Date.from(Instant.now()).toString()))
+				.append(String.format(format, "Status: ", job.getStatus()))
+				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception: ", job.getFailureMessage()) : "")
+				.toString();
+		
+		if (Assert.isNotNull(job.getNotificationEmail())) {
+    		
+    		String subject = String.format("[%s] Scheduled Job Request Complete", salesforceConnectionString.getOrganizationId());
+    		
+    		try {
+				sendNotification(job.getNotificationEmail(), subject, message);
+			} catch (IOException e) {
+				LOGGER.error("Unable to send email: " + e.getMessage());
 			}
 		}
-	}
-	
-	private ScheduledJobRequest setupNextScheduledJobRequest(ScheduledJob scheduledJob) {
-		ZonedDateTime dateTime = ZonedDateTime.ofInstant(scheduledJob.getScheduleDate().toInstant(), ZoneId.of("UTC"));
 		
-		String collectionName = MongoDatastore.getCollectionName( com.nowellpoint.api.model.document.AccountProfile.class );
-		ObjectId id = new ObjectId( System.getProperty( Properties.DEFAULT_SUBJECT ) );
-    	DBRef reference = new DBRef( collectionName, id );		
-		UserRef userRef = new UserRef(reference);
-
-		Date now = Date.from(Instant.now());
-    	
-		ScheduledJobRequest scheduledJobRequest = new ScheduledJobRequest();
-		scheduledJobRequest.setScheduledJobId(scheduledJob.getId());
-		scheduledJobRequest.setConnectorId(scheduledJob.getConnectorId());
-		scheduledJobRequest.setConnectorType(scheduledJob.getConnectorType());
-		scheduledJobRequest.setOwner(scheduledJob.getOwner());
-		scheduledJobRequest.setCreatedDate(now);
-		scheduledJobRequest.setCreatedBy(userRef);
-		scheduledJobRequest.setDescription(scheduledJob.getDescription());
-		scheduledJobRequest.setEnvironmentKey(scheduledJob.getEnvironmentKey());
-		scheduledJobRequest.setEnvironmentName(scheduledJob.getEnvironmentName());
-		scheduledJobRequest.setIsSandbox(scheduledJob.getIsSandbox());
-		scheduledJobRequest.setJobTypeCode(scheduledJob.getJobTypeCode());
-		scheduledJobRequest.setJobTypeId(scheduledJob.getJobTypeId());
-		scheduledJobRequest.setJobTypeName(scheduledJob.getJobTypeName());
-		scheduledJobRequest.setStatus(scheduledJob.getStatus());
-		scheduledJobRequest.setLastModifiedDate(now);
-		scheduledJobRequest.setLastModifiedBy(userRef);
-		scheduledJobRequest.setNotificationEmail(scheduledJob.getNotificationEmail());
-		scheduledJobRequest.setScheduleDate(scheduledJob.getScheduleDate());
-		scheduledJobRequest.setSystemCreatedDate(now);
-		scheduledJobRequest.setSystemModifiedDate(now);
-		scheduledJobRequest.setYear(dateTime.getYear());
-		scheduledJobRequest.setMonth(dateTime.getMonth().getValue());
-		scheduledJobRequest.setDay(dateTime.getDayOfMonth());
-		scheduledJobRequest.setHour(dateTime.getHour());
-		scheduledJobRequest.setMinute(dateTime.getMinute());
-		scheduledJobRequest.setSecond(dateTime.getSecond());
-		
-		return scheduledJobRequest;
+		if (Assert.isNotNull(job.getSlackWebhookUrl())) {
+			
+			ObjectNode payload = new ObjectMapper().createObjectNode()
+					.put("text", message)
+					.put("username", "Nowellpoint Notification Service");
+			
+			HttpResponse httpResponse = RestResource.post(job.getSlackWebhookUrl())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.body(payload)
+					.execute();
+			
+			if (httpResponse.getStatusCode() != Status.OK) {
+				LOGGER.error(httpResponse.getAsString());
+			}			
+		}
 	}
 	
 	/**
@@ -436,86 +327,7 @@ public class SalesforceMetadataBackupJob implements Job {
     	request.body = mail.build();
     	sendgrid.api(request);
 	}
-	
-	/**
-	 * 
-	 * 
-	 * @param authEndpoint
-	 * @param username
-	 * @param password
-	 * @param securityToken
-	 * @return access token from Salesforce
-	 * @throws JobExecutionException
-	 * 
-	 * 
-	 */
-	
-	private String authenticate(String authEndpoint, String username, String password, String securityToken) throws Exception {
-		
-		ConnectorConfig config = new ConnectorConfig();
-		config.setAuthEndpoint(String.format("%s/services/Soap/u/%s", authEndpoint, System.getProperty(Properties.SALESFORCE_API_VERSION)));
-		config.setUsername(username);
-		config.setPassword(password.concat(securityToken));
-		
-		try {
-			PartnerConnection connection = newConnection(config);
-			return connection.getConfig().getSessionId();
-		} catch (ConnectionException e) {
-			if (e instanceof LoginFault) {
-				LoginFault loginFault = (LoginFault) e;
-				throw new Exception(loginFault.getExceptionCode().name().concat(": ").concat(loginFault.getExceptionMessage()));
-			} else {
-				throw new Exception(e.getMessage());
-			}
-		}	
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param refreshToken
-	 * @return access token from Salesforce
-	 * 
-	 * 
-	 */
-	
-	private String authenticate(String refreshToken) {
-		
-		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
-				.setRefreshToken(refreshToken)
-				.build();
-		
-		OauthAuthenticationResponse authenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
-				.authenticate(request);
-		
-		Token token = authenticationResponse.getToken();
-		
-		return token.getAccessToken();
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param environmentKey
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	private Map<String, UserProperty> getUserProperties(String environmentKey) {
-		
-		UserProperty userProperty = new UserProperty();
-		userProperty.setSubject(environmentKey);
-		
-		Map<String, UserProperty> properties = UserProperties.query(userProperty)
-				.stream()
-				.collect(Collectors.toMap(UserProperty::getKey, p -> p));
-		
-		return properties;
-	}
-	
+
 	/**
 	 * 
 	 * 
@@ -532,7 +344,7 @@ public class SalesforceMetadataBackupJob implements Job {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(bytes.length);
 		
-		AmazonS3 s3client = new AmazonS3Client();
+		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
 		PutObjectResult result = s3client.putObject(new PutObjectRequest(
 				bucketName,
@@ -628,68 +440,5 @@ public class SalesforceMetadataBackupJob implements Job {
 		Theme theme = client.getTheme(themeRequest);
 		
 		return theme;
-	}
-}
-
-class SalesforceConnectorService extends MongoDocumentService<SalesforceConnector> {
-	
-	public SalesforceConnectorService() {
-		super(SalesforceConnector.class);
-	}
-	
-	public Environment getEnvironment(String id, String key) {
-		SalesforceConnector salesforceConnector = super.findById(id);
-		
-		Environment environment = salesforceConnector.getEnvironments()
-				.stream()
-				.filter(e -> key.equals(e.getKey()))
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("Invalid environment key: " + key));
-		
-		return environment;
-	}
-}
-
-class ScheduledJobRequestService extends MongoDocumentService<ScheduledJobRequest> {
-
-	public ScheduledJobRequestService() {
-		super(ScheduledJobRequest.class);
-	}
-	
-	public void create(ScheduledJobRequest scheduledJobRequest) {
-		super.create(scheduledJobRequest);
-		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
-	}
-	
-	public void replace(ScheduledJobRequest scheduledJobRequest) {
-		super.replace(scheduledJobRequest);
-		hset(encode(System.getProperty(Properties.DEFAULT_SUBJECT)), scheduledJobRequest);
-	}
-	
-	public Set<ScheduledJobRequest> getScheduledJobRequests() {
-		LocalDateTime  now = LocalDateTime.now(Clock.systemUTC()); 
-		return super.find( and ( 
-				eq ( "status", "Scheduled" ), 
-				eq ( "jobTypeCode", "SALESFORCE_METADATA_BACKUP" ),
-				eq ( "year", now.get( ChronoField.YEAR_OF_ERA ) ),
-				eq ( "month", now.get( ChronoField.MONTH_OF_YEAR ) ),
-				eq ( "day", now.get( ChronoField.DAY_OF_MONTH ) ),
-				eq ( "hour", now.get( ChronoField.HOUR_OF_DAY ) ) ) );
-	}
-}
-
-class ScheduledJobService extends MongoDocumentService<ScheduledJob> {
-
-	public ScheduledJobService() {
-		super(ScheduledJob.class);
-	}
-	
-	public void replace(ScheduledJob scheduledJob) {
-		hset(encode(scheduledJob.getOwner().getIdentity().getId().toString()), scheduledJob);
-		super.replace( eq ( "_id", scheduledJob.getId() ), scheduledJob );
-	}
-	
-	public ScheduledJob findById(ObjectId id) {
-		return super.findOne( eq ( "_id", id ) );
 	}
 }

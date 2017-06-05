@@ -1,40 +1,24 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
-import java.util.Map;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
-import javax.ws.rs.core.MediaType;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
-import com.nowellpoint.client.model.ExceptionResponse;
+import com.nowellpoint.client.NowellpointClient;
+import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
 import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.sforce.OauthToken;
 
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class SalesforceOauthController extends AbstractController {
+public class SalesforceOauthController extends AbstractStaticController {
 	
 	public static final class Template {
-		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-callback.html");
-	}
-	
-	public SalesforceOauthController() {
-		super(SalesforceOauthController.class);
-	}
-	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		get(Path.Route.SALESFORCE_OAUTH, (request, response) -> oauth(configuration, request, response));
-        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), (request, response) -> callback(configuration, request, response));
-        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), (request, response) -> getSalesforceToken(configuration, request, response));
+		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth-callback.html");
 	}
 	
 	/**
@@ -45,15 +29,14 @@ public class SalesforceOauthController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	private String oauth(Configuration configuration, Request request, Response response) {
+	public static String oauth(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-    			.path("salesforce")
-    			.path("oauth")
-    			.queryParameter("state", request.queryParams("id"))
-    			.execute();
+		String oauthRedirect = NowellpointClient.defaultClient(token)
+				.salesforce()
+				.getOauthRedirect();
 		
-		response.redirect(httpResponse.getHeaders().get("Location"));		
+		response.redirect(oauthRedirect);
 		
 		return "";
 	};
@@ -66,7 +49,7 @@ public class SalesforceOauthController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-	private String callback(Configuration configuration, Request request, Response response) {
+	public static String callback(Configuration configuration, Request request, Response response) {
     	
     	Optional<String> code = Optional.ofNullable(request.queryParams("code"));
     	
@@ -74,9 +57,7 @@ public class SalesforceOauthController extends AbstractController {
     		throw new BadRequestException("missing OAuth code from Salesforce");
     	}
     	
-    	Map<String, Object> model = getModel();
-    	
-    	return render(configuration, request, response, model, Template.SALESFORCE_OAUTH);
+    	return render(SalesforceOauthController.class, configuration, request, response, getModel(), Template.SALESFORCE_OAUTH);
     };
 	
     /**
@@ -87,43 +68,24 @@ public class SalesforceOauthController extends AbstractController {
 	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 */
 	
-    private String getSalesforceToken(Configuration configuration, Request request, Response response) {
+    public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
+    	Token token = getToken(request);
     	
-    	HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.bearerAuthorization(getToken(request).getAccessToken())
-    			.path("salesforce")
-    			.path("oauth")
-    			.path("token")
-    			.queryParameter("code", request.queryParams("code"))
-    			.execute();
+    	OauthToken oauthToken = NowellpointClient.defaultClient(token)
+    			.salesforce()
+    			.getOauthToken(request.queryParams("code"));
     	
-    	Token token = null;
+    	CreateSalesforceConnectorRequest createSalesforceConnectorRequest = new CreateSalesforceConnectorRequest()
+    			.withId(oauthToken.getId())
+    			.withAccessToken(oauthToken.getAccessToken())
+    			.withInstanceUrl(oauthToken.getInstanceUrl())
+    			.withRefreshToken(oauthToken.getRefreshToken());
     	
-    	if (httpResponse.getStatusCode() != Status.OK) {
-    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
-    	}
+    	CreateResult<SalesforceConnector> createResult = NowellpointClient.defaultClient(token)
+    			.salesforceConnector()
+    			.create(createSalesforceConnectorRequest);
     	
-    	token = httpResponse.getEntity(Token.class);
-    	
-    	httpResponse = RestResource.post(API_ENDPOINT)
-				.header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
-				.bearerAuthorization(getToken(request).getAccessToken())
-				.path("connectors")
-    			.path("salesforce")
-    			.parameter("id", token.getId())
-    			.parameter("instanceUrl", token.getInstanceUrl())
-    			.parameter("accessToken", token.getAccessToken())
-    			.parameter("refreshToken", token.getRefreshToken())
-    			.execute();
-    	
-    	if (httpResponse.getStatusCode() != Status.CREATED) {
-    		ExceptionResponse error = httpResponse.getEntity(ExceptionResponse.class);
-			throw new BadRequestException(error.getMessage());
-    	}
-    	
-    	SalesforceConnector salesforceConnector = httpResponse.getEntity(SalesforceConnector.class);
+    	SalesforceConnector salesforceConnector = createResult.getTarget();
     	
     	response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
     	

@@ -4,7 +4,7 @@ public class Error {
 	
 	private Integer code;
 	
-	private String message;
+	private String[] messages;
 	
 	public Error() {
 		
@@ -18,11 +18,15 @@ public class Error {
 		this.code = code;
 	}
 
-	public String getMessage() {
-		return message;
+	public String[] getMessages() {
+		return messages;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setMessages(String[] messages) {
+		this.messages = messages;
 	}
-}
+	
+	public String getErrorMessage() {
+		return messages[0];
+	}
+ }

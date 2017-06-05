@@ -3,6 +3,7 @@ package com.nowellpoint.api.model.sforce;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization implements Serializable {
@@ -15,6 +16,7 @@ public class Organization implements Serializable {
 	
 	private String id;
 	
+	@EmbedOne
 	private Attributes attributes;
 	
 	private String division;

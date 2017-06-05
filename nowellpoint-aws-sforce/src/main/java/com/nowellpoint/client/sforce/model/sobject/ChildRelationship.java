@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChildRelationship implements Serializable {
 	
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -7988759722991600823L;
 
 	/**

@@ -9,10 +9,24 @@
   </projects>
   <buildSpec>
     <buildCommand>
-      <name>tern.eclipse.ide.core.ternBuilder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/tern.eclipse.ide.core.ternBuilder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
-      <name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
@@ -21,22 +35,57 @@
       <name>org.eclipse.wst.common.project.facet.core.builder</name>
     </buildCommand>
     <buildCommand>
-      <name>org.jboss.tools.jst.web.kb.kbbuilder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.jst.web.kb.kbbuilder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
-      <name>org.jboss.tools.cdi.core.cdibuilder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.cdi.core.cdibuilder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
-      <name>org.jboss.tools.ws.jaxrs.metamodelBuilder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.ws.jaxrs.metamodelBuilder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
       <name>org.eclipse.wst.validation.validationbuilder</name>
     </buildCommand>
     <buildCommand>
-      <name>org.hibernate.eclipse.console.hibernateBuilder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.hibernate.eclipse.console.hibernateBuilder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
     <buildCommand>
-      <name>org.eclipse.m2e.core.maven2Builder</name>
+      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+      <triggers>full,incremental,</triggers>
+      <arguments>
+        <dictionary>
+          <key>LaunchConfigHandle</key>
+          <value>&lt;project&gt;/.externalToolBuilders/org.eclipse.m2e.core.maven2Builder.launch</value>
+        </dictionary>
+      </arguments>
     </buildCommand>
   </buildSpec>
   <natures>

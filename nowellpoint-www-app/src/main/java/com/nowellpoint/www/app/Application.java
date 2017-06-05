@@ -1,65 +1,60 @@
 package com.nowellpoint.www.app;
 
+import static spark.Spark.before;
+import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
+import static spark.Spark.post;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.IsoCountry;
-import com.nowellpoint.client.model.NowellpointServiceException;
+import com.nowellpoint.client.model.IsoCountryList;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AccountProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
-//import com.nowellpoint.www.app.view.ApplicationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
-import com.nowellpoint.www.app.view.ContactUsController;
 import com.nowellpoint.www.app.view.DashboardController;
+import com.nowellpoint.www.app.view.IndexController;
+import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
-//import com.nowellpoint.www.app.view.ProjectController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
-import com.nowellpoint.www.app.view.ScheduledJobController;
-//import com.nowellpoint.www.app.view.SetupController;
 import com.nowellpoint.www.app.view.SignUpController;
+import com.nowellpoint.www.app.view.StartController;
 
 import freemarker.template.Configuration;
-import freemarker.template.TemplateException;
+import freemarker.template.Template;
 import freemarker.template.TemplateModelException;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class Application implements SparkApplication {
 	
     public static void main(String[] args) throws Exception {
-    	new Application().init();
+    	new Application();
     }
 
 	@Override
 	public void init() {
-		
-		//
-		// add resource bundle
-		//
-
-		ResourceBundle messages = ResourceBundle.getBundle("messages", Locale.US);
         
         //
 		// Configure FreeMarker
@@ -73,91 +68,156 @@ public class Application implements SparkApplication {
 
         configuration.setClassForTemplateLoading(this.getClass(), "/views");
 		configuration.setDefaultEncoding("UTF-8");
-		configuration.setLocale(Locale.getDefault());
-		configuration.setTimeZone(TimeZone.getDefault());
         
         //
         // load countries list
         //
 		
+		List<IsoCountry> isoCountries = loadCountries(configuration.getLocale());
+		
 		try {			
-			List<IsoCountry> isoCountries = loadCountries();
-			
-			List<IsoCountry> filteredList = isoCountries.stream()
-					.filter(country -> "US".equals(country.getLanguage()))
-					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
-					.collect(Collectors.toList());
-			
-			configuration.setSharedVariable("countryList", filteredList);
-			
+			configuration.setSharedVariable("countryList", isoCountries);
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
 			halt();
 		}
+		
+		//
+		// verify secure requests
+		//
+		
+		before("/app/*", (request, response) -> AuthenticationController.verify(request, response));
+		
+		//
+		// index routes
+		//
+		
+		get(Path.Route.INDEX, (request, response) -> IndexController.serveIndexPage(configuration, request, response));
+		post(Path.Route.CONTACT, (request, response) -> IndexController.contact(configuration, request, response));
+		
+		//
+		// dashboard controller
+		//
+		
+		get(Path.Route.DASHBOARD, (request, response) -> DashboardController.showDashboard(configuration, request, response));
+		
+		//
+		// notifications controller
+		//
+		
+		get(Path.Route.NOTIFICATIONS, (request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
+		
+		//
+		// account profile routes
+		//
+		
+		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> AccountProfileController.listPlans(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.viewAccountProfile(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.reviewPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> AccountProfileController.currentPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.setPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.updateAccountProfile(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.confirmDeactivateAccountProfile(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.deactivateAccountProfile(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> AccountProfileController.removeProfilePicture(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> AccountProfileController.updateAccountProfileAddress(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> AccountProfileController.addCreditCard(configuration, request, response));  
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> AccountProfileController.getCreditCard(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> AccountProfileController.editCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.updateCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> AccountProfileController.setPrimaryCreditCard(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.removeCreditCard(configuration, request, response));
+		
+		//
+		// authentication routes
+		//
+		
+		get(Path.Route.LOGIN, (request, response) -> AuthenticationController.serveLoginPage(configuration, request, response));
+        post(Path.Route.LOGIN, (request, response) -> AuthenticationController.login(configuration, request, response));
+        get(Path.Route.LOGOUT, (request, response) -> AuthenticationController.logout(configuration, request, response));
         
         //
-        // load messages for locale
+        // start routes
         //
         
-        messages.keySet().stream().forEach(message -> {
-        	try {
-				configuration.setSharedVariable(message, messages.getString(message));
-			} catch (TemplateException e) {
-				e.printStackTrace();
-				halt();
-			}
-        });
+        get(Path.Route.START, (request, response) -> StartController.serveStartPage(configuration, request, response));
         
         //
-        //
-        //
-        
-        AuthenticationController authenticationController = new AuthenticationController();
-        AccountProfileController accountProfileController = new AccountProfileController();
-        DashboardController dashboardController = new DashboardController();
-        AdministrationController administrationController = new AdministrationController();
-        SignUpController signUpController = new SignUpController();
-        NotificationController notificationController = new NotificationController();
-        //SetupController setupController = new SetupController();
-        SalesforceOauthController salesforceOauthController = new SalesforceOauthController();
-        ContactUsController contactUsController = new ContactUsController();
-        //ApplicationController applicationController = new ApplicationController();
-        //ProjectController projectController = new ProjectController();
-        SalesforceConnectorController salesforceConnectorController = new SalesforceConnectorController();
-        ScheduledJobController scheduledJobsController = new ScheduledJobController();
-        
-        //
-        // setup routes
+        // administration routes
         //
         
-        authenticationController.configureRoutes(configuration);
-        accountProfileController.configureRoutes(configuration);
-        administrationController.configureRoutes(configuration);
-        salesforceOauthController.configureRoutes(configuration);
-        dashboardController.configureRoutes(configuration);
-        signUpController.configureRoutes(configuration);
-        notificationController.configureRoutes(configuration);
-        contactUsController.configureRoutes(configuration);
-        salesforceConnectorController.configureRoutes(configuration);
-        scheduledJobsController.configureRoutes(configuration);
-
-        get(Path.Route.INDEX, (request, response) -> getContextRoot(request, response), new FreeMarkerEngine(configuration));
+        get(Path.Route.ADMINISTRATION, (request, response) -> AdministrationController.serveAdminHomePage(configuration, request, response));	
+        get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> AdministrationController.showManageCache(configuration, request, response));	
+		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> AdministrationController.purgeCache(configuration, request, response));
+		
+		//
+		// salesforce oauth routes
+		//
+		
+		get(Path.Route.SALESFORCE_OAUTH, (request, response) -> SalesforceOauthController.oauth(configuration, request, response));
+        get(Path.Route.SALESFORCE_OAUTH.concat("/callback"), (request, response) -> SalesforceOauthController.callback(configuration, request, response));
+        get(Path.Route.SALESFORCE_OAUTH.concat("/token"), (request, response) -> SalesforceOauthController.getSalesforceToken(configuration, request, response));
         
-        get(Path.Route.SERVICES, (request, response) -> getServices(request, response), new FreeMarkerEngine(configuration));
+        //
+        // signup routes
+        //
         
-        get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
+        get(Path.Route.PLANS, (request, response) -> SignUpController.plans(configuration, request, response));
+		get(Path.Route.FREE_ACCOUNT, (request, response) -> SignUpController.freeAccount(configuration, request, response));
+		get(Path.Route.SIGN_UP, (request, response) -> SignUpController.paidAccount(configuration, request, response));
+		post(Path.Route.SIGN_UP, (request, response) -> SignUpController.signUp(configuration, request, response));
+		get(Path.Route.VERIFY_EMAIL, (request, response) -> SignUpController.verifyEmail(configuration, request, response));
         
+		
+		//
+		// salesforce connector routes
+		//
+		
+		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController.listSalesforceConnectors(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController.newSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController.viewSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_FLOW_NEW, (request, response) -> SalesforceConnectorController.newFlow(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> SalesforceConnectorController.updateSalesforceConnector(configuration, request, response));
+        delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController.deleteSalesforceConnector(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController.editSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_TEST, (request, response) -> SalesforceConnectorController.testSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController.buildSalesforceConnector(configuration, request, response));
+        post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP, (request, response) -> SalesforceConnectorController.metadataBackup(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
+        
+        //
+        // jobs routes
+        //
+        
+        get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
+        get(Path.Route.JOBS_VIEW, (request, response) -> JobController.viewJob(configuration, request, response));
+        post(Path.Route.JOBS_UPDATE, (request, response) -> JobController.updateJob(configuration, request, response));
+        get(Path.Route.JOBS_OUTPUTS, (request, response) -> JobController.viewOutputs(configuration, request, response));
+        get(Path.Route.JOBS_OUTPUTS_DOWNLOAD, (request, response) -> JobController.downloadOutputFile(configuration, request, response));
+        post(Path.Route.JOBS_RUN, (request, response) -> JobController.runJob(configuration, request, response));
+        post(Path.Route.JOBS_WEBHOOK_URL_TEST, (request, response) -> JobController.testWebhookUrl(configuration, request, response));
+        
+        post("/app/jobs/:connectorId/metadata-backup", (request, response) -> JobController.createJob(configuration, request, response));
+        
+		//
+		// health check route
+		//
+        
+        get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));        
         
         //
         // exception handlers
         //
         
-        exception(NowellpointServiceException.class, (exception, request, response) ->{
-        	response.status(((NowellpointServiceException) exception).getStatusCode());
+        exception(ServiceUnavailableException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
+        	response.status(Status.SERVICE_UNAVAILABLE);
         	response.body(exception.getMessage());
         });
         
         exception(BadRequestException.class, (exception, request, response) -> {
+        	exception.printStackTrace();
             response.status(400);
             response.body(exception.getMessage());
         });
@@ -169,11 +229,26 @@ public class Application implements SparkApplication {
         });
         
         exception(InternalServerErrorException.class, (exception, request, response) -> {
-            response.status(500);
-            response.body(exception.getMessage());
+  
+        	Map<String, Object> model = new HashMap<>();
+        	model.put("errorMessage", exception.getMessage());
+        	
+        	Writer output = new StringWriter();
+    		try {
+    			Template template = configuration.getTemplate("error.html");
+    			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
+    			environment.process();
+    			response.status(500);
+            	response.body(output.toString());
+            	output.flush();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			halt();
+    		}
         });
         
         exception(Exception.class, (exception, request, response) -> {
+        	exception.printStackTrace();
         	response.status(500);
             response.body(exception.getMessage());
         });
@@ -184,42 +259,25 @@ public class Application implements SparkApplication {
 	 * @return
 	 */
 	
-	private static List<IsoCountry> loadCountries() {
-		HttpResponse httpResponse = RestResource.get(System.getenv("NOWELLPOINT_API_ENDPOINT"))
+	private static List<IsoCountry> loadCountries(Locale locale) {
+		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
 				.execute();
 		
 		List<IsoCountry> countries = Collections.emptyList();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			countries = httpResponse.getEntityList(IsoCountry.class);
+			
+			IsoCountryList isoCountryList = httpResponse.getEntity(IsoCountryList.class);
+			
+			countries = isoCountryList.getItems()
+					.stream()
+					.filter(country -> "US".equals(country.getLanguage()))
+					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
+					.collect(Collectors.toList());
 		}
 		
 		return countries;
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getContextRoot(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-    	return new ModelAndView(model, Path.Template.INDEX);
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static ModelAndView getServices(Request request, Response response) {
-    	Map<String,Object> model = new HashMap<String,Object>();
-		return new ModelAndView(model, Path.Template.SERVICES);
 	}
 	
 	/**

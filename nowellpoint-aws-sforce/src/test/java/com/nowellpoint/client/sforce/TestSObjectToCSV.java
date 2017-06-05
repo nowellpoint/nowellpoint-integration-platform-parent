@@ -23,20 +23,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.OutboundEvent;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.http.HttpRequestException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.util.Properties;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -198,7 +198,7 @@ public class TestSObjectToCSV {
 	}
 	
 	private void  saveToBucket(OutboundEvent outboundEvent, File file) {
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		
 		ObjectMetadata metadata = new ObjectMetadata();
 		metadata.setContentLength(file.length());

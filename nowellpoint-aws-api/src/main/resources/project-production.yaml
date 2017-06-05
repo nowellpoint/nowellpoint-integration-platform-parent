@@ -1,0 +1,11 @@
+logger:
+    level: INFO
+swarm:
+    http:
+        port: 5000
+    https:
+        certificate:
+            generate: true
+        port: 5100 
+propertyStore:
+    name: production  

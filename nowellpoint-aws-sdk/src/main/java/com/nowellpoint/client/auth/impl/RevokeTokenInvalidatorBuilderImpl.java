@@ -2,19 +2,20 @@ package com.nowellpoint.client.auth.impl;
 
 import com.nowellpoint.client.auth.RevokeTokenInvalidatorBuilder;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
+import com.nowellpoint.client.model.Token;
 
 public class RevokeTokenInvalidatorBuilderImpl implements RevokeTokenInvalidatorBuilder {
 
-	private String accessToken;
+	private Token token;
 
 	@Override
-	public RevokeTokenInvalidatorBuilder setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
+	public RevokeTokenInvalidatorBuilder setToken(Token token) {
+		this.token = token;
 		return this;
 	}
 
 	@Override
 	public RevokeTokenRequest build() {
-		return new RevokeTokenRequestImpl(accessToken);
+		return new RevokeTokenRequestImpl(token);
 	}
 }

@@ -1,30 +1,46 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.api.model.codec.AccountProfileCodec;
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.document.DateDeserializer;
-import com.nowellpoint.mongodb.document.DateSerializer;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-@Document(collectionName="account.profiles", codec=AccountProfileCodec.class)
+@Document(collectionName="account.profiles")
 public class AccountProfile extends MongoDocument {
-
-	/**
-	 * 
-	 */
 
 	private static final long serialVersionUID = 3163086585922281575L;
 	
+	@EmbedOne
+	private Meta meta;
+	
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
-	private UserRef lastModifiedBy;
+	@Reference(referenceClass = AccountProfile.class)
+	private UserRef lastUpdatedBy;
 
 	private String username;
 
@@ -62,21 +78,24 @@ public class AccountProfile extends MongoDocument {
 
 	private String emailEncodingKey;
 
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
 	private Date lastLoginDate;
 	
+	@EmbedOne
 	private Address address;
 
-	private String href;
+	private String accountHref;
 	
+	@EmbedOne
 	private Photos photos;
 	
+	@EmbedOne
 	private Subscription subscription;
 	
-	private String leadId;
+	@EmbedMany
+	private Set<CreditCard> creditCards = new HashSet<>();
 	
-	private Set<CreditCard> creditCards;
+	@EmbedMany
+	private Set<Transaction> transactions = new HashSet<>();
 	
 	private Boolean hasFullAccess;
 	
@@ -88,6 +107,14 @@ public class AccountProfile extends MongoDocument {
 		setHasFullAccess(Boolean.FALSE);
 	}
 
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
+
 	public UserRef getCreatedBy() {
 		return createdBy;
 	}
@@ -96,12 +123,12 @@ public class AccountProfile extends MongoDocument {
 		this.createdBy = createdBy;
 	}
 
-	public UserRef getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserRef getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserRef lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getUsername() {
@@ -264,12 +291,12 @@ public class AccountProfile extends MongoDocument {
 		this.address = address;
 	}
 
-	public String getHref() {
-		return href;
+	public String getAccountHref() {
+		return accountHref;
 	}
 
-	public void setHref(String href) {
-		this.href = href;
+	public void setAccountHref(String accountHref) {
+		this.accountHref = accountHref;
 	}
 
 	public Photos getPhotos() {
@@ -288,20 +315,20 @@ public class AccountProfile extends MongoDocument {
 		this.subscription = subscription;
 	}
 
-	public String getLeadId() {
-		return leadId;
-	}
-
-	public void setLeadId(String leadId) {
-		this.leadId = leadId;
-	}
-
 	public Set<CreditCard> getCreditCards() {
 		return creditCards;
 	}
 
 	public void setCreditCards(Set<CreditCard> creditCards) {
 		this.creditCards = creditCards;
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	public Boolean getHasFullAccess() {
@@ -326,5 +353,9 @@ public class AccountProfile extends MongoDocument {
 
 	public void setEnableSalesforceLogin(Boolean enableSalesforceLogin) {
 		this.enableSalesforceLogin = enableSalesforceLogin;
+	}
+	
+	public void addTransaction(Transaction transaction) {
+		transactions.add(transaction);
 	}
 }

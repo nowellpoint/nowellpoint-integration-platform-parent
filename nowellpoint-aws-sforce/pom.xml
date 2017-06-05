@@ -9,16 +9,10 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
-		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>2.3</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
@@ -28,6 +22,12 @@
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-data</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -49,7 +49,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-shade-plugin</artifactId>
-						<version>2.3</version>
+						<version>2.4.3</version>
 						<configuration>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 						</configuration>

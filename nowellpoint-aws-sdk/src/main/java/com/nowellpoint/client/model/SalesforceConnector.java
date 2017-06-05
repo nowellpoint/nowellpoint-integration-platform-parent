@@ -1,12 +1,14 @@
 package com.nowellpoint.client.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.nowellpoint.client.model.sforce.Identity;
 import com.nowellpoint.client.model.sforce.Organization;
+import com.nowellpoint.client.model.sforce.Sobject;
+import com.nowellpoint.client.model.sforce.Theme;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SalesforceConnector extends AbstractResource {
@@ -17,14 +19,32 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Organization organization;
 	
+	private String connectionString;
+	
+	private Date lastTestedOn;
+	
+	private Boolean isValid;
+	
+	private String serviceEndpoint;
+	
+	private String status;
+	
 	private UserInfo owner;
 	
 	private String tag;
 	
-	private List<Environment> environments;
+	private List<Job> jobs;
+	
+	private List<Service> services;
+	
+	private List<Sobject> sobjects;
+	
+	private Theme theme;
 	
 	public SalesforceConnector() {
-		setEnvironments(Collections.emptyList());
+		sobjects = new ArrayList<>();
+		services = new ArrayList<>();
+		jobs = new ArrayList<>();
 	}
 	
 	public SalesforceConnector(String id) {
@@ -55,6 +75,46 @@ public class SalesforceConnector extends AbstractResource {
 		this.organization = organization;
 	}
 
+	public String getConnectionString() {
+		return connectionString;
+	}
+
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
+	}
+
+	public Date getLastTestedOn() {
+		return lastTestedOn;
+	}
+
+	public void setLastTestedOn(Date lastTestedOn) {
+		this.lastTestedOn = lastTestedOn;
+	}
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
+	}
+
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
 	public UserInfo getOwner() {
 		return owner;
 	}
@@ -71,14 +131,35 @@ public class SalesforceConnector extends AbstractResource {
 		this.tag = tag;
 	}
 
-	public List<Environment> getEnvironments() {
-		if (environments == null) {
-			setEnvironments(new ArrayList<Environment>());
-		}
-		return environments;
+	public List<Job> getJobs() {
+		return jobs;
 	}
 
-	public void setEnvironments(List<Environment> environments) {
-		this.environments = environments;
+	public void setJobs(List<Job> jobs) {
+		this.jobs = jobs;
+	}
+
+	public List<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(List<Service> services) {
+		this.services = services;
+	}
+
+	public List<Sobject> getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(List<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

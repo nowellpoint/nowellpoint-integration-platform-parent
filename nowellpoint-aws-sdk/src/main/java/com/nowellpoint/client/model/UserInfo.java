@@ -2,99 +2,37 @@ package com.nowellpoint.client.model;
 
 public class UserInfo {
 	
-	/**
-	 * 
-	 */
-	
 	private String id; 
 	
-	/**
-	 * 
-	 */
-
+	private Meta meta;
+	
 	private String lastName;
-
-	/**
-	 * 
-	 */
 
 	private String firstName;
 
-	/**
-	 * 
-	 */
-
 	private String name;
-
-	/**
-	 * 
-	 */
 
 	private String company;
 
-	/**
-	 * 
-	 */
-
 	private String division;
-
-	/**
-	 * 
-	 */
 
 	private String department;
 
-	/**
-	 * 
-	 */
-
 	private String title;
-
-	/**
-	 * 
-	 */
 
 	private String email;
 
-	/**
-	 * 
-	 */
-
 	private String phone;
-
-	/**
-	 * 
-	 */
 
 	private String extension;
 
-	/**
-	 * 
-	 */
-
 	private String fax;
-
-	/**
-	 * 
-	 */
 
 	private String mobilePhone;
 
-	/**
-	 * 
-	 */
-
 	private Boolean isActive;
 	
-	/**
-	 * 
-	 */
-	
 	private Address address;
-	
-	/**
-	 * 
-	 */
 	
 	private Photos photos;
 	
@@ -104,6 +42,14 @@ public class UserInfo {
 	
 	public UserInfo(String id) {
 		setId(id);
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public String getId() {

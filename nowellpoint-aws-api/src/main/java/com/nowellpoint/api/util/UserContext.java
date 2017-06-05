@@ -15,7 +15,12 @@ import io.jsonwebtoken.Jwts;
 
 public class UserContext {
 	
-	private static ThreadLocal<SecurityContext> threadLocal = new ThreadLocal<SecurityContext>();
+	private static ThreadLocal<SecurityContext> threadLocal = new ThreadLocal<SecurityContext>() {
+	    @Override 
+	    protected SecurityContext initialValue() {
+	        return new UserPrincipalSecurityContext(System.getProperty(Properties.DEFAULT_SUBJECT), new ArrayList<String>());
+	    }
+	};
 	
 	public static void setUserContext(String accessToken) {
 		Jws<Claims> claims = parseClaims(accessToken); 

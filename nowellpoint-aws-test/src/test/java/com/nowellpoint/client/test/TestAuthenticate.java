@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
@@ -18,6 +19,7 @@ public class TestAuthenticate {
 	public void testClientCredentialsAuthentication() {
 		
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
 				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.setApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
 				.build();
@@ -35,7 +37,7 @@ public class TestAuthenticate {
 		System.out.println(token.getAccessToken());
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
@@ -45,6 +47,7 @@ public class TestAuthenticate {
 	public void testUsernamePasswordAuthentication() {
 		
 		PasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
 				.setUsername(System.getenv("STORMPATH_USERNAME"))
 				.setPassword(System.getenv("STORMPATH_PASSWORD"))
 				.build();
@@ -63,9 +66,34 @@ public class TestAuthenticate {
 		System.out.println(token.getAccessToken());
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
-		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
+		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);	
+	}
+	
+	@Test(expected=com.nowellpoint.client.auth.impl.OauthException.class)
+	public void testUsernamePasswordAuthenticationException() {
+		
+		PasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
+				.setUsername(System.getenv("STORMPATH_USERNAME"))
+				.setPassword("STORMPATH_PASSWORD")
+				.build();
+		
+		Authenticators.PASSWORD_GRANT_AUTHENTICATOR.authenticate(request);
+	}
+	
+	@Test(expected=com.nowellpoint.client.auth.impl.OauthException.class)
+	public void testClientCredentialsAuthenticationException() {
+		
+		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
+				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
+				.setApiKeySecret("STORMPATH_API_KEY_SECRET")
+				.build();
+		
+		Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR.authenticate(request);
+
 	}
 }

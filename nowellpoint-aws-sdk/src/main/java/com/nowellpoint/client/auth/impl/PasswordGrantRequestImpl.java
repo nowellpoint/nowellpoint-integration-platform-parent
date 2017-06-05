@@ -1,5 +1,6 @@
 package com.nowellpoint.client.auth.impl;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 
 public class PasswordGrantRequestImpl implements PasswordGrantRequest {
@@ -8,7 +9,10 @@ public class PasswordGrantRequestImpl implements PasswordGrantRequest {
 	
 	private String password;
 	
-	public PasswordGrantRequestImpl(String username, String password) {
+	private Environment environment;
+	
+	public PasswordGrantRequestImpl(Environment environment, String username, String password) {
+		this.environment = environment;
 		this.username = username;
 		this.password = password;
 	}
@@ -21,5 +25,10 @@ public class PasswordGrantRequestImpl implements PasswordGrantRequest {
 	@Override
 	public String getPassword() {
 		return password;
+	}
+	
+	@Override
+	public Environment getEnvironment() {
+		return environment;
 	}
 }

@@ -12,5 +12,4 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Document {
 	String collectionName();
-	Class<?> codec() default Object.class;
 }

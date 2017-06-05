@@ -2,37 +2,37 @@ package com.nowellpoint.client.model;
 
 public class GetPlansRequest {
 	
-	private String localeSidKey;
+	private String locale;
 	
-	private String languageSidKey;
+	private String language;
 	
 	public GetPlansRequest() {
 		
 	}
-
-	public String getLocaleSidKey() {
-		return localeSidKey;
-	}
-
-	public void setLocaleSidKey(String localeSidKey) {
-		this.localeSidKey = localeSidKey;
-	}
-
-	public String getLanguageSidKey() {
-		return languageSidKey;
-	}
-
-	public void setLanguageSidKey(String languageSidKey) {
-		this.languageSidKey = languageSidKey;
-	}
 	
-	public GetPlansRequest withLocaleSidKey(String localeSidKey) {
-		setLocaleSidKey(localeSidKey);
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public GetPlansRequest withLocale(String locale) {
+		setLocale(locale);
 		return this;
 	}
 	
-	public GetPlansRequest withLanguageSidKey(String languageSidKey) {
-		setLanguageSidKey(languageSidKey);
+	public GetPlansRequest withLanguage(String language) {
+		setLanguage(language);
 		return this;
 	}
 }

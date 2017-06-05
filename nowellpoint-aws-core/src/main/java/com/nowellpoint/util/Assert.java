@@ -6,13 +6,13 @@ public class Assert {
 		
 	}
 	
-	public static void notNull(Object value, String message) {
+	public static void assertNotNull(Object value, String message) {
 		if (value == null) {
 			throw new IllegalArgumentException(message);
 		}
 	}
 	
-	public static void isNotNullOrEmpty(String value, String message) {
+	public static void assertNotNullOrEmpty(String value, String message) {
 		if (value == null || value.isEmpty()) {
 			throw new IllegalArgumentException(message);
 		}
@@ -59,7 +59,11 @@ public class Assert {
 	}
 	
 	public static Boolean isEqual(String value1, String value2) {
-		if (value1.equals(value2)) {
+		if (value1 == null && value2 == null) {
+			return Boolean.TRUE;
+		} else if (value1 == null && value2 != null) {
+			return Boolean.FALSE;
+		} else if (value1.equals(value2)) {
 			return Boolean.TRUE;
 		} else {
 			return Boolean.FALSE;
@@ -67,10 +71,14 @@ public class Assert {
 	}
 	
 	public static Boolean isNotEqual(String value1, String value2) {
-		if (! value1.equals(value2)) {
-			return Boolean.TRUE;
-		} else {
+		if (value1 == null && value2 == null) {
 			return Boolean.FALSE;
+		} else if (value1 == null && value2 != null) {
+			return Boolean.TRUE;
+		} else if (value1.equals(value2)) {
+			return Boolean.FALSE;
+		} else {
+			return Boolean.TRUE;
 		}
 	}
 	

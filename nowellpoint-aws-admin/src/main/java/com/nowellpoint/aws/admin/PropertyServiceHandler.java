@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.AttributeEncryptor;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
@@ -16,7 +15,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.DirectKmsMaterialProvider;
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.EncryptionMaterialsProvider;
 import com.amazonaws.services.kms.AWSKMS;
-import com.amazonaws.services.kms.AWSKMSClient;
+import com.amazonaws.services.kms.AWSKMSClientBuilder;
 import com.amazonaws.services.kms.model.AliasListEntry;
 import com.amazonaws.services.kms.model.ListAliasesResult;
 import com.amazonaws.services.lambda.runtime.Context;
@@ -28,26 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PropertyServiceHandler implements RequestStreamHandler {
 	
-	private static AWSKMS kmsClient = new AWSKMSClient();
+	private static AWSKMS kmsClient = AWSKMSClientBuilder.defaultClient();
 	private static ObjectMapper objectMapper = new ObjectMapper();
-	
-	private static String getKeyId(String keyAlias) {
-
-		ListAliasesResult listAliasesResult = kmsClient.listAliases();
-		
-		Optional<AliasListEntry> aliasListEntry = listAliasesResult.getAliases()
-				.stream()
-				.filter(entry -> keyAlias.equals(keyAlias))
-				.findFirst();
-		
-		String keyId = null;
-		
-		if (aliasListEntry.isPresent()) {
-			keyId = aliasListEntry.get().getTargetKeyId();
-		} 
-
-		return keyId;
-	}
 
 	@Override
 	public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
@@ -61,8 +42,8 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 		
 		logger.log("using encryption key: " + keyAlias);
 		
-		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(new AWSKMSClient(), getKeyId(keyAlias), null);			
-		DynamoDBMapper mapper = new DynamoDBMapper(new AmazonDynamoDBClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
+		EncryptionMaterialsProvider provider = new DirectKmsMaterialProvider(kmsClient, getKeyId(keyAlias), null);			
+		DynamoDBMapper mapper = new DynamoDBMapper(AmazonDynamoDBClientBuilder.defaultClient(), DynamoDBMapperConfig.DEFAULT, new AttributeEncryptor(provider));
 		
 		Property property = new Property();
 		property.setSubject(node.get("propertyStore").asText().toUpperCase());
@@ -84,5 +65,18 @@ public class PropertyServiceHandler implements RequestStreamHandler {
 		}
 		
 		outputStream.write(bytes);
+	}
+	
+	private static String getKeyId(String keyAlias) throws IOException {
+
+		ListAliasesResult listAliasesResult = kmsClient.listAliases();
+		
+		AliasListEntry aliasListEntry = listAliasesResult.getAliases()
+				.stream()
+				.filter(entry -> keyAlias.equals(keyAlias))
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to find key for alias: %s", keyAlias)));
+
+		return aliasListEntry.getTargetKeyId();
 	}
 }

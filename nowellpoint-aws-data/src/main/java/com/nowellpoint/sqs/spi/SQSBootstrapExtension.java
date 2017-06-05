@@ -1,8 +1,5 @@
 package com.nowellpoint.sqs.spi;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.nowellpoint.aws.data.QueueListener;
 
 import javax.enterprise.event.Observes;
@@ -29,19 +26,46 @@ public class SQSBootstrapExtension implements Extension {
 	
 	private static final Logger LOGGER = Logger.getLogger(SQSBootstrapExtension.class);
 	
+	private static SQSConnectionFactory connectionFactory;
+	
 	private static SQSConnection connection;
 	
-	private Map<String,String> queueMap = new HashMap<String,String>();
+	private static Session session;
 	
 	public <T> void processAnnotatedType(@Observes @WithAnnotations({QueueListener.class}) ProcessAnnotatedType<T> type, BeanManager beanManager) {
+		
     	if (type.getAnnotatedType().getJavaClass().isAnnotationPresent(QueueListener.class)) {
-    		QueueListener queue = type.getAnnotatedType().getJavaClass().getAnnotation(QueueListener.class);
-			queueMap.put(queue.queueName(), type.getAnnotatedType().getJavaClass().getName());
+    		
+    		QueueListener queueListener = type.getAnnotatedType().getJavaClass().getAnnotation(QueueListener.class);
+    		
+    		LOGGER.info(String.format("setting up queue: %s", queueListener.queueName()));
+
+			try {
+				Queue queue = session.createQueue(queueListener.queueName());
+				
+				MessageConsumer consumer = session.createConsumer(queue);
+				
+				MessageListener listener = (MessageListener) Class.forName(type.getAnnotatedType().getJavaClass().getName()).newInstance();
+				 
+				consumer.setMessageListener(listener);
+				
+			} catch (JMSException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				LOGGER.error(e);
+			}
     	}
     } 
 	
 	public void beforeBeanDiscovery(@Observes BeforeBeanDiscovery event) {
+		
     	LOGGER.info("beginning the simple queue scanning process");
+    	
+    	try {
+    		connectionFactory = SQSConnectionFactory.builder().build();	
+			connection = connectionFactory.createConnection();
+			session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+		} catch (JMSException e) {
+			LOGGER.error(e);
+		}
     }
 	
 	public void afterBeanDiscovery(@Observes AfterBeanDiscovery event) {
@@ -50,35 +74,7 @@ public class SQSBootstrapExtension implements Extension {
 	
 	public void afterDeploymentValidation(@Observes AfterDeploymentValidation event) {
 		
-		if (queueMap.isEmpty()) {
-			return;
-		}
-		
-		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();	
-		 
-		try {
-			connection = connectionFactory.createConnection();
-			
-			Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-			
-			for (String name : queueMap.keySet()) {
-				
-				LOGGER.info(String.format("setting up queue: %s", name));
-				
-				Queue queue =  session.createQueue(name);
-				
-				MessageConsumer consumer = session.createConsumer(queue);
-				
-				LOGGER.info(queueMap.get(name));
-				
-				MessageListener listener = (MessageListener) Class.forName(queueMap.get(name)).newInstance();
-				 
-				consumer.setMessageListener(listener);
-			}
-			
-		} catch (JMSException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			LOGGER.error(e);
-		}
+		LOGGER.info("starting queue connections");
 		
 		try {
 			connection.start();

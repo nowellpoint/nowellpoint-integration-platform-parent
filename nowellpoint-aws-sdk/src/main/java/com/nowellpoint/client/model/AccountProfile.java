@@ -9,171 +9,66 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountProfile extends AbstractResource {
 	
-	/**
-	 * 
-	 */
-
 	private String username;
-
-	/**
-	 * 
-	 */
 
 	private String lastName;
 
-	/**
-	 * 
-	 */
-
 	private String firstName;
 
-	/**
-	 * 
-	 */
-
 	private String name;
-
-	/**
-	 * 
-	 */
-
+	
 	private String company;
-
-	/**
-	 * 
-	 */
 
 	private String division;
 
-	/**
-	 * 
-	 */
-
 	private String department;
-
-	/**
-	 * 
-	 */
 
 	private String title;
 
-	/**
-	 * 
-	 */
-
 	private String email;
-
-	/**
-	 * 
-	 */
 
 	private String phone;
 
-	/**
-	 * 
-	 */
-
 	private String extension;
-
-	/**
-	 * 
-	 */
 
 	private String fax;
 
-	/**
-	 * 
-	 */
-
 	private String mobilePhone;
-
-	/**
-	 * 
-	 */
-
+	
 	private Boolean isActive;
-
-	/**
-	 * 
-	 */
 
 	private String timeZoneSidKey;
 
-	/**
-	 * 
-	 */
-
 	private String localeSidKey;
 	
-	/**
-	 * 
-	 */
-
 	private String languageSidKey;
-
-	/**
-	 * 
-	 */
 
 	private String emailEncodingKey;
 
-	/**
-	 * 
-	 */
-
 	private Date lastLoginDate;
-	
-	/**
-	 * 
-	 */
-	
+
 	private Address address;
 	
-	/**
-	 * 
-	 */
-	
 	private Photos photos;
-	
-	/**
-	 * 
-	 */
-	
+
 	private Subscription subscription;
-	
-	/**
-	 * 
-	 */
 	
 	private List<CreditCard> creditCards;
 	
-	/**
-	 * 
-	 */
-	
+	private List<Transaction> transactions;
+
 	private CreditCard primaryCreditCard;
-	
-	/**
-	 * 
-	 */
-	
+
 	private Boolean hasFullAccess;
-	
-	/**
-	 * 
-	 */
-	
+
 	private Boolean enableSalesforceLogin;
-	
-	/**
-	 * 
-	 */
-	
+
 	public AccountProfile() {
 		address = new Address();
 		photos = new Photos();
 		subscription = new Subscription();
 		creditCards = new ArrayList<CreditCard>();
+		transactions = new ArrayList<Transaction>();
 	}
 	
 	public AccountProfile(String id) {
@@ -371,6 +266,14 @@ public class AccountProfile extends AbstractResource {
 	
 	public CreditCard getPrimaryCreditCard() {
 		return primaryCreditCard;
+	}
+
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 
 	public void setPrimaryCreditCard(CreditCard primaryCreditCard) {

@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActionOverride implements Serializable {
 	
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 282410126553466679L;
 	
 	private String actionName;

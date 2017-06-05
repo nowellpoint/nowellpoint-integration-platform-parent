@@ -1,72 +1,45 @@
 package com.nowellpoint.api.resource;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import javax.annotation.security.PermitAll;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.mongodb.client.MongoCollection;
-import com.nowellpoint.api.model.document.IsoCountry;
-import com.nowellpoint.mongodb.document.MongoDatastore;
+import com.nowellpoint.api.rest.domain.IsoCountry;
+import com.nowellpoint.api.rest.domain.IsoCountryList;
+import com.nowellpoint.api.service.IsoCountryService;
 
 @Path("iso-countries")
 public class IsoCountryResource {
 	
-	private static final String COLLECTION_NAME = "iso.countries";
+	@Inject
+	private IsoCountryService isoCountryService;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
     public Response findAll() {
-			
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
-			
-		List<IsoCountry> countries = StreamSupport.stream(collection.find().spliterator(), false)
-				.collect(Collectors.toList());
-		
-		return Response.ok(countries).build();
+		IsoCountryList isoCountries = isoCountryService.findAll();
+		return Response.ok(isoCountries).build();
     }
 	
 	@GET
-	@Path("{language}")
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
-    public Response findByLanguage(@PathParam("language") String language) {
-		
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
-		
-		List<IsoCountry> countries = StreamSupport.stream(collection.find( eq ( "language", language ) ).spliterator(), false)
-				.collect(Collectors.toList());
-		
-		return Response.ok(countries).build();
+    public Response findByLanguage(@QueryParam("language") String language) {
+		IsoCountryList isoCountries = isoCountryService.findByLanguage(language);
+		return Response.ok(isoCountries).build();
     }
 	
 	@GET
-	@Path("{language}/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
-	public Response findByIsoCode(@PathParam("language") String language, @PathParam("code") String code) {
-		
-		MongoCollection<IsoCountry> collection = MongoDatastore.getDatabase()
-				.getCollection(COLLECTION_NAME)
-				.withDocumentClass(IsoCountry.class);
-				
-		IsoCountry country = collection.find( and ( eq ( "language", language ), eq ( "code", code ) ) ).first();
-		
-		return Response.ok(country).build();
+	public Response findByIsoCode(@QueryParam("language") String language, @QueryParam("iso2Code") String iso2Code) {
+		IsoCountry isoCountry = isoCountryService.findByIso2CodeAndLanguage(iso2Code, language);
+		return Response.ok(isoCountry).build();
 	}
 }

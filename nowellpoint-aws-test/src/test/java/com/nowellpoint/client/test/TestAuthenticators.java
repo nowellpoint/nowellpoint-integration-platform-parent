@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
@@ -20,36 +19,27 @@ import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
-import com.nowellpoint.client.auth.TokenCredentials;
 import com.nowellpoint.client.auth.impl.OauthException;
-import com.nowellpoint.client.model.AccountProfile;
-import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Environment;
-import com.nowellpoint.client.model.EnvironmentRequest;
-import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.NowellpointServiceException;
-import com.nowellpoint.client.model.SObjectDetail;
+import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.SalesforceConnector;
+import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 
 public class TestAuthenticators {
 	
-	private static Logger LOG = Logger.getLogger(TestAuthenticators.class.getName());
 	private static Token token = null;
 	
 	@BeforeClass
 	public static void before() {
-		System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/security/keystore.jks");
-		System.setProperty("javax.net.ssl.trustStorePassword", "secret");
 		
 		long start = System.currentTimeMillis();
 		
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
 				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
 				.setApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
+				.setEnvironment(Environment.SANDBOX)
 				.build();
 		
 		OauthAuthenticationResponse response = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR
@@ -64,6 +54,23 @@ public class TestAuthenticators {
 		assertNotNull(token.getTokenType());
 		
 		System.out.println(token.getAccessToken());
+		
+		start = System.currentTimeMillis();
+		
+		Identity identity = NowellpointClient.defaultClient(token)
+				.identity()
+				.get(token.getId());
+		
+		assertNotNull(identity);	
+		
+		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
+		
+		System.out.println(identity.getName());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testIllegalArgumentException() {
+		OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder().build();
 	}
 	
 	@Test
@@ -74,158 +81,54 @@ public class TestAuthenticators {
 		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
 				.withName(name);
 		
-		GetResult<List<SalesforceConnector>> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget().get(0);
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 		
-		UpdateResult<SalesforceConnector> updateResult = new NowellpointClient(new TokenCredentials(token))
+		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.update(salesforceConnector.getId(), salesforceConnectorRequest);
 		
 		assertTrue(updateResult.isSuccess());
 		
-		GetResult<SalesforceConnector> getSalesforceConnector = new NowellpointClient(new TokenCredentials(token))
+		salesforceConnector = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.get(salesforceConnector.getId());
 		
-		assertEquals(getSalesforceConnector.getTarget().getName(), name);
+		assertEquals(salesforceConnector.getName(), name);
 		
-		System.out.println(getSalesforceConnector.getTarget().getName());
+		System.out.println(salesforceConnector.getName());
 	}
 	
 	@Test
-	public void createAndDeleteEnvironment() {
-		
-		LOG.info("start createAndDeleteEnvironment");
-		
-		GetResult<SalesforceConnector> getResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.get("5838ae0d25075c7a81115253");
-		
-		SalesforceConnector salesforceConnector = getResult.getTarget();
-		
-		String authEndpoint = "https://login.salesforce.com";
-		String environmentName = "Test Environment";
-		String password = System.getenv("SALESFORCE_PASSWORD");
-		String username = System.getenv("SALESFORCE_USERNAME");
-		String securityToken = System.getenv("SALESFORCE_SECURITY_TOKEN");
-		
-		EnvironmentRequest environmentRequest = new EnvironmentRequest()
-				.withIsActive(Boolean.TRUE)
-				.withAuthEndpoint(authEndpoint)
-				.withEnvironmentName(environmentName)
-				.withPassword(password)
-				.withUsername(username)
-				.withSecurityToken(securityToken);
-		
-		CreateResult<Environment> createResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.add(salesforceConnector.getId(), environmentRequest);
-		
-		assertTrue(createResult.isSuccess());
-		
-		String environmentKey = createResult.getTarget().getKey();
-		
-		UpdateResult<Environment> testConnection = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.test(salesforceConnector.getId(), environmentKey);
-		
-		assertTrue(testConnection.isSuccess());
-		
-		UpdateResult<Environment> buildResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.build(salesforceConnector.getId(), environmentKey);
-		
-		assertTrue(buildResult.isSuccess());
-		
-		GetResult<SObjectDetail> getSobjectDetailResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.sobjectDetail()
-				.get(salesforceConnector.getId(), environmentKey, "Opportunity");
-		
-		assertTrue(getSobjectDetailResult.isSuccess());
-		
-		DeleteResult deleteResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.delete(salesforceConnector.getId(), createResult.getTarget().getKey());
-		
-		assertTrue(deleteResult.isSuccess());		
-	}
-	
-	@Test
-	public void testGetAccountProfile() {
+	public void testGetIdentity() {
 		
 		long start = System.currentTimeMillis();
 		
-		GetResult<AccountProfile> getResult = new NowellpointClient(new TokenCredentials(token))
-				.accountProfile()
-				.get();
+		Identity identity = NowellpointClient.defaultClient(token)
+				.identity()
+				.get(token.getId());
 		
-		assertTrue(getResult.isSuccess());	
+		assertNotNull(identity);	
 		
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
-		System.out.println(getResult.getTarget().getName());
+		System.out.println(identity.getName());
 	}
 	
-	@Test
-	public void buildEnvironment() {
-		long start = System.currentTimeMillis();
-		
-		GetResult<List<SalesforceConnector>> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.getSalesforceConnectors();
-		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget()
-				.stream()
-				.filter(s -> s.getEnvironments() != null || s.getEnvironments().size() > 0)
-				.findFirst()
-				.get();
-		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.build(salesforceConnector.getId(), salesforceConnector.getEnvironments().get(0).getKey());
-		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getErrorMessage());
-		System.out.println("buildEnvironment: " + (System.currentTimeMillis() - start));
-		
-		Environment environment = updateResult.getTarget();
-		
-		System.out.println(environment.getKey());
-	}
 	
 	@Test
 	@Ignore
 	public void testConnection() {
 		long start = System.currentTimeMillis();
 		
-		GetResult<List<SalesforceConnector>> salesforceConnectors = new NowellpointClient(new TokenCredentials(token))
+		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.getSalesforceConnectors();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getTarget().get(0);
-		
-		UpdateResult<Environment> updateResult = new NowellpointClient(new TokenCredentials(token))
-				.salesforceConnector()
-				.environment()
-				.test(salesforceConnector.getId(), salesforceConnector.getEnvironments().get(0).getKey());
-		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getErrorMessage());
-		System.out.println("testConnection: " + (System.currentTimeMillis() - start));
-		
-		Environment environment = updateResult.getTarget();
-		
-		System.out.println(environment.getKey());
+		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 	}
 	
 	@Test
@@ -256,7 +159,7 @@ public class TestAuthenticators {
 			System.out.println(token.getAccessToken());
 			
 			RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-					.setAccessToken(token.getAccessToken())
+					.setToken(token)
 					.build();
 			
 			Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
@@ -308,23 +211,18 @@ public class TestAuthenticators {
 //			client.logout();
 			
 		} catch (OauthException e) {
-			System.out.println(e.getCode());
-			System.out.println(e.getMessage());
-		} catch (NowellpointServiceException e) {
-			System.out.println(e.getMessage());
-		} 
+			System.out.println(e.getError());
+			System.out.println(e.getErrorDescription());
+		}
 	}
 	
 	@AfterClass
 	public static void afterClass() {
-		long start = System.currentTimeMillis();
 		
 		RevokeTokenRequest revokeTokenRequest = OauthRequests.REVOKE_TOKEN_REQUEST.builder()
-				.setAccessToken(token.getAccessToken())
+				.setToken(token)
 				.build();
 		
 		Authenticators.REVOKE_TOKEN_INVALIDATOR.revoke(revokeTokenRequest);
-		
-		System.out.println("revoke token: " + (System.currentTimeMillis() - start));
 	}
 }

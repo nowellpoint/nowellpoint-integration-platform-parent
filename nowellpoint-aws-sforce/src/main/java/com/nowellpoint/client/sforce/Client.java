@@ -1,16 +1,10 @@
 package com.nowellpoint.client.sforce;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.nowellpoint.aws.http.HttpRequestException;
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -19,8 +13,14 @@ import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 public class Client {
+	
+	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
 			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
@@ -220,29 +220,23 @@ public class Client {
 	 * 
 	 */
 	
-	public Count getCount(CountRequest request) {
-		try {
-			HttpResponse httpResponse = RestResource.get(request.getQueryUrl())
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(request.getAccessToken())
-					.queryParameter("q", URLEncoder.encode(request.getQueryString(), "UTF-8"))
-					.execute();
-			
-			Count result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				result = httpResponse.getEntity(Count.class);
-			} else {
-				throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
-			}
-			
-			return result;
-			
-		} catch (HttpRequestException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+	public Long getCount(CountRequest request) {
+		HttpResponse httpResponse = RestResource.get(request.getQueryUrl())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(request.getAccessToken())
+				.queryParameter("q", request.getQueryString())
+				.execute();
 		
-		return null;
+		Long totalSize = Long.valueOf(0);
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Count count = httpResponse.getEntity(Count.class);
+			totalSize = count.getRecords().get(0).getExpr0();
+		} else {
+			LOGGER.warning(httpResponse.getAsString());
+		}
+			
+		return totalSize;
 	}
 }

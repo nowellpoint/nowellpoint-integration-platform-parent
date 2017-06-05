@@ -1,24 +1,22 @@
 package com.nowellpoint.client.resource;
 
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.MediaType;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.aws.http.Status;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.AddResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.GetResult;
-import com.nowellpoint.client.model.NotFoundException;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.SetResult;
+import com.nowellpoint.client.model.exception.NotFoundException;
+import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 
@@ -31,7 +29,9 @@ public class AccountProfileResource extends AbstractResource {
 	private static final String RESOURCE_CONTEXT = "account-profile";
 	
 	/**
-	 * @param token
+	 * 
+	 * @param environmentUrl
+	 * @param accessToken
 	 */
 	
 	public AccountProfileResource(Token token) {
@@ -39,59 +39,30 @@ public class AccountProfileResource extends AbstractResource {
 	}
 	
 	/**
-	 * @return
-	 */
-	
-	public GetResult<AccountProfile> get() {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.path(RESOURCE_CONTEXT)
-				.path("me")
-				.execute();
-		
-		GetResult<AccountProfile> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-    		result = new GetResultImpl<AccountProfile>(accountProfile); 
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-    		Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<AccountProfile>(error);
-    	}
-    	
-    	return result;
-	} 
-	
-	/**
 	 * 
 	 * @param id
 	 * @return
 	 */
 	
-	public GetResult<AccountProfile> get(String id) {
-		HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
-				.accept(MediaType.APPLICATION_JSON)
+	public AccountProfile get(String id) {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.execute();
 		
-		GetResult<AccountProfile> result = null;
+		AccountProfile resource = null;
     	
     	if (httpResponse.getStatusCode() == Status.OK) {
-    		AccountProfile accountProfile = httpResponse.getEntity(AccountProfile.class);
-    		result = new GetResultImpl<AccountProfile>(accountProfile); 
+    		resource = httpResponse.getEntity(AccountProfile.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
-    		Error error = httpResponse.getEntity(Error.class);
-			result = new GetResultImpl<AccountProfile>(error);
+			throw new ServiceUnavailableException(httpResponse.getAsString());
     	}
     	
-    	return result;
+    	return resource;
 	} 
 	
 	/**
@@ -101,7 +72,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public DeleteResult deactivate(String id) {
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("account-profile")
 				.path(id)
@@ -127,7 +98,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public UpdateResult<AccountProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
-		HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -170,7 +141,7 @@ public class AccountProfileResource extends AbstractResource {
 	 */
 	
 	public UpdateResult<AccountProfile> removeProfilePicture(String accountProfileId) {
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
     			.bearerAuthorization(token.getAccessToken())
         		.path("account-profile")
         		.path(accountProfileId)
@@ -227,7 +198,8 @@ public class AccountProfileResource extends AbstractResource {
 		
 		/**
 		 * 
-		 * @param token
+		 * @param environmentUrl
+		 * @param accessToken
 		 */
 		
 		public AddressResource(Token token) {
@@ -240,27 +212,25 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public GetResult<Address> get(String accountProfileId) {
-			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		public Address get(String accountProfileId) {
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)
 					.path("address")
 					.execute();
 			
-			GetResult<Address> result = null;
+			Address resource = null;
 	    	
 	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		Address resource = httpResponse.getEntity(Address.class);
-	    		result = new GetResultImpl<Address>(resource); 
+	    		resource = httpResponse.getEntity(Address.class);
 	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-	    		Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<Address>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
 	    	
-	    	return result;
+	    	return resource;
 		}
 		
 		/**
@@ -271,7 +241,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public UpdateResult<Address> update(String accountProfileId, AddressRequest addressRequest) {
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -323,11 +293,11 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public SetResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+		public UpdateResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
 					.path(RESOURCE_CONTEXT)
 					.path(subscriptionRequest.getAccountProfileId())
 					.path("subscription")
@@ -335,14 +305,14 @@ public class AccountProfileResource extends AbstractResource {
 					.parameter("paymentMethodToken", subscriptionRequest.getPaymentMethodToken())
 					.execute();
 			
-			SetResult<Subscription> result = null;
+			UpdateResult<Subscription> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
 				Subscription subscription = httpResponse.getEntity(Subscription.class);
-				result = new SetResultImpl<Subscription>(subscription);
+				result = new UpdateResultImpl<Subscription>(subscription);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new SetResultImpl<Subscription>(error);
+				result = new UpdateResultImpl<Subscription>(error);
 			}
 			
 			return result;
@@ -372,43 +342,37 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public AddResult<CreditCard> add(CreditCardRequest creditCardRequest) {
-			
-			CreditCard creditCard = new CreditCard()
-					.withBillingAddress(new Address()
-							.withCity(creditCardRequest.getCity())
-							.withCountryCode(creditCardRequest.getCountryCode())
-							.withPostalCode(creditCardRequest.getPostalCode())
-							.withState(creditCardRequest.getState())
-							.withStreet(creditCardRequest.getStreet()))
-					.withBillingContact(new Contact()
-							.withFirstName(creditCardRequest.getFirstName())
-							.withLastName(creditCardRequest.getLastName()))
-					.withCardholderName(creditCardRequest.getCardholderName())
-					.withExpirationMonth(creditCardRequest.getExpirationMonth())
-					.withExpirationYear(creditCardRequest.getExpirationYear())
-					.withNumber(creditCardRequest.getNumber())
-					.withCvv(creditCardRequest.getCvv())
-					.withPrimary(creditCardRequest.getPrimary());
-			
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
+		public CreateResult<CreditCard> add(CreditCardRequest creditCardRequest) {
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
 					.path("account-profile")
 					.path(creditCardRequest.getAccountProfileId())
 					.path("credit-card")
-					.body(creditCard)
+					.parameter("cardholderName", creditCardRequest.getCardholderName())
+					.parameter("cvv", creditCardRequest.getCvv())
+					.parameter("number", creditCardRequest.getNumber())
+					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
+					.parameter("expirationYear", creditCardRequest.getExpirationYear())
+					.parameter("primary", creditCardRequest.getPrimary())
+					.parameter("street", creditCardRequest.getStreet())
+					.parameter("city", creditCardRequest.getCity())
+					.parameter("state", creditCardRequest.getState())
+					.parameter("postalCode", creditCardRequest.getPostalCode())
+					.parameter("countryCode", creditCardRequest.getCountryCode())
+					.parameter("firstName", creditCardRequest.getFirstName())
+					.parameter("lastName", creditCardRequest.getLastName())
 					.execute();
 			
-			AddResult<CreditCard> result = null;
+			CreateResult<CreditCard> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				creditCard = httpResponse.getEntity(CreditCard.class);
-				result = new AddResultImpl<CreditCard>(creditCard);
+				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
+				result = new CreateResultImpl<CreditCard>(creditCard);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
-				result = new AddResultImpl<CreditCard>(error);
+				result = new CreateResultImpl<CreditCard>(error);
 			}
 			
 			return result;
@@ -421,39 +385,31 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public UpdateResult<CreditCard> update(CreditCardRequest creditCardRequest) {
-			
-			CreditCard creditCard = new CreditCard()
-					.withBillingAddress(new Address()
-							.withCity(creditCardRequest.getCity())
-							.withCountryCode(creditCardRequest.getCountryCode())
-							.withPostalCode(creditCardRequest.getPostalCode())
-							.withState(creditCardRequest.getState())
-							.withStreet(creditCardRequest.getStreet()))
-					.withBillingContact(new Contact()
-							.withFirstName(creditCardRequest.getFirstName())
-							.withLastName(creditCardRequest.getLastName()))
-					.withCardholderName(creditCardRequest.getCardholderName())
-					.withExpirationMonth(creditCardRequest.getExpirationMonth())
-					.withExpirationYear(creditCardRequest.getExpirationYear())
-					.withNumber(creditCardRequest.getNumber())
-					.withCvv(creditCardRequest.getCvv())
-					.withPrimary(creditCardRequest.getPrimary());
-			
-			HttpResponse httpResponse = RestResource.put(API_ENDPOINT)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON)
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
 					.path("account-profile")
 					.path(creditCardRequest.getAccountProfileId())
 					.path("credit-card")
 					.path(creditCardRequest.getToken())
-					.body(creditCard)
+					.parameter("cardholderName", creditCardRequest.getCardholderName())
+					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
+					.parameter("expirationYear", creditCardRequest.getExpirationYear())
+					.parameter("primary", creditCardRequest.getPrimary())
+					.parameter("street", creditCardRequest.getStreet())
+					.parameter("city", creditCardRequest.getCity())
+					.parameter("state", creditCardRequest.getState())
+					.parameter("postalCode", creditCardRequest.getPostalCode())
+					.parameter("countryCode", creditCardRequest.getCountryCode())
+					.parameter("firstName", creditCardRequest.getFirstName())
+					.parameter("lastName", creditCardRequest.getLastName())
 					.execute();
 			
 			UpdateResult<CreditCard> result = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-				creditCard = httpResponse.getEntity(CreditCard.class);
+				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
 				result = new UpdateResultImpl<CreditCard>(creditCard);
 			} else {
 				Error error = httpResponse.getEntity(Error.class);
@@ -471,7 +427,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public UpdateResult<CreditCard> setPrimary(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.post(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -479,7 +435,7 @@ public class AccountProfileResource extends AbstractResource {
 					.path(accountProfileId)
 					.path("credit-card")
 					.path(paymentMethodToken)
-					.parameter("primary", "true")
+					.path("primary")
 					.execute();
 			
 			UpdateResult<CreditCard> result = null;
@@ -501,8 +457,8 @@ public class AccountProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public GetResult<CreditCard> get(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.get(API_ENDPOINT)
+		public CreditCard get(String accountProfileId, String paymentMethodToken) {
+			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)
@@ -510,19 +466,17 @@ public class AccountProfileResource extends AbstractResource {
 					.path(paymentMethodToken)
 					.execute();
 			
-			GetResult<CreditCard> result = null;
+			CreditCard resource = null;
 	    	
 	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		CreditCard resource = httpResponse.getEntity(CreditCard.class);
-	    		result = new GetResultImpl<CreditCard>(resource); 
+	    		resource = httpResponse.getEntity(CreditCard.class);
 	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 				throw new NotFoundException(httpResponse.getAsString());
 			} else {
-	    		Error error = httpResponse.getEntity(Error.class);
-				result = new GetResultImpl<CreditCard>(error);
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
 	    	
-	    	return result;
+	    	return resource;
 		}
 		
 		/**
@@ -533,7 +487,7 @@ public class AccountProfileResource extends AbstractResource {
 		 */
 		
 		public DeleteResult delete(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+			HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.path("account-profile")
 					.path(accountProfileId)

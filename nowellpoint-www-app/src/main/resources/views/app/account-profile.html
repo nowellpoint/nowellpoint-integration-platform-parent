@@ -7,10 +7,11 @@
             </div>
         </div>
         <br>
-
+        <div class="hr-divider"></div>
+        <br>
         <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["name"]}</dt>
@@ -34,10 +35,13 @@
                     <dt>${labels["timezone.key"]}</dt>
                     <dd>${accountProfile.timeZoneSidKey!}&emsp;</dd>
                     <hr>
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${accountProfile.createdBy.id}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdOn?date?string.long!} ${accountProfile.createdOn?time?string.medium!}</dd>
+                    <hr>
                 </dl>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-4">
 
                 <dl class="dl-vertical">
                     <dt>${labels["department"]}</dt>
@@ -58,21 +62,20 @@
                     <dt>${labels["locale.key"]}</dt>
                     <dd>${locales[accountProfile.localeSidKey]!}&emsp;</dd>
                     <hr>
+                    <dt>&emsp;</dt>
+                    <dd>&emsp;</dd>
+                    <hr>
+                    <dt>${labels["last.modified.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${accountProfile.createdBy.id}">${accountProfile.lastUpdatedBy.name}</a>, ${accountProfile.lastUpdatedOn?date?string.long!} ${accountProfile.lastUpdatedOn?time?string.medium!}</dd>
+                    <hr>
                 </dl>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-4">
 
                 <div>
-                    <img src="${(accountProfile.photos.profilePicture)!}" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
+                    <img src="/images/person-generic.jpg" class="img-circle img-responsive center-block" alt="/images/person-generic.jpg">
                 </div>
-                <br>
-                <#if (accountProfile.photos.profilePicture)! !='/images/person-generic.jpg'>
-                    <div class="text-center">
-                        <a href="#" id="clickable" class="btn btn-primary center" role="button"> <i id="spinner" class="fa fa-spinner fa-spin"></i>${labels["delete"]}
-                        </a>
-                    </div>
-                </#if>
 
             </div>
 
@@ -103,28 +106,4 @@
         <br>
         <br>
 
-        <div id="settings" class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
-                        <h3 class="dashhead-title">${labels["settings"]}</h3>
-                    </div>
-                </div>
-                <br>
-                <div class="hr-divider"></div>
-                <br>
-            </div>
-            <div class="col-md-6">
-                <dl class="dl-vertical">
-                    <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${createdByHref}">${accountProfile.createdBy.name}</a>, ${accountProfile.createdDate?date?string.long!} ${accountProfile.createdDate?time?string.medium!}</dd>
-                </dl>
-            </div>
-            <div class="col-md-6">
-                <dl class="dl-vertical">
-                    <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${lastModifiedByHref}">${accountProfile.lastModifiedBy.name}</a>, ${accountProfile.lastModifiedDate?date?string.long!} ${accountProfile.lastModifiedDate?time?string.medium!}</dd>
-                </dl>
-            </div>
-        </div>
     </@t.page>

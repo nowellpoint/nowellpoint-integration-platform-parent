@@ -1,21 +1,16 @@
 package com.nowellpoint.www.app.view;
 
-import static spark.Spark.get;
-
-import java.util.Map;
-
-import com.nowellpoint.aws.http.HttpResponse;
-import com.nowellpoint.aws.http.RestResource;
-import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.RestResource;
+import com.nowellpoint.http.Status;
 
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class AdministrationController extends AbstractController {
+public class AdministrationController extends AbstractStaticController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class.getName());
 	
@@ -24,17 +19,6 @@ public class AdministrationController extends AbstractController {
 		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
 	}
 	
-	public AdministrationController() {
-		super(AdministrationController.class);
-	}
-	
-	@Override
-	public void configureRoutes(Configuration configuration) {
-		get(Path.Route.ADMINISTRATION, (request, response) -> showAdministrationHome(configuration, request, response));	
-        get(Path.Route.ADMINISTRATION.concat("/cache"), (request, response) -> showManageCache(configuration, request, response));	
-		get(Path.Route.ADMINISTRATION.concat("/cache/purge"), (request, response) -> purgeCache(configuration, request, response));
-	}
-	
 	/**
 	 * 
 	 * @param configuration
@@ -43,14 +27,8 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String showAdministrationHome(Configuration configuration, Request request, Response response) {
-		
-		AccountProfile account = getAccount(request);
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		
-		return render(configuration, request, response, model, Template.ADMINISTRATION_HOME);
+	public static String serveAdminHomePage(Configuration configuration, Request request, Response response) {
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.ADMINISTRATION_HOME);
 		
 	};
 	
@@ -62,14 +40,8 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String showManageCache(Configuration configuration, Request request, Response response) {
-		
-		AccountProfile account = getAccount(request);
-		
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		
-		return render(configuration, request, response, model, Template.CACHE_MANAGER);
+	public static String showManageCache(Configuration configuration, Request request, Response response) {
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
 		
 	};
 	
@@ -81,20 +53,18 @@ public class AdministrationController extends AbstractController {
 	 * @return
 	 */
 	
-	private String purgeCache(Configuration configuration, Request request, Response response) {
+	public static String purgeCache(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		HttpResponse httpResponse = RestResource.delete(API_ENDPOINT)
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
 		
-		LOGGER.info("Status Code: " + httpResponse.getStatusCode() + " Method: " + request.requestMethod() + " : " + request.pathInfo());
+		if (httpResponse.getStatusCode() != Status.OK) {
+			LOGGER.error(httpResponse.getAsString());
+		}
 		
-		AccountProfile account = getAccount(request);
-		Map<String, Object> model = getModel();
-		model.put("account", account);
-		
-		return render(configuration, request, response, model, Template.CACHE_MANAGER);
+		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
 	};
 }

@@ -5,66 +5,20 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nowellpoint.mongodb.annotation.Id;
+import com.nowellpoint.mongodb.annotation.MappedSuperclass;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@MappedSuperclass
 public abstract class MongoDocument implements Serializable {
-	
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = 4165321769330346404L;
 	
-	/**
-	 * 
-	 */
-	
-	@JsonProperty("_id")
-	@JsonSerialize(using = ObjectIdSerializer.class)
-	@JsonDeserialize(using = ObjectIdDeserializer.class)
+	@Id
 	private ObjectId id;
 	
-	/**
-	 * 
-	 */
+	private Date createdOn;
 	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	@JsonInclude(Include.NON_NULL)
-	private Date createdDate;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	@JsonInclude(Include.NON_NULL)
-	private Date lastModifiedDate;
-	
-	/**
-	 * 
-	 */
-	
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	@JsonInclude(Include.NON_NULL)
-	private Date systemCreatedDate;
-	
-	/**
-	 * 
-	 */
-
-	@JsonSerialize(using = DateSerializer.class)
-	@JsonDeserialize(using = DateDeserializer.class)
-	@JsonInclude(Include.NON_NULL)
-	private Date systemModifiedDate;
+	private Date lastUpdatedOn;
 	
 	public MongoDocument() {
 		
@@ -78,35 +32,19 @@ public abstract class MongoDocument implements Serializable {
 		this.id = id;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public Date getCreatedOn() {
+		return createdOn;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
 	}
 
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
+	public Date getLastUpdatedOn() {
+		return lastUpdatedOn;
 	}
 
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public Date getSystemCreatedDate() {
-		return systemCreatedDate;
-	}
-
-	public void setSystemCreatedDate(Date systemCreatedDate) {
-		this.systemCreatedDate = systemCreatedDate;
-	}
-
-	public Date getSystemModifiedDate() {
-		return systemModifiedDate;
-	}
-
-	public void setSystemModifiedDate(Date systemModifiedDate) {
-		this.systemModifiedDate = systemModifiedDate;
+	public void setLastUpdatedOn(Date lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
 	}
 }

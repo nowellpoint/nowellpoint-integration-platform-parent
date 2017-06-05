@@ -1,23 +1,43 @@
-<div id="sidebar-wrapper">
-    <ul class="sidebar-nav">
-        <li>&nbsp;</li>
-        <li>
-            <a href="/app/dashboard">
+<div id="sidebar-wrapper" class="menu">
+    <ul class="nav flex-column sidebar-nav">
+        <li class="nav-item sidebar-brand">
+                ${messages["application.title"]}
+        </li>
+        <li class="nav-item">
+            &nbsp;
+        </li>    
+        <li class="nav-item">
+            <a class="nav-link" href="/app/dashboard">
                ${messages["dashboard"]}
             </a>
         </li>
-        <li>
-            <a href="/app/connectors/salesforce">
-               ${messages["connectors"]}
+        <li class="nav-item">
+            &nbsp;
+        </li> 
+        <li class="nav-item menu-title text-muted">
+            ${messages["connectors"]}
+        </li> 
+        <li class="nav-item">
+            <a class="nav-link" href="${links['salesforce.connector']}">
+               ${messages["salesforce"]}
             </a>
         </li>
-        <li>
-            <a href="/app/scheduled-jobs">
-                ${messages["scheduled.jobs"]}
+        <li class="nav-item">
+            &nbsp;
+        </li> 
+        <li class="nav-item menu-title text-muted">
+            ${messages["scheduled.jobs"]}
+        </li>    
+        <li class="nav-item">
+            <a class="nav-link" href="${links['jobs']}">
+                ${messages["jobs"]}
             </a>
         </li>
-        <li>
-            <a href="/app/account-profile/${account.id}">
+        <li class="nav-item">
+            &nbsp;
+        </li> 
+        <li class="nav-item">
+            <a class="nav-link" href="${links['account.profile']}/${identity.id}">
                 ${messages["account.profile"]}
             </a>
         </li>

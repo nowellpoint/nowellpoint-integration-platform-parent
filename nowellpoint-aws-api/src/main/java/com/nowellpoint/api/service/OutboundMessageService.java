@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -74,7 +74,7 @@ public class OutboundMessageService {
 			
 		ZipOutputStream zip = new ZipOutputStream(baos);
 			
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 			
 		GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", "deployments/Outbound_Event__c.object");
 	    	
@@ -158,7 +158,7 @@ public class OutboundMessageService {
 		
 		GetObjectRequest getObjectRequest = new GetObjectRequest("aws-microservices", key);
 		
-		AmazonS3 s3Client = new AmazonS3Client();
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		
 		S3Object zipFile = s3Client.getObject(getObjectRequest);
 		

@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RecordTypeInfo implements Serializable {
 	
-    /**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -9027607808560048930L;
 
 	private String recordTypeId;

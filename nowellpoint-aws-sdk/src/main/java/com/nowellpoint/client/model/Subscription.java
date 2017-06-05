@@ -34,6 +34,10 @@ public class Subscription implements Serializable {
 	
 	private String billingFrequency;
 	
+	private String status;
+	
+	private Date nextBillingDate;
+	
 	public Subscription() {
 		
 	}
@@ -116,5 +120,21 @@ public class Subscription implements Serializable {
 
 	public void setBillingFrequency(String billingFrequency) {
 		this.billingFrequency = billingFrequency;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Date getNextBillingDate() {
+		return nextBillingDate;
+	}
+
+	public void setNextBillingDate(Date nextBillingDate) {
+		this.nextBillingDate = nextBillingDate;
 	}
 }

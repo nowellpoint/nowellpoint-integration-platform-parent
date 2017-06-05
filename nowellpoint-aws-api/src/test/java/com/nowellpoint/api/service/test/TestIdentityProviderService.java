@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import com.nowellpoint.util.Properties;
 import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.account.AccountList;
-import com.stormpath.sdk.account.AccountStatus;
-import com.stormpath.sdk.account.Accounts;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
@@ -51,34 +48,6 @@ public class TestIdentityProviderService {
 	}
 	
 	@Test
-	public void testEmailVerificationToken() {
-		
-		AccountList accounts = application.getAccounts(
-				Accounts.where(
-						Accounts.username().eqIgnoreCase("test.nowellpoint@mailinator.com")));
-		
-		Account account = accounts.single();
-			
-		System.out.println(account.getFullName());
-		
-		System.out.println(account.getEmailVerificationStatus());
-		System.out.println(account.getEmailVerificationToken().getHref());
-		System.out.println(account.getEmailVerificationToken().getValue());
-		
-		account.setPassword("ksieki81;ski");
-		account.setUsername(account.getUsername());
-		account.setGivenName(account.getGivenName());
-		account.setMiddleName(null);
-		account.setSurname(account.getSurname());
-		account.setEmail("administrator@nowellpoint.com");
-		account.setStatus(AccountStatus.UNVERIFIED);
-		
-		account.save();
-		
-		assertNotNull(account.getEmailVerificationToken().getHref());
-	}
-	
-	@Test
 	public void testAuthentication() {
 		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
 				.builder()
@@ -89,6 +58,8 @@ public class TestIdentityProviderService {
 		OAuthGrantRequestAuthenticationResult authenticationResult = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
 				.forApplication(application)
 				.authenticate(request);
+		
+		System.out.println(authenticationResult.getAccessToken().getJwt());
 		
 		assertNotNull(authenticationResult.getAccessToken().getAccount().getFullName());
 		assertNotNull(authenticationResult.getAccessToken().getJwt());

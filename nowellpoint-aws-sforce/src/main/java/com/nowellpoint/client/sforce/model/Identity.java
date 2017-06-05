@@ -209,9 +209,6 @@ public class Identity implements Serializable {
 	@JsonProperty("email")
 	private String email;
 	
-	@JsonProperty("email_verified")
-	private Boolean email_verified;
-	
 	@JsonProperty("first_name")
 	private String first_name;
 	
@@ -238,9 +235,6 @@ public class Identity implements Serializable {
 	
 	@JsonProperty("mobile_phone")
 	private String mobile_phone;
-	
-	@JsonProperty("mobile_phone_verified")
-	private Boolean mobile_phone_verified;
 
 	@JsonProperty("active")
 	private Boolean active;
@@ -331,14 +325,6 @@ public class Identity implements Serializable {
 		this.email = email;
 	}
 
-	public Boolean getEmailVerified() {
-		return email_verified;
-	}
-
-	public void setEmailVerified(Boolean emailVerified) {
-		this.email_verified = emailVerified;
-	}
-
 	public String getFirstName() {
 		return first_name;
 	}
@@ -409,14 +395,6 @@ public class Identity implements Serializable {
 
 	public void setMobilePhone(String mobilePhone) {
 		this.mobile_phone = mobilePhone;
-	}
-
-	public Boolean getMobilePhoneVerified() {
-		return mobile_phone_verified;
-	}
-
-	public void setMobilePhoneVerified(Boolean mobilePhoneVerified) {
-		this.mobile_phone_verified = mobilePhoneVerified;
 	}
 
 	public Urls getUrls() {

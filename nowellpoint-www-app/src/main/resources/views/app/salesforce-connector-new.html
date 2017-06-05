@@ -23,22 +23,19 @@
             <div class="panel-body">
 
                 <p>
-
-
-                    <b>${labels["description"]}:</b> Creating a Secure Salesforce API User
+                    <b>${labels["description"]}:</b>&nbsp;${labels["description.text"]}
                     <br>
-                    <b>${labels["resolution"]}:</b> Create an Integration User
+                    <b>${labels["resolution"]}:</b>&nbsp;${labels["resolution.text"]}
                     <br>
-                    <br> Client applications that access Salesforce through the API must first log in as a Salesforce user for authentication. Create a special user in your organization, solely for integration purposes. That way, even if an actual user leaves your organization, you'll always have a user with the correct permissions available. Assign this user a special profile with the following permissions selected: (Note that you are advised to use a Full Salesforce License for the user to be able to set the below permissions and have full access to avoid any other errors) “API Only”—Specifies that the user can only log in through the API. This prevents the user from being used for any purpose other than integration scenarios. “Modify All Data”—Specifies that the user can view any data stored in the database and edit any field with the editable flag. (Some fields, like CreatedDate, do not have the editable flag set and cannot be edited by any user, regardless of the “Modify All Data” permission.) This permission is also required for any user who wants to upsert non-unique external IDs through the API. If you don't need to worry about external IDs, use the “Modify All" records permission for a more secure integration. This permission further restricts the integration user's access. In addition, consider restricting the following to enable a more secure integration: All logins use secure access (HTTPS).
-
+                    <br>${labels["resolution.description"]}
                 </p>
 
             </div>
         </div>
 
         <p class="pull-right">
-            <a href="${labels['base.path']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-            <a href="/app/salesforce/oauth" class="btn btn-primary" role="button">${labels["create.connector"]}</a>
+            <a href="${links['salesforce.connector']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
+            <a href="${links['salesforce.oauth']}" class="btn btn-primary" role="button">${labels["create.connector"]}</a>
         </p>
 
     </@t.page>

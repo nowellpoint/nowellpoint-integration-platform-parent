@@ -1,7 +1,23 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -9,7 +25,7 @@ import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
-import org.wildfly.swarm.logging.LoggingFraction;
+import org.wildfly.swarm.swagger.SwaggerArchive;
 
 import com.nowellpoint.util.Properties;
 
@@ -18,43 +34,21 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		
 		//
-		// set system properties from command line args
-		//
-		
-		if (args != null && args.length > 0) {
-			Arrays.asList(args).stream().forEach(a -> {
-				if (a.startsWith("-D")) {
-					String[] param = a.replace("-D", "").split("=");
-					System.setProperty(param[0], param[1]);
-				}
-			});
-		}
-		
-		//
-		// set default system properties
-		//
-		
-		System.setProperty("swarm.http.port", getHttpPort());
-		System.setProperty("swarm.https.port", getHttpsPort());
-		System.setProperty("swarm.https.certificate.generate", "true");
-
-		//
 		// build the container
 		//
 		
-        Swarm container = new Swarm(); 
+        Swarm container = new Swarm(args);
         
 		//
-        // set system properties from configuration
+        // dynamically set secure system properties based configuration
         //
 
-        Properties.loadProperties(container
-                .stageConfig()
+        Properties.loadProperties(container.configView()
                 .resolve("propertyStore.name")
                 .getValue());
         
         //
-        // set default timezone to UTC
+        // set default time zone to UTC
         //
         
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
@@ -65,25 +59,24 @@ public class Main {
         
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.api"))
-        		.addAsWebInfResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
+        		.addAsResource(new ClassLoaderAsset("messages_en_US.properties", Main.class.getClassLoader()), "messages_en_US.properties")
         		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
-        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        
-        deployment.addAllDependencies();
+        		.addAsWebResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
+        		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+        		.addAllDependencies();
         
         //
-        // start the container and deploy the archives
+        // enable swagger
         //
+        
+        final SwaggerArchive archive = deployment.as(SwaggerArchive.class);
+        archive.setResourcePackages("com.nowellpoint.api.rest");
+        archive.setPrettyPrint(Boolean.TRUE);
 
-        container.fraction(LoggingFraction.createDefaultLoggingFraction()).start().deploy(deployment);
-
+        //
+        // start the container and deploy the archive
+        //
+        
+        container.start(deployment);
     }
-	
-	public static String getHttpPort() {
-		return Optional.ofNullable(System.getenv().get("PORT")).orElse("5000");
-	}
-	
-	public static String getHttpsPort() {
-		return String.valueOf(Integer.valueOf(getHttpPort()) + 100);
-	}
 }

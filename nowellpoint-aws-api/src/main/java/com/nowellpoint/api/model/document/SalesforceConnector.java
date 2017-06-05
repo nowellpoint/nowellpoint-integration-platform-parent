@@ -1,42 +1,93 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.model.document;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.api.model.codec.SalesforceConnectionCodec;
 import com.nowellpoint.api.model.sforce.Identity;
 import com.nowellpoint.api.model.sforce.Organization;
+import com.nowellpoint.client.sforce.model.Theme;
+import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-@Document(collectionName="salesforce.connectors", codec=SalesforceConnectionCodec.class)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collectionName="salesforce.connectors")
 public class SalesforceConnector extends MongoDocument {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -3438714915624952119L;
+	
+	@EmbedOne
+	private Meta meta;
 	
 	private String name;
 	
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
-	private UserRef lastModifiedBy;
-	
+	@Reference(referenceClass = AccountProfile.class)
+	private UserRef lastUpdatedBy;
+
+	@Reference(referenceClass = AccountProfile.class)
 	private UserRef owner;
 	
+	@EmbedOne
 	private Identity identity;
 	
+	@EmbedOne
 	private Organization organization;
+	
+	private String connectionString;
+	
+	private Date lastTestedOn;
+	
+	private Boolean isValid;
+	
+	private String serviceEndpoint;
+	
+	private String status;
 	
 	private String tag;
 	
-	private Set<Environment> environments;
+	@EmbedMany
+	private Set<Service> services = new HashSet<>();
+	
+	@EmbedMany
+	private Set<Sobject> sobjects = new HashSet<>();
+	
+	@EmbedOne
+	private Theme theme;
 	
 	public SalesforceConnector() {
 		
+	}
+
+	public Meta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(Meta meta) {
+		this.meta = meta;
 	}
 
 	public String getName() {
@@ -55,12 +106,12 @@ public class SalesforceConnector extends MongoDocument {
 		this.createdBy = createdBy;
 	}
 
-	public UserRef getLastModifiedBy() {
-		return lastModifiedBy;
+	public UserRef getLastUpdatedBy() {
+		return lastUpdatedBy;
 	}
 
-	public void setLastModifiedBy(UserRef lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public UserRef getOwner() {
@@ -87,6 +138,46 @@ public class SalesforceConnector extends MongoDocument {
 		this.organization = organization;
 	}
 
+	public String getConnectionString() {
+		return connectionString;
+	}
+
+	public void setConnectionString(String connectionString) {
+		this.connectionString = connectionString;
+	}
+
+	public Date getLastTestedOn() {
+		return lastTestedOn;
+	}
+
+	public void setLastTestedOn(Date lastTestedOn) {
+		this.lastTestedOn = lastTestedOn;
+	}
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getServiceEndpoint() {
+		return serviceEndpoint;
+	}
+
+	public void setServiceEndpoint(String serviceEndpoint) {
+		this.serviceEndpoint = serviceEndpoint;
+	}
+
 	public String getTag() {
 		return tag;
 	}
@@ -95,11 +186,27 @@ public class SalesforceConnector extends MongoDocument {
 		this.tag = tag;
 	}
 
-	public Set<Environment> getEnvironments() {
-		return environments;
+	public Set<Service> getServices() {
+		return services;
 	}
 
-	public void setEnvironments(Set<Environment> environments) {
-		this.environments = environments;
+	public void setServices(Set<Service> services) {
+		this.services = services;
+	}
+
+	public Set<Sobject> getSobjects() {
+		return sobjects;
+	}
+
+	public void setSobjects(Set<Sobject> sobjects) {
+		this.sobjects = sobjects;
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

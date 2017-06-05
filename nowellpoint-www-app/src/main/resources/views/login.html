@@ -13,82 +13,57 @@
     <title>${messages["application.title"]}</title>
 
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <link rel="stylesheet" href="css/media.css" type="text/css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
 
 </head>
 
 <body>
 
-    <section>
-        <div class="container">
-            <div class="row">
-                <br>
-                <br>
-                <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
-                <div class="col-md-8">
-                    <#if errorMessage??>
-                        <div id="alert" class="alert alert-danger">
-                            <a class="close" data-dismiss="alert">×</a>
-                            <div class="text-center">${errorMessage}</div>
-                        </div>
-                    </#if>
+    <div class="login_container">
+        <div class="login_section" id="login">
+            <div class="center">
+                <div class="site-logo">
+                    <h1><a href="/">${messages["application.title"]}</a></h1>
                 </div>
-                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"></div>
+                <h2>${labels["welcome.back"]}</h2>
+                <div class="line"></div>
             </div>
-            <div class="row">
-                <div class="col-xs-offset-0 col-xs-12 col-xs-offset-0 col-sm-offset-2 col-sm-8 col-sm-offset-2 col-md-offset-4 col-md-4 col-md-offset-4">
 
-                    <h3><div class="text-center">${labels["welcome.back"]}</div></h3>
-                    <br>
+            <p class="error">${errorMessage!}</p>
+            <br>
 
-                    <form class="form-vertical" role="form" method="post" action="/login">
-
-                        <div class="form-group">
-                            <label class="control-label" for="username">${labels["email"]}</label>
-                            <input type="text" class="form-control" name="username" id="username" required="" autofocus="" />
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="password">${labels["password"]}</label>
-                            <input type="password" class="form-control" name="password" id="password" required="" autocomplete="off" />
-                        </div>
-
-                        <div class="form-group">
-                            <div class="pull-right">
-                                <button type="submit" name="submit" id="submit" class="btn btn-primary">${labels["login"]}</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="row">
-                <br>
-                <br>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2"></div>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2">
-                    <div class="panel panel-default">
-                        <div class="panel-body text-center">${labels["new.to.nowellpoint"]}<a href="/list-plans">&nbsp;${labels["sign.up"]}</a></div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2"></div>
-            </div>
-            <div class="row">
-                <br>
-                <br>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2"></div>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2">
-                    <div class="text-center"><a href="/contact">${labels["contact.us"]}</a></div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-2"></div>
+            <div class="mid">
+                <form role="form" id="login-form" method="post" action="/login">
+                    <fieldset>
+                        <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
+                        <p class="form-group">
+                            <input type="email" name="username" id="username" placeholder="${labels['email']}" autofocus class="field form-control">
+                        </p>
+                        <p class="form-group">
+                            <input type="password" name="password" id="password" placeholder="${labels['password']}" autocomplete="off" class="field form-control">
+                        </p>
+                        <p class="form-group">
+                            <input type="submit" id="submit" value="${labels['login']}" class="button">
+                        </p>
+                    </fieldset>
+                </form>
+                <ul>
+                    <li>
+                        <a href="/free" class="btn btn-warning">${labels["create.free.account"]}</a>
+                    </li>
+                </ul>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
 
 </body>
 

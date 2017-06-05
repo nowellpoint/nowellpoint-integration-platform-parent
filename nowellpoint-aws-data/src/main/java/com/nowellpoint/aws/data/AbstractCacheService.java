@@ -4,6 +4,7 @@ import static com.nowellpoint.aws.data.CacheManager.deserialize;
 import static com.nowellpoint.aws.data.CacheManager.serialize;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -16,6 +17,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 public abstract class AbstractCacheService {
 	
@@ -40,6 +42,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.set(key.getBytes(), serialize(value));
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -60,6 +64,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.setex(key.getBytes(), expire, serialize(value));
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -81,6 +87,8 @@ public abstract class AbstractCacheService {
 		byte[] bytes = null;
 		try {
 			bytes = jedis.get(key.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -104,6 +112,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.del(key.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -123,6 +133,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hset(key.getBytes(), field.getBytes(), serialize(value));
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -141,6 +153,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hdel(key.getBytes(), field.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -173,6 +187,8 @@ public abstract class AbstractCacheService {
 		byte[] bytes = null;
 		try {
 			bytes = jedis.hget(key.getBytes(), field.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -205,6 +221,8 @@ public abstract class AbstractCacheService {
 					e.printStackTrace();
 				}
 			}); 
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -235,20 +253,13 @@ public abstract class AbstractCacheService {
 		
 		try {
 			return jedis.hexists(key.getBytes(), field.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
+			return false;
 		} finally {
 			jedis.close();
 		}
 	}
-	
-	/**
-	 * 
-	 * 
-	 * @param key
-	 * @param type
-	 * @return
-	 * 
-	 * 
-	 */
 	
 	protected <T> Set<T> hscan(Class<T> type, String key) {
 		Jedis jedis = CacheManager.getCache();
@@ -259,18 +270,42 @@ public abstract class AbstractCacheService {
 		
 		try {
 			scanResult = jedis.hscan(key.getBytes(), SCAN_POINTER_START.getBytes(), params);
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
 		
 		Set<T> results = new HashSet<T>();
 		
-		scanResult.getResult().forEach(r -> {
-			T t = deserialize(r.getValue(), type);
-			results.add(t);
+		if (scanResult != null) {
+			scanResult.getResult().forEach(r -> {
+				T t = deserialize(r.getValue(), type);
+				results.add(t);
+			});
+		}
+		
+		return results;
+	}
+	
+	protected Set<String> hkeys(String key) {
+		Jedis jedis = CacheManager.getCache();
+		Set<byte[]> fields = null;
+		try {
+			fields = jedis.hkeys(key.getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
+		} finally {
+			jedis.close();
+		}
+		
+		Set<String> results = new HashSet<String>();
+		fields.stream().forEach(field -> {
+			results.add(new String(field, Charset.forName("UTF-8")));
 		});
 		
 		return results;
+		
 	}
 	
 	/**
@@ -286,6 +321,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.expire(key.getBytes(), seconds);
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -304,6 +341,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hset(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes(), CacheManager.serialize(value));
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -322,6 +361,8 @@ public abstract class AbstractCacheService {
 		Jedis jedis = CacheManager.getCache();
 		try {
 			jedis.hdel(key.getBytes(), value.getClass().getName().concat(":").concat(value.getId().toString()).getBytes());
+		} catch (JedisConnectionException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}

@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>nowellpoint-aws-api</artifactId>
-    <name>Nowellpoint Rest Api</name>
-    <packaging>jar</packaging>
-    
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>nowellpoint-aws-api</artifactId>
+	<name>Nowellpoint Rest Api</name>
+	<packaging>jar</packaging>
+
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
@@ -28,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly.swarm>2016.11.0</version.wildfly.swarm>
+		<version.wildfly.swarm>2017.5.0</version.wildfly.swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -46,6 +47,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>cdi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>jaxrs</artifactId>
 		</dependency>
 		<dependency>
@@ -61,16 +66,34 @@
 			<artifactId>logging</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>management</artifactId>
-        </dependency>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>management</artifactId>
+		</dependency>
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jaxrs</artifactId>
-			<version>1.5.10</version>
+			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>swagger</artifactId>
+			<version>2017.5.0</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>	
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>builder</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>	
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value-fixture</artifactId>
+			<version>2.4.6</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-api</artifactId>
@@ -106,6 +129,11 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.2.2.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
@@ -184,70 +212,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>com.github.kongchen</groupId>
-				<artifactId>swagger-maven-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<apiSources>
-						<apiSource>
-							<springmvc>false</springmvc>
-							<locations>com.nowellpoint.aws.api.resource</locations>
-							<info>
-								<title>The Nowellpoint API</title>
-								<description>API for all interactions with the Nowellpoint
-									integration platform</description>
-								<version>v1.0</version>
-							</info>
-							<swaggerDirectory>target</swaggerDirectory>
-						</apiSource>
-					</apiSources>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											com.github.kongchen
-										</groupId>
-										<artifactId>
-											swagger-maven-plugin
-										</artifactId>
-										<versionRange>
-											[3.1.1,)
-										</versionRange>
-										<goals>
-											<goal>generate</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>
