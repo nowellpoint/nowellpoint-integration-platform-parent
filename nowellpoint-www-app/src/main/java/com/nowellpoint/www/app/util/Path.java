@@ -33,6 +33,7 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_BUILD = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/build");
 		public static final String CONNECTORS_SALESFORCE_METADATA_BACKUP = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/metadata-backup");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects");
+		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/sobjects/:sobject");
 		public static final String CONNECTORS_SALESFORCE_SERVICE_SETUP = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/services/:serviceId/setup");
 		public static final String CONNECTORS_SALESFORCE_FLOW_NEW = String.format(APPLICATION_CONTEXT, "connectors/salesforce/:id/new-flow");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");

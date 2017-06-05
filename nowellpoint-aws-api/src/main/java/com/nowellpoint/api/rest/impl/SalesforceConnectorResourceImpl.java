@@ -20,6 +20,7 @@ import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.util.Assert;
 
 public class SalesforceConnectorResourceImpl implements SalesforceConnectorResource {
@@ -112,6 +113,16 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 		
 		return Response.ok()
 				.entity(salesforceConnector)
+				.build(); 
+	}
+	
+	public Response describeSObject(String id, String sobject) {
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
+		
+		DescribeSobjectResult result = salesforceConnectorService.describeSobject(salesforceConnector, sobject);
+		
+		return Response.ok(result)
 				.build(); 
 	}
 	

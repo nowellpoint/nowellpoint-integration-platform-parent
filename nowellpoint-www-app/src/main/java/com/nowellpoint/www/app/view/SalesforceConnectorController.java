@@ -11,6 +11,7 @@ import com.nowellpoint.client.model.SalesforceConnectorList;
 import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -318,6 +319,25 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnector", salesforceConnector);
 
 		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_LIST);
+	}
+	
+	public static String viewSObject(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String sobject = request.params(":sobject");
+		
+		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
+		
+		DescribeSobjectResult result = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.describeSobject(id, sobject);
+		
+		Map<String, Object> model = getModel();
+		model.put("salesforceConnector", salesforceConnector);
+    	model.put("sobject", result);
+
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
 	}
 	
 	public static String newFlow(Configuration configuration, Request request, Response response) {

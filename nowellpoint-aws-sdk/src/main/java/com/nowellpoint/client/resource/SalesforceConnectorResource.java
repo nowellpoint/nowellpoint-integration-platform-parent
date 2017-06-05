@@ -11,6 +11,7 @@ import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -86,6 +87,29 @@ public class SalesforceConnectorResource extends AbstractResource {
     	}
     	
     	return resource;
+	}
+	
+	public DescribeSobjectResult describeSobject(String id, String sobject) {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.header("Content-Type", MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.path("sobjects")
+    			.queryParameter("sobject", sobject)
+    			.execute();
+		
+		DescribeSobjectResult resource = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(DescribeSobjectResult.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
+		
+		return resource;
 	}
 	
 	public UpdateResult<SalesforceConnector> update(String id, SalesforceConnectorRequest salesforceConnectorRequest) {

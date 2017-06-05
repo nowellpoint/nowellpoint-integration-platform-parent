@@ -48,6 +48,7 @@ import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
+import com.nowellpoint.client.sforce.DescribeSobjectRequest;
 import com.nowellpoint.client.sforce.GetIdentityRequest;
 import com.nowellpoint.client.sforce.GetOrganizationRequest;
 import com.nowellpoint.client.sforce.OauthException;
@@ -58,6 +59,7 @@ import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 import com.sforce.ws.ConnectionException;
@@ -292,6 +294,30 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		jobRequestEvent.fire(jobRequest);
 	}
 	
+	@Override
+	public DescribeSobjectResult describeSobject(SalesforceConnector salesforceConnector, String sobject) {
+		
+		DescribeSobjectResult result = null;
+		
+		try {
+			Token token = connect(salesforceConnector.getConnectionString());
+			result = describeSObject(token.getAccessToken(), sobject, salesforceConnector.getIdentity().getUrls().getSobjects());
+			salesforceConnector.setIsValid(Boolean.TRUE);
+			salesforceConnector.setStatus(token.getIssuedAt());
+		} catch (OauthException e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus("Error: " + e.getErrorDescription());
+		} catch (Exception e) {
+			salesforceConnector.setIsValid(Boolean.FALSE);
+			salesforceConnector.setStatus("Error: " + e.getMessage());
+		} finally {
+			salesforceConnector.setLastTestedOn(Date.from(Instant.now()));
+			update(salesforceConnector);
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * 
 	 * @param accessToken
@@ -366,6 +392,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	}
 	
 	private DescribeGlobalSobjectsResult describe(String accessToken, String sobjectsUrl) {
+		
 		Client client = new Client();
 		
 		DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
@@ -375,6 +402,20 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 		
 		return describeGlobalSobjectsResult;
+	}
+	
+	private DescribeSobjectResult describeSObject(String accessToken, String sobject, String sobjectsUrl) {
+		
+		Client client = new Client();
+		
+		DescribeSobjectRequest request = new DescribeSobjectRequest()
+				.withAccessToken(accessToken)
+				.withSobject(sobject)
+				.withSobjectsUrl(sobjectsUrl);
+		
+		DescribeSobjectResult result = client.describeSobject(request);
+		
+		return result;
 	}
 	
 	private Theme getTheme(String accessToken, String restUrl) {

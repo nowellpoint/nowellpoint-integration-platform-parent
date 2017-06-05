@@ -1,7 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
         <div>
-            <p class="card-text"><a href="${links['salesforce.connector']}/${salesforceConnector.id}#sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connector"]}</p>
+            <p class="card-text"><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.sobjects"]}</p>
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -10,8 +10,8 @@
             <div class="flextable-item flextable-primary">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${sobject.result.name}</h6>
-                        <h3 class="dashhead-title">${sobject.result.label}</h3>
+                        <h6 class="dashhead-subtitle">${sobject.name}</h6>
+                        <h3 class="dashhead-title">${sobject.label}</h3>
                     </div>
                 </div>
             </div>
@@ -24,31 +24,31 @@
                         <td class="text-center">
                             ${labels["query"]}
                             <br>
-                            <p class="${sobject.result.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.queryable?then('icon-check', 'icon-cross')}"></span></p>
+                            <p class="${sobject.queryable?then('text-success', 'text-danger')}"><span class="icon ${sobject.queryable?then('icon-check', 'icon-cross')}"></span></p>
                         </td>
                         <td class="text-center">
                             ${labels["create"]}
                             <br>
-                            <p class="${sobject.result.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.createable?then('icon-check', 'icon-cross')}"></span></p>
+                            <p class="${sobject.createable?then('text-success', 'text-danger')}"><span class="icon ${sobject.createable?then('icon-check', 'icon-cross')}"></span></p>
                         </td>
                         <td class="text-center">
                             ${labels["update"]}
                             <br>
-                            <p class="${sobject.result.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.updateable?then('icon-check', 'icon-cross')}"></span></p>
+                            <p class="${sobject.updateable?then('text-success', 'text-danger')}"><span class="icon ${sobject.updateable?then('icon-check', 'icon-cross')}"></span></p>
                         </td>
                         <td class="text-center">
                             ${labels["delete"]}
                             <br>
-                            <p class="${sobject.result.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.result.deletable?then('icon-check', 'icon-cross')}"></span></p>
+                            <p class="${sobject.deletable?then('text-success', 'text-danger')}"><span class="icon ${sobject.deletable?then('icon-check', 'icon-cross')}"></span></p>
                         </td>
                         <td class="text-center">
                             ${labels["custom"]}
                             <br>
-                            <span class="icon ${sobject.result.custom?then('icon-check', '')}"></span>
+                            <span class="icon ${sobject.custom?then('icon-check', '')}"></span>
                         </td>
                         <td class="text-center">
                             ${labels["record.count"]}
-                            <br> ${sobject.totalSize}
+                            <br> &nbsp;
                         </td>
                 </tbody>
             </table>
@@ -77,7 +77,7 @@
                                 <th class="text-right">${labels["length"]}</th>
                             </thead>
                             <tbody>
-                                <#list sobject.result.fields as field>
+                                <#list sobject.fields as field>
                                     <tr>
                                         <td>${field.name}</td>
                                         <td>${field.label}</td>
@@ -97,13 +97,13 @@
                                 <th>${labels["relationship.name"]}</th>
                             </thead>
                             <tbody>
-                                <#if sobject.result.childRelationships?size==0>
+                                <#if sobject.childRelationships?size==0>
                                     <tr>
                                         <td colspan="3">${labels["no.relationships"]}</td>
                                     </tr>
                                 </#if>
-                                <#if sobject.result.childRelationships?size gt 0>
-                                    <#list sobject.result.childRelationships as relationship>
+                                <#if sobject.childRelationships?size gt 0>
+                                    <#list sobject.childRelationships as relationship>
                                         <tr>
                                             <td>${relationship.field}</td>
                                             <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}/sobjects/${(relationship.childSObject!)}">${relationship.childSObject}</a></td>

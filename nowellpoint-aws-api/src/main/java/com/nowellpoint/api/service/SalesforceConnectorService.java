@@ -3,6 +3,7 @@ package com.nowellpoint.api.service;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
 /**
  * 
@@ -29,4 +30,6 @@ public interface SalesforceConnectorService {
 	public void build(SalesforceConnector salesforceConnector);
 	
 	public void metadataBackup(SalesforceConnector salesforceConnector);
+	
+	public DescribeSobjectResult describeSobject(SalesforceConnector salesforceConnector, String sobject);
 }

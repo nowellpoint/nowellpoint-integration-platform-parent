@@ -29,6 +29,11 @@ public interface SalesforceConnectorResource {
 			@FormParam("refreshToken") String refreshToken);
 	
 	@GET
+	@Path("{id}/sobjects")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response describeSObject(@PathParam(value="id") String id, @QueryParam(value="sobject") String sobject);
+	
+	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSalesforceConnector(@PathParam(value="id") String id, @QueryParam(value="expand") String expand);

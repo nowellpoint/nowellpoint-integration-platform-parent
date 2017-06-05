@@ -184,6 +184,7 @@ public class Application implements SparkApplication {
         post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController.buildSalesforceConnector(configuration, request, response));
         post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP, (request, response) -> SalesforceConnectorController.metadataBackup(configuration, request, response));
         get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
+        get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
         
         //
         // jobs routes
