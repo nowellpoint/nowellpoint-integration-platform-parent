@@ -102,7 +102,7 @@ public class SalesforceConnector extends AbstractResource {
 				connectionEntry.getToken(), 
 				Boolean.TRUE, 
 				token.getInstanceUrl(),
-				new Date(new Long(token.getIssuedAt())));
+				now);
 	}
 	
 	private <T> SalesforceConnector(T document) {

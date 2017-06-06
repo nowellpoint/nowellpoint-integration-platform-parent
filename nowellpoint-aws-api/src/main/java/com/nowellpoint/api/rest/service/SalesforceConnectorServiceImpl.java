@@ -1,3 +1,21 @@
+/**
+ * 
+ * Copyright 2015-2016 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.nowellpoint.api.rest.service;
 
 import java.io.IOException;
@@ -116,20 +134,21 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		Client client = new Client();
 		
-		GetIdentityRequest getIdentityRequest = new GetIdentityRequest()
+		GetIdentityRequest identityRequest = new GetIdentityRequest()
 				.setAccessToken(token.getAccessToken())
 				.setId(token.getId());
 		
-		Identity identity = client.getIdentity( getIdentityRequest );
-		identity.getPhotos().setPicture( putImage( token.getAccessToken(), identity.getPhotos().getPicture() ) );
-		identity.getPhotos().setThumbnail( putImage( token.getAccessToken(), identity.getPhotos().getThumbnail() ) );
+		Identity identity = client.getIdentity( identityRequest );
 		
-		GetOrganizationRequest getOrganizationRequest = new GetOrganizationRequest()
+		GetOrganizationRequest organizationRequest = new GetOrganizationRequest()
 				.setAccessToken(token.getAccessToken())
 				.setOrganizationId(identity.getOrganizationId())
 				.setSobjectUrl(identity.getUrls().getSobjects());
 		
-		Organization organization = client.getOrganization(getOrganizationRequest);
+		Organization organization = client.getOrganization( organizationRequest );
+		
+		identity.getPhotos().setPicture( putImage( token.getAccessToken(), identity.getPhotos().getPicture() ) );
+		identity.getPhotos().setThumbnail( putImage( token.getAccessToken(), identity.getPhotos().getThumbnail() ) );
 		
 		ConnectionString connectString = ConnectionString.salesforce(
 				token.getRefreshToken(), 
