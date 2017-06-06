@@ -186,11 +186,11 @@
                                     <label class="control-label" for="countryCode">${labels["country"]}*</label>
                                     <select id="countryCode" name="countryCode" class="form-control" required>
                                         <#list countryList as country>
-                                            <#if country.code==accountProfile.address.countryCode>
-                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                            <#if country.iso2Code==accountProfile.address.countryCode>
+                                                <option value="${country.iso2Code}" selected="selected">${country.name}</option>
                                             </#if>
-                                            <#if country.code !=accountProfile.address.countryCode>
-                                                <option value="${country.code}">${country.name}</option>
+                                            <#if country.iso2Code !=accountProfile.address.countryCode>
+                                                <option value="${country.iso2Code}">${country.name}</option>
                                             </#if>
                                         </#list>
                                     </select>
@@ -354,15 +354,15 @@
                                         <option value="">${labels["select.one"]}</option>
                                         <#list countryList as country>
                                             <#if creditCard.billingAddress.countryCode??>
-                                                <#if country.code==creditCard.billingAddress.countryCode>
-                                                    <option value="${country.code}" selected="selected">${country.name}</option>
+                                                <#if country.iso2Code==creditCard.billingAddress.countryCode>
+                                                    <option value="${country.iso2Code}" selected="selected">${country.name}</option>
                                                 </#if>
-                                                <#if country.code !=creditCard.billingAddress.countryCode>
-                                                    <option value="${country.code}">${country.name}</option>
+                                                <#if country.iso2Code !=creditCard.billingAddress.countryCode>
+                                                    <option value="${country.iso2Code}">${country.name}</option>
                                                 </#if>
                                             </#if>
                                             <#if ! creditCard.billingAddress.countryCode??>
-                                                <option value="${country.code}">${country.name}</option>
+                                                <option value="${country.iso2Code}">${country.name}</option>
                                             </#if>
                                         </#list>
                                     </select>

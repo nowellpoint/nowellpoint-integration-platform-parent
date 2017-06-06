@@ -65,11 +65,11 @@
                         <p class="form-group">
                             <select id="countryCode" name="countryCode" required>
                                 <#list countryList as country>
-                                    <#if country.code==countryCode>
-                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                    <#if country.iso2Code==countryCode>
+                                        <option value="${country.iso2Code}" selected="selected">${country.name}</option>
                                     </#if>
-                                    <#if country.code !=countryCode>
-                                        <option value="${country.code}">${country.name}</option>
+                                    <#if country.iso2Code !=countryCode>
+                                        <option value="${country.iso2Code}">${country.name}</option>
                                     </#if>
                                 </#list>
                             </select>

@@ -51,7 +51,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("locale", Locale.getDefault().toString())
+				.queryParameter("locale", "en_US")
 				.queryParameter("language", "en_US")
 				.execute();
 		
@@ -87,7 +87,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("locale", Locale.getDefault().toString())
+				.queryParameter("locale", "en_US")
 				.queryParameter("language", "en_US")
 				.execute();
 		
