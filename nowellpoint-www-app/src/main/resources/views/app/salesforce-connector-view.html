@@ -81,7 +81,7 @@
                     <dt>${labels["tested.on"]}</dt>
                     <dd>${salesforceConnector.lastTestedOn?date?string.long!} ${salesforceConnector.lastTestedOn?time?string.medium!}&emsp;
                         <div class="pull-right">
-                            <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></div>
+                            <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-danger')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></div>
                     </dd>
                     <hr>
 

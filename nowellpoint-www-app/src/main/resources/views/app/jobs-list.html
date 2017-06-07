@@ -34,7 +34,7 @@
                     <thead>
                         <th>${labels["job.name"]}</th>
                         <th>${labels["last.run.date"]}</th>
-                        <th>${labels["status"]}</th>
+                        <th class="text-center">${labels["status"]}</th>
                         <th class="text-right">${labels["number.executions"]}</th>
                         <th class="text-right">${labels["job.outputs"]}</th>
                     </thead>
@@ -43,7 +43,22 @@
                             <tr>
                                 <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
                                 <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
-                                <td>${job.status}</td>
+                                <td class="text-center">
+                                    <h6>
+                                    <#if job.status="SUCCESS" >
+                                        <span class="badge badge-pill badge-success">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status="COMPLETE" >
+                                        <span class="badge badge-pill badge-success">${job.status}</span>
+                                    </#if>
+                                    <#if job.status="SCHEDULED" >
+                                        <span class="badge badge-pill badge-info">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status="ERROR">
+                                        <span class="badge badge-pill badge-danger">${job.status}</span>
+                                    </#if>
+                                    </h6>
+                                </td>
                                 <td class="text-right">${job.numberOfExecutions}</td>
                                 <td class="text-right"><a href="${links['jobs']}/${job.id}/outputs"><span class="icon icon-folder"></span></a></td>
                             </tr>
@@ -51,7 +66,7 @@
                     </tbody>
                 </table>
             </div>
-            <h4><small class="text-muted">${labels["history.message"]}</small></h4>    
+            <h4><small class="text-muted">${labels["history.message"]}</small></h4>
             <br>
             <br>
         </#if>

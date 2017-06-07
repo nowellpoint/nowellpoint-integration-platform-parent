@@ -43,7 +43,7 @@
                             <tr id="${salesforceConnector.id}">
                                 <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
                                 <td class="text-center">
-                                    <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-warning')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></td>
+                                    <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-danger')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></td>
                                 <td>${salesforceConnector.organization.name}</td>
                                 <td>${salesforceConnector.organization.instanceName}</td>
                                 <td class="text-right"><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm btn-primary-outline" role="button"><span class="icon icon-edit fa-1x"></span></a>

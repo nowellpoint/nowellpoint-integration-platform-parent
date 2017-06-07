@@ -196,11 +196,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    		
 	    	}
 	    	
-	    	if (Assert.isNull(context.getNextFireTime())) {
-				job.setStatus("COMPLETE");
-			} else {
-				job.setStatus("SCHEDULED");
-			}
+	    	job.setStatus("COMPLETE");
 			
 		} catch (OauthException e) {
 			job.setStatus("ERROR");
@@ -215,6 +211,11 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		jobExecution.setFireTime(context.getFireTime());
 		jobExecution.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		jobExecution.setStatus(job.getStatus());
+		jobExecution.setFailureMessage(job.getFailureMessage());
+		
+		if (Assert.isNotNull(context.getNextFireTime())) {
+			job.setStatus("SCHEDULED");
+		}
 		
 		job.addJobExecution(jobExecution);
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
@@ -235,8 +236,8 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		String message = new StringBuilder()
 				.append(String.format(format, "Scheduled Job: ", job.getJobName()))
 				.append(String.format(format, "Completion Date: ", Date.from(Instant.now()).toString()))
-				.append(String.format(format, "Status: ", job.getStatus()))
-				.append(Assert.isNotNull(job.getFailureMessage()) ? String.format(format, "Exception: ", job.getFailureMessage()) : "")
+				.append(String.format(format, "Status: ", jobExecution.getStatus()))
+				.append(Assert.isNotNull(jobExecution.getFailureMessage()) ? String.format(format, "Exception: ", jobExecution.getFailureMessage()) : "")
 				.toString();
 		
 		if (Assert.isNotNull(job.getNotificationEmail())) {
