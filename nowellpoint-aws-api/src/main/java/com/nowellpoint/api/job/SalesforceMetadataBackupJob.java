@@ -193,10 +193,9 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    	//
 
 		    	job.addJobOutput(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
-	    		
 	    	}
 	    	
-	    	job.setStatus("COMPLETE");
+	    	job.setStatus("SUCCESS");
 			
 		} catch (OauthException e) {
 			job.setStatus("ERROR");
@@ -213,15 +212,18 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		jobExecution.setStatus(job.getStatus());
 		jobExecution.setFailureMessage(job.getFailureMessage());
 		
-		if (Assert.isNotNull(context.getNextFireTime())) {
-			job.setStatus("SCHEDULED");
-		}
-		
 		job.addJobExecution(jobExecution);
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
 		job.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		job.setFireTime(context.getFireTime());
 		job.setNextFireTime(context.getNextFireTime());
+		
+		if (Assert.isNotNull(context.getNextFireTime())) {			
+			job.setStatus("SCHEDULED");
+			job.getSchedule().setStartAt(context.getNextFireTime());
+		} else {
+			job.setStatus("COMPLETE");
+		}
 		
 		documentManager.replaceOne(job);
 		

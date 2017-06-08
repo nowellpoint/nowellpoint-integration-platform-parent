@@ -94,6 +94,10 @@ public class CacheManager implements ServletContextListener {
 		LOGGER.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}
 	
+	public boolean isClosed() {
+		return jedisPool.isClosed();
+	}
+	
 	/**
 	 * 
 	 * @return cache

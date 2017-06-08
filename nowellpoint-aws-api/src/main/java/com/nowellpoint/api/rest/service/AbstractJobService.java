@@ -50,7 +50,7 @@ public class AbstractJobService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
 		Set<com.nowellpoint.api.model.document.Job> documents = documentManager.find(
 				com.nowellpoint.api.model.document.Job.class,
-				eq ( "status", "Scheduled" ) );
+				eq ( "status", "SCHEDULED" ) );
 		JobList resources = new JobList(documents);
 		return resources;
 	}

@@ -2,7 +2,6 @@ package com.nowellpoint.www.app.view;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.Environment;
@@ -58,17 +57,14 @@ public class IndexController extends AbstractStaticController {
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
 		
-		Map<String,Object> model = getModel();
-		model.put("planList", plans);
-		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(IndexController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.INDEX)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(IndexController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.templateName(Template.INDEX)
+				.timeZone(getTimeZone(request))
+				.addToModel("planList", plans)
 				.build();
 	}
 	

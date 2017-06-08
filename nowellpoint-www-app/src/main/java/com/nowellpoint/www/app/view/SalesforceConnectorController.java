@@ -166,13 +166,13 @@ public class SalesforceConnectorController extends AbstractStaticController {
     	model.put("salesforceConnectorsList", salesforceConnectorList.getItems());
     	
     	return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SalesforceConnectorController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.SALESFORCE_CONNECTOR_LIST)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(SalesforceConnectorController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.SALESFORCE_CONNECTOR_LIST)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 
@@ -371,13 +371,13 @@ public class SalesforceConnectorController extends AbstractStaticController {
 		model.put("salesforceConnector", salesforceConnector);
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SalesforceConnectorController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.SALESFORCE_CONNECTOR_FLOW_NEW)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(SalesforceConnectorController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.SALESFORCE_CONNECTOR_FLOW_NEW)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 }

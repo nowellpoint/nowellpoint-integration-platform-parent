@@ -48,12 +48,18 @@
                                     <#if job.status="SUCCESS" >
                                         <span class="badge badge-pill badge-success">${job.status}</span>
                                     </#if> 
-                                    <#if job.status="COMPLETE" >
-                                        <span class="badge badge-pill badge-success">${job.status}</span>
-                                    </#if>
+                                    <#if job.status="COMPLETED" >
+                                        <span class="badge badge-pill badge-default">${job.status}</span>
+                                    </#if>    
                                     <#if job.status="SCHEDULED" >
                                         <span class="badge badge-pill badge-info">${job.status}</span>
                                     </#if> 
+                                    <#if job.status="SUBMITTED" >
+                                        <span class="badge badge-pill badge-info">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status="TERMINATED" >
+                                        <span class="badge badge-pill badge-default">${job.status}</span>
+                                    </#if>     
                                     <#if job.status="ERROR">
                                         <span class="badge badge-pill badge-danger">${job.status}</span>
                                     </#if>

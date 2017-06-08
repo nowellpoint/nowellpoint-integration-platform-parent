@@ -29,4 +29,6 @@ public interface JobService {
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
 	public String getOutputFile(String id, String filename) throws IOException;
+	
+	public void loadScheduledJobs();
 }

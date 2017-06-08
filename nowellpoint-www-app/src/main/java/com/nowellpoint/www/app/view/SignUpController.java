@@ -117,13 +117,13 @@ public class SignUpController extends AbstractStaticController {
 		model.put("action", "createAccount");
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SignUpController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.SIGN_UP)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.SIGN_UP)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 	
@@ -165,13 +165,13 @@ public class SignUpController extends AbstractStaticController {
 			model.put("action", "createAccount");
 			
 			return TemplateBuilder.template()
-					.withConfiguration(configuration)
-					.withControllerClass(SignUpController.class)
-					.withIdentity(getIdentity(request))
-					.withLocale(getLocale(request))
-					.withModel(model)
-					.withTemplateName(Template.SIGN_UP)
-					.withTimeZone(getTimeZone(request))
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.identity(getIdentity(request))
+					.locale(getLocale(request))
+					.model(model)
+					.templateName(Template.SIGN_UP)
+					.timeZone(getTimeZone(request))
 					.build();
 			
 		} else {
@@ -200,13 +200,13 @@ public class SignUpController extends AbstractStaticController {
 			model.put("action", "listPlans");
 			
 			return TemplateBuilder.template()
-					.withConfiguration(configuration)
-					.withControllerClass(SignUpController.class)
-					.withIdentity(getIdentity(request))
-					.withLocale(getLocale(request))
-					.withModel(model)
-					.withTemplateName(Template.SIGN_UP)
-					.withTimeZone(getTimeZone(request))
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.identity(getIdentity(request))
+					.locale(getLocale(request))
+					.model(model)
+					.templateName(Template.SIGN_UP)
+					.timeZone(getTimeZone(request))
 					.build();
 		}
 	}
@@ -279,13 +279,13 @@ public class SignUpController extends AbstractStaticController {
 	    		model.put("email", email);
 	        	
 	        	return TemplateBuilder.template()
-	    				.withConfiguration(configuration)
-	    				.withControllerClass(SignUpController.class)
-	    				.withIdentity(getIdentity(request))
-	    				.withLocale(getLocale(request))
-	    				.withModel(model)
-	    				.withTemplateName(Template.SIGN_UP_CONFIRM)
-	    				.withTimeZone(getTimeZone(request))
+	    				.configuration(configuration)
+	    				.controllerClass(SignUpController.class)
+	    				.identity(getIdentity(request))
+	    				.locale(getLocale(request))
+	    				.model(model)
+	    				.templateName(Template.SIGN_UP_CONFIRM)
+	    				.timeZone(getTimeZone(request))
 	    				.build();
 	    	}
 	    	
@@ -295,13 +295,13 @@ public class SignUpController extends AbstractStaticController {
 		}
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SignUpController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.SIGN_UP)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.SIGN_UP)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 	/**
@@ -333,13 +333,13 @@ public class SignUpController extends AbstractStaticController {
     	}
     	
     	return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(SignUpController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.VERIFY_EMAIL)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.VERIFY_EMAIL)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 }

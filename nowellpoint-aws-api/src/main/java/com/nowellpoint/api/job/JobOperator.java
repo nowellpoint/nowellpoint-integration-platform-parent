@@ -45,7 +45,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.KeyMatcher;
 
 import com.nowellpoint.api.rest.domain.Job;
-import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.util.Assert;
 
@@ -69,15 +68,7 @@ public class JobOperator  {
 			scheduler.start();
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
-		}
-		
-		JobList jobList = jobService.findAllScheduled();
-		
-		jobList.getItems().stream().forEach(job -> {
-			LOGGER.info(job.getId());
-			submitJob(job);
-		});
-		
+		}	
 	}
 	
 	@PreDestroy

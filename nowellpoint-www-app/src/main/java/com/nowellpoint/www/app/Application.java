@@ -100,11 +100,16 @@ public class Application implements SparkApplication {
 			halt();
 		}
 		
+		before("/*", (request, response) -> {
+			request.attribute("com.nowellpoint.default.locale", configuration.getLocale());
+			request.attribute("com.nowellpoint.default.timezone", configuration.getTimeZone());
+		});
+		
 		//
 		// verify secure requests
 		//
 		
-		before("/app/*", (request, response) -> AuthenticationController.verify(request, response));
+		before("/app/*", (request, response) -> AuthenticationController.verify(configuration, request, response));
 		
 		//
 		// index routes

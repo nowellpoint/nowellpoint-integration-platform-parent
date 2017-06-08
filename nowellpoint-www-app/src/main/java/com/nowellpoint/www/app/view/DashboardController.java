@@ -35,13 +35,13 @@ public class DashboardController extends AbstractStaticController {
 		model.put("jobList", jobList.getItems());
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(DashboardController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.DASHBOARD)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(DashboardController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.DASHBOARD)
+				.timeZone(getTimeZone(request))
 				.build();
 	};
 }

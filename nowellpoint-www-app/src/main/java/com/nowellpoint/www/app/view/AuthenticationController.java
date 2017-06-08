@@ -51,7 +51,7 @@ public class AuthenticationController extends AbstractStaticController {
 	 * @throws IOException
 	 */
 	
-	public static void verify(Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
+	public static void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
     	if (cookie.isPresent()) {
     		

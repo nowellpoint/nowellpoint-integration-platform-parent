@@ -35,13 +35,13 @@ public class JobController extends AbstractStaticController {
     	model.put("jobList", jobList.getItems());
     	
     	return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(JobController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.JOBS_LIST)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_LIST)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 	
@@ -58,13 +58,13 @@ public class JobController extends AbstractStaticController {
 		model.put("job", job);
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(JobController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.JOBS_VIEW)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_VIEW)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 	
@@ -81,13 +81,13 @@ public class JobController extends AbstractStaticController {
 		model.put("job", job);
 		
 		return TemplateBuilder.template()
-				.withConfiguration(configuration)
-				.withControllerClass(JobController.class)
-				.withIdentity(getIdentity(request))
-				.withLocale(getLocale(request))
-				.withModel(model)
-				.withTemplateName(Template.JOBS_OUTPUTS)
-				.withTimeZone(getTimeZone(request))
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_OUTPUTS)
+				.timeZone(getTimeZone(request))
 				.build();
 	}
 	

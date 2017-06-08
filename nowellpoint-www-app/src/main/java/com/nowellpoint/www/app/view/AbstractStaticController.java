@@ -20,6 +20,7 @@ import com.nowellpoint.client.model.Token;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
@@ -29,6 +30,8 @@ import spark.Request;
 import spark.Response;
 
 public class AbstractStaticController {
+	
+	private static final Logger LOGGER = Logger.getLogger(AbstractStaticController.class.getName());
 	
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
@@ -71,11 +74,11 @@ public class AbstractStaticController {
 	}
 	
 	protected static Locale getLocale(Request request) {
-		return request.attribute(LOCALE) != null ? request.attribute(LOCALE) : Locale.getDefault();
+		return request.attribute(LOCALE);
 	}
 	
 	protected static TimeZone getTimeZone(Request request) {		
-		return request.attribute(TIME_ZONE) != null ? request.attribute(TIME_ZONE) : TimeZone.getDefault();
+		return request.attribute(TIME_ZONE);
 	}
 	
 	protected static String getLabel(Class<?> controllerClass, Request request, String key) {
@@ -87,9 +90,13 @@ public class AbstractStaticController {
 		Locale locale = getLocale(request);
 		TimeZone timeZone = getTimeZone(request);
 		model.put("identity", identity);
-        model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-        model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		try {
+			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+			model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+			model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		}
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
 	

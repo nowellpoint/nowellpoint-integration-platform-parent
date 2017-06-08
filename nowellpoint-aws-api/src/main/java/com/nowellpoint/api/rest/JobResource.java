@@ -102,5 +102,4 @@ public interface JobResource {
 	@Path("{id}/actions/{action}/invoke")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, @PathParam(value="action") String action);
-
 }

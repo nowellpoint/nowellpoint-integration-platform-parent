@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 import javax.enterprise.event.Observes;
 import javax.validation.ValidationException;
 
+import org.jboss.logging.Logger;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -48,6 +50,8 @@ import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 
 public class JobServiceImpl extends AbstractJobService implements JobService {
+	
+	private static final Logger LOGGER = Logger.getLogger(JobServiceImpl.class);
 	
 	protected final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
@@ -148,5 +152,15 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	@Override
 	public void runJob(Job job) {
 		super.run(job);
+	}
+	
+	@Override
+	public void loadScheduledJobs() {
+		JobList jobList = findAllScheduled();
+		
+		jobList.getItems().stream().forEach(job -> {
+			LOGGER.info(String.format("Scheduling Job: %s", job.getId()));
+			super.run(job);
+		});
 	}
 }
