@@ -33,7 +33,7 @@
                 <table class="table">
                     <thead>
                         <th>${labels["connector.name"]}</th>
-                        <th class="text-center">${labels["valid"]}</th>
+                        <th>${labels["valid"]}</th>
                         <th>${labels["organization.name"]}</th>
                         <th>${labels["instance.name"]}</th>
                         <th class="text-right">${labels["action"]}</th>
@@ -42,7 +42,7 @@
                         <#list salesforceConnectorsList?sort_by( "createdOn") as salesforceConnector>
                             <tr id="${salesforceConnector.id}">
                                 <td><a href="${links['salesforce.connector']}/${salesforceConnector.id}">${(salesforceConnector.name!)}</a></td>
-                                <td class="text-center">
+                                <td>
                                     <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-danger')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></td>
                                 <td>${salesforceConnector.organization.name}</td>
                                 <td>${salesforceConnector.organization.instanceName}</td>

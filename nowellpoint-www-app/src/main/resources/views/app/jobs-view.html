@@ -133,7 +133,7 @@
                         <thead>
                             <th>${labels["fire.instance.id"]}</th>
                             <th>${labels['fire.time']}</th>
-                            <th class="text-center">${labels["status"]}</th>
+                            <th>${labels["status"]}</th>
                             <th></th>
                             <th class="text-right">${labels["job.run.time"]}</th>
                         </thead>
@@ -142,7 +142,7 @@
                                 <tr id="${jobExecution.fireInstanceId}">
                                     <td>${jobExecution.fireInstanceId}</td>
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
-                                    <td class="text-center"><h6>
+                                    <td><h6>
                                         <#if jobExecution.status="SUCCESS" >
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 

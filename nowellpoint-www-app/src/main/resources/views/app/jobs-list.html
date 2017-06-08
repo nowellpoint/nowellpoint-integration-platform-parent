@@ -34,7 +34,7 @@
                     <thead>
                         <th>${labels["job.name"]}</th>
                         <th>${labels["last.run.date"]}</th>
-                        <th class="text-center">${labels["status"]}</th>
+                        <th>${labels["status"]}</th>
                         <th class="text-right">${labels["number.executions"]}</th>
                         <th class="text-right">${labels["job.outputs"]}</th>
                     </thead>
@@ -43,7 +43,7 @@
                             <tr>
                                 <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
                                 <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
-                                <td class="text-center">
+                                <td>
                                     <h6>
                                     <#if job.status="SUCCESS" >
                                         <span class="badge badge-pill badge-success">${job.status}</span>

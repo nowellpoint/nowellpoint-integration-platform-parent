@@ -67,7 +67,8 @@
                     <hr>
 
                     <dt>${labels["sobject.count"]}</dt>
-                    <dd><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects">${sobjectCount}</a></dd>
+                    <dd><#if sobjectCount=0>${sobjectCount}</#if>
+                        <#if sobjectCount gt 0><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects">${sobjectCount}</a></#if></dd>
                     <hr>
 
                     <dt>${labels["organization.id"]}</dt>
@@ -84,8 +85,6 @@
                             <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-danger')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></div>
                     </dd>
                     <hr>
-
-
 
                 </dl>
             </div>

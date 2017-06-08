@@ -199,7 +199,7 @@ public abstract class HttpRequest {
 			
 			CloseableHttpResponse httpResponse = null;
 			
-			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));
+			LOG.fine(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));
 			
 			if (HttpMethod.POST.equals(httpMethod)) {
 				HttpPost post = new HttpPost(uri);
@@ -227,8 +227,8 @@ public abstract class HttpRequest {
 				delete.setHeaders(addHeaders());
 		        httpResponse = httpClient.execute(delete);
 			} else {
-				System.out.println("unsupported method exception");
-				throw new IOException("unsupported method exception");
+				LOG.severe("unsupported method exception: " + httpMethod);
+				throw new IOException("unsupported method exception: " + httpMethod);
 			}
 			
 			statusCode = httpResponse.getStatusLine().getStatusCode();
