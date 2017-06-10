@@ -132,13 +132,11 @@
 	<classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/39.0.0/force-partner-api-39.0.0.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.125/aws-java-sdk-lambda-1.11.125.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.125/aws-java-sdk-core-1.11.125.jar"/>
 	<classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.6/jackson-dataformat-cbor-2.6.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.125/jmespath-java-1.11.125.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-data"/>
 	<classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.125/aws-java-sdk-dynamodb-1.11.125.jar"/>
@@ -156,12 +154,14 @@
 	<classpathentry kind="var" path="M2_REPO/io/netty/netty-all/4.1.8.Final/netty-all-4.1.8.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/redis/clients/jedis/2.8.1/jedis-2.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-pool2/2.4.2/commons-pool2-2.4.2.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/4.12/junit-4.12.jar"/>
 	<classpathentry kind="src" path="target/generated-sources/annotations">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-data"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-sforce"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

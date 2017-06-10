@@ -82,6 +82,16 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
+	public void stopJob(Job job) {
+		super.stop(job);
+	}
+	
+	@Override
+	public void terminateJob(Job job) {
+		super.termiante(job);
+	}
+	
+	@Override
 	public String getOutputFile(String id, String filename) throws IOException {
 		Job job = findById(id);
 		JobOutput jobOutput = job.getJobOutput(filename);
@@ -150,8 +160,8 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
-	public void runJob(Job job) {
-		super.run(job);
+	public void submitJob(Job job) {
+		super.submit(job);
 	}
 	
 	@Override
@@ -160,7 +170,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		
 		jobList.getItems().stream().forEach(job -> {
 			LOGGER.info(String.format("Scheduling Job: %s", job.getId()));
-			super.run(job);
+			super.submit(job);
 		});
 	}
 }

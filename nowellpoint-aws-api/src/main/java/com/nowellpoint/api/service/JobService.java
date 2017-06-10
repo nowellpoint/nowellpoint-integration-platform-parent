@@ -24,7 +24,11 @@ public interface JobService {
 	
 	public void updateJob(Job job);
 	
-	public void runJob(Job job);
+	public void submitJob(Job job);
+	
+	public void stopJob(Job job);
+	
+	public void terminateJob(Job job);
 	
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	

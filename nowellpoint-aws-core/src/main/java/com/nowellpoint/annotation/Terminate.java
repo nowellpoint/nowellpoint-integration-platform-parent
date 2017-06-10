@@ -11,6 +11,4 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({FIELD, PARAMETER})
-public @interface Submitted {
-
-}
+public @interface Terminate {}

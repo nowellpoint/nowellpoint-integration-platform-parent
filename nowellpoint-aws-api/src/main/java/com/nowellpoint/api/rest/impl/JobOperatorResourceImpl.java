@@ -12,7 +12,9 @@ public class JobOperatorResourceImpl implements JobOperatorResource {
 	private JobService jobService;
 	
 	public Response invokeAction(String action) {
-		jobService.loadScheduledJobs();
+		if (action.equalsIgnoreCase("start")) {
+			jobService.loadScheduledJobs();
+		}
 		return Response.ok().build();
 	}
 }

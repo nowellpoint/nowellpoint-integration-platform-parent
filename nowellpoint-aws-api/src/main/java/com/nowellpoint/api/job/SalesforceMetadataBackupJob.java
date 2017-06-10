@@ -222,7 +222,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 			job.setStatus("SCHEDULED");
 			job.getSchedule().setStartAt(context.getNextFireTime());
 		} else {
-			job.setStatus("COMPLETE");
+			job.setStatus("COMPLETED");
 		}
 		
 		documentManager.replaceOne(job);

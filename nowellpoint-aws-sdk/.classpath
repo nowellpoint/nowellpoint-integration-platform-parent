@@ -29,7 +29,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/5.4.0.Final/hibernate-validator-5.4.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.3.0.Final/jboss-logging-3.3.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/classmate/1.3.1/classmate-1.3.1.jar"/>
-	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.125/aws-java-sdk-lambda-1.11.125.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.125/aws-java-sdk-core-1.11.125.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
@@ -48,5 +47,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

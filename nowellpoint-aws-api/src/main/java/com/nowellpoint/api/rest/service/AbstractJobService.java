@@ -10,6 +10,9 @@ import javax.inject.Inject;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import com.nowellpoint.annotation.Stop;
+import com.nowellpoint.annotation.Submit;
+import com.nowellpoint.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.aws.data.AbstractCacheService;
@@ -24,7 +27,16 @@ public class AbstractJobService extends AbstractCacheService {
 	protected DocumentManagerFactory documentManagerFactory;
 	
 	@Inject
-	private Event<Job> jobEvent;
+	@Submit
+	private Event<Job> submitJob;
+	
+	@Inject
+	@Stop
+	private Event<Job> stopJob;
+	
+	@Inject
+	@Terminate
+	private Event<Job> terminateJob;
 	
 	protected Job findById(String id) {
 		com.nowellpoint.api.model.document.Job document = get(com.nowellpoint.api.model.document.Job.class, id);
@@ -68,11 +80,7 @@ public class AbstractJobService extends AbstractCacheService {
 		documentManager.insertOne( document );
 		job.fromDocument(document);
 		set(job.getId(), document);
-		jobEvent.fire(job);
-	}
-	
-	protected void run(Job job) {
-		jobEvent.fire(job);
+		submitJob.fire(job);
 	}
 	
 	protected void update(Job job) {
@@ -88,5 +96,17 @@ public class AbstractJobService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.deleteOne(document);
 		del(job.getId());
+	}
+	
+	protected void submit(Job job) {
+		submitJob.fire(job);
+	}
+	
+	protected void stop(Job job) {
+		stopJob.fire(job);
+	}
+	
+	protected void termiante(Job job) {
+		terminateJob.fire(job);
 	}
 }

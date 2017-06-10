@@ -18,6 +18,9 @@
 
 package com.nowellpoint.api.job;
 
+import static org.quartz.JobKey.jobKey;
+import static org.quartz.TriggerKey.triggerKey; 
+
 import org.quartz.CalendarIntervalScheduleBuilder;
 import org.quartz.DateBuilder.IntervalUnit;
 
@@ -41,9 +44,13 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.KeyMatcher;
 
+import com.nowellpoint.annotation.Stop;
+import com.nowellpoint.annotation.Submit;
+import com.nowellpoint.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.util.Assert;
@@ -76,7 +83,23 @@ public class JobOperator  {
 		shutdown();
 	}
 	
-	public void submitJob(@Observes Job job) {
+	public void unscheduleJob(@Observes @Stop Job job) {
+		try {
+			scheduler.unscheduleJob(triggerKey(job.getId().toString(), job.getScheduleOption()));
+		} catch (SchedulerException e) {
+			LOGGER.error(e);
+		}
+	}
+	
+	public void deleteJob(@Observes @Terminate Job job) {
+		try {
+			scheduler.deleteJob(jobKey(job.getId().toString(), job.getJobName()));
+		} catch (SchedulerException e) {
+			LOGGER.error(e);
+		}
+	}
+	
+	public void submitJob(@Observes @Submit Job job) {
 		
 		try {
 			Class <? extends org.quartz.Job> jobClass = Class.forName (job.getClassName()).asSubclass (org.quartz.Job.class);
@@ -87,11 +110,14 @@ public class JobOperator  {
 		    		.withIdentity(jobKey)
 		    		.build();
 		    
+		    TriggerKey triggerKey = new TriggerKey(job.getId().toString(), job.getScheduleOption());
+		    
 		    Trigger trigger = null;
 			
 			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
 				
 				trigger = TriggerBuilder.newTrigger()
+						.withIdentity(triggerKey)
 						.startAt(job.getSchedule().getRunAt())
 						.build();
 				
@@ -110,6 +136,7 @@ public class JobOperator  {
 				}
 				
 				trigger = TriggerBuilder.newTrigger()
+						.withIdentity(triggerKey)
 						.startAt(job.getSchedule().getStartAt())
 						.endAt(job.getSchedule().getEndAt())
 						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
