@@ -35,4 +35,6 @@ public interface JobService {
 	public String getOutputFile(String id, String filename) throws IOException;
 	
 	public void loadScheduledJobs();
+	
+	public void sendSlackTestMessage(Job job);
 }

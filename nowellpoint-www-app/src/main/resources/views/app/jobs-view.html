@@ -17,8 +17,20 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
-            <button type="button" id="run" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
+            <#if job.status="SCHEDULED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="stop-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/stop">${labels["stop"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
+            <#if job.status="COMPLETED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+            </#if>
+            <#if job.status="STOPPED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -80,7 +92,7 @@
                         <#if (job.slackWebhookUrl)??>
                             &emsp;&emsp;
                             <div class="pull-right">
-                                <button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm"><span class="icon icon-flash fa fa-1x"></span></button>
+                                <button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm" data-href="${links['jobs']}/${job.id!}/webhook-test"><span class="icon icon-flash fa fa-1x"></span></button>
                             </div>
                         </#if>
                     </dd>
@@ -142,7 +154,8 @@
                                 <tr id="${jobExecution.fireInstanceId}">
                                     <td>${jobExecution.fireInstanceId}</td>
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
-                                    <td><h6>
+                                    <td>
+                                        <h6>
                                         <#if jobExecution.status="SUCCESS" >
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 
@@ -268,16 +281,62 @@
                 });
             });
 
-            $("#run").click(function(e) {
+            $("#submit-job").click(function(e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
-                    url: "${links['jobs']}/${job.id!}/run",
+                    url: $(this).data("href"),
                     dataType: "html",
                     complete: function(response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
-                            $("#overlay").hide();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#stop-job").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).data("href"),
+                    dataType: "html",
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#terminate-job").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).data("href"),
+                    dataType: "html",
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
@@ -296,15 +355,14 @@
 
                 $.ajax({
                     method: 'POST',
-                    url: "${links['jobs']}/${job.id!}/webhook-test",
+                    url: $(this).data("href"),
                     complete: function(response) {
-
-                        if (response.status == 200) {
-                            $("#overlay").hide();
+                        $("#overlay").hide();
+                        if (response.status == 204) {
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-
+                                    location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
                         } else {

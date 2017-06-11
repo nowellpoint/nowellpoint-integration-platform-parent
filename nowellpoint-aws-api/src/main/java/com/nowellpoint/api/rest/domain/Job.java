@@ -94,7 +94,8 @@ public class Job extends AbstractResource {
 			Date createdOn,
 			UserInfo createdBy,
 			Date lastUpdatedOn,
-			UserInfo lastUpdatedBy) {
+			UserInfo lastUpdatedBy,
+			Date nextFireTime) {
 		
 		if (Assert.isNotNull(description) && Assert.isEmpty(description)) {
 			description = null;
@@ -123,6 +124,7 @@ public class Job extends AbstractResource {
 		this.createdBy = createdBy;
 		this.lastUpdatedOn = lastUpdatedOn;
 		this.lastUpdatedBy = lastUpdatedBy;
+		this.nextFireTime = nextFireTime;
 		this.numberOfExecutions = 0;
 		this.status = Job.Statuses.SCHEDULED;
 	}
@@ -174,7 +176,8 @@ public class Job extends AbstractResource {
 				Date.from(Instant.now()),
 				userInfo,
 				Date.from(Instant.now()),
-				userInfo);
+				userInfo,
+				schedule.getRunAt());
 	}
 	
 	private <T> Job(T document) {

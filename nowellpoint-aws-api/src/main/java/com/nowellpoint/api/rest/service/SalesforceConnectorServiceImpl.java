@@ -168,27 +168,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		create(salesforceConnector);
 		
-		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
-		
-		Source source = Source.of(salesforceConnector);
-		
-		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
-		
-		CreateJobRequest jobRequest = CreateJobRequest.builder()
-				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
-				.jobType(jobType)
-				.source(source)
-				.notificationEmail(salesforceConnector.getIdentity().getEmail())
-				.schedule(RunOnSchedule.builder()
-						.startAt(startAt.getTime())
-						.timeInterval(1)
-						.timeZone(startAt.getTimeZone())
-						.timeUnit(TimeUnit.DAYS)
-						.build())
-				.build();
-		
-		jobRequestEvent.fire(jobRequest);
-		
+		addSalesforceMetadataBackup(salesforceConnector);
+
 		return salesforceConnector;
 	}
 	
@@ -482,6 +463,29 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
 		
 		update(salesforceConnector);
+	}
+	
+	private void addSalesforceMetadataBackup(SalesforceConnector salesforceConnector) {
+		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		
+		Source source = Source.of(salesforceConnector);
+		
+		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
+		
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
+				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
+				.jobType(jobType)
+				.source(source)
+				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.schedule(RunOnSchedule.builder()
+						.startAt(startAt.getTime())
+						.timeInterval(1)
+						.timeZone(startAt.getTimeZone())
+						.timeUnit(TimeUnit.DAYS)
+						.build())
+				.build();
+		
+		jobRequestEvent.fire(jobRequest);
 	}
 	
 	private Calendar getDefaultStartDate(String localeSidKey) {

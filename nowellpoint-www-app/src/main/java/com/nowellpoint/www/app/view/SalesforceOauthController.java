@@ -22,11 +22,11 @@ public class SalesforceOauthController extends AbstractStaticController {
 	}
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * oauth
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	public static String oauth(Configuration configuration, Request request, Response response) {
@@ -42,11 +42,11 @@ public class SalesforceOauthController extends AbstractStaticController {
 	};
 	
 	/**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	 * 
-	 * callback
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	
 	public static String callback(Configuration configuration, Request request, Response response) {
@@ -61,12 +61,12 @@ public class SalesforceOauthController extends AbstractStaticController {
     };
 	
     /**
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 * 
-	 * getSalesforceToken
-	 * 
-	 * -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	 */
+     * 
+     * @param configuration
+     * @param request
+     * @param response
+     * @return
+     */
 	
     public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
     	Token token = getToken(request);

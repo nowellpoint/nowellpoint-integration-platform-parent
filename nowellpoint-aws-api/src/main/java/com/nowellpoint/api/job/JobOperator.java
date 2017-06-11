@@ -137,7 +137,7 @@ public class JobOperator  {
 				
 				trigger = TriggerBuilder.newTrigger()
 						.withIdentity(triggerKey)
-						.startAt(job.getSchedule().getStartAt())
+						.startAt(job.getSchedule().getRunAt())
 						.endAt(job.getSchedule().getEndAt())
 						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
 								.withInterval(job.getSchedule().getTimeInterval(), intervalUnit)

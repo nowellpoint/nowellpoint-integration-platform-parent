@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JobOutput {
 	
+	private String fireInstanceId;
+	
 	private String type;
 	
 	private String filename;
@@ -22,6 +24,14 @@ public class JobOutput {
 	
 	public JobOutput() {
 		
+	}
+
+	public String getFireInstanceId() {
+		return fireInstanceId;
+	}
+
+	public void setFireInstanceId(String fireInstanceId) {
+		this.fireInstanceId = fireInstanceId;
 	}
 
 	public String getType() {

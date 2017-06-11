@@ -121,24 +121,12 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	//
 			
 			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(token.getAccessToken(), identity.getUrls().getSobjects());
-			
-			//
-			// create keyName
-			//
 
-	    	String keyName = String.format("%s/DescribeGlobalResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-	    	
-	    	//
-			// write the result to S3
 			//
-
-	    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
+			// Save result to S3 and add link to the job
+			//
 	    	
-	    	//
-	    	// add Backup reference to Job
-	    	//
-	    	
-	    	job.addJobOutput(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
+	    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), describeGlobalSobjectsResult));
 	    	
 	    	//
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
@@ -153,28 +141,10 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	if (! describeSobjectResults.isEmpty()) {
 	    		
 	    		//
-		    	// create keyName
-		    	//
-		    	
-		    	keyName = String.format("%s/DescribeSobjectResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-		    	
-		    	//
-				// write the result to S3
+				// Save result to S3 and add link to the job
 				//
-
-		    	result = putObject(keyName, describeSobjectResults);
 		    	
-		    	//
-		    	// add Backup reference to ScheduledJobRequest
-		    	//
-
-		    	job.addJobOutput(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
-		    	
-		    	//
-		    	// add theme
-		    	//
-		    	
-		    	keyName = String.format("%s/Theme-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+		    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), describeSobjectResults));
 		    	
 		    	//
 		    	// get theme
@@ -182,17 +152,11 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 
 		    	Theme theme = getTheme(token.getAccessToken(), identity.getUrls().getRest());
 		    	
-		    	// 
-		    	// write result to S3
 		    	//
-
-		    	result = putObject(keyName, theme);
+				// Save result to S3 and add link to the job
+				//
 		    	
-		    	//
-		    	// add Backup reference to ScheduledJobRequest
-		    	//
-
-		    	job.addJobOutput(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
+		    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), theme));
 	    	}
 	    	
 	    	job.setStatus("SUCCESS");
@@ -220,7 +184,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		if (Assert.isNotNull(context.getNextFireTime())) {			
 			job.setStatus("SCHEDULED");
-			job.getSchedule().setStartAt(context.getNextFireTime());
+			job.getSchedule().setRunAt(context.getNextFireTime());
 		} else {
 			job.setStatus("COMPLETED");
 		}
@@ -329,6 +293,25 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
     	request.endpoint = "mail/send";
     	request.body = mail.build();
     	sendgrid.api(request);
+	}
+	
+	/**
+	 * 
+	 * @param path
+	 * @param object
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	
+	private JobOutput saveJobOutput(String fireInstanceId, String path, Object object) throws JsonProcessingException {
+		
+		String objectName = object.getClass().getSimpleName();
+		
+		String keyName = generateKeyName(objectName, path);
+   
+    	PutObjectResult result = putObject(keyName, object);
+    	
+    	return JobOutput.of(fireInstanceId, objectName, result.getMetadata().getContentLength(), bucketName, keyName);
 	}
 
 	/**
@@ -443,5 +426,9 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		Theme theme = client.getTheme(themeRequest);
 		
 		return theme;
+	}
+	
+	private String generateKeyName(String fileType, String organizationId) {
+		return String.format("%s/%s-%s", organizationId, fileType, dateFormat.format(Date.from(Instant.now())).replace(":", ""));
 	}
 }

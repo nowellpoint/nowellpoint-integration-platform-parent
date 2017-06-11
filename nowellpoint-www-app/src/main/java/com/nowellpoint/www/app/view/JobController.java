@@ -68,6 +68,52 @@ public class JobController extends AbstractStaticController {
 				.build();
 	}
 	
+	public static String stopJob(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<Job> result = NowellpointClient.defaultClient(token)
+			.job()
+			.stop(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("job", result.getTarget());
+		
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_VIEW)
+				.timeZone(getTimeZone(request))
+				.build();
+	}
+	
+	public static String terminateJob(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<Job> result = NowellpointClient.defaultClient(token)
+			.job()
+			.terminate(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("job", result.getTarget());
+		
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_VIEW)
+				.timeZone(getTimeZone(request))
+				.build();
+	}
+	
 	public static String viewOutputs(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -106,14 +152,14 @@ public class JobController extends AbstractStaticController {
 		return "";
 	}
 	
-	public static String runJob(Configuration configuration, Request request, Response response) {
+	public static String submitJob(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
 		
 		UpdateResult<Job> updateResult = NowellpointClient.defaultClient(token)
 				.job()
-				.run(id);
+				.submit(id);
 		
 		if (! updateResult.isSuccess()) {
 			response.status(400);
