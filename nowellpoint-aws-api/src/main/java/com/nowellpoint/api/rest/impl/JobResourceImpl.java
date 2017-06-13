@@ -40,9 +40,7 @@ import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
-import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.service.JobService;
@@ -232,7 +230,6 @@ public class JobResourceImpl implements JobResource {
 		Job job = jobService.findById(id);
 		
 		if ("submit".equals(action)) {
-			job.setSchedule(Schedule.of(RunWhenSubmitted.builder().build()));
 			jobService.submitJob(job);
 		} else if ("test-webhook-url".equals(action)) {
 			jobService.sendSlackTestMessage(job);

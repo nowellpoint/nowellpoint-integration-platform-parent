@@ -48,7 +48,7 @@
                                     <#if job.status="SUCCESS" >
                                         <span class="badge badge-pill badge-success">${job.status}</span>
                                     </#if> 
-                                    <#if job.status="COMPLETED" >
+                                    <#if job.status="COMPLETED" or job.status="RUNNING">
                                         <span class="badge badge-pill badge-default">${job.status}</span>
                                     </#if>    
                                     <#if job.status="SCHEDULED" >
@@ -60,7 +60,7 @@
                                     <#if job.status="TERMINATED" >
                                         <span class="badge badge-pill badge-default">${job.status}</span>
                                     </#if>     
-                                    <#if job.status="ERROR">
+                                    <#if job.status="FAILED">
                                         <span class="badge badge-pill badge-danger">${job.status}</span>
                                     </#if>
                                     </h6>

@@ -126,7 +126,11 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 			// Save result to S3 and add link to the job
 			//
 	    	
-	    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), describeGlobalSobjectsResult));
+	    	job.addJobOutput(saveJobOutput(
+	    			DescribeGlobalSobjectsResult.class.getSimpleName(), 
+	    			context.getFireInstanceId(), 
+	    			identity.getOrganizationId(), 
+	    			describeGlobalSobjectsResult));
 	    	
 	    	//
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
@@ -144,7 +148,11 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 				// Save result to S3 and add link to the job
 				//
 		    	
-		    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), describeSobjectResults));
+		    	job.addJobOutput(saveJobOutput(
+		    			DescribeSobjectResult.class.getSimpleName(), 
+		    			context.getFireInstanceId(), 
+		    			identity.getOrganizationId(), 
+		    			describeSobjectResults));
 		    	
 		    	//
 		    	// get theme
@@ -156,16 +164,20 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 				// Save result to S3 and add link to the job
 				//
 		    	
-		    	job.addJobOutput(saveJobOutput(context.getFireInstanceId(), identity.getOrganizationId(), theme));
+		    	job.addJobOutput(saveJobOutput(
+		    			Theme.class.getSimpleName(), 
+		    			context.getFireInstanceId(), 
+		    			identity.getOrganizationId(), 
+		    			theme));
 	    	}
 	    	
 	    	job.setStatus("SUCCESS");
 			
 		} catch (OauthException e) {
-			job.setStatus("ERROR");
+			job.setStatus("FAILED");
 			job.setFailureMessage(e.getError());
 		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
-			job.setStatus("ERROR");
+			job.setStatus("FAILED");
 			job.setFailureMessage(e.getMessage());
 		}
 		
@@ -303,15 +315,13 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	 * @throws JsonProcessingException
 	 */
 	
-	private JobOutput saveJobOutput(String fireInstanceId, String path, Object object) throws JsonProcessingException {
+	private JobOutput saveJobOutput(String fileName, String fireInstanceId, String path, Object object) throws JsonProcessingException {
 		
-		String objectName = object.getClass().getSimpleName();
-		
-		String keyName = generateKeyName(objectName, path);
+		String keyName = generateKeyName(fileName, path);
    
     	PutObjectResult result = putObject(keyName, object);
     	
-    	return JobOutput.of(fireInstanceId, objectName, result.getMetadata().getContentLength(), bucketName, keyName);
+    	return JobOutput.of(fireInstanceId, fileName, result.getMetadata().getContentLength(), bucketName, keyName);
 	}
 
 	/**

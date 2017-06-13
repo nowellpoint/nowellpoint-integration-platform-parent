@@ -31,6 +31,11 @@
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
             </#if>
+            <#if job.status="FAILED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -47,14 +52,17 @@
                     <dd>${(job.source.type)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["status"]}</dt>
-                    <!--  <#if job.status == "Stopped"> -->
+                    <!--  <#if job.status == "FAILED"> -->
                     <dd class="text-danger">
-                        <!-- </#if> -->
-                        <!--  <#if job.status == "Complete"> -->
-                        <dd class="text-success">
-                            <!-- </#if> -->
-                            ${(job.status)!}&emsp;
-                        </dd>
+                    <!-- </#if> -->
+                    <!--  <#if job.status == "COMPLETED"> -->
+                    <dd class="text-success">
+                    <!-- </#if> --> 
+                    ${(job.status)!}&emsp;
+                    <!-- <#if job.status == "RUNNING"> -->
+                    <i class="fa fa-spinner fa-spin"></i>
+                    <!-- </#if> -->       
+                    </dd>
                         <hr>
                         <dt>${labels["notification.email"]}</dt>
                         <dd>${(job.notificationEmail)!}&emsp;</dd>
@@ -159,7 +167,7 @@
                                         <#if jobExecution.status="SUCCESS" >
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 
-                                        <#if jobExecution.status!="SUCCESS">
+                                        <#if jobExecution.status="FAILED">
                                             <span class="badge badge-pill badge-danger">${jobExecution.status}</span>
                                         </#if>
                                     </h6></td>

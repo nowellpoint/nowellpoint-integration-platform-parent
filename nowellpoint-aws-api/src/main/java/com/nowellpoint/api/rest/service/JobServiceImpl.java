@@ -40,9 +40,9 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.annotation.Stop;
-import com.nowellpoint.annotation.Submit;
-import com.nowellpoint.annotation.Terminate;
+import com.nowellpoint.api.annotation.Stop;
+import com.nowellpoint.api.annotation.Submit;
+import com.nowellpoint.api.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
@@ -108,15 +108,11 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	
 	@Override
 	public void stopJob(Job job) {
-		job.setStatus(Job.Statuses.STOPPED);
-		update(job);
 		stopJob.fire(job);
 	}
 	
 	@Override
 	public void terminateJob(Job job) {
-		job.setStatus(Job.Statuses.TERMINATED);
-		update(job);
 		terminateJob.fire(job);
 	}
 	

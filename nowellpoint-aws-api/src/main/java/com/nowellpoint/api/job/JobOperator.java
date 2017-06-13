@@ -48,9 +48,9 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.KeyMatcher;
 
-import com.nowellpoint.annotation.Stop;
-import com.nowellpoint.annotation.Submit;
-import com.nowellpoint.annotation.Terminate;
+import com.nowellpoint.api.annotation.Stop;
+import com.nowellpoint.api.annotation.Submit;
+import com.nowellpoint.api.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.util.Assert;
@@ -84,16 +84,22 @@ public class JobOperator  {
 	}
 	
 	public void unscheduleJob(@Observes @Stop Job job) {
+		
 		try {
 			scheduler.unscheduleJob(triggerKey(job.getId().toString(), job.getScheduleOption()));
+			job.setStatus(Job.Statuses.STOPPED);
+			jobService.updateJob(job);
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
 	}
 	
 	public void deleteJob(@Observes @Terminate Job job) {
+
 		try {
 			scheduler.deleteJob(jobKey(job.getId().toString(), job.getJobName()));
+			job.setStatus(Job.Statuses.TERMINATED);
+			jobService.updateJob(job);
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
@@ -166,7 +172,7 @@ public class JobOperator  {
 			
 		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {
 			LOGGER.error(e.getMessage());
-			job.setStatus(Job.Statuses.ERROR);
+			job.setStatus(Job.Statuses.FAILED);
 			job.setFailureMessage(e.getMessage());
 		}
 		

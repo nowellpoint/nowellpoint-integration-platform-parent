@@ -392,7 +392,7 @@ public class Job extends AbstractResource {
 		public static final String STOPPED = "STOPPED";
 		public static final String SUBMITTED = "SUBMITTED";
 		public static final String TERMINATED = "TERMINATED";
-		public static final String ERROR = "ERROR";
+		public static final String FAILED = "FAILED";
 	}
 	
 	public class ScheduleOptions {
