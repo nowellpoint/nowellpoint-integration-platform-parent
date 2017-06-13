@@ -45,22 +45,22 @@
                                 <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
                                 <td>
                                     <h6>
-                                    <#if job.status="SUCCESS" >
+                                    <#if job.status=="SUCCESS" >
                                         <span class="badge badge-pill badge-success">${job.status}</span>
                                     </#if> 
-                                    <#if job.status="COMPLETED" or job.status="RUNNING">
+                                    <#if job.status=="COMPLETED" || job.status=="RUNNING">
                                         <span class="badge badge-pill badge-default">${job.status}</span>
                                     </#if>    
-                                    <#if job.status="SCHEDULED" >
+                                    <#if job.status=="SCHEDULED" >
                                         <span class="badge badge-pill badge-info">${job.status}</span>
                                     </#if> 
-                                    <#if job.status="SUBMITTED" >
+                                    <#if job.status=="SUBMITTED" >
                                         <span class="badge badge-pill badge-info">${job.status}</span>
                                     </#if> 
-                                    <#if job.status="TERMINATED" >
+                                    <#if job.status=="TERMINATED" >
                                         <span class="badge badge-pill badge-default">${job.status}</span>
                                     </#if>     
-                                    <#if job.status="FAILED">
+                                    <#if job.status=="FAILED">
                                         <span class="badge badge-pill badge-danger">${job.status}</span>
                                     </#if>
                                     </h6>

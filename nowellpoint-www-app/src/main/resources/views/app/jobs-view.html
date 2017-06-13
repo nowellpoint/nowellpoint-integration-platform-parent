@@ -17,21 +17,21 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <#if job.status="SCHEDULED">
+            <#if job.status == "SCHEDULED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="stop-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/stop">${labels["stop"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
             </#if>
-            <#if job.status="COMPLETED">
+            <#if job.status == "COMPLETED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
             </#if>
-            <#if job.status="STOPPED">
+            <#if job.status == "STOPPED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
             </#if>
-            <#if job.status="FAILED">
+            <#if job.status == "FAILED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
@@ -58,7 +58,7 @@
                     <!--  <#if job.status == "COMPLETED"> -->
                     <dd class="text-success">
                     <!-- </#if> --> 
-                    ${(job.status)!}&emsp;
+                    ${job.status}&emsp;
                     <!-- <#if job.status == "RUNNING"> -->
                     <i class="fa fa-spinner fa-spin"></i>
                     <!-- </#if> -->       

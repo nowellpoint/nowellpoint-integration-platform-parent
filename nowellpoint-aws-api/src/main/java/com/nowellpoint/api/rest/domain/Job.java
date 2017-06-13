@@ -126,7 +126,7 @@ public class Job extends AbstractResource {
 		this.lastUpdatedBy = lastUpdatedBy;
 		this.nextFireTime = nextFireTime;
 		this.numberOfExecutions = 0;
-		this.status = Job.Statuses.SCHEDULED;
+		this.status = Job.Statuses.NEW;
 	}
 	
 	public static Job of(CreateJobRequest jobRequest, UserInfo userInfo) {
@@ -388,6 +388,7 @@ public class Job extends AbstractResource {
 	}
 	
 	public class Statuses {
+		public static final String NEW = "NEW";
 		public static final String SCHEDULED = "SCHEDULED"; 
 		public static final String STOPPED = "STOPPED";
 		public static final String SUBMITTED = "SUBMITTED";
