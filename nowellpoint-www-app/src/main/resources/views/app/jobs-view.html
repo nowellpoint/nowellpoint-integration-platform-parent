@@ -17,21 +17,21 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <#if job.status == "SCHEDULED">
+            <#if job.status=="SCHEDULED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="stop-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/stop">${labels["stop"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
             </#if>
-            <#if job.status == "COMPLETED">
+            <#if job.status=="COMPLETED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
             </#if>
-            <#if job.status == "STOPPED">
+            <#if job.status=="STOPPED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
             </#if>
-            <#if job.status == "FAILED">
+            <#if job.status=="FAILED">
                 <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
                 <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
                 <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
@@ -54,15 +54,15 @@
                     <dt>${labels["status"]}</dt>
                     <!--  <#if job.status == "FAILED"> -->
                     <dd class="text-danger">
-                    <!-- </#if> -->
-                    <!--  <#if job.status == "COMPLETED"> -->
-                    <dd class="text-success">
-                    <!-- </#if> --> 
-                    ${job.status}&emsp;
-                    <!-- <#if job.status == "RUNNING"> -->
-                    <i class="fa fa-spinner fa-spin"></i>
-                    <!-- </#if> -->       
-                    </dd>
+                        <!-- </#if> -->
+                        <!--  <#if job.status == "COMPLETED"> -->
+                        <dd class="text-success">
+                            <!-- </#if> -->
+                            ${job.status}&emsp;
+                            <!-- <#if job.status == "RUNNING"> -->
+                            <i class="fa fa-spinner fa-spin"></i>
+                            <!-- </#if> -->
+                        </dd>
                         <hr>
                         <dt>${labels["notification.email"]}</dt>
                         <dd>${(job.notificationEmail)!}&emsp;</dd>
@@ -151,11 +151,12 @@
                 <div class="content table-responsive">
                     <table class="table">
                         <thead>
-                            <th>${labels["fire.instance.id"]}</th>
-                            <th>${labels['fire.time']}</th>
-                            <th>${labels["status"]}</th>
-                            <th></th>
-                            <th class="text-right">${labels["job.run.time"]}</th>
+                            <tr>
+                                <th>${labels["fire.instance.id"]}</th>
+                                <th>${labels['fire.time']}</th>
+                                <th>${labels["status"]}</th>
+                                <th class="text-right">${labels["job.run.time"]}</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <#list job.jobExecutions?sort_by( "fireTime") as jobExecution>
@@ -164,16 +165,21 @@
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
                                     <td>
                                         <h6>
-                                        <#if jobExecution.status="SUCCESS" >
+                                        <#if jobExecution.status="COMPLETED" >
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 
                                         <#if jobExecution.status="FAILED">
                                             <span class="badge badge-pill badge-danger">${jobExecution.status}</span>
                                         </#if>
                                     </h6></td>
-                                    <td>${(jobExecution.failureMessage)!}</td>
                                     <td class="text-right">${jobExecution.jobRunTime}</td>
                                 </tr>
+                                <#if jobExecution.status="FAILED">
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">${jobExecution.failureMessage!}</td>
+                                </tr>
+                                </#if>    
                             </#list>
                         </tbody>
                     </table>
@@ -261,7 +267,7 @@
         </div>
 
         <script>
-            $("#update").click(function(e) {
+            $("#update").click(function (e) {
                 e.preventDefault();
 
                 $form = $("#job-form");
@@ -272,13 +278,13 @@
                     url: "${links['jobs']}/${job.id!}",
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 200) {
                             $dialog.slideUp('slow').fadeOut();
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -289,19 +295,19 @@
                 });
             });
 
-            $("#submit-job").click(function(e) {
+            $("#submit-job").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
                     url: $(this).data("href"),
                     dataType: "html",
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 200) {
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -312,19 +318,19 @@
                 });
             });
 
-            $("#stop-job").click(function(e) {
+            $("#stop-job").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
                     url: $(this).data("href"),
                     dataType: "html",
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 200) {
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -335,19 +341,19 @@
                 });
             });
 
-            $("#terminate-job").click(function(e) {
+            $("#terminate-job").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
                     url: $(this).data("href"),
                     dataType: "html",
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 200) {
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -358,18 +364,18 @@
                 });
             });
 
-            $("#test-webhook").click(function(e) {
+            $("#test-webhook").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
                     url: $(this).data("href"),
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 204) {
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);

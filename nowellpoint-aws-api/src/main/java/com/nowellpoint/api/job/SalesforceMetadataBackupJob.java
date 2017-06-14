@@ -171,7 +171,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		    			theme));
 	    	}
 	    	
-	    	job.setStatus("SUCCESS");
+	    	job.setStatus("COMPLETED");
 			
 		} catch (OauthException e) {
 			job.setStatus("FAILED");
