@@ -383,7 +383,7 @@ public class Job extends AbstractResource {
 	}
 
 	@Override
-	public com.nowellpoint.api.model.document.Job toDocument() {
+	public synchronized com.nowellpoint.api.model.document.Job toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Job.class);
 	}
 	
