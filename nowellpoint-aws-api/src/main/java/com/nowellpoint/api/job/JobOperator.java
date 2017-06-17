@@ -24,8 +24,6 @@ import static org.quartz.TriggerKey.triggerKey;
 import org.quartz.CalendarIntervalScheduleBuilder;
 import org.quartz.DateBuilder.IntervalUnit;
 
-import java.sql.Date;
-import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
@@ -33,10 +31,10 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -52,7 +50,7 @@ import com.nowellpoint.api.annotation.Stop;
 import com.nowellpoint.api.annotation.Submit;
 import com.nowellpoint.api.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.Job;
-import com.nowellpoint.api.service.JobService;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.util.Assert;
 
 @Singleton
@@ -62,9 +60,6 @@ public class JobOperator  {
 	private static final Logger LOGGER = Logger.getLogger(JobOperator.class);
 	
 	private static Scheduler scheduler;
-	
-	@Inject
-	private JobService jobService;
 	
 	@PostConstruct
 	public void startJobOperator() {
@@ -87,8 +82,6 @@ public class JobOperator  {
 		
 		try {
 			scheduler.unscheduleJob(triggerKey(job.getId().toString(), job.getScheduleOption()));
-			job.setStatus(Job.Statuses.STOPPED);
-			jobService.updateJob(job);
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
@@ -98,8 +91,6 @@ public class JobOperator  {
 
 		try {
 			scheduler.deleteJob(jobKey(job.getId().toString(), job.getJobName()));
-			job.setStatus(Job.Statuses.TERMINATED);
-			jobService.updateJob(job);
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
@@ -111,23 +102,27 @@ public class JobOperator  {
 			Class <? extends org.quartz.Job> jobClass = Class.forName (job.getClassName()).asSubclass (org.quartz.Job.class);
 			
 			JobKey jobKey = new JobKey(job.getId().toString(), job.getJobName());
+			
+			JobDataMap jobDataMap = new JobDataMap();
+			jobDataMap.put(job.getId(), job.toDocument());
 
 		    JobDetail jobDetail = JobBuilder.newJob(jobClass)
 		    		.withIdentity(jobKey)
+		    		.usingJobData(jobDataMap)
 		    		.build();
 		    
 		    TriggerKey triggerKey = new TriggerKey(job.getId().toString(), job.getScheduleOption());
 		    
 		    Trigger trigger = null;
 			
-			if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || Job.ScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
+			if (JobScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || JobScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
 				
 				trigger = TriggerBuilder.newTrigger()
 						.withIdentity(triggerKey)
 						.startAt(job.getSchedule().getRunAt())
 						.build();
 				
-			} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption())) {
+			} else if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption())) {
 				
 				IntervalUnit intervalUnit = null;
 				
@@ -151,7 +146,7 @@ public class JobOperator  {
 								.preserveHourOfDayAcrossDaylightSavings(Boolean.TRUE))
 						.build();
 				
-			} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
+			} else if (JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
 				
 			} else {
 				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE and RUN_ON_SPECIFIC_DAYS", job.getScheduleOption()));
@@ -164,19 +159,9 @@ public class JobOperator  {
 						KeyMatcher.keyEquals(jobKey));
 			}
 			
-			if (trigger.getStartTime().after(Date.from(Instant.now()))) {
-				job.setStatus(Job.Statuses.SCHEDULED);
-			} else {
-				job.setStatus(Job.Statuses.SUBMITTED);
-			}
-			
 		} catch (ClassNotFoundException | SchedulerException | IllegalArgumentException e) {
 			LOGGER.error(e.getMessage());
-			job.setStatus(Job.Statuses.FAILED);
-			job.setFailureMessage(e.getMessage());
 		}
-		
-		jobService.updateJob(job);
 	}
 	
 	public static void pause() {

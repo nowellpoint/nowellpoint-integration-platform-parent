@@ -24,7 +24,7 @@ public class SalesforceMetadataBackupListener implements JobListener {
 
 	@Override
 	public void jobToBeExecuted(JobExecutionContext context) {
-
+		LOG.info("Firing job: " + context.getFireInstanceId());
 	}
 
 	@Override

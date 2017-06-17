@@ -24,6 +24,8 @@ public interface JobService {
 	
 	public void updateJob(Job job);
 	
+	public void runJob(Job job);
+	
 	public void submitJob(Job job);
 	
 	public void stopJob(Job job);

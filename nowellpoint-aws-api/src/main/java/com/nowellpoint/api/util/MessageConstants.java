@@ -7,4 +7,5 @@ public class MessageConstants {
 	public static final String SLACK_MISSING_USERNAME = "slack.missing.username";
 	public static final String SLACK_MISSING_MESSAGE_TEXT = "slack.missing.message.text";
 	public static final String JOB_UNABLE_TO_SUBMIT = "job.unable.to.submit";
+	public static final String JOB_INVALID_ACTION = "job.invalid.action";
 }

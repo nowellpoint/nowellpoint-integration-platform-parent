@@ -46,6 +46,8 @@ import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 
 public class JobResourceImpl implements JobResource {
 	
@@ -229,6 +231,10 @@ public class JobResourceImpl implements JobResource {
 		
 		Job job = jobService.findById(id);
 		
+		if (job == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Job.class.getSimpleName(), id ) );
+		}
+		
 		if ("submit".equals(action)) {
 			jobService.submitJob(job);
 		} else if ("test-webhook-url".equals(action)) {
@@ -237,6 +243,10 @@ public class JobResourceImpl implements JobResource {
 			jobService.stopJob(job);
 		} else if ("terminate".equals(action)) {
 			jobService.terminateJob(job);
+		} else if ("run".equals(action)) {
+			jobService.runJob(job);
+		} else {
+			throw new BadRequestException( String.format( MessageProvider.getMessage(Locale.US, MessageConstants.JOB_INVALID_ACTION), action ) );
 		}
 		
 		return Response.ok()

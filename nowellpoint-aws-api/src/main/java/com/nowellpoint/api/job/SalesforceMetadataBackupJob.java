@@ -15,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -30,6 +32,7 @@ import com.nowellpoint.api.model.document.Job;
 import com.nowellpoint.api.model.document.JobExecution;
 import com.nowellpoint.api.model.document.JobOutput;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.service.SalesforceServiceImpl;
 import com.nowellpoint.api.rest.service.VaultEntryServiceImpl;
@@ -84,9 +87,19 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
-		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
-				.getKey()
-				.getName()));
+//		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
+//				.getKey()
+//				.getName()));
+		
+		JobDetail jobDetail = context.getJobDetail();
+		
+		LOGGER.info(jobDetail.getKey().getName());
+		
+		LOGGER.info(jobDetail.getJobDataMap().containsKey(jobDetail.getKey().getName()));
+		
+		LOGGER.info(jobDetail.getJobDataMap().get(jobDetail.getKey().getName()).getClass().getName());
+		
+		Job job = (Job) jobDetail.getJobDataMap().get(jobDetail.getKey().getName());
 		
 		job.setStatus("RUNNING");
 		
@@ -179,6 +192,11 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
 			job.setStatus("FAILED");
 			job.setFailureMessage(e.getMessage());
+			try {
+				context.getScheduler().deleteJob(context.getJobDetail().getKey());
+			} catch (SchedulerException se) {
+				LOGGER.error(se);
+			}
 		}
 		
 		JobExecution jobExecution = new JobExecution();
@@ -192,15 +210,13 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
 		job.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		job.setFireTime(context.getFireTime());
-		job.setNextFireTime(context.getNextFireTime());
 		
-		if (Assert.isNotNull(context.getNextFireTime())) {			
+		if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption()) || JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
 			job.setStatus("SCHEDULED");
+			job.setNextFireTime(context.getNextFireTime());
 			job.getSchedule().setRunAt(context.getNextFireTime());
-		} else {
-			job.setStatus("COMPLETED");
 		}
-		
+				
 		documentManager.replaceOne(job);
 		
 		set(job.getId().toString(), job);

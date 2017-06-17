@@ -88,7 +88,7 @@
                 </dl>
             </div>
 
-        </div>
+        </div>   
 
         <div class="row">
 
@@ -113,6 +113,16 @@
             </div>
 
         </div>
+        
+        <div class="row">
+            <div class="col-8">
+                <dl class="dl-vertical">
+                    <dt>${labels["failure.message"]}</dt>
+                    <dd>${job.failureMessage!}</dd>    
+                    <hr>
+                </dl>
+            </div>
+        </div> 
 
         <div class="row">
 
@@ -133,8 +143,6 @@
             </div>
 
         </div>
-
-        <br>
 
         <br>
         <div class="hr-divider"></div>
@@ -169,17 +177,11 @@
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 
                                         <#if jobExecution.status="FAILED">
-                                            <span class="badge badge-pill badge-danger">${jobExecution.status}</span>
+                                            <span class="badge badge-pill badge-danger" data-toggle="tooltip" title="${jobExecution.failureMessage}">${jobExecution.status}</span>
                                         </#if>
                                     </h6></td>
-                                    <td class="text-right">${jobExecution.jobRunTime}</td>
-                                </tr>
-                                <#if jobExecution.status="FAILED">
-                                <tr>
-                                    <td></td>
-                                    <td colspan="3">${jobExecution.failureMessage!}</td>
-                                </tr>
-                                </#if>    
+                                    <td class="text-right">${jobExecution.jobRunTime}</td>                                    
+                                </tr>  
                             </#list>
                         </tbody>
                     </table>

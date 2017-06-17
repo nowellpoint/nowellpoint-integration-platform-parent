@@ -48,6 +48,8 @@ import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
+import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.CommunicationService;
@@ -107,13 +109,40 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
+	public void submitJob(Job job) {
+		if (job.getStatus().equals(JobStatus.TERMINATED) || job.getStatus().equals(JobStatus.SCHEDULED)) {
+			throw new ValidationException(MessageProvider.getMessage(Locale.US, MessageConstants.JOB_UNABLE_TO_SUBMIT));
+		}
+		
+		fireSubmitJobEvent(job);
+		
+		if (job.getSchedule().getRunAt().after(Date.from(Instant.now()))) {
+			job.setStatus(JobStatus.SCHEDULED);
+		} else {
+			job.setStatus(JobStatus.SUBMITTED);
+		}
+		
+		updateJob(job);
+	}
+	
+	@Override
+	public void runJob(Job job) {
+		job.setScheduleOption(JobScheduleOptions.RUN_WHEN_SUBMITTED);
+		fireSubmitJobEvent(job);
+	}
+	
+	@Override
 	public void stopJob(Job job) {
 		stopJob.fire(job);
+		job.setStatus(JobStatus.STOPPED);
+		updateJob(job);
 	}
 	
 	@Override
 	public void terminateJob(Job job) {
 		terminateJob.fire(job);
+		job.setStatus(JobStatus.TERMINATED);
+		updateJob(job);
 	}
 	
 	@Override
@@ -188,14 +217,6 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	@Override
 	public void updateJob(Job job) {
 		super.update(job);
-	}
-	
-	@Override
-	public void submitJob(Job job) {
-		if (job.getStatus().equals(Job.Statuses.TERMINATED) || job.getStatus().equals(Job.Statuses.SCHEDULED)) {
-			throw new ValidationException(MessageProvider.getMessage(Locale.US, MessageConstants.JOB_UNABLE_TO_SUBMIT));
-		}		
-		fireSubmitJobEvent(job);
 	}
 	
 	@Override
