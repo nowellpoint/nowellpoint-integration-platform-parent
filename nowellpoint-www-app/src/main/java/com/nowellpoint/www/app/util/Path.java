@@ -71,6 +71,7 @@ public class Path {
 		public static final String JOBS_WEBHOOK_URL_TEST = String.format(APPLICATION_CONTEXT, "jobs/:id/webhook-test");
 		public static final String JOBS_EDIT = String.format(APPLICATION_CONTEXT, "jobs/:id/edit");
 		public static final String JOBS_SUBMIT = String.format(APPLICATION_CONTEXT, "jobs/:id/submit");
+		public static final String JOBS_RUN = String.format(APPLICATION_CONTEXT, "jobs/:id/run");
 		public static final String JOBS_STOP = String.format(APPLICATION_CONTEXT, "jobs/:id/stop");
 		public static final String JOBS_TERMINATE = String.format(APPLICATION_CONTEXT, "jobs/:id/terminate");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");

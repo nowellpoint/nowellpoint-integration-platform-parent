@@ -68,6 +68,29 @@ public class JobController extends AbstractStaticController {
 				.build();
 	}
 	
+	public static String runJob(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		
+		UpdateResult<Job> result = NowellpointClient.defaultClient(token)
+			.job()
+			.run(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("job", result.getTarget());
+		
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(JobController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.JOBS_VIEW)
+				.timeZone(getTimeZone(request))
+				.build();
+	}
+	
 	public static String stopJob(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
