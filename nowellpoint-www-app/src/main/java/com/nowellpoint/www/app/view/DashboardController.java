@@ -3,8 +3,7 @@ package com.nowellpoint.www.app.view;
 import java.util.Map;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.JobList;
-import com.nowellpoint.client.model.SalesforceConnectorList;
+import com.nowellpoint.client.model.Dashboard;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -22,17 +21,12 @@ public class DashboardController extends AbstractStaticController {
 		
 		Token token = getToken(request);
 		
-		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.getSalesforceConnectors();    	
-		
-		JobList jobList = NowellpointClient.defaultClient(token)
-				.job()
-				.getJobs();
+		Dashboard dashboard = NowellpointClient.defaultClient(token)
+				.dashboard()
+				.get();
 		
 		Map<String, Object> model = getModel();
-		model.put("salesforceConnectorsList", salesforceConnectors.getItems());
-		model.put("jobList", jobList.getItems());
+		model.put("dashboard", dashboard);
 		
 		return TemplateBuilder.template()
 				.configuration(configuration)
