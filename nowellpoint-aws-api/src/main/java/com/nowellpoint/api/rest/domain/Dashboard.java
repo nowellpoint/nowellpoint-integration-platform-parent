@@ -3,6 +3,7 @@ package com.nowellpoint.api.rest.domain;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,9 +22,9 @@ public class Dashboard extends AbstractResource {
 	
 	private Integer jobs;
 	
-	private Set<JobStatusAggregation> jobStatusSummary;
+	private Set<JobStatusAggregation> jobStatusSummary = new HashSet<>();
 	
-	private Set<JobExecution> recentJobExecutions;
+	private Set<JobExecution> recentJobExecutions = new HashSet<>();
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date lastRefreshedOn;
@@ -35,24 +36,28 @@ public class Dashboard extends AbstractResource {
 	private Dashboard(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
 		this.connectors = salesforceConnectorList.getSize();
 		this.jobs = jobList.getSize();
-		this.jobStatusSummary = jobList.getItems()
-				.stream()
-				.collect(Collectors.groupingBy(
-						Job::getStatus,
-						Collectors.counting()))
-				.entrySet()
-				.stream()
-				.sorted(Comparator.comparing(e -> e.getKey()))
-				.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue())).collect(Collectors.toSet());
 		
-		this.recentJobExecutions = jobList.getItems().stream()
-			     .map(result -> result.getJobExecutions())
-			     .flatMap(Set::stream)
-			     .collect(Collectors.toSet())
-			     .stream()
-			     .sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
-			     .limit(10)
-			     .collect(Collectors.toSet());
+		if (jobList.getSize() > 0) {
+			
+			this.jobStatusSummary = jobList.getItems()
+					.stream()
+					.collect(Collectors.groupingBy(
+							Job::getStatus,
+							Collectors.counting()))
+					.entrySet()
+					.stream()
+					.sorted(Comparator.comparing(e -> e.getKey()))
+					.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue())).collect(Collectors.toSet());
+			
+			this.recentJobExecutions = jobList.getItems().stream()
+				     .map(result -> result.getJobExecutions())
+				     .flatMap(Set::stream)
+				     .collect(Collectors.toSet())
+				     .stream()
+				     .sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
+				     .limit(10)
+				     .collect(Collectors.toSet());	
+		}
 		
 		this.lastRefreshedOn = Date.from(Instant.now());
 	}

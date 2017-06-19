@@ -16,7 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
-@JsonInclude(Include.NON_EMPTY)
+@JsonInclude(Include.NON_NULL)
 public abstract class AbstractResource implements Resource, Createable, Updateable {
 
 	protected static final ModelMapper modelMapper = new ModelMapper();
