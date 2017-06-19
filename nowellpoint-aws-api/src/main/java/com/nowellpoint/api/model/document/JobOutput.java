@@ -23,6 +23,8 @@ import java.util.Date;
 
 public class JobOutput {
 	
+	private String fireInstanceId;
+	
 	private String type;
 	
 	private String filename;
@@ -39,7 +41,8 @@ public class JobOutput {
 		
 	}
 	
-	private JobOutput(String type, String filename, Long filesize, String bucket, String key) {
+	private JobOutput(String fireInstanceId, String type, String filename, Long filesize, String bucket, String key) {
+		this.fireInstanceId = fireInstanceId;
 		this.type = type;
 		this.filename = filename;
 		this.filesize = filesize;
@@ -48,8 +51,22 @@ public class JobOutput {
 		this.addedOn = Date.from(Instant.now());
 	}
 	
-	public static JobOutput of(String type, Long filesize, String bucket, String key) {
-		return new JobOutput(type, key.substring(key.indexOf("/") + 1).concat(".json"), filesize, bucket, key);
+	public static JobOutput of(String fireInstanceId, String type, Long filesize, String bucket, String key) {
+		return new JobOutput(
+				fireInstanceId, 
+				type, 
+				key.substring(key.indexOf("/") + 1).concat(".json"), 
+				filesize, 
+				bucket, 
+				key);
+	}
+
+	public String getFireInstanceId() {
+		return fireInstanceId;
+	}
+
+	public void setFireInstanceId(String fireInstanceId) {
+		this.fireInstanceId = fireInstanceId;
 	}
 
 	public String getType() {

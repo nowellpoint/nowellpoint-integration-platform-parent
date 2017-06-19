@@ -40,16 +40,14 @@ import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
-import com.nowellpoint.api.rest.domain.Schedule;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
-import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
-import com.nowellpoint.util.Assert;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 
 public class JobResourceImpl implements JobResource {
 	
@@ -63,9 +61,6 @@ public class JobResourceImpl implements JobResource {
 	
 	@Inject
 	private SalesforceConnectorService salesforceConnectorService;
-	
-	@Inject
-	private CommunicationService communicationService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -236,13 +231,22 @@ public class JobResourceImpl implements JobResource {
 		
 		Job job = jobService.findById(id);
 		
-		if ("run".equals(action)) {
-			job.setSchedule(Schedule.of(RunWhenSubmitted.builder().build()));
-			jobService.runJob(job);
+		if (job == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Job.class.getSimpleName(), id ) );
+		}
+		
+		if ("submit".equals(action)) {
+			jobService.submitJob(job);
 		} else if ("test-webhook-url".equals(action)) {
-			if (Assert.isNotNull(job.getSlackWebhookUrl())) {
-				communicationService.sendMessage(job.getSlackWebhookUrl(), "Nowellpoint Notification Service", "Test to ensure external communication service functions as expected");
-			}
+			jobService.sendSlackTestMessage(job);
+		} else if ("stop".equals(action)) {
+			jobService.stopJob(job);
+		} else if ("terminate".equals(action)) {
+			jobService.terminateJob(job);
+		} else if ("run".equals(action)) {
+			jobService.runJob(job);
+		} else {
+			throw new BadRequestException( String.format( MessageProvider.getMessage(Locale.US, MessageConstants.JOB_INVALID_ACTION), action ) );
 		}
 		
 		return Response.ok()

@@ -26,9 +26,17 @@ public interface JobService {
 	
 	public void runJob(Job job);
 	
+	public void submitJob(Job job);
+	
+	public void stopJob(Job job);
+	
+	public void terminateJob(Job job);
+	
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
 	public String getOutputFile(String id, String filename) throws IOException;
 	
 	public void loadScheduledJobs();
+	
+	public void sendSlackTestMessage(Job job);
 }

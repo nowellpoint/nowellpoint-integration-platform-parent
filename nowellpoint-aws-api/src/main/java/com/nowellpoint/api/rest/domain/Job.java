@@ -94,7 +94,8 @@ public class Job extends AbstractResource {
 			Date createdOn,
 			UserInfo createdBy,
 			Date lastUpdatedOn,
-			UserInfo lastUpdatedBy) {
+			UserInfo lastUpdatedBy,
+			Date nextFireTime) {
 		
 		if (Assert.isNotNull(description) && Assert.isEmpty(description)) {
 			description = null;
@@ -123,8 +124,9 @@ public class Job extends AbstractResource {
 		this.createdBy = createdBy;
 		this.lastUpdatedOn = lastUpdatedOn;
 		this.lastUpdatedBy = lastUpdatedBy;
+		this.nextFireTime = nextFireTime;
 		this.numberOfExecutions = 0;
-		this.status = Job.Statuses.SCHEDULED;
+		this.status = JobStatus.NEW;
 	}
 	
 	public static Job of(CreateJobRequest jobRequest, UserInfo userInfo) {
@@ -137,11 +139,11 @@ public class Job extends AbstractResource {
 				schedule = Schedule.of(jobRequest.getSchedule().get());
 			} else {
 				String scheduleOption = jobRequest.getScheduleOption().get();
-				if (Job.ScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
+				if (JobScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
 					schedule = Schedule.of(RunWhenSubmitted.builder().build());
-				} else if (Job.ScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
+				} else if (JobScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
 					schedule = Schedule.of(RunOnce.builder().runDate(DateUtil.iso8601(jobRequest.getRunAt().get())).build());
-				} else if (Job.ScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {
+				} else if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {
 					schedule = Schedule.of(RunOnSchedule.builder()
 							.endAt(DateUtil.iso8601(jobRequest.getEndAt().get()))
 							.startAt(DateUtil.iso8601(jobRequest.getStartAt().get()))
@@ -149,7 +151,7 @@ public class Job extends AbstractResource {
 							.timeUnit(TimeUnit.valueOf(jobRequest.getTimeUnit().get()))
 							.timeZone(TimeZone.getTimeZone(jobRequest.getTimeZone().get()))
 							.build());
-				} else if (Job.ScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(scheduleOption)) {		
+				} else if (JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(scheduleOption)) {		
 					schedule = Schedule.of(RunOnSpecificDays.builder().build());
 				} else {
 					throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE or RUN_ON_SPECIFIC_DAYS", jobRequest.getScheduleOption().get()));
@@ -174,7 +176,8 @@ public class Job extends AbstractResource {
 				Date.from(Instant.now()),
 				userInfo,
 				Date.from(Instant.now()),
-				userInfo);
+				userInfo,
+				schedule.getRunAt());
 	}
 	
 	private <T> Job(T document) {
@@ -380,22 +383,7 @@ public class Job extends AbstractResource {
 	}
 
 	@Override
-	public com.nowellpoint.api.model.document.Job toDocument() {
+	public synchronized com.nowellpoint.api.model.document.Job toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Job.class);
-	}
-	
-	public class Statuses {
-		public static final String SCHEDULED = "SCHEDULED"; 
-		public static final String STOPPED = "STOPPED";
-		public static final String SUBMITTED = "SUBMITTED";
-		public static final String TERMINATED = "TERMINATED";
-		public static final String ERROR = "ERROR";
-	}
-	
-	public class ScheduleOptions {
-		public static final String RUN_WHEN_SUBMITTED = "RUN_WHEN_SUBMITTED";
-		public static final String RUN_ONCE = "RUN_ONCE";
-		public static final String RUN_ON_SCHEDULE = "RUN_ON_SCHEDULE";
-		public static final String RUN_ON_SPECIFIC_DAYS = "RUN_ON_SPECIFIC_DAYS";
 	}
 }

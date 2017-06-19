@@ -17,8 +17,27 @@
         </div>
         <br>
         <div class="btn-toolbar" role="toolbar">
-            <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
-            <button type="button" id="run" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
+            <#if job.status=="SCHEDULED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="run-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
+                <button type="button" id="stop-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/stop">${labels["stop"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
+            <#if job.status=="COMPLETED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+            </#if>
+            <#if job.status=="STOPPED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
+            <#if job.status=="FAILED">
+                <button type="button" id="edit-job" class="btn btn-primary" data-toggle="modal" data-target="#job-dialog">${labels["edit"]}</button>&nbsp;
+                <button type="button" id="submit-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/submit">${labels["submit"]}</button>&nbsp;
+                <button type="button" id="run-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/run">${labels["run"]}</button>&nbsp;
+                <button type="button" id="terminate-job" class="btn btn-secondary" data-href="${links['jobs']}/${job.id!}/terminate">${labels["terminate"]}</button>&nbsp;
+            </#if>
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -35,13 +54,16 @@
                     <dd>${(job.source.type)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["status"]}</dt>
-                    <!--  <#if job.status == "Stopped"> -->
+                    <!--  <#if job.status == "FAILED"> -->
                     <dd class="text-danger">
                         <!-- </#if> -->
-                        <!--  <#if job.status == "Complete"> -->
+                        <!--  <#if job.status == "COMPLETED"> -->
                         <dd class="text-success">
                             <!-- </#if> -->
-                            ${(job.status)!}&emsp;
+                            ${job.status}&emsp;
+                            <!-- <#if job.status == "RUNNING"> -->
+                            <i class="fa fa-spinner fa-spin"></i>
+                            <!-- </#if> -->
                         </dd>
                         <hr>
                         <dt>${labels["notification.email"]}</dt>
@@ -68,7 +90,7 @@
                 </dl>
             </div>
 
-        </div>
+        </div>   
 
         <div class="row">
 
@@ -80,7 +102,7 @@
                         <#if (job.slackWebhookUrl)??>
                             &emsp;&emsp;
                             <div class="pull-right">
-                                <button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm"><span class="icon icon-flash fa fa-1x"></span></button>
+                                <button type="button" id="test-webhook" title="${labels['test']}" class="btn btn-outline-primary btn-sm" data-href="${links['jobs']}/${job.id!}/webhook-test"><span class="icon icon-flash fa fa-1x"></span></button>
                             </div>
                         </#if>
                     </dd>
@@ -93,6 +115,16 @@
             </div>
 
         </div>
+        
+        <div class="row">
+            <div class="col-8">
+                <dl class="dl-vertical">
+                    <dt>${labels["failure.message"]}</dt>
+                    <dd>${job.failureMessage!}</dd>    
+                    <hr>
+                </dl>
+            </div>
+        </div> 
 
         <div class="row">
 
@@ -115,8 +147,6 @@
         </div>
 
         <br>
-
-        <br>
         <div class="hr-divider"></div>
         <br>
 
@@ -131,28 +161,29 @@
                 <div class="content table-responsive">
                     <table class="table">
                         <thead>
-                            <th>${labels["fire.instance.id"]}</th>
-                            <th>${labels['fire.time']}</th>
-                            <th>${labels["status"]}</th>
-                            <th></th>
-                            <th class="text-right">${labels["job.run.time"]}</th>
+                            <tr>
+                                <th>${labels["fire.instance.id"]}</th>
+                                <th>${labels['fire.time']}</th>
+                                <th>${labels["status"]}</th>
+                                <th class="text-right">${labels["job.run.time"]}</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <#list job.jobExecutions?sort_by( "fireTime") as jobExecution>
                                 <tr id="${jobExecution.fireInstanceId}">
                                     <td>${jobExecution.fireInstanceId}</td>
                                     <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
-                                    <td><h6>
-                                        <#if jobExecution.status="SUCCESS" >
+                                    <td>
+                                        <h6>
+                                        <#if jobExecution.status="COMPLETED" >
                                             <span class="badge badge-pill badge-success">${jobExecution.status}</span>
                                         </#if> 
-                                        <#if jobExecution.status!="SUCCESS">
-                                            <span class="badge badge-pill badge-danger">${jobExecution.status}</span>
+                                        <#if jobExecution.status="FAILED">
+                                            <span class="badge badge-pill badge-danger" data-toggle="tooltip" title="${jobExecution.failureMessage}">${jobExecution.status}</span>
                                         </#if>
                                     </h6></td>
-                                    <td>${(jobExecution.failureMessage)!}</td>
-                                    <td class="text-right">${jobExecution.jobRunTime}</td>
-                                </tr>
+                                    <td class="text-right">${jobExecution.jobRunTime}</td>                                    
+                                </tr>  
                             </#list>
                         </tbody>
                     </table>
@@ -240,7 +271,7 @@
         </div>
 
         <script>
-            $("#update").click(function(e) {
+            $("#update").click(function (e) {
                 e.preventDefault();
 
                 $form = $("#job-form");
@@ -251,13 +282,13 @@
                     url: "${links['jobs']}/${job.id!}",
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function(response) {
+                    complete: function (response) {
                         $("#overlay").hide();
                         if (response.status == 200) {
                             $dialog.slideUp('slow').fadeOut();
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -268,19 +299,42 @@
                 });
             });
 
-            $("#run").click(function(e) {
+            $("#submit-job").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
-                    url: "${links['jobs']}/${job.id!}/run",
+                    url: $(this).data("href"),
                     dataType: "html",
-                    complete: function(response) {
+                    complete: function (response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
-                            $("#overlay").hide();
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+            
+            $("#run-job").click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).data("href"),
+                    dataType: "html",
+                    complete: function (response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
@@ -291,20 +345,65 @@
                 });
             });
 
-            $("#test-webhook").click(function(e) {
+            $("#stop-job").click(function (e) {
                 e.preventDefault();
 
                 $.ajax({
                     method: 'POST',
-                    url: "${links['jobs']}/${job.id!}/webhook-test",
-                    complete: function(response) {
-
+                    url: $(this).data("href"),
+                    dataType: "html",
+                    complete: function (response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
-                            $("#overlay").hide();
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
 
+            $("#terminate-job").click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).data("href"),
+                    dataType: "html",
+                    complete: function (response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
+                                    location.href = "${links['jobs']}/${job.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#test-webhook").click(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: 'POST',
+                    url: $(this).data("href"),
+                    complete: function (response) {
+                        $("#overlay").hide();
+                        if (response.status == 204) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
+                                    location.href = "${links['jobs']}/${job.id}";
                                 });
                             }, 1000);
                         } else {

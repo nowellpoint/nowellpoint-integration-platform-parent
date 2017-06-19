@@ -3,10 +3,16 @@
     <@t.page>
 
         <div class="row">
-            <div class="col-sm-6">
-                <div class="statcard p-3">
-                    <h3 class="statcard-number">${salesforceConnectorsList?size}</h3>
+            <div class="col-xl-2 col-lg-3 col-md-4">
+                <div class="statcard p-3 text-xs-center">
+                    <h3 class="statcard-number">${dashboard.connectors}</h3>
                     <span class="statcard-desc">${labels["connectors"]}</span>
+                </div>
+            </div>
+            <div class="col-xl-2 col-lg-3 col-md-4">
+                <div class="statcard p-3 text-xs-center">
+                    <h3 class="statcard-number">${dashboard.jobs}</h3>
+                    <span class="statcard-desc">${labels["jobs"]}</span>
                 </div>
             </div>
         </div>
@@ -14,73 +20,63 @@
         <hr>
 
         <div class="row">
-            <div class="col">
-                <div class="card">
-                    <div class="card-block">
-                        <h4 class="card-title">${labels["scheduled.jobs"]}</h4>
-                        <br>
-                        <div class="content table-responsive">
-                            <table id="salesforce-metadata-backup-status" class="table">
-                                <thead>
-                                    <th class="col-xs-2">${labels["status"]}</th>
-                                    <th class="col-xs-6">${labels["job.type"]}</th>
-                                    <th class="col-xs-4 text-right">${labels["run.date"]}</th>
-                                </thead>
-                                <tbody>
-                                    <#if jobList?size==0>
-                                        <tr>
-                                            <td class="text-center" colspan="3">&nbsp;</td>
-                                        </tr>
-                                    </#if>
-                                    <#list jobList as job>
-                                        <tr>
-                                            <td>&emsp;
-                                                <!--  <#if job.status?? && job.status == "COMPLETE"> -->
-                                                <i class="fa fa-circle text-success"></i>
-                                                <!--  <#elseif job.status?? && job.status == "FAILURE"> -->
-                                                <i class="fa fa-circle text-danger"></i>
-                                                <!--  <#elseif job.status?? && job.status == "STOPPED"> -->
-                                                <i class="fa fa-circle text-warning"></i>
-                                                <!--  <#elseif job.status?? && job.status == "TERMINATED"> -->
-                                                <i class="fa fa-circle text-info"></i>
-                                                <!-- <#else> -->
-                                                <i class="fa fa-circle text-muted"></i>
-                                                <!-- </#if> -->
-                                            </td>
-                                            <td>
-                                                <a href="${links['jobs']}/${job.id}">${job.jobName}</a>
-                                            </td>
-                                            <td class="text-right">
-                                                <!--  <#if job.fireTime??> -->
-                                                ${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}
-                                                <!-- </#if> -->
-                                            </td>
-                                        </tr>
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </div>
-                        <hr>
-                        <div class="stats">
-                            <i class="fa fa-circle text-muted"></i>&nbsp;${labels["not.run"]}&emsp;
-                            <i class="fa fa-circle text-success"></i>&nbsp;${labels["complete"]}&emsp;
-                            <i class="fa fa-circle text-danger"></i>&nbsp;${labels["fail"]}&emsp;
-                            <i class="fa fa-circle text-warning"></i>&nbsp;${labels["stopped"]}&emsp;
-                            <i class="fa fa-circle text-info"></i>&nbsp;${labels["terminated"]}
-                        </div>
-                        <div class="stats">
-                            <!-- <#assign refreshTime = .now> -->
-                            <i class="fa fa-clock-o"></i> ${labels["last.refreshed"]}: ${refreshTime?date?string.iso} ${refreshTime?time?string["HH:mm:ss"]}
+
+            <div class="col-4">
+
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4 class="card-title">${labels["job.status.summary"]}</h4>
+                            <div class="content table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <th>${labels["status"]}</th>
+                                        <th class="text-right">${labels["count"]}</th>
+                                    </thead>
+                                    <tbody>
+                                        <#list dashboard.jobStatusSummary as summary>
+                                            <tr>
+                                                <td>${summary.status}</td>
+                                                <td class="text-right">${summary.count}</td>
+                                            </tr>
+                                        </#list>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col">
-            </div>
-            <div class="w-100"></div>
-            <div class="col"></div>
-            <div class="col"></div>
-        </div>
+            
+            <div class="col-8">
 
+                <div class="card-deck">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4 class="card-title">${labels["job.recent.executions"]}</h4>
+                            <div class="content table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <th>${labels["status"]}</th>
+                                        <th>${labels["fire.time"]}</th>
+                                        <th>${labels["failure.message"]}</th>
+                                    </thead>
+                                    <tbody>
+                                        <#list dashboard.recentJobExecutions as jobExecution>
+                                            <tr>
+                                                <td>${jobExecution.status}</td>
+                                                <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
+                                                <td>${jobExecution.failureMessage!}</td>
+                                            </tr>
+                                        </#list>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
 
     </@t.page>

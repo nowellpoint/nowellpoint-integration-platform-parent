@@ -140,7 +140,7 @@ public class Schedule {
 	
 	public static Schedule of(RunOnSchedule runOnSchedule) {
 		return new Schedule(
-				null,
+				runOnSchedule.getStartAt(),
 				runOnSchedule.getStartAt(), 
 				runOnSchedule.getEndAt().orElse(null), 
 				runOnSchedule.getTimeZone(), 

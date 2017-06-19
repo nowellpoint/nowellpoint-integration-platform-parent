@@ -1,4 +1,4 @@
-package com.nowellpoint.annotation;
+package com.nowellpoint.api.annotation;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -11,6 +11,4 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({FIELD, PARAMETER})
-public @interface Submitted {
-
-}
+public @interface Deactivate {}

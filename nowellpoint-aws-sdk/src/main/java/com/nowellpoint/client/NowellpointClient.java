@@ -22,6 +22,7 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.AccountProfileResource;
+import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.JobTypeResource;
@@ -47,6 +48,10 @@ public abstract class NowellpointClient  {
 	public interface Builder {
 		Builder token(Token token);
 		NowellpointClient build();
+	}
+	
+	public DashboardResource dashboard() {
+		return new DashboardResource(token());
 	}
 	
 	public IdentityResource identity() {

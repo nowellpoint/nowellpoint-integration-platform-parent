@@ -37,7 +37,7 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.exceptions.NotFoundException;
-import com.nowellpoint.annotation.Deactivate;
+import com.nowellpoint.api.annotation.Deactivate;
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.api.rest.domain.AccountProfile;

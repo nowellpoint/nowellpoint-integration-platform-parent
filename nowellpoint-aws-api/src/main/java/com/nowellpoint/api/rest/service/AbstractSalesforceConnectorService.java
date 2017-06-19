@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
@@ -70,5 +71,12 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		}
 		SalesforceConnector resource = SalesforceConnector.of( document );
 		return resource;
+	}
+	
+	protected SalesforceConnectorList query(Bson query) {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager(); 
+		Set<com.nowellpoint.api.model.document.SalesforceConnector> documents = documentManager.find( com.nowellpoint.api.model.document.SalesforceConnector.class, query );
+		SalesforceConnectorList salesforceConnectorList = new SalesforceConnectorList(documents);
+		return salesforceConnectorList;
 	}
 }

@@ -4,7 +4,6 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.util.Set;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
@@ -22,9 +21,6 @@ public class AbstractJobService extends AbstractCacheService {
 	
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
-	
-	@Inject
-	private Event<Job> jobEvent;
 	
 	protected Job findById(String id) {
 		com.nowellpoint.api.model.document.Job document = get(com.nowellpoint.api.model.document.Job.class, id);
@@ -68,11 +64,6 @@ public class AbstractJobService extends AbstractCacheService {
 		documentManager.insertOne( document );
 		job.fromDocument(document);
 		set(job.getId(), document);
-		jobEvent.fire(job);
-	}
-	
-	protected void run(Job job) {
-		jobEvent.fire(job);
 	}
 	
 	protected void update(Job job) {

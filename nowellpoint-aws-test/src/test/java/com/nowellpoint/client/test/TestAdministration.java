@@ -14,7 +14,7 @@ import com.nowellpoint.http.RestResource;
 
 public class TestAdministration {
 	
-private static Token token;
+	private static Token token;
 	
 	@BeforeClass
 	public static void authenticate() {
@@ -36,5 +36,7 @@ private static Token token;
 				.bearerAuthorization(token.getAccessToken())
 				.path("cache")
 				.execute();
+		
+		System.out.println(httpResponse.getStatusCode());
 	}
 }

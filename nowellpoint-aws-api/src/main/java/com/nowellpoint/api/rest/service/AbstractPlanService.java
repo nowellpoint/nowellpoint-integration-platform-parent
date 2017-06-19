@@ -40,8 +40,8 @@ public class AbstractPlanService extends AbstractCacheService {
 			documents = documentManager.find(
 					com.nowellpoint.api.model.document.Plan.class, and ( 
 							eq ( "isActive", Boolean.TRUE ), 
-							eq ( "localeSidKey", locale ), 
-							eq ( "languageSidKey", language ) ) );
+							eq ( "locale", locale ), 
+							eq ( "language", language ) ) );
 			
 			hset(locale.concat(":").concat(language), documents);
 			

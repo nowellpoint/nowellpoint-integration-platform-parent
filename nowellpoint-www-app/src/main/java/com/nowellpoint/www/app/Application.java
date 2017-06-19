@@ -218,7 +218,10 @@ public class Application implements SparkApplication {
         post(Path.Route.JOBS_UPDATE, (request, response) -> JobController.updateJob(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS, (request, response) -> JobController.viewOutputs(configuration, request, response));
         get(Path.Route.JOBS_OUTPUTS_DOWNLOAD, (request, response) -> JobController.downloadOutputFile(configuration, request, response));
+        post(Path.Route.JOBS_SUBMIT, (request, response) -> JobController.submitJob(configuration, request, response));
         post(Path.Route.JOBS_RUN, (request, response) -> JobController.runJob(configuration, request, response));
+        post(Path.Route.JOBS_STOP, (request, response) -> JobController.stopJob(configuration, request, response));
+        post(Path.Route.JOBS_TERMINATE, (request, response) -> JobController.terminateJob(configuration, request, response));
         post(Path.Route.JOBS_WEBHOOK_URL_TEST, (request, response) -> JobController.testWebhookUrl(configuration, request, response));
         
         post("/app/jobs/:connectorId/metadata-backup", (request, response) -> JobController.createJob(configuration, request, response));

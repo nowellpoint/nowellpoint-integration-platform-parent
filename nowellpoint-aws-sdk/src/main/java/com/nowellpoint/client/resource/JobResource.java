@@ -38,6 +38,9 @@ public class JobResource extends AbstractResource {
 	
 	private static final String RESOURCE_CONTEXT = "jobs";
 	private static final String RUN = "run";
+	private static final String SUBMIT = "submit";
+	private static final String STOP = "stop";
+	private static final String TERMINATE = "terminate";
 	private static final String TEST_WEBHOOK_URL = "test-webhook-url";
 	
 	public JobResource(Token token) {
@@ -83,8 +86,20 @@ public class JobResource extends AbstractResource {
     	return resource;
 	}
 	
+	public UpdateResult<Job> submit(String id) {
+    	return invokeAction(id, SUBMIT);
+	}
+	
 	public UpdateResult<Job> run(String id) {
     	return invokeAction(id, RUN);
+	}
+	
+	public UpdateResult<Job> stop(String id) {
+		return invokeAction(id, STOP);
+	}
+	
+	public UpdateResult<Job> terminate(String id) {
+		return invokeAction(id, TERMINATE);
 	}
 	
 	public UpdateResult<Job> testWebHookUrl(String id) {

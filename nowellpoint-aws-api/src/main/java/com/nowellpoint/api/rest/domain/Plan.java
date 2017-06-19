@@ -8,9 +8,9 @@ public class Plan extends AbstractResource {
 	
 	private Boolean recommendedPlan;
 
-	private String localeSidKey;
+	private String locale;
 	
-	private String languageLocaleKey;
+	private String language;
 	
 	private String planName;
 	
@@ -42,20 +42,20 @@ public class Plan extends AbstractResource {
 		this.recommendedPlan = recommendedPlan;
 	}
 
-	public String getLocaleSidKey() {
-		return localeSidKey;
+	public String getLocale() {
+		return locale;
 	}
 
-	public void setLocaleSidKey(String localeSidKey) {
-		this.localeSidKey = localeSidKey;
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 
-	public String getLanguageLocaleKey() {
-		return languageLocaleKey;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLanguageLocaleKey(String languageLocaleKey) {
-		this.languageLocaleKey = languageLocaleKey;
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getPlanName() {

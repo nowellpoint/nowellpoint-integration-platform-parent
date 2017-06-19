@@ -44,12 +44,13 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
+import com.mongodb.client.model.Filters;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.RunOnSchedule;
 import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
@@ -168,27 +169,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		create(salesforceConnector);
 		
-		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		addSalesforceMetadataBackup(salesforceConnector);
 		
-		Source source = Source.of(salesforceConnector);
-		
-		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
-		
-		CreateJobRequest jobRequest = CreateJobRequest.builder()
-				.scheduleOption(Job.ScheduleOptions.RUN_ON_SCHEDULE)
-				.jobType(jobType)
-				.source(source)
-				.notificationEmail(salesforceConnector.getIdentity().getEmail())
-				.schedule(RunOnSchedule.builder()
-						.startAt(startAt.getTime())
-						.timeInterval(1)
-						.timeZone(startAt.getTimeZone())
-						.timeUnit(TimeUnit.DAYS)
-						.build())
-				.build();
-		
-		jobRequestEvent.fire(jobRequest);
-		
+		refreshConnectionStrings( token.getId(), connectString );
+
 		return salesforceConnector;
 	}
 	
@@ -482,6 +466,36 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
 		
 		update(salesforceConnector);
+	}
+	
+	private void addSalesforceMetadataBackup(SalesforceConnector salesforceConnector) {
+		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
+		
+		Source source = Source.of(salesforceConnector);
+		
+		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
+		
+		CreateJobRequest jobRequest = CreateJobRequest.builder()
+				.scheduleOption(JobScheduleOptions.RUN_ON_SCHEDULE)
+				.jobType(jobType)
+				.source(source)
+				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.schedule(RunOnSchedule.builder()
+						.startAt(startAt.getTime())
+						.timeInterval(1)
+						.timeZone(startAt.getTimeZone())
+						.timeUnit(TimeUnit.DAYS)
+						.build())
+				.build();
+		
+		jobRequestEvent.fire(jobRequest);
+	}
+	
+	private void refreshConnectionStrings(String id, ConnectionString connectionString) {
+		SalesforceConnectorList salesforceConnectorList = query( Filters.eq ( "identity.id", id ));
+		salesforceConnectorList.getItems().forEach(salesforceConnector -> {
+			vaultEntryService.replace(salesforceConnector.getConnectionString(), connectionString.get());
+		});
 	}
 	
 	private Calendar getDefaultStartDate(String localeSidKey) {

@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 import javax.validation.ValidationException;
 
 import org.jboss.logging.Logger;
@@ -38,14 +40,22 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.util.IOUtils;
 import com.mongodb.client.model.Filters;
+import com.nowellpoint.api.annotation.Stop;
+import com.nowellpoint.api.annotation.Submit;
+import com.nowellpoint.api.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.Job;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
+import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 
@@ -54,6 +64,21 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	private static final Logger LOGGER = Logger.getLogger(JobServiceImpl.class);
 	
 	protected final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+	
+	@Inject
+	@Submit
+	private Event<Job> submitJob;
+	
+	@Inject
+	@Stop
+	private Event<Job> stopJob;
+	
+	@Inject
+	@Terminate
+	private Event<Job> terminateJob;
+	
+	@Inject
+	private CommunicationService communicationService;
 
 	@Override
 	public JobList findAllByOwner(String ownerId) {
@@ -78,7 +103,46 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	
 	@Override
 	public JobList queryBySource(String sourceId) {
-		return super.query( Filters.eq ( "source.id", sourceId ) );
+		return super.query( Filters.and( 
+				Filters.eq ( "source.id", sourceId ), 
+				Filters.eq( "source.type", "SALESFORCE" ) ) );
+	}
+	
+	@Override
+	public void submitJob(Job job) {
+		if (job.getStatus().equals(JobStatus.TERMINATED) || job.getStatus().equals(JobStatus.SCHEDULED)) {
+			throw new ValidationException(MessageProvider.getMessage(Locale.US, MessageConstants.JOB_UNABLE_TO_SUBMIT));
+		}
+		
+		fireSubmitJobEvent(job);
+		
+		if (job.getSchedule().getRunAt().after(Date.from(Instant.now()))) {
+			job.setStatus(JobStatus.SCHEDULED);
+		} else {
+			job.setStatus(JobStatus.SUBMITTED);
+		}
+		
+		updateJob(job);
+	}
+	
+	@Override
+	public void runJob(Job job) {
+		job.setScheduleOption(JobScheduleOptions.RUN_WHEN_SUBMITTED);
+		fireSubmitJobEvent(job);
+	}
+	
+	@Override
+	public void stopJob(Job job) {
+		stopJob.fire(job);
+		job.setStatus(JobStatus.STOPPED);
+		updateJob(job);
+	}
+	
+	@Override
+	public void terminateJob(Job job) {
+		terminateJob.fire(job);
+		job.setStatus(JobStatus.TERMINATED);
+		updateJob(job);
 	}
 	
 	@Override
@@ -121,7 +185,9 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 
 		Job job = Job.of(jobRequest, userInfo);
 		
-		super.create(job);
+		createJob(job);
+		
+		fireSubmitJobEvent(job);
 		
 		return job;
 	}
@@ -144,14 +210,13 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		return job;
 	}
 	
-	@Override
-	public void updateJob(Job job) {
-		super.update(job);
+	private void createJob(Job job) {
+		super.create(job);
 	}
 	
 	@Override
-	public void runJob(Job job) {
-		super.run(job);
+	public void updateJob(Job job) {
+		super.update(job);
 	}
 	
 	@Override
@@ -159,8 +224,19 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		JobList jobList = findAllScheduled();
 		
 		jobList.getItems().stream().forEach(job -> {
-			LOGGER.info(String.format("Scheduling Job: %s", job.getId()));
-			super.run(job);
+			fireSubmitJobEvent(job);
 		});
+	}
+	
+	@Override
+	public void sendSlackTestMessage(Job job) {
+		String subject = MessageProvider.getMessage(Locale.US, MessageConstants.SLACK_MESSAGE_SUBJECT);
+		String testMessage = MessageProvider.getMessage(Locale.US, MessageConstants.SLACK_TEST_MESSAGE);
+		communicationService.sendMessage(job.getSlackWebhookUrl(), subject, testMessage);
+	}
+	
+	private void fireSubmitJobEvent(Job job) {
+		LOGGER.info(String.format("Submitting Job: %s", job.getId()));
+		submitJob.fire(job);
 	}
 }

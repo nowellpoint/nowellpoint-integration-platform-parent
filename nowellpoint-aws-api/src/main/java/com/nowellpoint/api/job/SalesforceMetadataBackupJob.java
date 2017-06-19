@@ -15,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -30,6 +32,7 @@ import com.nowellpoint.api.model.document.Job;
 import com.nowellpoint.api.model.document.JobExecution;
 import com.nowellpoint.api.model.document.JobOutput;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
 import com.nowellpoint.api.rest.service.SalesforceServiceImpl;
 import com.nowellpoint.api.rest.service.VaultEntryServiceImpl;
@@ -84,9 +87,19 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		
-		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
-				.getKey()
-				.getName()));
+//		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
+//				.getKey()
+//				.getName()));
+		
+		JobDetail jobDetail = context.getJobDetail();
+		
+		LOGGER.info(jobDetail.getKey().getName());
+		
+		LOGGER.info(jobDetail.getJobDataMap().containsKey(jobDetail.getKey().getName()));
+		
+		LOGGER.info(jobDetail.getJobDataMap().get(jobDetail.getKey().getName()).getClass().getName());
+		
+		Job job = (Job) jobDetail.getJobDataMap().get(jobDetail.getKey().getName());
 		
 		job.setStatus("RUNNING");
 		
@@ -121,24 +134,16 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	//
 			
 			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(token.getAccessToken(), identity.getUrls().getSobjects());
-			
-			//
-			// create keyName
-			//
 
-	    	String keyName = String.format("%s/DescribeGlobalResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-	    	
-	    	//
-			// write the result to S3
 			//
-
-	    	PutObjectResult result = putObject(keyName, describeGlobalSobjectsResult);
+			// Save result to S3 and add link to the job
+			//
 	    	
-	    	//
-	    	// add Backup reference to Job
-	    	//
-	    	
-	    	job.addJobOutput(JobOutput.of("DescribeGlobal", result.getMetadata().getContentLength(), bucketName, keyName));
+	    	job.addJobOutput(saveJobOutput(
+	    			DescribeGlobalSobjectsResult.class.getSimpleName(), 
+	    			context.getFireInstanceId(), 
+	    			identity.getOrganizationId(), 
+	    			describeGlobalSobjectsResult));
 	    	
 	    	//
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
@@ -153,28 +158,14 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	if (! describeSobjectResults.isEmpty()) {
 	    		
 	    		//
-		    	// create keyName
-		    	//
-		    	
-		    	keyName = String.format("%s/DescribeSobjectResult-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
-		    	
-		    	//
-				// write the result to S3
+				// Save result to S3 and add link to the job
 				//
-
-		    	result = putObject(keyName, describeSobjectResults);
 		    	
-		    	//
-		    	// add Backup reference to ScheduledJobRequest
-		    	//
-
-		    	job.addJobOutput(JobOutput.of("DescribeSobjects", result.getMetadata().getContentLength(), bucketName, keyName));
-		    	
-		    	//
-		    	// add theme
-		    	//
-		    	
-		    	keyName = String.format("%s/Theme-%s", identity.getOrganizationId(), dateFormat.format(Date.from(Instant.now())));
+		    	job.addJobOutput(saveJobOutput(
+		    			DescribeSobjectResult.class.getSimpleName(), 
+		    			context.getFireInstanceId(), 
+		    			identity.getOrganizationId(), 
+		    			describeSobjectResults));
 		    	
 		    	//
 		    	// get theme
@@ -182,27 +173,30 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 
 		    	Theme theme = getTheme(token.getAccessToken(), identity.getUrls().getRest());
 		    	
-		    	// 
-		    	// write result to S3
 		    	//
-
-		    	result = putObject(keyName, theme);
+				// Save result to S3 and add link to the job
+				//
 		    	
-		    	//
-		    	// add Backup reference to ScheduledJobRequest
-		    	//
-
-		    	job.addJobOutput(JobOutput.of("Theme", result.getMetadata().getContentLength(), bucketName, keyName));
+		    	job.addJobOutput(saveJobOutput(
+		    			Theme.class.getSimpleName(), 
+		    			context.getFireInstanceId(), 
+		    			identity.getOrganizationId(), 
+		    			theme));
 	    	}
 	    	
-	    	job.setStatus("SUCCESS");
+	    	job.setStatus("COMPLETED");
 			
 		} catch (OauthException e) {
-			job.setStatus("ERROR");
+			job.setStatus("FAILED");
 			job.setFailureMessage(e.getError());
 		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
-			job.setStatus("ERROR");
+			job.setStatus("FAILED");
 			job.setFailureMessage(e.getMessage());
+			try {
+				context.getScheduler().deleteJob(context.getJobDetail().getKey());
+			} catch (SchedulerException se) {
+				LOGGER.error(se);
+			}
 		}
 		
 		JobExecution jobExecution = new JobExecution();
@@ -216,15 +210,13 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		job.setNumberOfExecutions(job.getNumberOfExecutions().intValue() + 1);
 		job.setJobRunTime(System.currentTimeMillis() - context.getFireTime().getTime());
 		job.setFireTime(context.getFireTime());
-		job.setNextFireTime(context.getNextFireTime());
 		
-		if (Assert.isNotNull(context.getNextFireTime())) {			
+		if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption()) || JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
 			job.setStatus("SCHEDULED");
-			job.getSchedule().setStartAt(context.getNextFireTime());
-		} else {
-			job.setStatus("COMPLETE");
+			job.setNextFireTime(context.getNextFireTime());
+			job.getSchedule().setRunAt(context.getNextFireTime());
 		}
-		
+				
 		documentManager.replaceOne(job);
 		
 		set(job.getId().toString(), job);
@@ -329,6 +321,23 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
     	request.endpoint = "mail/send";
     	request.body = mail.build();
     	sendgrid.api(request);
+	}
+	
+	/**
+	 * 
+	 * @param path
+	 * @param object
+	 * @return
+	 * @throws JsonProcessingException
+	 */
+	
+	private JobOutput saveJobOutput(String fileName, String fireInstanceId, String path, Object object) throws JsonProcessingException {
+		
+		String keyName = generateKeyName(fileName, path);
+   
+    	PutObjectResult result = putObject(keyName, object);
+    	
+    	return JobOutput.of(fireInstanceId, fileName, result.getMetadata().getContentLength(), bucketName, keyName);
 	}
 
 	/**
@@ -443,5 +452,9 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		Theme theme = client.getTheme(themeRequest);
 		
 		return theme;
+	}
+	
+	private String generateKeyName(String fileType, String organizationId) {
+		return String.format("%s/%s-%s", organizationId, fileType, dateFormat.format(Date.from(Instant.now())).replace(":", ""));
 	}
 }
