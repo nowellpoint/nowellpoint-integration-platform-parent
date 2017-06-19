@@ -288,6 +288,7 @@ public class Application implements SparkApplication {
 	private static List<IsoCountry> loadCountries(Locale locale) {
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
+				.queryParameter("language", "US")
 				.execute();
 		
 		List<IsoCountry> countries = Collections.emptyList();
