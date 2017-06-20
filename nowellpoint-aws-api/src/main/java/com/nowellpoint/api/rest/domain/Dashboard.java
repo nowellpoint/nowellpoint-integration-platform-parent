@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +23,10 @@ public class Dashboard extends AbstractResource {
 	
 	private Integer jobs;
 	
+	private Long space;
+	
+	private String data;
+	
 	private Set<JobStatusAggregation> jobStatusSummary = new HashSet<>();
 	
 	private Set<JobExecution> recentJobExecutions = new HashSet<>();
@@ -36,6 +41,8 @@ public class Dashboard extends AbstractResource {
 	private Dashboard(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
 		this.connectors = salesforceConnectorList.getSize();
 		this.jobs = jobList.getSize();
+		this.space = Long.valueOf(0);
+		this.data = "0.00 GB";
 		
 		if (jobList.getSize() > 0) {
 			
@@ -47,16 +54,29 @@ public class Dashboard extends AbstractResource {
 					.entrySet()
 					.stream()
 					.sorted(Comparator.comparing(e -> e.getKey()))
-					.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue())).collect(Collectors.toSet());
+					.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue()))
+					.collect(Collectors.toSet());
 			
-			this.recentJobExecutions = jobList.getItems().stream()
-				     .map(result -> result.getJobExecutions())
-				     .flatMap(Set::stream)
-				     .collect(Collectors.toSet())
-				     .stream()
-				     .sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
-				     .limit(10)
-				     .collect(Collectors.toSet());	
+			this.recentJobExecutions = jobList.getItems()
+					.stream()
+					.map(e -> e.getJobExecutions())
+					.flatMap(Set::stream)
+					.collect(Collectors.toSet())
+					.stream()
+					.sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
+				    .limit(10)
+				    .collect(Collectors.toSet());	
+			
+			this.space = jobList.getItems()
+					.stream()
+					.map(e -> e.getJobOutputs())
+					.flatMap(Set::stream)
+					.collect(Collectors.toSet())
+					.stream()
+					.mapToLong(o -> o.getFilesize())
+					.sum();
+			
+			this.data = formatFileSize(this.space);
 		}
 		
 		this.lastRefreshedOn = Date.from(Instant.now());
@@ -130,6 +150,22 @@ public class Dashboard extends AbstractResource {
 		this.recentJobExecutions = recentJobExecutions;
 	}
 
+	public Long getSpace() {
+		return space;
+	}
+
+	public void setSpace(Long space) {
+		this.space = space;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
 	public Date getLastRefreshedOn() {
 		return lastRefreshedOn;
 	}
@@ -146,5 +182,31 @@ public class Dashboard extends AbstractResource {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	private static String formatFileSize(long size) {
+	    String hrSize = null;
+
+	    double b = size;
+	    double k = size/1024.0;
+	    double m = ((size/1024.0)/1024.0);
+	    double g = (((size/1024.0)/1024.0)/1024.0);
+	    double t = ((((size/1024.0)/1024.0)/1024.0)/1024.0);
+
+	    DecimalFormat format = new DecimalFormat("0.00");
+
+	    if ( t > 1 ) {
+	        hrSize = format.format(t).concat(" TB");
+	    } else if ( g > 1 ) {
+	        hrSize = format.format(g).concat(" GB");
+	    } else if ( m > 1 ) {
+	        hrSize = format.format(m).concat(" MB");
+	    } else if ( k > 1 ) {
+	        hrSize = format.format(k).concat(" KB");
+	    } else {
+	        hrSize = format.format(b).concat(" Bytes");
+	    }
+
+	    return hrSize;
 	}
 }
