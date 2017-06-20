@@ -4,21 +4,21 @@
 
         <div class="row">
             <div class="col-xl-2 col-lg-3 col-md-4">
-                <div class="statcard p-3 text-xs-center">
-                    <h4 class="statcard-number">${dashboard.connectors}</h4>
+                <div class="statcard p-3">
                     <span class="statcard-desc">${labels["connectors"]}</span>
+                    <h4 class="statcard-number"><b>${dashboard.connectors}</b></h4>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-3 col-md-4">
-                <div class="statcard p-3 text-xs-center">
-                    <h4 class="statcard-number">${dashboard.jobs}</h4>
+                <div class="statcard p-3">
                     <span class="statcard-desc">${labels["jobs"]}</span>
+                    <h4 class="statcard-number"><b>${dashboard.jobs}</b></h4>
                 </div>
             </div>
             <div class="col-xl-2 col-lg-3 col-md-4">
-                <div class="statcard p-3 text-xs-center">
-                    <h4 class="statcard-number">${dashboard.data}</h4>
+                <div class="statcard p-3">
                     <span class="statcard-desc">${labels["data"]}</span>
+                    <h4 class="statcard-number"><b>${dashboard.data}</b></h4>
                 </div>
             </div>
         </div>
@@ -29,60 +29,51 @@
 
             <div class="col-4">
 
-                <div class="card-deck">
-                    <div class="card">
-                        <div class="card-block">
-                            <h4 class="card-title">${labels["job.status.summary"]}</h4>
-                            <div class="content table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <th>${labels["status"]}</th>
-                                        <th class="text-right">${labels["count"]}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#list dashboard.jobStatusSummary as summary>
-                                            <tr>
-                                                <td>${summary.status}</td>
-                                                <td class="text-right">${summary.count}</td>
-                                            </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                <div class="card">
+                    <h4 class="card-header">${labels["job.status.summary"]}</h4>
+                    <div class="card-block">
+                        <table class="table table-sm">
+                            <thead>
+                                <th>${labels["status"]}</th>
+                                <th class="text-right">${labels["count"]}</th>
+                            </thead>
+                            <tbody>
+                                <#list dashboard.jobStatusSummary as summary>
+                                    <tr>
+                                        <td>${summary.status}</td>
+                                        <td class="text-right">${summary.count}</td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-8">
 
-                <div class="card-deck">
-                    <div class="card">
-                        <div class="card-block">
-                            <h4 class="card-title">${labels["job.recent.executions"]}</h4>
-                            <div class="content table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <th>${labels["status"]}</th>
-                                        <th>${labels["fire.time"]}</th>
-                                        <th>${labels["failure.message"]}</th>
-                                    </thead>
-                                    <tbody>
-                                        <#list dashboard.recentJobExecutions as jobExecution>
-                                            <tr>
-                                                <td>${jobExecution.status}</td>
-                                                <td>${jobExecution.fireTime?date?string.long} ${jobExecution.fireTime?time?string.medium}</td>
-                                                <td>${jobExecution.failureMessage!}</td>
-                                            </tr>
-                                        </#list>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                <div class="card">
+                    <h4 class="card-header">${labels["job.recent.executions"]}</h4>
+                    <div class="card-block">
+                        <table class="table table-sm">
+                            <thead>
+                                <th>${labels["status"]}</th>
+                                <th>${labels["fire.time"]}</th>
+                                <th class="w-75">${labels["failure.message"]}</th>
+                            </thead>
+                            <tbody>
+                                <#list dashboard.recentJobExecutions as jobExecution>
+                                    <tr>
+                                        <td>${jobExecution.status}</td>
+                                        <td>${jobExecution.fireTime?date?string.iso!} ${jobExecution.fireTime?time?string["HH:mm"]!}</td>
+                                        <td>${jobExecution.failureMessage!}</td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>    
                 </div>
             </div>
-            
         </div>
 
     </@t.page>

@@ -23,8 +23,6 @@ public class Dashboard extends AbstractResource {
 	
 	private Integer jobs;
 	
-	private Long space;
-	
 	private String data;
 	
 	private Set<JobStatusAggregation> jobStatusSummary = new HashSet<>();
@@ -41,8 +39,7 @@ public class Dashboard extends AbstractResource {
 	private Dashboard(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
 		this.connectors = salesforceConnectorList.getSize();
 		this.jobs = jobList.getSize();
-		this.space = Long.valueOf(0);
-		this.data = "0.00 GB";
+		this.data = "0 Bytes";
 		
 		if (jobList.getSize() > 0) {
 			
@@ -67,7 +64,7 @@ public class Dashboard extends AbstractResource {
 				    .limit(10)
 				    .collect(Collectors.toSet());	
 			
-			this.space = jobList.getItems()
+			long space = jobList.getItems()
 					.stream()
 					.map(e -> e.getJobOutputs())
 					.flatMap(Set::stream)
@@ -76,7 +73,7 @@ public class Dashboard extends AbstractResource {
 					.mapToLong(o -> o.getFilesize())
 					.sum();
 			
-			this.data = formatFileSize(this.space);
+			this.data = formatFileSize(space);
 		}
 		
 		this.lastRefreshedOn = Date.from(Instant.now());
@@ -148,14 +145,6 @@ public class Dashboard extends AbstractResource {
 
 	public void setRecentJobExecutions(Set<JobExecution> recentJobExecutions) {
 		this.recentJobExecutions = recentJobExecutions;
-	}
-
-	public Long getSpace() {
-		return space;
-	}
-
-	public void setSpace(Long space) {
-		this.space = space;
 	}
 
 	public String getData() {
