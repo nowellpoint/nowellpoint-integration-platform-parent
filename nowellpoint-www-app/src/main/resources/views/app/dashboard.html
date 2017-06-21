@@ -38,7 +38,7 @@
                                 <th class="text-right">${labels["count"]}</th>
                             </thead>
                             <tbody>
-                                <#list dashboard.jobStatusSummary as summary>
+                                <#list dashboard.jobStatusSummary?sort_by("status") as summary>
                                     <tr>
                                         <td>${summary.status}</td>
                                         <td class="text-right">${summary.count}</td>
@@ -62,7 +62,7 @@
                                 <th class="w-75">${labels["failure.message"]}</th>
                             </thead>
                             <tbody>
-                                <#list dashboard.recentJobExecutions as jobExecution>
+                                <#list dashboard.recentJobExecutions?sort_by("fireTime") as jobExecution>
                                     <tr>
                                         <td>${jobExecution.status}</td>
                                         <td>${jobExecution.fireTime?date?string.iso!} ${jobExecution.fireTime?time?string["HH:mm"]!}</td>

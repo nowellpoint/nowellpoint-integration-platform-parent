@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.text.DecimalFormat;
+import static com.nowellpoint.util.NumberFormatter.formatFileSize;
+
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Date;
@@ -171,31 +172,5 @@ public class Dashboard extends AbstractResource {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
-	}
-	
-	private static String formatFileSize(long size) {
-	    String hrSize = null;
-
-	    double b = size;
-	    double k = size/1024.0;
-	    double m = ((size/1024.0)/1024.0);
-	    double g = (((size/1024.0)/1024.0)/1024.0);
-	    double t = ((((size/1024.0)/1024.0)/1024.0)/1024.0);
-
-	    DecimalFormat format = new DecimalFormat("0.00");
-
-	    if ( t > 1 ) {
-	        hrSize = format.format(t).concat(" TB");
-	    } else if ( g > 1 ) {
-	        hrSize = format.format(g).concat(" GB");
-	    } else if ( m > 1 ) {
-	        hrSize = format.format(m).concat(" MB");
-	    } else if ( k > 1 ) {
-	        hrSize = format.format(k).concat(" KB");
-	    } else {
-	        hrSize = format.format(b).concat(" Bytes");
-	    }
-
-	    return hrSize;
 	}
 }

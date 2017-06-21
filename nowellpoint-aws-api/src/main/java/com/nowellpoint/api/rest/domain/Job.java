@@ -18,6 +18,8 @@
 
 package com.nowellpoint.api.rest.domain;
 
+import static com.nowellpoint.util.NumberFormatter.formatFileSize;
+
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
@@ -182,6 +184,9 @@ public class Job extends AbstractResource {
 	
 	private <T> Job(T document) {
 		modelMapper.map(document, this);
+		this.jobOutputs.stream().forEach(o -> {
+			o.setFileSizeInUnits(formatFileSize(o.getFilesize()));
+		});
 	}
 	
 	public static Job of(MongoDocument document) {

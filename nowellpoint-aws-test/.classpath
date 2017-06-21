@@ -36,6 +36,8 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.2/org.apache.oltu.oauth2.common-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.2/org.apache.oltu.oauth2.resourceserver-1.0.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/pdfbox/2.0.4/pdfbox-2.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/fontbox/2.0.4/fontbox-2.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.71.0/braintree-java-2.71.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sdk"/>

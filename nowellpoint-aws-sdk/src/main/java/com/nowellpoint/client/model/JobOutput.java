@@ -10,7 +10,7 @@ public class JobOutput {
 	
 	private String filename;
 	
-	private Long filesize;
+	private String fileSizeInUnits;
 	
 	private Date addedOn;
 	
@@ -42,12 +42,12 @@ public class JobOutput {
 		this.filename = filename;
 	}
 
-	public Long getFilesize() {
-		return filesize;
+	public String getFileSizeInUnits() {
+		return fileSizeInUnits;
 	}
 
-	public void setFilesize(Long filesize) {
-		this.filesize = filesize;
+	public void setFileSizeInUnits(String fileSizeInUnits) {
+		this.fileSizeInUnits = fileSizeInUnits;
 	}
 
 	public Date getAddedOn() {
