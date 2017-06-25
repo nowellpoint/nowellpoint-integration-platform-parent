@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -86,10 +85,6 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		documentManagerFactory = Datastore.getCurrentSession();
 		
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		
-//		Job job = documentManager.fetch(Job.class, new ObjectId(context.getJobDetail()
-//				.getKey()
-//				.getName()));
 		
 		JobDetail jobDetail = context.getJobDetail();
 		

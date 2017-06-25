@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.util.Properties;
+import com.sendgrid.Attachments;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -117,7 +118,7 @@ public class SendGridEmailService implements EmailService {
 	}
 	
 	@Override
-	public void sendInvoiceMessage(String email, String name) {
+	public void sendInvoiceMessage(String email, String name, String invoiceNumber, String base64EncodedContent) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -137,11 +138,19 @@ public class SendGridEmailService implements EmailService {
 			    personalization.addTo(to);
 			    personalization.addSubstitution("%name%", name);
 			    
+			    Attachments attachments = new Attachments();
+			    attachments.setContent(base64EncodedContent);
+			    attachments.setType("application/pdf");
+			    attachments.setFilename(String.format("invoice_%s.pdf", invoiceNumber));
+			    attachments.setDisposition("attachment");
+			    attachments.setContentId("Invoice");
+			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);
 			    mail.addContent(content);
 			    mail.setTemplateId("d38cc1d5-d2ec-4b21-83b5-84b23aa44bc8");
 			    mail.addPersonalization(personalization);
+			    mail.addAttachments(attachments);
 			    
 			    Request request = new Request();
 			    try {
