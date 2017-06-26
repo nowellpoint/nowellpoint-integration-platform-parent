@@ -1,5 +1,9 @@
 package com.nowellpoint.client.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.amazonaws.util.IOUtils;
 import com.nowellpoint.client.model.AccountProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
@@ -63,6 +67,38 @@ public class AccountProfileResource extends AbstractResource {
     	}
     	
     	return resource;
+	} 
+	
+	
+	/**
+	 * 
+	 * @param id
+	 * @param invoiceNumber
+	 * @return
+	 * @throws IOException 
+	 */
+	
+	public byte[] downloadInvoice(String id, String invoiceNumber) throws IOException {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_OCTET_STREAM)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.path("invoice")
+				.path(invoiceNumber)
+				.execute();
+		
+		InputStream resource = null;
+    	
+    	if (httpResponse.getStatusCode() == Status.OK) {
+    		resource = httpResponse.getEntity();
+    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+			throw new NotFoundException(httpResponse.getAsString());
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+    	}
+    	
+    	return IOUtils.toByteArray(resource);
 	} 
 	
 	/**

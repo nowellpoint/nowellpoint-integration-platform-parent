@@ -33,11 +33,12 @@ import com.nowellpoint.api.invoice.model.Service;
 public class InvoiceGenerator {
 	
 	private static final Logger LOG = Logger.getLogger(InvoiceGenerator.class);
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy");
 	
 	private static Font HELVETICA_14_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, new BaseColor(27, 150, 254));
-	private static Font HELVETICA_8_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 8, Font.NORMAL, new BaseColor(27, 150, 254));
-    private static Font HELVETICA_8_NORMAL_GRAY = new Font(Font.FontFamily.HELVETICA, 8.0f, Font.NORMAL, new BaseColor(79,79,79));
-    private static Font HELVETICA_8_BOLD_GRAY = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD, new BaseColor(79,79,79));
+	private static Font HELVETICA_10_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(27, 150, 254));
+    private static Font HELVETICA_10_NORMAL_GRAY = new Font(Font.FontFamily.HELVETICA, 10.0f, Font.NORMAL, new BaseColor(79,79,79));
+    private static Font HELVETICA_10_BOLD_GRAY = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(79,79,79));
 
 	public String generate(Invoice invoice) {
 		Document document = new Document();
@@ -92,13 +93,17 @@ public class InvoiceGenerator {
 	}
 	
 	private PdfPTable getBillingPeriod(Date billingPeriodStartDate, Date billingPeriodEndDate) {
-		PdfPTable table = new PdfPTable(2);
+		PdfPCell cell = new PdfPCell(new Phrase(String.format("Billing Period: %s - %s", sdf.format(billingPeriodStartDate), sdf.format(billingPeriodEndDate)), HELVETICA_10_NORMAL_LIGHT_BLUE));
+	    cell.setPadding(10.0f);
+	    cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
+	    cell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
+	    cell.setBorderWidth(0.1f);
+	    cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        
+		PdfPTable table = new PdfPTable(1);
         table.setWidthPercentage(100);
         table.setSpacingAfter(30);
-        
-        table.addCell(getHeaderItemCell("Billing Period", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-		table.addCell(getServiceCell(String.format("%s - %s", billingPeriodStartDate, billingPeriodEndDate), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        
+        table.addCell(cell);
         return table;
 	}
 	
@@ -107,23 +112,23 @@ public class InvoiceGenerator {
         table.setWidthPercentage(100);
         table.setSpacingAfter(30);
         
-        table.addCell(getCell("Bill To", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell("Bill To", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell(payee.getCompanyName(), PdfPCell.ALIGN_LEFT, HELVETICA_8_BOLD_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell(payee.getCompanyName(), PdfPCell.ALIGN_LEFT, HELVETICA_10_BOLD_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(String.format("ATTN: %s", payee.getAttentionTo()), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell(String.format("ATTN: %s", payee.getAttentionTo()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(payee.getStreet(), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell(payee.getStreet(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(String.format("%s, %s, %s", payee.getCity(), payee.getState(), payee.getPostalCode()), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell(String.format("%s, %s, %s", payee.getCity(), payee.getState(), payee.getPostalCode()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(payee.getCountry(), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell(payee.getCountry(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         return table;
 	}
@@ -143,25 +148,23 @@ public class InvoiceGenerator {
         table.setWidthPercentage(100);
         table.setSpacingAfter(30);
         
-        table.addCell(getCell("Nowellpoint LLC", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-        table.addCell(getCell("Issue Date", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell("Nowellpoint LLC", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell("Issue Date", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy");
+        table.addCell(getCell("129 S. Bloodworth Street", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(sdf.format(transactionDate), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell("129 S. Bloodworth Street", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell(sdf.format(transactionDate), PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell("Raleigh, NC 27601", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell("Raleigh, NC 27601", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell("United States", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell("United States", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell("1-888-721-6440", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell("Invoice No", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell("1-888-721-6440", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell("Invoice No", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-        
-        table.addCell(getCell("www.nowellpoint.com", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-        table.addCell(getCell(transactionId, PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+        table.addCell(getCell("www.nowellpoint.com", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(transactionId, PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         return table;
 	}
@@ -173,26 +176,26 @@ public class InvoiceGenerator {
 		table.setSpacingAfter(10);
 		table.setWidths(new int[]{3, 1, 1, 1});
         
-		table.addCell(getHeaderItemCell("Plan", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Unit", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Quantity", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Amount", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell("Plan", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell("Unit", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell("Quantity", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell("Amount", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
 		
 		BigDecimal totalAmount = new BigDecimal(0.00);
 		
 		services.stream().forEach(service -> {
-			table.addCell(getServiceCell(service.getServiceName(), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-			table.addCell(getServiceCell(String.valueOf(service.getUnitPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
-			table.addCell(getServiceCell(String.valueOf(service.getQuantity()), PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
-			table.addCell(getServiceCell(String.valueOf(service.getTotalPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+			table.addCell(getServiceCell(service.getServiceName(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+			table.addCell(getServiceCell(String.valueOf(service.getUnitPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
+			table.addCell(getServiceCell(String.valueOf(service.getQuantity()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
+			table.addCell(getServiceCell(String.valueOf(service.getTotalPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 			
 			totalAmount.add(new BigDecimal(service.getTotalPrice()));
 		});
         
-		table.addCell(getServiceCell("Total", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
-		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
-		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
-		table.addCell(getServiceCell(String.valueOf(totalAmount), PdfPCell.ALIGN_RIGHT, HELVETICA_8_NORMAL_GRAY));
+		table.addCell(getServiceCell("Total", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getServiceCell(String.valueOf(totalAmount), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 		
 		return table;
 	}
@@ -203,8 +206,8 @@ public class InvoiceGenerator {
 		table.setSpacingBefore(5);
 		table.setSpacingAfter(30);
         
-		table.addCell(getHeaderItemCell("Payment Method", PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_LIGHT_BLUE));
-		table.addCell(getServiceCell(String.format("Credit Card: %s ending in %s", paymentMethod.getCardType(), paymentMethod.getLastFour()), PdfPCell.ALIGN_LEFT, HELVETICA_8_NORMAL_GRAY));
+		table.addCell(getHeaderItemCell("Payment Method", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getServiceCell(String.format("Credit Card: %s ending in %s", paymentMethod.getCardType(), paymentMethod.getLastFour()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         
         return table;
 	}

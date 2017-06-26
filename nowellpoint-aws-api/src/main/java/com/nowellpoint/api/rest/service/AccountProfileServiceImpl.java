@@ -6,6 +6,7 @@ import static com.nowellpoint.util.Assert.isNotNull;
 import static com.nowellpoint.util.Assert.isNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.Instant;
@@ -29,8 +30,12 @@ import org.modelmapper.ModelMapper;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
+import com.amazonaws.util.IOUtils;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.CustomerRequest;
@@ -165,6 +170,31 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		updateAccountProfile( accountProfile );
 		
 		deactivateEvent.fire( accountProfile );
+	}
+	
+	@Override
+	public byte[] getInvoice(String id, String invoiceNumber) {
+		if (UserContext.getPrincipal().getName().equals(id)) {
+			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
+			builder.setBucket("nowellpoint-invoices");
+			builder.setKey(invoiceNumber);
+			
+			GetObjectRequest request = new GetObjectRequest(builder.build());
+			AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+			
+			S3Object object = s3client.getObject(request);
+			InputStream inputStream = object.getObjectContent();
+			
+			try {
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				inputStream.close();
+				return bytes;
+			} catch (IOException e) {
+				LOGGER.error(e);
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

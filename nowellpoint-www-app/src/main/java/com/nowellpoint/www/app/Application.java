@@ -141,6 +141,7 @@ public class Application implements SparkApplication {
 		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.viewAccountProfile(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.reviewPlan(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> AccountProfileController.currentPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_INVOICE_DOWNLOAD, (request, response) -> AccountProfileController.downloadInvoice(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.setPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.updateAccountProfile(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.confirmDeactivateAccountProfile(configuration, request, response));

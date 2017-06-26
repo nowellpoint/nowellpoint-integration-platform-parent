@@ -1,13 +1,17 @@
 package com.nowellpoint.api.rest.impl;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -67,6 +71,30 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		return Response.ok(subscription)
 				.build();
 	}
+    
+    @Override
+    public Response getInvoice(String id, String invoiceNumber) {
+    	
+    	byte[] bytes = accountProfileService.getInvoice(id, invoiceNumber);
+    	
+    	StreamingOutput output = new StreamingOutput() {
+
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+                try {
+                    output.write(bytes);
+                }
+                catch (Exception e) {
+                    throw new WebApplicationException(e);
+                }
+            }
+    	};
+    	
+    	return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"invoice_%s.pdf\"", invoiceNumber))
+				.header("Content-Length", bytes.length)
+				.entity(output)
+				.build();
+    }
 	
 	@Override
 	public Response setSubscription(String id, String planId, String paymentMethodToken) {

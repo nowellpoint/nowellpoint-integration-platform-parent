@@ -76,7 +76,7 @@
                                     <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}</td>
                                     <td>${(transaction.updatedOn?date?string.long)!}</td>
                                     <td>${transaction.status}</td>
-                                    <td></td>
+                                    <td class="text-right"><a href="${links['account.profile']}/${accountProfile.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
                                 </tr>
                             </#list>
                         </tbody>
