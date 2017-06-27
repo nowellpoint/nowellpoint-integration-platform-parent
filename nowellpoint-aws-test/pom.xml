@@ -28,6 +28,23 @@
 			<version>${version.sendgrid.java}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.okta.sdk</groupId>
+			<artifactId>okta-sdk-api</artifactId>
+			<version>${version.okta.sdk}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.okta.sdk</groupId>
+			<artifactId>okta-sdk-impl</artifactId>
+			<version>${version.okta.sdk}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.okta.sdk</groupId>
+			<artifactId>okta-sdk-httpclient</artifactId>
+			<version>${version.okta.sdk}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-api</artifactId>
 			<version>${version.stormpath.sdk}</version>

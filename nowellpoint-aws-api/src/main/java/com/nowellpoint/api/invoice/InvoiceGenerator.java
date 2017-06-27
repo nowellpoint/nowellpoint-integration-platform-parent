@@ -80,6 +80,7 @@ public class InvoiceGenerator {
 		
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentLength(bytes.length);
+		objectMetadata.setContentType("application/pdf");
 		
 		PutObjectRequest request = new PutObjectRequest(
 				"nowellpoint-invoices",
@@ -88,7 +89,6 @@ public class InvoiceGenerator {
 				objectMetadata);
 		
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
-		
 		s3client.putObject(request);
 	}
 	

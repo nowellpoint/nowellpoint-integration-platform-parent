@@ -24,21 +24,22 @@
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.2.3/stormpath-sdk-api-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.2.3/stormpath-sdk-impl-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-api/0.6.0/okta-sdk-api-0.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-impl/0.6.0/okta-sdk-impl-0.6.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.7.0/jjwt-0.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.9.4/joda-time-2.9.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.7/joda-time-2.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-httpclient/0.6.0/okta-sdk-httpclient-0.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.2.3/stormpath-sdk-api-1.2.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.2.3/stormpath-sdk-impl-1.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.2.3/stormpath-sdk-httpclient-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.21/jcl-over-slf4j-1.7.21.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.2.3/stormpath-sdk-oauth-1.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.authzserver/1.0.2/org.apache.oltu.oauth2.authzserver-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.2/org.apache.oltu.oauth2.common-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.2/org.apache.oltu.oauth2.resourceserver-1.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/itextpdf/layout/7.0.3/layout-7.0.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/itextpdf/kernel/7.0.3/kernel-7.0.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/itextpdf/io/7.0.3/io-7.0.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/itextpdf/itextpdf/5.5.11/itextpdf-5.5.11.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.71.0/braintree-java-2.71.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
