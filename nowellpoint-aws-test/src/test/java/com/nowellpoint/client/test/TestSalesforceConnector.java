@@ -34,7 +34,7 @@ public class TestSalesforceConnector {
 		token = response.getToken();
 	}
 	
-	@Test
+	//@Test
 	public void testSalesforceConnectorMetadataBackup() {
 		
 		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
@@ -69,7 +69,7 @@ public class TestSalesforceConnector {
 		Assert.assertTrue(updateResult.isSuccess());
 	}
 	
-	//@Test
+	@Test
 	public void testSalesforceConnectorBuild() {
 		
 		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
