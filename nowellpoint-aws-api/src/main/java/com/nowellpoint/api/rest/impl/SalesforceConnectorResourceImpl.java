@@ -17,6 +17,7 @@ import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -80,7 +81,7 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 			
 			if (Arrays.asList(elements).contains("jobs")) {
 				JobList jobList = jobService.queryBySource(salesforceConnector.getId());
-				salesforceConnector.setJobs(jobList.getItems());
+				salesforceConnector.addJobs(jobList.getItems());
 			}
 		}
 		
@@ -99,7 +100,13 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	public Response updateSalesforceConnector(String id, String name, String tag, String ownerId) {	
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.updateSalesforceConnector(id, name, tag, ownerId);
+		UpdateSalesforceConnectorRequest request = UpdateSalesforceConnectorRequest.builder()
+				.name(name)
+				.tag(tag)
+				.ownerId(ownerId)
+				.build();
+		
+		SalesforceConnector salesforceConnector = salesforceConnectorService.updateSalesforceConnector(id, request);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)

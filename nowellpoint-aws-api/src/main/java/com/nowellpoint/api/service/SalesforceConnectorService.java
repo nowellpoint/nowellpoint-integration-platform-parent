@@ -2,6 +2,7 @@ package com.nowellpoint.api.service;
 
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 
@@ -19,7 +20,7 @@ public interface SalesforceConnectorService {
 	
 	public SalesforceConnector createSalesforceConnector(Token token);
 	
-	public SalesforceConnector updateSalesforceConnector(String id, String name, String tag, String ownerId);
+	public SalesforceConnector updateSalesforceConnector(String id, UpdateSalesforceConnectorRequest request);
 	
 	public void deleteSalesforceConnector(SalesforceConnector salesforceConnector);
 	
