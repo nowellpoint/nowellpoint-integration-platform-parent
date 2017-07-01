@@ -2,6 +2,7 @@ package com.nowellpoint.api.rest.domain;
 
 import com.nowellpoint.api.model.document.Address;
 import com.nowellpoint.api.model.document.Photos;
+import com.nowellpoint.util.Assert;
 
 public class UserInfo {
 	
@@ -48,6 +49,7 @@ public class UserInfo {
 	}
 	
 	public static UserInfo of(String id) {
+		Assert.assertNotNullOrEmpty(id, "User Id cannot be null or empty");
 		return new UserInfo(id);
 	}
 

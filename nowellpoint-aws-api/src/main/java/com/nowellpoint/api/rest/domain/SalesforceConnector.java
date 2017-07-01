@@ -29,6 +29,7 @@ import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
 import com.nowellpoint.client.sforce.model.sobject.Sobject;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.DigitalSignature;
 import com.nowellpoint.util.Properties;
 import com.sforce.soap.partner.PartnerConnection;
@@ -105,15 +106,54 @@ public class SalesforceConnector extends AbstractResource {
 		this.lastTestedOn = lastTestedOn;
 	}
 	
+	private SalesforceConnector(SalesforceConnector instance, UpdateSalesforceConnectorRequest request) {
+		this.id = instance.getId();
+		this.name = instance.getName();
+		this.createdBy = instance.getCreatedBy();
+		this.createdOn = instance.getCreatedOn();
+		this.meta = instance.getMeta();
+		this.owner = instance.getOwner();
+		this.identity = instance.getIdentity();
+		this.organization = instance.getOrganization();
+		this.connectionString = instance.getConnectionString();
+		this.lastTestedOn = instance.getLastTestedOn();
+		this.isValid = instance.getIsValid();
+		this.serviceEndpoint = instance.getServiceEndpoint();
+		this.status = instance.getStatus();
+		this.tag = instance.getTag();
+		this.services = instance.getServices();
+		this.sobjects = instance.getSobjects();
+		this.theme = instance.getTheme();
+		this.lastUpdatedBy = request.getLastUpdatedBy();
+		this.lastUpdatedOn = Date.from(Instant.now());
+		
+		if (Assert.isNotNull(request.getName())) {
+			this.name = request.getName();
+		}
+		
+		if (Assert.isNotNull(request.getOwner())) {
+			this.owner = request.getOwner();
+		}
+		
+		if (request.getTag().isPresent()) {
+			this.tag = request.getTag().get();
+		} else if (Assert.isEmpty(request.getTag().get())) {
+			this.tag = null;
+		}
+	}
+	
 	public static SalesforceConnector of(
 			UserInfo createdBy,
 			Identity identity, 
 			Organization organization, 
-			VaultEntry connectionEntry, 
+			ConnectionString connectionString, 
 			Token token) {
 		
 		String name = organization.getName().concat(":").concat(organization.getId());
 		Date now = Date.from(Instant.now());
+		
+		VaultEntry vaultEntry = VaultEntry.of(connectionString.get());
+		dynamoDBMapper.save(vaultEntry);
 		
 		return new SalesforceConnector(
 				name, 
@@ -124,31 +164,18 @@ public class SalesforceConnector extends AbstractResource {
 				now, 
 				identity, 
 				organization, 
-				connectionEntry.getToken(), 
+				vaultEntry.getToken(), 
 				Boolean.TRUE, 
 				token.getInstanceUrl(),
 				now);
 	}
 	
-	public static SalesforceConnector of(SalesforceConnector instance, UpdateSalesforceConnectorRequest request) {
+	public static SalesforceConnector of(
+			SalesforceConnector instance, 
+			UpdateSalesforceConnectorRequest request) {
+		
 		Preconditions.checkNotNull(instance, "instance");
-		SalesforceConnector newInstance = new SalesforceConnector();
-		newInstance.setName(instance.getName());
-		newInstance.setCreatedBy(instance.getCreatedBy());
-		newInstance.setLastUpdatedBy(instance.getLastUpdatedBy());
-		newInstance.setOwner(instance.getOwner());
-		newInstance.setIdentity(instance.getIdentity());
-		newInstance.setOrganization(instance.getOrganization());
-		newInstance.setConnectionString(instance.getConnectionString());
-		newInstance.setLastTestedOn(instance.getLastTestedOn());
-		newInstance.setIsValid(instance.getIsValid());
-		newInstance.setServiceEndpoint(instance.getServiceEndpoint());
-		newInstance.setStatus(instance.getStatus());
-		newInstance.setTag(instance.getTag());
-		newInstance.setServices(instance.getServices());
-		newInstance.setSobjects(instance.getSobjects());
-		newInstance.setTheme(instance.getTheme());
-		return newInstance;
+		return new SalesforceConnector(instance, request);
 	}
 	
 	private <T> SalesforceConnector(T document) {
@@ -163,64 +190,32 @@ public class SalesforceConnector extends AbstractResource {
 		return name;
 	}
 
-	private void setName(String name) {
-		this.name = name;
-	}
-
 	public UserInfo getCreatedBy() {
 		return createdBy;
-	}
-
-	private void setCreatedBy(UserInfo createdBy) {
-		this.createdBy = createdBy;
 	}
 
 	public UserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	private void setLastUpdatedBy(UserInfo lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
-	}
-
 	public UserInfo getOwner() {
 		return owner;
-	}
-
-	private void setOwner(UserInfo owner) {
-		this.owner = owner;
 	}
 
 	public Identity getIdentity() {
 		return identity;
 	}
 
-	private void setIdentity(Identity identity) {
-		this.identity = identity;
-	}
-
 	public Organization getOrganization() {
 		return organization;
 	}
-
-	private void setOrganization(Organization organization) {
-		this.organization = organization;
-	}	
 	
 	public String getConnectionString() {
 		return connectionString;
 	}
 
-	private void setConnectionString(String connectionString) {
-		this.connectionString = connectionString;
-	}
-
 	public Date getLastTestedOn() {
 		return lastTestedOn;
-	}
-
-	private void setLastTestedOn(Date lastTestedOn) {
-		this.lastTestedOn = lastTestedOn;
 	}
 
 	public Boolean getIsValid() {
@@ -235,24 +230,12 @@ public class SalesforceConnector extends AbstractResource {
 		return serviceEndpoint;
 	}
 
-	private void setServiceEndpoint(String serviceEndpoint) {
-		this.serviceEndpoint = serviceEndpoint;
-	}
-
 	public String getStatus() {
 		return status;
 	}
 
-	private void setStatus(String status) {
-		this.status = status;
-	}
-
 	public String getTag() {
 		return tag;
-	}
-
-	private void setTag(String tag) {
-		this.tag = tag;
 	}
 	
 	public Set<Job> getJobs() {
@@ -296,24 +279,12 @@ public class SalesforceConnector extends AbstractResource {
 		return services;
 	}
 
-	private void setServices(Set<Service> services) {
-		this.services = services;
-	}
-
 	public Set<Sobject> getSobjects() {
 		return sobjects;
 	}
 
-	private void setSobjects(Set<Sobject> sobjects) {
-		this.sobjects = sobjects;
-	}
-
 	public Theme getTheme() {
 		return theme;
-	}
-
-	private void setTheme(Theme theme) {
-		this.theme = theme;
 	}
 
 	@Override
@@ -331,15 +302,14 @@ public class SalesforceConnector extends AbstractResource {
 		try {
 			token = login(salesforceConnectionString);
 			setIsValid(Boolean.TRUE);
-			setStatus(token.getIssuedAt());
 		} catch (OauthException e) {
 			setIsValid(Boolean.FALSE);
-			setStatus("Error: " + e.getErrorDescription());
+			this.status = "Error: " + e.getErrorDescription();
 		} catch (ConnectionException e) {
 			setIsValid(Boolean.FALSE);
-			setStatus("Error: " + e.getMessage());
+			this.status = "Error: " + e.getMessage();
 		} finally {
-			setLastTestedOn(Date.from(Instant.now()));
+			this.lastTestedOn = Date.from(Instant.now());
 		}
 		
 		return token;
@@ -363,10 +333,8 @@ public class SalesforceConnector extends AbstractResource {
 	
 	public void build() {
 		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describe();
-		setSobjects(describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet()));
-		
-		Theme theme = describeTheme();
-		setTheme(theme);
+		this.sobjects = describeGlobalSobjectsResult.getSobjects().stream().collect(Collectors.toSet());
+		this.theme = describeTheme();
 	}
 	
 	public DescribeGlobalSobjectsResult describe() {

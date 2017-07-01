@@ -2,6 +2,7 @@ package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -18,6 +19,7 @@ import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
+import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -100,10 +102,14 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	public Response updateSalesforceConnector(String id, String name, String tag, String ownerId) {	
 		
+		UserInfo owner = Assert.isEmpty(ownerId) ? null : UserInfo.of(ownerId);
+		UserInfo lastUpdatedBy = UserInfo.of(securityContext.getUserPrincipal().getName());
+		
 		UpdateSalesforceConnectorRequest request = UpdateSalesforceConnectorRequest.builder()
-				.name(name)
-				.tag(tag)
-				.ownerId(ownerId)
+				.name(Assert.isEmpty(name) ? null : name)
+				.tag(Assert.isNull(tag) ? Optional.empty() : Optional.of(tag))
+				.owner(owner)
+				.lastUpdatedBy(lastUpdatedBy)
 				.build();
 		
 		SalesforceConnector salesforceConnector = salesforceConnectorService.updateSalesforceConnector(id, request);

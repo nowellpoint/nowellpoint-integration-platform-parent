@@ -43,7 +43,6 @@ import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.mongodb.client.model.Filters;
-import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.ConnectionString;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.JobScheduleOptions;
@@ -69,7 +68,6 @@ import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
-import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 
 /**
@@ -142,15 +140,13 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				token.getId(), 
 				SalesforceConnectionString.REFRESH_TOKEN);
 		
-		VaultEntry vaultEntry = vaultEntryService.store(connectString.get());
-		
 		UserInfo createdBy = new UserInfo(UserContext.getPrincipal().getName());
 		
 		SalesforceConnector salesforceConnector = SalesforceConnector.of( 
 				createdBy,
 				identity, 
 				organization, 
-				vaultEntry, 
+				connectString, 
 				token);
 		
 		create(salesforceConnector);
@@ -170,9 +166,10 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Override
 	public SalesforceConnector updateSalesforceConnector(String id, UpdateSalesforceConnectorRequest request) {		
-		SalesforceConnector salesforceConnector = findById(id);
-		updateSalesforceConnector(salesforceConnector, request.getName().get(), request.getTag().get(), request.getOwnerId().get(), null, null);
-		return salesforceConnector;
+		SalesforceConnector source = findById(id);
+		SalesforceConnector instance = SalesforceConnector.of(source, request);
+		update(instance);
+		return instance;
 	}
 	
 	/**
@@ -311,40 +308,6 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		Service service = salesforceConnector.getService(serviceId);
 		
 		return service;
-	}
-	
-	private void updateSalesforceConnector(SalesforceConnector salesforceConnector, String name, String tag, String ownerId, Boolean isValid, String connectionStatus) {
-		if (Assert.isNullOrEmpty(name)) {
-			name = salesforceConnector.getName();
-		}
-		
-		if (Assert.isNullOrEmpty(ownerId)) {
-			ownerId = salesforceConnector.getOwner().getId();
-		}
-		
-		if (Assert.isNull(tag)) {
-			tag = salesforceConnector.getTag();
-		} else if (Assert.isEmpty(tag)) {
-			tag = null;
-		}
-		
-		if (Assert.isNullOrEmpty(connectionStatus)) {
-			connectionStatus = salesforceConnector.getStatus();
-		}
-		
-		if (Assert.isNull(isValid)) {
-			isValid = salesforceConnector.getIsValid();
-		}
-		
-		//salesforceConnector.setName(name);
-		//salesforceConnector.setTag(tag);
-		//salesforceConnector.setOwner(new UserInfo(ownerId));
-		//salesforceConnector.setIsValid(isValid);
-		//salesforceConnector.setStatus(connectionStatus);
-		//salesforceConnector.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
-		//salesforceConnector.setLastUpdatedOn(Date.from(Instant.now()));
-		
-		update(salesforceConnector);
 	}
 	
 	private void addSalesforceMetadataBackup(SalesforceConnector salesforceConnector) {

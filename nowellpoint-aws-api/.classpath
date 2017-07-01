@@ -120,7 +120,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/objenesis/objenesis/2.1/objenesis-2.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/1.0.0/modelmapper-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz-jobs/2.2.3/quartz-jobs-2.2.3.jar"/>
