@@ -292,6 +292,12 @@ public class SalesforceConnector extends AbstractResource {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.SalesforceConnector.class);
 	}
 	
+	public void removeConnection() {
+		String token = SalesforceConnectionString.of(this.connectionString).getCredentials();
+		VaultEntry vaultEntry = VaultEntry.of(token);
+		dynamoDBMapper.delete(vaultEntry);
+	}
+	
 	public Token connect() {
 		
 		VaultEntry vaultEntry = dynamoDBMapper.load(VaultEntry.class, this.connectionString);

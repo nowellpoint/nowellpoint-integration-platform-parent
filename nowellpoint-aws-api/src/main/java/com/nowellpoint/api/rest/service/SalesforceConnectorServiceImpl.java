@@ -180,10 +180,8 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	
 	@Override
 	public void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
-				
-		String token = SalesforceConnectionString.of(salesforceConnector.getConnectionString()).getCredentials();
 		
-		vaultEntryService.remove(token);
+		salesforceConnector.removeConnection();
 		
 		Photos photos = salesforceConnector.getIdentity().getPhotos();
 

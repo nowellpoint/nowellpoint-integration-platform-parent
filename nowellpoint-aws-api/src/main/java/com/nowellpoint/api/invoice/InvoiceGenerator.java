@@ -189,7 +189,7 @@ public class InvoiceGenerator {
 			table.addCell(getServiceCell(String.valueOf(service.getQuantity()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 			table.addCell(getServiceCell(String.valueOf(service.getTotalPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 			
-			totalAmount.add(new BigDecimal(service.getTotalPrice()));
+			totalAmount.add(service.getTotalPrice());
 		});
         
 		table.addCell(getServiceCell("Total", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
