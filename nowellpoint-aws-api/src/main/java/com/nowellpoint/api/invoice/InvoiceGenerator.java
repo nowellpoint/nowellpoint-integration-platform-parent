@@ -2,11 +2,15 @@ package com.nowellpoint.api.invoice;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.Executors;
 
 import org.jboss.logging.Logger;
 
@@ -26,9 +30,20 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.nowellpoint.api.invoice.model.Invoice;
 import com.nowellpoint.api.invoice.model.InvoiceGeneratorException;
+import com.nowellpoint.api.invoice.model.InvoiceProperties;
 import com.nowellpoint.api.invoice.model.Payee;
 import com.nowellpoint.api.invoice.model.PaymentMethod;
 import com.nowellpoint.api.invoice.model.Service;
+import com.nowellpoint.util.Properties;
+import com.sendgrid.Attachments;
+import com.sendgrid.Content;
+import com.sendgrid.Email;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Personalization;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 
 public class InvoiceGenerator {
 	
@@ -39,8 +54,13 @@ public class InvoiceGenerator {
 	private static Font HELVETICA_10_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(27, 150, 254));
     private static Font HELVETICA_10_NORMAL_GRAY = new Font(Font.FontFamily.HELVETICA, 10.0f, Font.NORMAL, new BaseColor(79,79,79));
     private static Font HELVETICA_10_BOLD_GRAY = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, new BaseColor(79,79,79));
+    
+    private Locale locale;
 
-	public String generate(Invoice invoice) {
+	public void generate(Invoice invoice) {
+		
+		setLocale(invoice.getLocale());
+		
 		Document document = new Document();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -48,7 +68,7 @@ public class InvoiceGenerator {
 			PdfWriter.getInstance(document, baos);
 			
 			document.setMargins(75, 75, 75, 10);
-			document.addTitle("Invoice");
+			document.addTitle(getLabel(InvoiceProperties.INVOICE_TITLE));
 			document.addAuthor("Nowellpoint Invoice Generation Service");
 			document.addSubject(String.format("Invoice for %s", invoice.getPayee().getCompanyName()));
 			document.addCreator(InvoiceGenerator.class.getName());
@@ -71,8 +91,19 @@ public class InvoiceGenerator {
 		}
         
         putObject(invoice.getInvoiceNumber(), baos);
-
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
+        
+        System.out.println(invoice.getPayee().getEmail());
+        
+        sendInvoice(
+        		invoice.getPayee().getCustomerId(), 
+        		"john.d.herson@gmail.com", //invoice.getPayee().getEmail(), 
+        		invoice.getPayee().getAttentionTo(), 
+        		invoice.getInvoiceNumber(), 
+        		Base64.getEncoder().encodeToString(baos.toByteArray()));
+	}
+	
+	private void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 	
 	private void putObject(String keyName, ByteArrayOutputStream baos) {
@@ -267,5 +298,60 @@ public class InvoiceGenerator {
 	    cell.setBorder(PdfPCell.NO_BORDER);
 	    cell.setPaddingBottom(30.0f);
 	    return cell;
+	}
+	
+	private void sendInvoice(String customerId, String email, String name, String invoiceNumber, String base64EncodedContent) {
+		Executors.newSingleThreadExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				Email from = new Email();
+				from.setEmail("billing@nowellpoint.com");
+				from.setName("Nowellpoint Billing");
+			    
+			    Email to = new Email();
+			    to.setEmail(email);
+			    to.setName(name);
+			    
+			    Content content = new Content();
+			    content.setType("text/html");
+			    content.setValue("<html><body>some text here</body></html>");
+			    	    
+			    Personalization personalization = new Personalization();
+			    personalization.addTo(to);
+			    personalization.addSubstitution("%name%", name);
+			    personalization.addSubstitution("%invoice-link%", String.format("https://localhost:8443/app/account-profile/%s/current-plan", customerId));
+			    
+			    Attachments attachments = new Attachments();
+			    attachments.setContent(base64EncodedContent);
+			    attachments.setType("application/pdf");
+			    attachments.setFilename(String.format("invoice_%s.pdf", invoiceNumber));
+			    attachments.setDisposition("attachment");
+			    attachments.setContentId("Invoice");
+			    
+			    Mail mail = new Mail();
+			    mail.setFrom(from);
+			    mail.addContent(content);
+			    mail.setTemplateId("78e36394-86c3-4e16-be73-a3ed3ddae1a8");
+			    mail.addPersonalization(personalization);
+			    mail.addAttachments(attachments);
+			    
+			    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
+			    
+			    Request request = new Request();
+			    try {
+			    	request.method = Method.POST;
+			    	request.endpoint = "mail/send";
+			    	request.body = mail.build();
+			    	Response response = sendgrid.api(request);
+			    	LOG.info("sendInvoiceMessage: " + response.statusCode + " " + response.body);
+			    } catch (IOException e) {
+			    	LOG.error(e);
+			    }
+			}
+		});	
+	}
+	
+	private String getLabel(String key) {
+		return ResourceBundle.getBundle("invoice", locale).getString(key);
 	}
 }

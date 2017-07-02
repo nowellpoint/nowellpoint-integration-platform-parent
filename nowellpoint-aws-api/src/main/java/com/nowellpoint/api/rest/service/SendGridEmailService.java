@@ -118,7 +118,7 @@ public class SendGridEmailService implements EmailService {
 	}
 	
 	@Override
-	public void sendInvoiceMessage(String email, String name, String invoiceNumber, String base64EncodedContent) {
+	public void sendInvoiceMessage(String email, String name, String invoiceNumber, String invoiceLink, String base64EncodedContent) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -137,6 +137,7 @@ public class SendGridEmailService implements EmailService {
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
 			    personalization.addSubstitution("%name%", name);
+			    personalization.addSubstitution("%invoice-link", invoiceLink);
 			    
 			    Attachments attachments = new Attachments();
 			    attachments.setContent(base64EncodedContent);
@@ -148,7 +149,7 @@ public class SendGridEmailService implements EmailService {
 			    Mail mail = new Mail();
 			    mail.setFrom(from);
 			    mail.addContent(content);
-			    mail.setTemplateId("d38cc1d5-d2ec-4b21-83b5-84b23aa44bc8");
+			    mail.setTemplateId("78e36394-86c3-4e16-be73-a3ed3ddae1a8");
 			    mail.addPersonalization(personalization);
 			    mail.addAttachments(attachments);
 			    

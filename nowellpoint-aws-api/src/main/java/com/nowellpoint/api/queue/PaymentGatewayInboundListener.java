@@ -25,8 +25,6 @@ import com.nowellpoint.api.invoice.model.Invoice;
 import com.nowellpoint.api.invoice.model.Payee;
 import com.nowellpoint.api.invoice.model.PaymentMethod;
 import com.nowellpoint.api.invoice.model.Service;
-import com.nowellpoint.api.rest.service.SendGridEmailService;
-import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.aws.data.QueueListener;
 import com.nowellpoint.util.Properties;
 
@@ -46,7 +44,6 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 	
 	private static final Logger LOGGER = Logger.getLogger(PaymentGatewayInboundListener.class);
 	
-	private EmailService emailService = new SendGridEmailService();
 	private InvoiceGenerator invoiceGenerator = new InvoiceGenerator();
 
 	@Override
@@ -73,7 +70,6 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 						textMessage.getStringProperty("WEBHOOK_NOTIFICATION_KIND"),
 						subscription.getId()));
 				
-				try {
 						
 					//DocumentManagerFactory documentManagerFactory = Datastore.getCurrentSession();
 					//DocumentManager documentManager = documentManagerFactory.createDocumentManager();
@@ -90,12 +86,12 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 						
 						Plan plan = plans.stream().filter(p -> p.getId().equals(transaction.getPlanId())).findFirst().get();
 						
-						String name = transaction.getCustomer().getFirstName().concat(" ").concat(transaction.getCustomer().getLastName());
-						
 						Customer customer = gateway.customer().find(transaction.getCustomer().getId());
 						
 						Payee payee = Payee.builder()
+								.customerId(customer.getId())
 								.attentionTo(transaction.getCreditCard().getCardholderName())
+								.email(customer.getEmail())
 								.city(customer.getAddresses().get(0).getLocality())
 								.companyName(customer.getCompany())
 								.country(customer.getAddresses().get(0).getCountryName())
@@ -127,8 +123,9 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 								.addServices(service)
 								.build();
 						
-						String content = invoiceGenerator.generate(invoice);
-						emailService.sendInvoiceMessage(transaction.getCustomer().getEmail(), name, transaction.getId(), content);
+						invoiceGenerator.generate(invoice);
+						
+						message.acknowledge();
 					}
 //						
 //					accountProfile.getSubscription().setStatus(subscription.get("status").asText());
@@ -180,11 +177,6 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 //						}
 //					}	
 								
-				//} catch (DocumentNotFoundException e) {
-				//	LOGGER.error(e);
-				} finally {
-					message.acknowledge();
-				}
 			}
 			
 		} catch (JMSException | IOException e) {
