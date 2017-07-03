@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.jboss.logging.Logger;
 
@@ -69,8 +69,8 @@ public class InvoiceGenerator {
 			
 			document.setMargins(75, 75, 75, 10);
 			document.addTitle(getLabel(InvoiceProperties.INVOICE_TITLE));
-			document.addAuthor("Nowellpoint Invoice Generation Service");
-			document.addSubject(String.format("Invoice for %s", invoice.getPayee().getCompanyName()));
+			document.addAuthor(getLabel(InvoiceProperties.INVOICE_AUTHOR));
+			document.addSubject(String.format(getLabel(InvoiceProperties.INVOICE_SUBJECT), invoice.getPayee().getCompanyName()));
 			document.addCreator(InvoiceGenerator.class.getName());
 			
 			document.open();
@@ -92,19 +92,28 @@ public class InvoiceGenerator {
         
         putObject(invoice.getInvoiceNumber(), baos);
         
-        System.out.println(invoice.getPayee().getEmail());
-        
         sendInvoice(
         		invoice.getPayee().getCustomerId(), 
-        		"john.d.herson@gmail.com", //invoice.getPayee().getEmail(), 
+        		invoice.getPayee().getEmail(), 
         		invoice.getPayee().getAttentionTo(), 
         		invoice.getInvoiceNumber(), 
         		Base64.getEncoder().encodeToString(baos.toByteArray()));
 	}
 	
+	/**
+	 * 
+	 * @param locale
+	 */
+	
 	private void setLocale(Locale locale) {
 		this.locale = locale;
 	}
+	
+	/**
+	 * 
+	 * @param keyName
+	 * @param baos
+	 */
 	
 	private void putObject(String keyName, ByteArrayOutputStream baos) {
 		byte[] bytes = baos.toByteArray();
@@ -123,8 +132,15 @@ public class InvoiceGenerator {
 		s3client.putObject(request);
 	}
 	
+	/**
+	 * 
+	 * @param billingPeriodStartDate
+	 * @param billingPeriodEndDate
+	 * @return
+	 */
+	
 	private PdfPTable getBillingPeriod(Date billingPeriodStartDate, Date billingPeriodEndDate) {
-		PdfPCell cell = new PdfPCell(new Phrase(String.format("Billing Period: %s - %s", sdf.format(billingPeriodStartDate), sdf.format(billingPeriodEndDate)), HELVETICA_10_NORMAL_LIGHT_BLUE));
+		PdfPCell cell = new PdfPCell(new Phrase(String.format(getLabel(InvoiceProperties.BILLING_PERIOD), sdf.format(billingPeriodStartDate), sdf.format(billingPeriodEndDate)), HELVETICA_10_NORMAL_LIGHT_BLUE));
 	    cell.setPadding(10.0f);
 	    cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
 	    cell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
@@ -143,13 +159,13 @@ public class InvoiceGenerator {
         table.setWidthPercentage(100);
         table.setSpacingAfter(30);
         
-        table.addCell(getCell("Bill To", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell(getLabel(InvoiceProperties.BILL_TO), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
         table.addCell(getCell(payee.getCompanyName(), PdfPCell.ALIGN_LEFT, HELVETICA_10_BOLD_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(String.format("ATTN: %s", payee.getAttentionTo()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(String.format(getLabel(InvoiceProperties.ATTENTION), payee.getAttentionTo()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         table.addCell(getCell(payee.getStreet(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
@@ -179,22 +195,22 @@ public class InvoiceGenerator {
         table.setWidthPercentage(100);
         table.setSpacingAfter(30);
         
-        table.addCell(getCell("Nowellpoint LLC", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
-        table.addCell(getCell("Issue Date", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell(getLabel(InvoiceProperties.PAY_TO_COMPANY), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell(getLabel(InvoiceProperties.ISSUE_DATE), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell("129 S. Bloodworth Street", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(getLabel(InvoiceProperties.PAY_TO_STREET_ADDRESS), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell(sdf.format(transactionDate), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell("Raleigh, NC 27601", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(String.format("%s, %s %s", getLabel(InvoiceProperties.PAY_TO_CITY), getLabel(InvoiceProperties.PAY_TO_STATE), getLabel(InvoiceProperties.PAY_TO_POSTAL_CODE)), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell("United States", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(getLabel(InvoiceProperties.PAY_TO_COUNTRY), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell("1-888-721-6440", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
-        table.addCell(getCell("Invoice No", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+        table.addCell(getCell(getLabel(InvoiceProperties.PAY_TO_PHONE), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(getLabel(InvoiceProperties.INVOICE_NUMBER), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell("www.nowellpoint.com", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(getLabel(InvoiceProperties.PAY_TO_WEBSITE), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell(transactionId, PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         return table;
@@ -207,26 +223,26 @@ public class InvoiceGenerator {
 		table.setSpacingAfter(10);
 		table.setWidths(new int[]{3, 1, 1, 1});
         
-		table.addCell(getHeaderItemCell("Plan", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Unit", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Quantity", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
-		table.addCell(getHeaderItemCell("Amount", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell(getLabel(InvoiceProperties.PLAN), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell(getLabel(InvoiceProperties.UNIT), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell(getLabel(InvoiceProperties.QUANTITY), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getHeaderItemCell(getLabel(InvoiceProperties.AMOUNT), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
 		
-		BigDecimal totalAmount = new BigDecimal(0.00);
+		AtomicReference<BigDecimal> totalAmount = new AtomicReference<>();
+		totalAmount.set(new BigDecimal(0.00));
 		
 		services.stream().forEach(service -> {
 			table.addCell(getServiceCell(service.getServiceName(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
 			table.addCell(getServiceCell(String.valueOf(service.getUnitPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 			table.addCell(getServiceCell(String.valueOf(service.getQuantity()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 			table.addCell(getServiceCell(String.valueOf(service.getTotalPrice()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
-			
-			totalAmount.add(service.getTotalPrice());
+			totalAmount.set(totalAmount.get().add(service.getTotalPrice()));
 		});
         
-		table.addCell(getServiceCell("Total", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getServiceCell(getLabel(InvoiceProperties.TOTAL), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
 		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 		table.addCell(getServiceCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
-		table.addCell(getServiceCell(String.valueOf(totalAmount), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getServiceCell(String.valueOf(totalAmount.get()), PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
 		
 		return table;
 	}
@@ -237,8 +253,8 @@ public class InvoiceGenerator {
 		table.setSpacingBefore(5);
 		table.setSpacingAfter(30);
         
-		table.addCell(getHeaderItemCell("Payment Method", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
-		table.addCell(getServiceCell(String.format("Credit Card: %s ending in %s", paymentMethod.getCardType(), paymentMethod.getLastFour()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+		table.addCell(getHeaderItemCell(getLabel(InvoiceProperties.PAYMENT_METHOD), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
+		table.addCell(getServiceCell(String.format(getLabel(InvoiceProperties.CREDIT_CARD), paymentMethod.getCardType(), paymentMethod.getLastFour()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         
         return table;
 	}
@@ -301,54 +317,49 @@ public class InvoiceGenerator {
 	}
 	
 	private void sendInvoice(String customerId, String email, String name, String invoiceNumber, String base64EncodedContent) {
-		Executors.newSingleThreadExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				Email from = new Email();
-				from.setEmail("billing@nowellpoint.com");
-				from.setName("Nowellpoint Billing");
-			    
-			    Email to = new Email();
-			    to.setEmail(email);
-			    to.setName(name);
-			    
-			    Content content = new Content();
-			    content.setType("text/html");
-			    content.setValue("<html><body>some text here</body></html>");
-			    	    
-			    Personalization personalization = new Personalization();
-			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", name);
-			    personalization.addSubstitution("%invoice-link%", String.format("https://localhost:8443/app/account-profile/%s/current-plan", customerId));
-			    
-			    Attachments attachments = new Attachments();
-			    attachments.setContent(base64EncodedContent);
-			    attachments.setType("application/pdf");
-			    attachments.setFilename(String.format("invoice_%s.pdf", invoiceNumber));
-			    attachments.setDisposition("attachment");
-			    attachments.setContentId("Invoice");
-			    
-			    Mail mail = new Mail();
-			    mail.setFrom(from);
-			    mail.addContent(content);
-			    mail.setTemplateId("78e36394-86c3-4e16-be73-a3ed3ddae1a8");
-			    mail.addPersonalization(personalization);
-			    mail.addAttachments(attachments);
-			    
-			    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
-			    
-			    Request request = new Request();
-			    try {
-			    	request.method = Method.POST;
-			    	request.endpoint = "mail/send";
-			    	request.body = mail.build();
-			    	Response response = sendgrid.api(request);
-			    	LOG.info("sendInvoiceMessage: " + response.statusCode + " " + response.body);
-			    } catch (IOException e) {
-			    	LOG.error(e);
-			    }
-			}
-		});	
+		Email from = new Email();
+		from.setEmail(getLabel(InvoiceProperties.PAY_TO_EMAIL));
+		from.setName(getLabel(InvoiceProperties.PAY_TO_NAME));
+	    
+	    Email to = new Email();
+	    to.setEmail(email);
+	    to.setName(name);
+	    
+	    Content content = new Content();
+	    content.setType("text/html");
+	    content.setValue("<html><body>some text here</body></html>");
+	    	    
+	    Personalization personalization = new Personalization();
+	    personalization.addTo(to);
+	    personalization.addSubstitution("%name%", name);
+	    personalization.addSubstitution("%invoice-link%", String.format("%s/app/account-profile/%s/current-plan", System.getProperty(Properties.APPLICATION_HOSTNAME), customerId));
+	    
+	    Attachments attachments = new Attachments();
+	    attachments.setContent(base64EncodedContent);
+	    attachments.setType("application/pdf");
+	    attachments.setFilename(String.format("invoice_%s.pdf", invoiceNumber));
+	    attachments.setDisposition("attachment");
+	    attachments.setContentId("Invoice");
+	    
+	    Mail mail = new Mail();
+	    mail.setFrom(from);
+	    mail.addContent(content);
+	    mail.setTemplateId("78e36394-86c3-4e16-be73-a3ed3ddae1a8");
+	    mail.addPersonalization(personalization);
+	    mail.addAttachments(attachments);
+	    
+	    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
+	    
+	    Request request = new Request();
+	    try {
+	    	request.method = Method.POST;
+	    	request.endpoint = "mail/send";
+	    	request.body = mail.build();
+	    	Response response = sendgrid.api(request);
+	    	LOG.info("sendInvoiceMessage: " + response.statusCode + " " + response.body);
+	    } catch (IOException e) {
+	    	LOG.error(e);
+	    }	
 	}
 	
 	private String getLabel(String key) {

@@ -124,9 +124,9 @@ WebhookNotification.Kind.SUBSCRIPTION_WENT_PAST_DUE
 								.build();
 						
 						invoiceGenerator.generate(invoice);
-						
-						message.acknowledge();
 					}
+					
+					message.acknowledge();
 //						
 //					accountProfile.getSubscription().setStatus(subscription.get("status").asText());
 //					accountProfile.getSubscription().setNextBillingDate(new Date(subscription.get("nextBillingDate").asLong()));
