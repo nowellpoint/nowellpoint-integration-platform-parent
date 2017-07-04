@@ -30,6 +30,7 @@ public class TestSubscriptionWebhook {
 	
 	private static Logger LOG = Logger.getLogger(TestSubscriptionWebhook.class.getName());
 	
+	@Test
 	public void testCreateSubscription() {
 		
 		Properties.loadProperties("sandbox");
@@ -45,7 +46,7 @@ public class TestSubscriptionWebhook {
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company("Test Company")
-				.email("test.nowellpoint@mailinator.com")
+				.email("john.d.herson@gmail.com")
 				.firstName("Test")
 				.lastName("Herson")
 				.phone("000-000-0000");
@@ -53,12 +54,16 @@ public class TestSubscriptionWebhook {
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().create(customerRequest);
 		
 		AddressRequest addressRequest = new AddressRequest()
+				.locality("Raleigh")
+				.postalCode("27601")
+				.region("NC")
+				.streetAddress("129 S. Bloodworth Street")
 				.countryCodeAlpha2("US");
 		
 		Result<com.braintreegateway.Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName( "Test User" )
+				.cardholderName( "John Herson" )
 				.expirationMonth( "12" )
 				.expirationYear( "2017" )
 				.number( "4111111111111111" )
@@ -75,10 +80,19 @@ public class TestSubscriptionWebhook {
 		Result<com.braintreegateway.Subscription> subscriptionResult = gateway.subscription().create( subscriptionRequest );
 		
 		LOG.info(subscriptionResult.getTarget().getId());
+		
+		//gateway.creditCard().delete(creditCardResult.getTarget().getToken());
+		
+		//gateway.subscription().delete(customerResult.getTarget().getId(), subscriptionResult.getTarget().getId());
+		
+		//gateway.address().delete(customerResult.getTarget().getId(), addressResult.getTarget().getId());
+		
+		//gateway.customer().delete(customerResult.getTarget().getId());
 
 	}
 	
 	@Test
+	@Ignore
 	public void testChargeSubscriptionMock() {
 		Properties.loadProperties("sandbox");
 		

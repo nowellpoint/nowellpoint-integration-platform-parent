@@ -26,4 +26,5 @@ public class InvoiceLabels {
 	public static final String TOTAL = "total";
 	public static final String PAYMENT_METHOD = "payment.method";
 	public static final String CREDIT_CARD = "credit.card";
+	public static final String EMAIL_SUBJECT = "emai.subject";
 }

@@ -2,20 +2,26 @@ package com.nowellpoint.payables.invoice;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+//import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+//import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+//import com.amazonaws.services.simpleemail.model.Body;
+//import com.amazonaws.services.simpleemail.model.Content;
+//import com.amazonaws.services.simpleemail.model.Destination;
+//import com.amazonaws.services.simpleemail.model.Message;
+//import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -32,18 +38,10 @@ import com.nowellpoint.payables.invoice.model.InvoiceLabels;
 import com.nowellpoint.payables.invoice.model.Payee;
 import com.nowellpoint.payables.invoice.model.PaymentMethod;
 import com.nowellpoint.payables.invoice.model.Service;
-import com.nowellpoint.util.Properties;
-import com.sendgrid.Attachments;
-import com.sendgrid.Content;
-import com.sendgrid.Email;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Personalization;
-import com.sendgrid.Request;
-import com.sendgrid.SendGrid;
 
 public class InvoiceGenerator {
 	
+	private static final Logger LOG = Logger.getLogger(InvoiceGenerator.class.getName());
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
 	private static final Font HELVETICA_14_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, new BaseColor(27, 150, 254));
 	private static final Font HELVETICA_10_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(27, 150, 254));
@@ -52,8 +50,8 @@ public class InvoiceGenerator {
     
     private Locale locale;
 
-	public void generate(Invoice invoice) {
-		
+	public byte[] generate(Invoice invoice) {
+
 		setLocale(invoice.getLocale());
 		
 		Document document = new Document();
@@ -81,22 +79,13 @@ public class InvoiceGenerator {
 	        document.close();
 	        
 		} catch (DocumentException e) {
-			//LOG.error(e);
+			LOG.severe(e.getMessage());
 			throw new InvoiceGeneratorException(e);
 		}
         
         putObject(invoice.getInvoiceNumber(), baos);
         
-        try {
-			sendInvoice(
-					invoice.getPayee().getCustomerId(), 
-					invoice.getPayee().getEmail(), 
-					invoice.getPayee().getAttentionTo(), 
-					invoice.getInvoiceNumber(), 
-					Base64.getEncoder().encodeToString(baos.toByteArray()));
-		} catch (IOException e) {
-			throw new InvoiceGeneratorException(e);
-		}
+        return baos.toByteArray();
 	}
 	
 	/**
@@ -315,48 +304,23 @@ public class InvoiceGenerator {
 	    return cell;
 	}
 	
-	private void sendInvoice(String customerId, String email, String name, String invoiceNumber, String base64EncodedContent) throws IOException {
-		Email from = new Email();
-		from.setEmail(getLabel(InvoiceLabels.PAY_TO_EMAIL));
-		from.setName(getLabel(InvoiceLabels.PAY_TO_NAME));
-	    
-	    Email to = new Email();
-	    to.setEmail(email);
-	    to.setName(name);
-	    
-	    Content content = new Content();
-	    content.setType("text/html");
-	    content.setValue("<html><body>some text here</body></html>");
-	    	    
-	    Personalization personalization = new Personalization();
-	    personalization.addTo(to);
-	    personalization.addSubstitution("%name%", name);
-	    personalization.addSubstitution("%invoice-link%", String.format("%s/app/account-profile/%s/current-plan", System.getProperty(Properties.APPLICATION_HOSTNAME), customerId));
-	    
-	    Attachments attachments = new Attachments();
-	    attachments.setContent(base64EncodedContent);
-	    attachments.setType("application/pdf");
-	    attachments.setFilename(String.format("invoice_%s.pdf", invoiceNumber));
-	    attachments.setDisposition("attachment");
-	    attachments.setContentId("Invoice");
-	    
-	    Mail mail = new Mail();
-	    mail.setFrom(from);
-	    mail.addContent(content);
-	    mail.setTemplateId("78e36394-86c3-4e16-be73-a3ed3ddae1a8");
-	    mail.addPersonalization(personalization);
-	    mail.addAttachments(attachments);
-	    
-	    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
-	    
-	    Request request = new Request();
-	    request.method = Method.POST;
-	    request.endpoint = "mail/send";
-	    request.body = mail.build();
-	    
-	    sendgrid.api(request);
-	    	//LOG.info("sendInvoiceMessage: " + response.statusCode + " " + response.body);	
-	}
+//	private void sendInvoice(String customerId, String to, String name, String invoiceNumber) throws IOException {
+//        Destination destination = new Destination().withToAddresses(new String[] { to });
+//
+//        Content subject = new Content().withData(getLabel(InvoiceLabels.EMAIL_SUBJECT));
+//        Content textBody = new Content().withData("");
+//        Body body = new Body().withText(textBody);
+//
+//        Message message = new Message().withSubject(subject).withBody(body);
+//
+//        SendEmailRequest request = new SendEmailRequest().withSource(InvoiceLabels.PAY_TO_EMAIL).w
+//                .withDestination(destination).withMessage(message);
+//        
+//        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.defaultClient();
+//        client.sendEmail(request);
+//	}
+	
+	//String customerId, String email, String name, String invoiceNumber, String base64EncodedContent, String apiKey
 	
 	private String getLabel(String key) {
 		return ResourceBundle.getBundle("invoice", locale).getString(key);

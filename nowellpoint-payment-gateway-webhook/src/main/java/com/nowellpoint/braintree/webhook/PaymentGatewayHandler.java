@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -60,14 +62,7 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 
 			logger.log("[Subscription Id Received " + webhookNotification.getSubscription().getId());
 			
-			PaymentGatewayNotification notification = new PaymentGatewayNotification()
-					.environment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT))
-					.merchantId(System.getProperty(Properties.BRAINTREE_MERCHANT_ID))
-					.privateKey(System.getProperty(Properties.BRAINTREE_PRIVATE_KEY))
-					.publicKey(System.getProperty(Properties.BRAINTREE_PUBLIC_KEY))
-					.subscriptionId(webhookNotification.getSubscription().getId())
-					.status(PaymentGatewayNotification.Status.RECEIVED.name())
-					.webhookNotification(webhookNotification.getKind().name());
+			PaymentGatewayNotification notification = initialize(webhookNotification);      
 			
 			mapper.save(notification);
 		}	
@@ -96,6 +91,19 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 //				}
 //			}
 //		}
+	}
+	
+	private PaymentGatewayNotification initialize(WebhookNotification webhookNotification) {
+		return new PaymentGatewayNotification().environment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT))
+				.merchantId(System.getProperty(Properties.BRAINTREE_MERCHANT_ID))
+				.privateKey(System.getProperty(Properties.BRAINTREE_PRIVATE_KEY))
+				.publicKey(System.getProperty(Properties.BRAINTREE_PUBLIC_KEY))
+				.subscriptionId(webhookNotification.getSubscription().getId())
+				.status(PaymentGatewayNotification.Status.RECEIVED.name())
+				.emailApiKey(System.getProperty(Properties.SENDGRID_API_KEY))
+				.webhookNotificationKind(webhookNotification.getKind().name())
+				.applicationHostname(System.getProperty(Properties.APPLICATION_HOSTNAME))
+				.receivedOn(Date.from(Instant.now()));
 	}
 	
 	private String getValue(List<NameValuePair> params, String name) {
