@@ -20,6 +20,8 @@ import com.braintreegateway.Environment;
 import com.braintreegateway.WebhookNotification;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.dynamodb.DynamoDBMapperProvider;
+import com.nowellpoint.dynamodb.model.PaymentGatewayNotification;
 import com.nowellpoint.util.Properties;
 
 public class PaymentGatewayHandler implements RequestStreamHandler {

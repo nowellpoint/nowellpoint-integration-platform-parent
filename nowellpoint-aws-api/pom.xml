@@ -72,12 +72,7 @@
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>swagger</artifactId>
-			<version>2017.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.11</version>
+			<version>2017.6.1</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->

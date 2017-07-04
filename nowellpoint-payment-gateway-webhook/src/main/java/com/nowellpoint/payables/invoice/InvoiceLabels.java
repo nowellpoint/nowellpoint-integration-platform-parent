@@ -1,4 +1,4 @@
-package com.nowellpoint.payables.invoice.model;
+package com.nowellpoint.payables.invoice;
 
 public class InvoiceLabels {
 	public static final String INVOICE_TITLE = "invoice.title";

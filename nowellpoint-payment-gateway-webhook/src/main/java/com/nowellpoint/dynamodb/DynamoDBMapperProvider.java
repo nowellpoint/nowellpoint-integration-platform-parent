@@ -1,6 +1,4 @@
-package com.nowellpoint.braintree.webhook;
-
-import java.util.Optional;
+package com.nowellpoint.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.AttributeEncryptor;
@@ -10,12 +8,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.Direc
 import com.amazonaws.services.dynamodbv2.datamodeling.encryption.providers.EncryptionMaterialsProvider;
 import com.amazonaws.services.kms.AWSKMS;
 import com.amazonaws.services.kms.AWSKMSClientBuilder;
-import com.amazonaws.services.kms.model.AliasListEntry;
-import com.amazonaws.services.kms.model.ListAliasesResult;
 
 public class DynamoDBMapperProvider {
 	
-	private static String KEY_ALIAS = "alias/DATA_ENCRYPTION_KEY";
 	private static AWSKMS kms = AWSKMSClientBuilder.defaultClient();
 	private static DynamoDBMapper mapper;
 	
@@ -38,20 +33,6 @@ public class DynamoDBMapperProvider {
 	}
 	
 	private static String getKeyId() {
-
-		ListAliasesResult listAliasesResult = kms.listAliases();
-		
-		Optional<AliasListEntry> aliasListEntry = listAliasesResult.getAliases()
-				.stream()
-				.filter(entry -> KEY_ALIAS.equals(entry.getAliasName()))
-				.findFirst();
-		
-		String keyId = null;
-		
-		if (aliasListEntry.isPresent()) {
-			keyId = aliasListEntry.get().getTargetKeyId();
-		} 
-
-		return keyId;
+		return System.getenv("KEY_ID");
 	}
 }

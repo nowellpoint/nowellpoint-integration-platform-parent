@@ -8,6 +8,7 @@ import java.util.Locale;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.DynamodbEvent;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Customer;
@@ -16,6 +17,8 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.WebhookNotification;
+import com.nowellpoint.dynamodb.DynamoDBMapperProvider;
+import com.nowellpoint.dynamodb.model.PaymentGatewayNotification;
 import com.nowellpoint.payables.invoice.InvoiceGenerator;
 import com.nowellpoint.payables.invoice.model.Invoice;
 import com.nowellpoint.payables.invoice.model.Payee;
@@ -32,12 +35,13 @@ import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 
-public class SubscriptionProcessingService {
+public class SubscriptionProcessingService implements RequestHandler<DynamodbEvent, String> {
 	
 	private static final DynamoDBMapper mapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	private LambdaLogger logger;
 	
-	public String handleEvent(DynamodbEvent event, Context context) {
+	@Override
+	public String handleRequest(DynamodbEvent event, Context context) {
     	
     	logger = context.getLogger();
 		
@@ -47,13 +51,12 @@ public class SubscriptionProcessingService {
 					.concat(record.getEventID())
 					.concat(" Event Name: " + record.getEventName()));
     		
-    		String id = record.getDynamodb().getKeys().get("Id").getS();
+    		String id = record.getDynamodb().getKeys().get("ID").getS();
     		
     		PaymentGatewayNotification notification = mapper.load(PaymentGatewayNotification.class, id);
+    		notification.setStatus(PaymentGatewayNotification.Status.PROCESSING.name());
     		
-    		logger.log(notification.getMerchantId());
-    		
-    		notification.setStatus(PaymentGatewayNotification.Status.PROCESSED.name());
+    		mapper.save( notification );
     		
     		try {
     			
@@ -73,7 +76,20 @@ public class SubscriptionProcessingService {
     					.findFirst()
     					.get();
         		
+    			
     			/**
+    			 * 
+    			 */
+    			
+    			notification.setStatus(PaymentGatewayNotification.Status.PROCESSED.name());
+    			
+    			/**
+    			 * 
+    			 * 
+    			 * 
+    			 * Begin Business Processes logic
+    			 * 
+    			 * 
     			 * 
     			 */
     			
@@ -140,7 +156,20 @@ public class SubscriptionProcessingService {
     						.build();
     				
     				sendInvoice(request);
+    				
+    			} else if (notification.getWebhookNotificationKind().equals(WebhookNotification.Kind.SUBSCRIPTION_WENT_ACTIVE.name())) {
+    				
+    				
     			}
+    			
+    			/**
+    			 * 
+    			 * 
+    			 * 
+    			 * 
+    			 * 
+    			 * 
+    			 */
     			
     		} catch (Exception e) {
     			notification.setStatus(PaymentGatewayNotification.Status.FAILED.name());
@@ -150,7 +179,7 @@ public class SubscriptionProcessingService {
     		}
     	});
 		
-    	return "ok";
+    	return String.format("Successfully processed %s records.", event.getRecords().size());
 	}
 	
 	private void sendInvoice(SendEmailRequest request) throws IOException {

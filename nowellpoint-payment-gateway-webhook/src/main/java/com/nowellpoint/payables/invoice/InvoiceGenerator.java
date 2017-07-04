@@ -2,6 +2,7 @@ package com.nowellpoint.payables.invoice;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +10,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -33,15 +33,12 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.nowellpoint.payables.invoice.model.Invoice;
-import com.nowellpoint.payables.invoice.model.InvoiceGeneratorException;
-import com.nowellpoint.payables.invoice.model.InvoiceLabels;
 import com.nowellpoint.payables.invoice.model.Payee;
 import com.nowellpoint.payables.invoice.model.PaymentMethod;
 import com.nowellpoint.payables.invoice.model.Service;
 
 public class InvoiceGenerator {
 	
-	private static final Logger LOG = Logger.getLogger(InvoiceGenerator.class.getName());
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
 	private static final Font HELVETICA_14_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, new BaseColor(27, 150, 254));
 	private static final Font HELVETICA_10_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(27, 150, 254));
@@ -50,7 +47,7 @@ public class InvoiceGenerator {
     
     private Locale locale;
 
-	public byte[] generate(Invoice invoice) {
+	public byte[] generate(Invoice invoice) throws IOException {
 
 		setLocale(invoice.getLocale());
 		
@@ -79,8 +76,7 @@ public class InvoiceGenerator {
 	        document.close();
 	        
 		} catch (DocumentException e) {
-			LOG.severe(e.getMessage());
-			throw new InvoiceGeneratorException(e);
+			throw new IOException(e);
 		}
         
         putObject(invoice.getInvoiceNumber(), baos);
