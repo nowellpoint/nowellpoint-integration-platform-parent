@@ -60,6 +60,7 @@ public class Main {
         JAXRSArchive deployment = ShrinkWrap.create(JAXRSArchive.class, "nowellpoint-api.war")
         		.addPackages(true, Package.getPackage("com.nowellpoint.api"))
         		.addAsResource(new ClassLoaderAsset("messages_en_US.properties", Main.class.getClassLoader()), "messages_en_US.properties")
+        		.addAsResource(new ClassLoaderAsset("invoice_en_US.properties", Main.class.getClassLoader()), "invoice_en_US.properties")
         		.addAsWebResource(new ClassLoaderAsset("ValidationMessages.properties", Main.class.getClassLoader()), "ValidationMessages.properties")
         		.addAsWebResource(new ClassLoaderAsset("WEB-INF/web.xml", Main.class.getClassLoader()), "web.xml")
         		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")

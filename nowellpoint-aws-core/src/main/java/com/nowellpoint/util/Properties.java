@@ -46,6 +46,7 @@ public class Properties {
 	public static final String BRAINTREE_PRIVATE_KEY = "braintree.private.key";
 	public static final String VERIFY_EMAIL_REDIRECT = "verify.email.redirect";
 	public static final String CLOUDFRONT_HOSTNAME = "cloudfront.hostname";
+	public static final String APPLICATION_HOSTNAME = "application.hostname";
 	
 	public static void loadProperties(String propertyStore) {
 		Map<String,String> properties = getProperties(propertyStore);

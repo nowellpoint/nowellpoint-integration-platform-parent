@@ -261,6 +261,11 @@ public abstract class HttpRequest {
 		}
 		
 		@Override
+		public InputStream getEntity() {
+			return entity;
+		}
+		
+		@Override
 		public <T> T getEntity(Class<T> type) throws HttpRequestException {
 			try {
 				return objectMapper.readValue(entity, type);

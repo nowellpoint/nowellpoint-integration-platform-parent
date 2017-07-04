@@ -12,6 +12,9 @@ public class JobOutput {
 	
 	private String filename;
 	
+	private String fileSizeInUnits;
+	
+	@JsonIgnore
 	private Long filesize;
 	
 	@JsonIgnore
@@ -48,6 +51,14 @@ public class JobOutput {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public String getFileSizeInUnits() {
+		return fileSizeInUnits;
+	}
+
+	public void setFileSizeInUnits(String fileSizeInUnits) {
+		this.fileSizeInUnits = fileSizeInUnits;
 	}
 
 	public Long getFilesize() {

@@ -9,6 +9,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amazon.sqs.javamessaging.SQSConnection;
@@ -20,6 +21,7 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.WebhookNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.util.Properties;
@@ -28,6 +30,7 @@ public class TestSubscriptionWebhook {
 	
 	private static Logger LOG = Logger.getLogger(TestSubscriptionWebhook.class.getName());
 	
+	@Test
 	public void testCreateSubscription() {
 		
 		Properties.loadProperties("sandbox");
@@ -43,7 +46,7 @@ public class TestSubscriptionWebhook {
 		
 		CustomerRequest customerRequest = new CustomerRequest()
 				.company("Test Company")
-				.email("test.nowellpoint@mailinator.com")
+				.email("john.d.herson@gmail.com")
 				.firstName("Test")
 				.lastName("Herson")
 				.phone("000-000-0000");
@@ -51,12 +54,16 @@ public class TestSubscriptionWebhook {
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().create(customerRequest);
 		
 		AddressRequest addressRequest = new AddressRequest()
+				.locality("Raleigh")
+				.postalCode("27601")
+				.region("NC")
+				.streetAddress("129 S. Bloodworth Street")
 				.countryCodeAlpha2("US");
 		
 		Result<com.braintreegateway.Address> addressResult = gateway.address().create(customerResult.getTarget().getId(), addressRequest);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName( "Test User" )
+				.cardholderName( "John Herson" )
 				.expirationMonth( "12" )
 				.expirationYear( "2017" )
 				.number( "4111111111111111" )
@@ -73,10 +80,55 @@ public class TestSubscriptionWebhook {
 		Result<com.braintreegateway.Subscription> subscriptionResult = gateway.subscription().create( subscriptionRequest );
 		
 		LOG.info(subscriptionResult.getTarget().getId());
+		
+		//gateway.creditCard().delete(creditCardResult.getTarget().getToken());
+		
+		//gateway.subscription().delete(customerResult.getTarget().getId(), subscriptionResult.getTarget().getId());
+		
+		//gateway.address().delete(customerResult.getTarget().getId(), addressResult.getTarget().getId());
+		
+		//gateway.customer().delete(customerResult.getTarget().getId());
 
 	}
 	
 	@Test
+	@Ignore
+	public void testChargeSubscriptionMock() {
+		Properties.loadProperties("sandbox");
+		
+		BraintreeGateway gateway = new BraintreeGateway(
+				Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
+				System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
+				System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
+				System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+		);
+		
+		gateway.clientToken().generate();
+		
+		com.braintreegateway.Subscription subscription = gateway.subscription().find("7p5dh6");
+		
+		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
+		try {
+			SQSConnection connection = connectionFactory.createConnection();
+			Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+			Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
+			MessageProducer producer = session.createProducer(queue);
+			
+			TextMessage message = session.createTextMessage(new ObjectMapper().writeValueAsString(subscription));
+			message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", "sandbox");
+			message.setStringProperty("WEBHOOK_NOTIFICATION_KIND", WebhookNotification.Kind.SUBSCRIPTION_CHARGED_SUCCESSFULLY.name());
+			
+			producer.send(message);
+			
+			connection.close();
+			
+		} catch (JMSException | JsonProcessingException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	@Test
+	@Ignore
 	public void testCancelSubscriptionMock() {
 		
 		Properties.loadProperties("sandbox");

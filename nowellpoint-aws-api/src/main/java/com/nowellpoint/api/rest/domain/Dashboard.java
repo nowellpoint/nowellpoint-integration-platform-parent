@@ -1,5 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
+import static com.nowellpoint.util.NumberFormatter.formatFileSize;
+
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +24,8 @@ public class Dashboard extends AbstractResource {
 	
 	private Integer jobs;
 	
+	private String data;
+	
 	private Set<JobStatusAggregation> jobStatusSummary = new HashSet<>();
 	
 	private Set<JobExecution> recentJobExecutions = new HashSet<>();
@@ -36,6 +40,7 @@ public class Dashboard extends AbstractResource {
 	private Dashboard(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
 		this.connectors = salesforceConnectorList.getSize();
 		this.jobs = jobList.getSize();
+		this.data = "0 Bytes";
 		
 		if (jobList.getSize() > 0) {
 			
@@ -47,16 +52,29 @@ public class Dashboard extends AbstractResource {
 					.entrySet()
 					.stream()
 					.sorted(Comparator.comparing(e -> e.getKey()))
-					.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue())).collect(Collectors.toSet());
+					.map(e -> JobStatusAggregation.of(e.getKey(), e.getValue()))
+					.collect(Collectors.toSet());
 			
-			this.recentJobExecutions = jobList.getItems().stream()
-				     .map(result -> result.getJobExecutions())
-				     .flatMap(Set::stream)
-				     .collect(Collectors.toSet())
-				     .stream()
-				     .sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
-				     .limit(10)
-				     .collect(Collectors.toSet());	
+			this.recentJobExecutions = jobList.getItems()
+					.stream()
+					.map(e -> e.getJobExecutions())
+					.flatMap(Set::stream)
+					.collect(Collectors.toSet())
+					.stream()
+					.sorted( (e1,e2) -> e2.getFireTime().compareTo(e1.getFireTime()))
+				    .limit(10)
+				    .collect(Collectors.toSet());	
+			
+			long space = jobList.getItems()
+					.stream()
+					.map(e -> e.getJobOutputs())
+					.flatMap(Set::stream)
+					.collect(Collectors.toSet())
+					.stream()
+					.mapToLong(o -> o.getFilesize())
+					.sum();
+			
+			this.data = formatFileSize(space);
 		}
 		
 		this.lastRefreshedOn = Date.from(Instant.now());
@@ -128,6 +146,14 @@ public class Dashboard extends AbstractResource {
 
 	public void setRecentJobExecutions(Set<JobExecution> recentJobExecutions) {
 		this.recentJobExecutions = recentJobExecutions;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 
 	public Date getLastRefreshedOn() {

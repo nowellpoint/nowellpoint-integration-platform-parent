@@ -4,7 +4,7 @@
 	<groupId>com.nowellpoint</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>
@@ -46,7 +46,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.aws.sdk>1.11.149</version.aws.sdk>
+		<version.aws.sdk>1.11.158</version.aws.sdk>
 		<jackson.version>2.8.5</jackson.version>
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>
@@ -54,6 +54,7 @@
 		<aws.dynamodb.encryption.version>1.11.0</aws.dynamodb.encryption.version>
 		<jedis.version>2.8.1</jedis.version>
 		<version.force.api>39.0.0</version.force.api>
+		<version.okta.sdk>0.6.0</version.okta.sdk>
 		<version.stormpath.sdk>1.2.3</version.stormpath.sdk>
 		<version.braintree.sdk>2.71.0</version.braintree.sdk>
 		<version.sendgrid.java>3.1.0</version.sendgrid.java>

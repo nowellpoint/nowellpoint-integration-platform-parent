@@ -5,11 +5,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nowellpoint.client.Environment;
+import com.nowellpoint.client.ClientCredentialsAuthenticator;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
-import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
-import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.model.CreateResult;
@@ -26,16 +24,7 @@ public class TestAccountProfile {
 	
 	@BeforeClass
 	public static void authenticate() {
-		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
-				.setEnvironment(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")))
-				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
-				.setApiKeySecret(System.getenv("STORMPATH_API_KEY_SECRET"))
-				.build();
-		
-		OauthAuthenticationResponse response = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR
-				.authenticate(request);
-		
-		token = response.getToken();
+		token = new ClientCredentialsAuthenticator().authenticate();
 	}
 	
 	@Test

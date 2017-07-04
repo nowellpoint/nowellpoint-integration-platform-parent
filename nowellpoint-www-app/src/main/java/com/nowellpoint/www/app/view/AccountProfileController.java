@@ -1,5 +1,6 @@
 package com.nowellpoint.www.app.view;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
@@ -196,6 +198,41 @@ public class AccountProfileController extends AbstractStaticController {
 		model.put("plan", plan);
 			
 		return render(AccountProfileController.class, configuration, request, response, model, Template.ACCOUNT_PROFILE_PLANS);	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String downloadInvoice(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String invoiceNumber = request.params(":invoiceNumber");
+		
+		try {
+			byte[] data = NowellpointClient.defaultClient(token)
+					.accountProfile()
+					.downloadInvoice(id, invoiceNumber);
+			
+			System.out.println(data.length);
+			
+			HttpServletResponse httpServletResponse = response.raw();
+	        httpServletResponse.setContentType("application/pdf");
+	        httpServletResponse.addHeader("Content-Disposition", "inline; filename=mypdf.pdf");
+	        httpServletResponse.getOutputStream().write(data);
+	        httpServletResponse.getOutputStream().close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "";
 	}
 	
 	/**

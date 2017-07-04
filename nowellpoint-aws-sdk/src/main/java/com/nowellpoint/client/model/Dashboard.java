@@ -13,6 +13,8 @@ public class Dashboard extends AbstractResource {
 	
 	private List<JobExecution> recentJobExecutions;
 	
+	private String data;
+	
 	private Date lastRefreshedOn;
 	
 	private Dashboard() {
@@ -49,6 +51,14 @@ public class Dashboard extends AbstractResource {
 
 	public void setRecentJobExecutions(List<JobExecution> recentJobExecutions) {
 		this.recentJobExecutions = recentJobExecutions;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 
 	public Date getLastRefreshedOn() {

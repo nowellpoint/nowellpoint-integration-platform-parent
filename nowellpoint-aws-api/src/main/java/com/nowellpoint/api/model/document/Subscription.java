@@ -46,6 +46,10 @@ public class Subscription implements Serializable {
 	
 	private Date nextBillingDate;
 	
+	private Date billingPeriodStartDate;
+	
+	private Date billingPeriodEndDate;
+	
 	private Date addedOn;
 	
 	private Date updatedOn;
@@ -148,5 +152,21 @@ public class Subscription implements Serializable {
 
 	public void setNextBillingDate(Date nextBillingDate) {
 		this.nextBillingDate = nextBillingDate;
+	}
+
+	public Date getBillingPeriodStartDate() {
+		return billingPeriodStartDate;
+	}
+
+	public void setBillingPeriodStartDate(Date billingPeriodStartDate) {
+		this.billingPeriodStartDate = billingPeriodStartDate;
+	}
+
+	public Date getBillingPeriodEndDate() {
+		return billingPeriodEndDate;
+	}
+
+	public void setBillingPeriodEndDate(Date billingPeriodEndDate) {
+		this.billingPeriodEndDate = billingPeriodEndDate;
 	}
 }

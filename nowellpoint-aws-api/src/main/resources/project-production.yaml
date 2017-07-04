@@ -8,4 +8,6 @@ swarm:
             generate: true
         port: 5100 
 propertyStore:
-    name: production  
+    name: production
+api:
+    hostname: https://api.nowellpoint.com/rest

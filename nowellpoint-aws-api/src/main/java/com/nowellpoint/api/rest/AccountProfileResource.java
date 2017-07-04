@@ -144,6 +144,11 @@ public interface AccountProfileResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response setPrimary(@PathParam("id") String id, @PathParam("token") String token);
 	
+	@GET
+	@Path("{id}/invoice/{invoiceNumber}")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getInvoice(@PathParam("id") String id, @PathParam("invoiceNumber") String invoiceNumber);
+	
 	@DELETE
 	@Path("{id}/credit-card/{token}")
 	public Response removeCreditCard(@PathParam("id") String id, @PathParam("token") String token);

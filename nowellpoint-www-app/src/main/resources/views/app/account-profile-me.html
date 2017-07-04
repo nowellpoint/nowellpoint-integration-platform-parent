@@ -464,6 +464,7 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
                             $dialog.slideUp('slow').fadeOut();
                             jQuery("#notification").modal('show');
@@ -491,6 +492,7 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
                             $dialog.slideUp('slow').fadeOut();
                             jQuery("#notification").modal('show');
@@ -519,6 +521,7 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
+                        $("#overlay").hide();
                         if (response.status == 200) {
                             $dialog.slideUp('slow').fadeOut();
                             jQuery("#notification").modal('show');

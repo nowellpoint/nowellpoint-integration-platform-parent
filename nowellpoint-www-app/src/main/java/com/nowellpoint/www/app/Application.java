@@ -58,6 +58,7 @@ import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
 
+import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateModelException;
@@ -66,6 +67,8 @@ import spark.Response;
 import spark.servlet.SparkApplication;
 
 public class Application implements SparkApplication {
+	
+	private static final Logger LOG = Logger.getLogger(Application.class.getName());
 	
     public static void main(String[] args) throws Exception {
     	new Application();
@@ -138,6 +141,7 @@ public class Application implements SparkApplication {
 		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.viewAccountProfile(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.reviewPlan(configuration, request, response));
 		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> AccountProfileController.currentPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_INVOICE_DOWNLOAD, (request, response) -> AccountProfileController.downloadInvoice(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.setPlan(configuration, request, response));
         post(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.updateAccountProfile(configuration, request, response));
         get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.confirmDeactivateAccountProfile(configuration, request, response));
@@ -237,24 +241,25 @@ public class Application implements SparkApplication {
         //
         
         exception(ServiceUnavailableException.class, (exception, request, response) -> {
-        	exception.printStackTrace();
+        	LOG.error(ServiceUnavailableException.class.getName(), exception);
         	response.status(Status.SERVICE_UNAVAILABLE);
         	response.body(exception.getMessage());
         });
         
         exception(BadRequestException.class, (exception, request, response) -> {
-        	exception.printStackTrace();
+        	LOG.error(BadRequestException.class.getName(), exception);
             response.status(400);
             response.body(exception.getMessage());
         });
         
         exception(NotFoundException.class, (exception, request, response) -> {
-        	exception.printStackTrace();
+        	LOG.error(NotFoundException.class.getName(), exception);
             response.status(404);
             response.body(exception.getMessage());
         });
         
         exception(InternalServerErrorException.class, (exception, request, response) -> {
+        	LOG.error(InternalServerErrorException.class.getName(), exception);
   
         	Map<String, Object> model = new HashMap<>();
         	model.put("errorMessage", exception.getMessage());
@@ -274,10 +279,31 @@ public class Application implements SparkApplication {
         });
         
         exception(Exception.class, (exception, request, response) -> {
-        	exception.printStackTrace();
+        	LOG.error(Exception.class.getName(), exception);
         	response.status(500);
-            response.body(exception.getMessage());
+            response.body(generateExceptionPage(configuration, exception.getMessage()));
         });
+	}
+	
+	private static String generateExceptionPage(Configuration configuration, String errorMessage) {
+		Map<String, Object> model = new HashMap<>();
+    	model.put("errorMessage", errorMessage);
+       
+		String page = null;
+		
+		Writer output = new StringWriter();
+		try {
+			Template template = configuration.getTemplate("error.html");
+			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
+			environment.process();
+			page = output.toString();
+        	output.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+			halt();
+		}
+		
+		return page;
 	}
 	
 	/**

@@ -14,3 +14,5 @@ swarm:
           port: 5993    
 propertyStore: 
     name: sandbox
+api:
+    hostname: https://localhost:5000/rest   

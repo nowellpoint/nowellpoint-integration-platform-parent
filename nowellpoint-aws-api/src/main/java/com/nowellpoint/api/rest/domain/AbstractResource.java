@@ -23,7 +23,9 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	
 	static {
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PRIVATE); 
+		modelMapper.getConfiguration().setMethodAccessLevel(AccessLevel.PRIVATE);
+		modelMapper.getConfiguration().setFieldMatchingEnabled(true);
+		modelMapper.getConfiguration().setFieldAccessLevel(AccessLevel.PRIVATE);
 		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
 			
 			@Override

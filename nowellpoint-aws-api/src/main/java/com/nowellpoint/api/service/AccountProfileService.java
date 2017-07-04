@@ -38,4 +38,6 @@ public interface AccountProfileService {
 	public void updateCreditCard(String id, String token, CreditCard creditCard);
 
 	public void removeCreditCard(String id, String token);
+	
+	public byte[] getInvoice(String id, String invoiceNumber);
 }
