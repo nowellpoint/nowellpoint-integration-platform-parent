@@ -2,9 +2,18 @@ package com.nowellpoint.braintree.webhook;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import com.amazon.sqs.javamessaging.SQSConnection;
+import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -17,6 +26,8 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Subscription;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.WebhookNotification;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.dynamodb.DynamoDBMapperProvider;
 import com.nowellpoint.dynamodb.model.PaymentGatewayNotification;
 import com.nowellpoint.payables.invoice.InvoiceGenerator;
@@ -157,9 +168,17 @@ public class SubscriptionProcessingService implements RequestHandler<DynamodbEve
     				
     				sendInvoice(request);
     				
+    				if ("sandbox".equalsIgnoreCase(notification.getEnvironment())) {
+    				
+    				String message = createSubscriptionMessage(subscription.getId(), subscription.getStatus().name(), subscription.getNextBillingDate(), transaction);
+    				
+    				publishMessage(notification.getEnvironment(), notification.getWebhookNotificationKind(), message);
+    				
+    				}
+    				
     			} else if (notification.getWebhookNotificationKind().equals(WebhookNotification.Kind.SUBSCRIPTION_WENT_ACTIVE.name())) {
     				
-    				
+
     			}
     			
     			/**
@@ -228,5 +247,63 @@ public class SubscriptionProcessingService implements RequestHandler<DynamodbEve
 	    Response response = sendgrid.api(request);
 	    
 	    logger.log("sendInvoiceMessage: " + response.statusCode + " : " + response.body);	
+	}
+	
+	private String createSubscriptionMessage(String id, String status, Calendar nextBillingDate, Transaction transaction) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		ObjectNode root = objectMapper.createObjectNode()
+				.put("id", id)
+				.put("status", status)
+				.put("nextBillingDate", nextBillingDate.getTimeInMillis());
+		
+		ObjectNode transactionNode = objectMapper.createObjectNode()
+				.put("id", transaction.getId())
+				.put("amount", transaction.getAmount())
+				.put("status", transaction.getStatus().name())
+				.put("currencyIsoCode", transaction.getCurrencyIsoCode())
+				.put("planId", transaction.getPlanId())
+				.put("createdAt", transaction.getCreatedAt().getTimeInMillis())
+				.put("updatedAt", transaction.getUpdatedAt().getTimeInMillis());
+		
+		root.set("transaction", transactionNode);
+		
+		ObjectNode creditCardNode = objectMapper.createObjectNode()
+				.put("token", transaction.getCreditCard().getToken())
+				.put("cardholderName", transaction.getCreditCard().getCardholderName())
+				.put("cardType", transaction.getCreditCard().getCardType())
+				.put("last4", transaction.getCreditCard().getLast4())
+				.put("expirationDate", transaction.getCreditCard().getExpirationDate())
+				.put("expirationMonth", transaction.getCreditCard().getExpirationMonth())
+				.put("expirationYear", transaction.getCreditCard().getExpirationYear())
+				.put("imageUrl", transaction.getCreditCard().getImageUrl());
+		
+		transactionNode.set("creditCard", creditCardNode);
+		
+		return root.toString();	
+	}
+	
+	private void publishMessage(String instance, String kind, String messageText) throws JMSException {
+		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
+		SQSConnection connection = null;
+		try {
+			connection = connectionFactory.createConnection();
+			Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+			Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
+			MessageProducer producer = session.createProducer(queue);
+			
+			TextMessage message = session.createTextMessage(messageText);
+			message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", instance);
+			message.setStringProperty("WEBHOOK_NOTIFICATION_KIND",kind);
+			
+			producer.send(message);
+			
+		} finally {
+			try {
+				connection.close();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
