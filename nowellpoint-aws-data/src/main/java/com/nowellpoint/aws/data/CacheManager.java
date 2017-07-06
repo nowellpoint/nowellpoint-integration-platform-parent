@@ -110,6 +110,21 @@ public class CacheManager implements ServletContextListener {
 	/**
 	 * 
 	 * @param key
+	 * @param value
+	 */
+	
+	public static <T> void set(String key, T value) {
+		Jedis jedis = getCache();
+		try {
+			jedis.set(key.getBytes(), serialize(value));
+		} finally {
+			jedis.close();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param key
 	 * @param values
 	 */
 	

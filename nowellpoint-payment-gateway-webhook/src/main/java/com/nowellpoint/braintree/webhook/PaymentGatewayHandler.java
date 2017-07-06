@@ -68,31 +68,6 @@ public class PaymentGatewayHandler implements RequestStreamHandler {
 			
 			mapper.save(notification);
 		}	
-			
-//			SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
-//			SQSConnection connection = null;
-//			try {
-//				connection = connectionFactory.createConnection();
-//				Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-//				Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
-//				MessageProducer producer = session.createProducer(queue);
-//				
-//				TextMessage message = session.createTextMessage(objectMapper.writeValueAsString(subscription));
-//				message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", node.get("instance").asText());
-//				message.setStringProperty("WEBHOOK_NOTIFICATION_KIND", webhookNotification.getKind().name());
-//				
-//				producer.send(message);
-//				
-//			} catch (JMSException | JsonProcessingException e) {
-//				e.printStackTrace();
-//			} finally {
-//				try {
-//					connection.close();
-//				} catch (JMSException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
 	}
 	
 	private PaymentGatewayNotification initialize(WebhookNotification webhookNotification) {

@@ -21,9 +21,11 @@ import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
+import com.braintreegateway.Transaction;
 import com.braintreegateway.WebhookNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.util.Properties;
 
 public class TestSubscriptionWebhook {
@@ -31,6 +33,7 @@ public class TestSubscriptionWebhook {
 	private static Logger LOG = Logger.getLogger(TestSubscriptionWebhook.class.getName());
 	
 	@Test
+	@Ignore
 	public void testCreateSubscription() {
 		
 		Properties.loadProperties("sandbox");
@@ -92,7 +95,6 @@ public class TestSubscriptionWebhook {
 	}
 	
 	@Test
-	@Ignore
 	public void testChargeSubscriptionMock() {
 		Properties.loadProperties("sandbox");
 		
@@ -105,7 +107,44 @@ public class TestSubscriptionWebhook {
 		
 		gateway.clientToken().generate();
 		
-		com.braintreegateway.Subscription subscription = gateway.subscription().find("7p5dh6");
+		com.braintreegateway.Subscription subscription = gateway.subscription().find("6q6tr2");
+		
+		Transaction transaction = subscription.getTransactions()
+				.stream().sorted((t1,t2) -> t2.getCreatedAt().compareTo(t1.getCreatedAt()))
+				.findFirst()
+				.get();
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		ObjectNode node = objectMapper.createObjectNode()
+				.put("id", subscription.getId())
+				.put("status", subscription.getStatus().name())
+				.put("nextBillingDate", subscription.getNextBillingDate().getTimeInMillis());
+		
+		ObjectNode transactionNode = objectMapper.createObjectNode()
+				.put("id", transaction.getId())
+				.put("amount", transaction.getAmount())
+				.put("status", transaction.getStatus().name())
+				.put("currencyIsoCode", transaction.getCurrencyIsoCode())
+				.put("planId", transaction.getPlanId())
+				.put("createdAt", transaction.getCreatedAt().getTimeInMillis())
+				.put("updatedAt", transaction.getUpdatedAt().getTimeInMillis());
+		
+		node.set("transaction", transactionNode);
+		
+		ObjectNode creditCardNode = objectMapper.createObjectNode()
+				.put("token", transaction.getCreditCard().getToken())
+				.put("cardholderName", transaction.getCreditCard().getCardholderName())
+				.put("cardType", transaction.getCreditCard().getCardType())
+				.put("last4", transaction.getCreditCard().getLast4())
+				.put("expirationDate", transaction.getCreditCard().getExpirationDate())
+				.put("expirationMonth", transaction.getCreditCard().getExpirationMonth())
+				.put("expirationYear", transaction.getCreditCard().getExpirationYear())
+				.put("imageUrl", transaction.getCreditCard().getImageUrl());
+		
+		transactionNode.set("creditCard", creditCardNode);
+		
+		LOG.info(node.toString());
 		
 		SQSConnectionFactory connectionFactory = SQSConnectionFactory.builder().build();
 		try {
@@ -114,7 +153,7 @@ public class TestSubscriptionWebhook {
 			Queue queue = session.createQueue("PAYMENT_GATEWAY_INBOUND");
 			MessageProducer producer = session.createProducer(queue);
 			
-			TextMessage message = session.createTextMessage(new ObjectMapper().writeValueAsString(subscription));
+			TextMessage message = session.createTextMessage(node.toString());
 			message.setStringProperty("WEBHOOK_NOTIFICATION_INSTANCE", "sandbox");
 			message.setStringProperty("WEBHOOK_NOTIFICATION_KIND", WebhookNotification.Kind.SUBSCRIPTION_CHARGED_SUCCESSFULLY.name());
 			
@@ -122,7 +161,7 @@ public class TestSubscriptionWebhook {
 			
 			connection.close();
 			
-		} catch (JMSException | JsonProcessingException e) {
+		} catch (JMSException e) {
 			e.printStackTrace();
 		}		
 	}
