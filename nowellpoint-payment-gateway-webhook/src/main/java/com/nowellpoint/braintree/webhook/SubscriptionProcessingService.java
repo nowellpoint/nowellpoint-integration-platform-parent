@@ -168,13 +168,9 @@ public class SubscriptionProcessingService implements RequestHandler<DynamodbEve
     				
     				sendInvoice(request);
     				
-    				if ("sandbox".equalsIgnoreCase(notification.getEnvironment())) {
-    				
     				String message = createSubscriptionMessage(subscription.getId(), subscription.getStatus().name(), subscription.getNextBillingDate(), transaction);
     				
     				publishMessage(notification.getEnvironment(), notification.getWebhookNotificationKind(), message);
-    				
-    				}
     				
     			} else if (notification.getWebhookNotificationKind().equals(WebhookNotification.Kind.SUBSCRIPTION_WENT_ACTIVE.name())) {
     				
