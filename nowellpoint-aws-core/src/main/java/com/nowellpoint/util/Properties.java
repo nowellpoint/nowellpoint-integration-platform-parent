@@ -34,6 +34,7 @@ public class Properties {
 	public static final String STORMPATH_APPLICATION_ID = "stormpath.application.id";
 	public static final String STORMPATH_DIRECTORY_ID = "stormpath.directory.id";
 	public static final String STORMPATH_GROUP_ID = "stormpath.group.id";
+	public static final String OKTA_API_KEY = "okta.api.key";
 	public static final String SENDGRID_API_KEY = "sendgrid.api.key";
 	public static final String REDIS_PASSWORD = "redis.password";
 	public static final String REDIS_HOST = "redis.host";

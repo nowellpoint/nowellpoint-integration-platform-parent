@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -44,6 +44,16 @@
 			<version>${version.okta.sdk}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-cognitoidp</artifactId>
+            <version>${version.aws.sdk}</version>
+        </dependency>
+		<dependency>
+    <groupId>com.okta</groupId>
+    <artifactId>okta-sdk</artifactId>
+    <version>0.0.4</version>
+</dependency>
 		<dependency>
 			<groupId>com.stormpath.sdk</groupId>
 			<artifactId>stormpath-sdk-api</artifactId>

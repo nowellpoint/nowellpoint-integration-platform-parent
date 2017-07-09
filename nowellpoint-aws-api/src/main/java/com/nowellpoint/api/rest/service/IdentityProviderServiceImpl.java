@@ -14,8 +14,11 @@ import com.stormpath.sdk.account.Accounts;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.application.Application;
-import com.stormpath.sdk.client.Client;
-import com.stormpath.sdk.client.Clients;
+import com.okta.sdk.authc.credentials.ClientCredentials;
+import com.okta.sdk.authc.credentials.TokenClientCredentials;
+import com.okta.sdk.client.Client;
+import com.okta.sdk.client.ClientBuilder;
+import com.okta.sdk.client.Clients;
 import com.stormpath.sdk.directory.Directory;
 import com.stormpath.sdk.oauth.AccessToken;
 import com.stormpath.sdk.oauth.Authenticators;
@@ -54,6 +57,15 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 		
 		directory = client.getResource(System.getProperty(Properties.STORMPATH_API_ENDPOINT).concat("/directories/")
 				.concat(System.getProperty(Properties.STORMPATH_DIRECTORY_ID)), Directory.class);
+		
+		
+		ClientBuilder builder = Clients.builder();
+		
+		ClientCredentials<String> credentials = new TokenClientCredentials(System.getProperty(Properties.OKTA_API_KEY));
+		
+		Client client = builder.setClientCredentials(credentials)
+				.setOrgUrl("")
+				.build();
 	}
 	
 	/**
@@ -64,6 +76,8 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
 	@Override
 	public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey) {
+		
+		
 		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
 				.builder()
 				.setApiKeyId(apiKey.getId())
