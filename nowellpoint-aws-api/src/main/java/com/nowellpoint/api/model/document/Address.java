@@ -43,6 +43,14 @@ public class Address implements Serializable {
 	public Address() {
 		
 	}
+	
+	private Address(String countryCode) {
+		this.countryCode = countryCode;
+	}
+	
+	public static Address of(String countryCode) {
+		return new Address(countryCode);
+	}
 
 	public String getStreet() {
 		return street;

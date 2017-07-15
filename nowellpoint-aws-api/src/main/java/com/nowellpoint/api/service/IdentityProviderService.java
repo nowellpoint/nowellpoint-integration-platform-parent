@@ -1,10 +1,12 @@
 package com.nowellpoint.api.service;
 
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.api.ApiKey;
-import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
+import com.okta.sdk.models.auth.AuthResult;
+import com.okta.sdk.resource.user.User;
 
 public interface IdentityProviderService {
+	
+	
+	public AuthResult authenticate(String username, String password);
 	
 	/**
 	 * 
@@ -12,16 +14,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey);
-	
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @return OAuthGrantRequestAuthenticationResult
-	 */
-	
-	public OAuthGrantRequestAuthenticationResult authenticate(String username, String password);
+	//public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey);
 	
 	/**
 	 * 
@@ -29,7 +22,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken);
+	//public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken);
 	
 	/**
 	 * 
@@ -37,7 +30,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	public String verify(String bearerToken);
+	//public String verify(String bearerToken);
 	
 	/**
 	 * 
@@ -45,7 +38,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	public Account getAccountByHref(String href);
+	public User getUser(String id);
 	
 	/**
 	 * 
@@ -55,7 +48,7 @@ public interface IdentityProviderService {
 	 * @param password
 	 */
 	
-	public Account createAccount(String email, String firstName, String lastName, String password);
+	public User createUser(String email, String firstName, String lastName, String password);
 	
 	/**
 	 * 
@@ -65,30 +58,14 @@ public interface IdentityProviderService {
 	 * @param lastName
 	 */
 	
-	public Account updateAccount(String href, String email, String firstName, String lastName);
-	
-	/**
-	 * 
-	 * @param href
-	 * @param username
-	 */
-	
-	public void updateUsername(String href, String username);
-	
-	/**
-	 * 
-	 * @param href
-	 * @param email
-	 */
-	
-	public void updateEmail(String href, String email);
+	public User updateUser(String id, String email, String firstName, String lastName);
 	
 	/**
 	 * 
 	 * @param href
 	 */
 	
-	public void deactivateAccount(String href);
+	public void deactivateUser(String id);
 	
 	/**
 	 * 
@@ -96,7 +73,14 @@ public interface IdentityProviderService {
 	 * @param password
 	 */
 	
-	public void changePassword(String href, String password);
+	public void changePassword(String id, String password);
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	
+	public void deleteUser(String id);
 	
 	/**
 	 * 
@@ -104,7 +88,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	public Account findByUsername(String username);
+	public User findByUsername(String username);
 	
 	/**
 	 * 
@@ -112,12 +96,4 @@ public interface IdentityProviderService {
 	 */
 	
 	public void revokeToken(String bearerToken);
-	
-	/**
-	 * 
-	 * @param emailVerificationToken
-	 * @return
-	 */
-	
-	public Account verifyEmail(String emailVerificationToken);
 }

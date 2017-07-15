@@ -41,8 +41,6 @@ public class AccountProfile extends AbstractResource {
 
 	private String extension;
 
-	private String fax;
-
 	private String mobilePhone;
 
 	private Boolean isActive;
@@ -61,12 +59,20 @@ public class AccountProfile extends AbstractResource {
 	private Address address;
 	
 	private Subscription subscription;
+	
+	@JsonIgnore
+	private Set<ReferenceLink> referenceLinks;
 
 	@JsonIgnore
 	private String accountHref;
 	
 	@JsonIgnore
 	private String emailVerificationToken;
+	
+	@JsonIgnore
+	private Boolean isPasswordVerified;
+	
+	private Organization organization;
 	
 	private Photos photos;
 	
@@ -94,8 +100,21 @@ public class AccountProfile extends AbstractResource {
 		modelMapper.map(document, this);
 	}
 	
+	private AccountProfile(String firstName, String lastName, String email, String organizationId, String countryCode) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.organization = Organization.of(organizationId);
+		this.address = Address.of(countryCode);
+		this.isPasswordVerified = Boolean.FALSE;
+	}
+
 	public static AccountProfile createAccountProfile() {
 		return new AccountProfile();
+	}
+	
+	public static AccountProfile of(String firstName, String lastName, String email, String organizationId, String countryCode) {
+		return new AccountProfile(firstName, lastName, email, organizationId, countryCode);
 	}
 	
 	public static AccountProfile of(String id) {
@@ -210,14 +229,6 @@ public class AccountProfile extends AbstractResource {
 		this.extension = extension;
 	}
 
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
@@ -290,6 +301,14 @@ public class AccountProfile extends AbstractResource {
 		this.subscription = subscription;
 	}
 
+	public Set<ReferenceLink> getReferenceLinks() {
+		return referenceLinks;
+	}
+
+	public void setReferenceLinks(Set<ReferenceLink> referenceLinks) {
+		this.referenceLinks = referenceLinks;
+	}
+
 	public String getAccountHref() {
 		return accountHref;
 	}
@@ -304,6 +323,22 @@ public class AccountProfile extends AbstractResource {
 
 	public void setEmailVerificationToken(String emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
+	}
+
+	public Boolean getIsPasswordVerified() {
+		return isPasswordVerified;
+	}
+
+	public void setIsPasswordVerified(Boolean isPasswordVerified) {
+		this.isPasswordVerified = isPasswordVerified;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 
 	public Photos getPhotos() {
@@ -371,6 +406,16 @@ public class AccountProfile extends AbstractResource {
 			transactions.remove(transaction);
 		}
 		transactions.add(transaction);
+	}
+	
+	public void addReferenceLink(ReferenceLink referenceLink) {
+		if (referenceLinks == null) {
+			referenceLinks = new HashSet<>();
+		}
+		if (referenceLinks.contains(referenceLink)) {
+			referenceLinks.remove(referenceLink);
+		}
+		referenceLinks.add(referenceLink);
 	}
 	
 	@Override

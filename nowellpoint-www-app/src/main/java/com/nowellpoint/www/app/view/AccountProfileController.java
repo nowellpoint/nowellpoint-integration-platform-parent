@@ -315,7 +315,6 @@ public class AccountProfileController extends AbstractStaticController {
 				.withDepartment(request.queryParams("department"))
 				.withTitle(request.queryParams("title"))
 				.withEmail(request.queryParams("email"))
-				.withFax(request.queryParams("fax"))
 				.withMobilePhone(request.queryParams("mobilePhone"))
 				.withPhone(request.queryParams("phone"))
 				.withExtension(request.queryParams("extension"))

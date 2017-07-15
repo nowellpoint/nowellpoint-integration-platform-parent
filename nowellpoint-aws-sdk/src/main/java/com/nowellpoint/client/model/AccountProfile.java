@@ -31,8 +31,6 @@ public class AccountProfile extends AbstractResource {
 
 	private String extension;
 
-	private String fax;
-
 	private String mobilePhone;
 	
 	private Boolean isActive;
@@ -162,14 +160,6 @@ public class AccountProfile extends AbstractResource {
 
 	public void setExtension(String extension) {
 		this.extension = extension;
-	}
-
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
 	}
 
 	public String getMobilePhone() {
@@ -343,11 +333,6 @@ public class AccountProfile extends AbstractResource {
 	
 	public AccountProfile withExtension(String extension) {
 		setExtension(extension);
-		return this;
-	}
-	
-	public AccountProfile withFax(String fax) {
-		setFax(fax);
 		return this;
 	}
 	

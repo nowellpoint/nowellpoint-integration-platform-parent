@@ -78,12 +78,6 @@ public class AccountProfileRequest extends AbstractResource {
 	 * 
 	 */
 
-	private String fax;
-
-	/**
-	 * 
-	 */
-
 	private String mobilePhone;
 
 	/**
@@ -265,14 +259,6 @@ public class AccountProfileRequest extends AbstractResource {
 		this.extension = extension;
 	}
 
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
@@ -436,11 +422,6 @@ public class AccountProfileRequest extends AbstractResource {
 	
 	public AccountProfileRequest withExtension(String extension) {
 		setExtension(extension);
-		return this;
-	}
-	
-	public AccountProfileRequest withFax(String fax) {
-		setFax(fax);
 		return this;
 	}
 	

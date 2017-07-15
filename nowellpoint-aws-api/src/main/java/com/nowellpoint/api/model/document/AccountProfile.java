@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
@@ -82,6 +83,9 @@ public class AccountProfile extends MongoDocument {
 	
 	@EmbedOne
 	private Address address;
+	
+	@EmbedMany
+	private Set<ReferenceLink> referenceLinks;
 
 	private String accountHref;
 	
@@ -100,6 +104,10 @@ public class AccountProfile extends MongoDocument {
 	private Boolean hasFullAccess;
 	
 	private String emailVerificationToken;
+	
+	private Boolean isPasswordVerified;
+	
+	private Organization organization;
 	
 	private Boolean enableSalesforceLogin;
 	
@@ -291,6 +299,14 @@ public class AccountProfile extends MongoDocument {
 		this.address = address;
 	}
 
+	public Set<ReferenceLink> getReferenceLinks() {
+		return referenceLinks;
+	}
+
+	public void setReferenceLinks(Set<ReferenceLink> referenceLinks) {
+		this.referenceLinks = referenceLinks;
+	}
+
 	public String getAccountHref() {
 		return accountHref;
 	}
@@ -355,6 +371,22 @@ public class AccountProfile extends MongoDocument {
 		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 	
+	public Boolean getIsPasswordVerified() {
+		return isPasswordVerified;
+	}
+
+	public void setIsPasswordVerified(Boolean isPasswordVerified) {
+		this.isPasswordVerified = isPasswordVerified;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
+	}
+
 	public void addTransaction(Transaction transaction) {
 		transactions.add(transaction);
 	}

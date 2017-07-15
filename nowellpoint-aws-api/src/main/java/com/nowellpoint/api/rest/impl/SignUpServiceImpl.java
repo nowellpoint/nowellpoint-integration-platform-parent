@@ -34,16 +34,19 @@ import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.resource.ResourceException;
+import com.nowellpoint.util.Assert;
+import com.okta.sdk.resource.ResourceException;
+import com.okta.sdk.resource.user.User;
 
 public class SignUpServiceImpl implements SignUpService {
 	
@@ -63,6 +66,9 @@ public class SignUpServiceImpl implements SignUpService {
 	
 	@Inject
 	private PlanService planService;
+	
+	@Inject
+	private OrganizationService organizationService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -115,17 +121,17 @@ public class SignUpServiceImpl implements SignUpService {
 			
 		} catch (DocumentNotFoundException e) {
 			
-			Account account = identityProviderService.findByUsername(email);
+			User user = identityProviderService.findByUsername(email);
 			
-			if (isNotNull(account)) {
-				account.delete();
+			if (isNotNull(user)) {
+				user.delete();
 			} 
 			
-			account = identityProviderService.createAccount(email, firstName, lastName, password);
+			user = identityProviderService.createUser(email, firstName, lastName, password);
 					
 			accountProfile = AccountProfile.createAccountProfile();
-			accountProfile.setAccountHref(account.getHref());
-			accountProfile.setEmailVerificationToken(account.getEmailVerificationToken().getValue());
+			accountProfile.setAccountHref(user.getResourceHref());
+			//accountProfile.setEmailVerificationToken(user..getEmailVerificationToken().getValue());
 			accountProfile.setFirstName(firstName);
 			accountProfile.setLastName(lastName);
 			accountProfile.setEmail(email);
@@ -340,24 +346,76 @@ public class SignUpServiceImpl implements SignUpService {
 		return Response.ok(response)
 				.build();
 	}
+    
+    public Response signUp(
+    		String firstName,
+    		String lastName,
+    		String email,
+    		String domain,
+    		String countryCode) {
+    	
+    	if (Assert.isNullOrEmpty(domain)) {
+    		Error error = new Error(1000, "Domain cannot be empty or null");
+			ResponseBuilder builder = Response.status(Status.CONFLICT);
+			builder.entity(error);
+			throw new WebApplicationException(builder.build());
+    	}
+    	
+    	Organization organization = null;
+    	
+    	try {
+    		organization = organizationService.findByDomain(domain);
+    	} catch (DocumentNotFoundException e) {
+    		organization = Organization.createOrganization(domain);
+    	}
+    	
+    	AccountProfile accountProfile = null;
+		
+		try {
+			
+			accountProfile = accountProfileServiceImpl.findByUsername(email);
+			
+			if (accountProfile.getIsActive()) {
+				Error error = new Error(1000, "Account for email is already enabled");
+				ResponseBuilder builder = Response.status(Status.CONFLICT);
+				builder.entity(error);
+				throw new WebApplicationException(builder.build());
+			}
+			
+		} catch (DocumentNotFoundException e) {
+			
+			accountProfile = AccountProfile.of(firstName, lastName, email, organization.getId(), countryCode);
+			
+			
+		}
+		
+		// send email verification link
+    	
+    	return Response.ok(accountProfile)
+				.build();
+    }
+    
+    public Response setPassword(String password, String confirmPassword) {
+    	return Response.ok().build();
+    }
 	
 	public Response verifyEmail(String emailVerificationToken) {
 		
-		Account account = null;
+		User user = null;
 		
 		try {
-			account = identityProviderService.verifyEmail(emailVerificationToken);
+			user = null; //identityProviderService.verifyEmail(emailVerificationToken);
 		} catch (ResourceException e) {
-			Error error = new Error(e.getCode(), e.getDeveloperMessage());
+			Error error = new Error(e.getCode(), e.getMessage());
 			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByAccountHref(account.getHref()));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByAccountHref(user.getResourceHref()));
 		
 		if (! query.isPresent()) {
-			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", account.getHref()));
+			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", user.getResourceHref()));
 			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());

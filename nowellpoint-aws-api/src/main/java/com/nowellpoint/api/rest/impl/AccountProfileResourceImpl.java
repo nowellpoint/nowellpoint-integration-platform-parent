@@ -178,7 +178,6 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		accountProfile.setCompany(company);
 		accountProfile.setDivision(division);
 		accountProfile.setDepartment(department);
-		accountProfile.setFax(fax);
 		accountProfile.setTitle(title);
 		accountProfile.setMobilePhone(mobilePhone);
 		accountProfile.setPhone(phone);

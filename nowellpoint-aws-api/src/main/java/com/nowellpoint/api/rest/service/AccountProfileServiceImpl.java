@@ -160,7 +160,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setCreditCards(null);
 		
 		if (isNotNull(accountProfile.getAccountHref())) {
-			identityProviderService.deactivateAccount(accountProfile.getAccountHref());
+			identityProviderService.deactivateUser(accountProfile.getAccountHref());
 		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {
@@ -242,12 +242,6 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			accountProfile.setTitle(original.getTitle());
 		} else if (isEmpty(accountProfile.getTitle())) {
 			accountProfile.setTitle(null);
-		}
-		
-		if (isNull(accountProfile.getFax())) {
-			accountProfile.setFax(original.getFax());
-		} else if (isEmpty(accountProfile.getFax())) {
-			accountProfile.setFax(null);
 		}
 		
 		if (isNull(accountProfile.getMobilePhone())) {
@@ -347,7 +341,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 					Assert.isNotEqual(accountProfile.getFirstName(), original.getFirstName()) ||
 					Assert.isNotEqual(accountProfile.getLastName(), original.getLastName())) {
 				
-				identityProviderService.updateAccount(
+				identityProviderService.updateUser(
 						accountProfile.getAccountHref(), 
 						accountProfile.getEmail(), 
 						accountProfile.getFirstName(), 

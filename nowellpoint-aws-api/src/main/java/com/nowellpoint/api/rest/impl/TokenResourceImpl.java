@@ -23,6 +23,7 @@ import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.util.Properties;
+import com.okta.sdk.models.auth.AuthResult;
 import com.stormpath.sdk.api.ApiKey;
 import com.stormpath.sdk.api.ApiKeys;
 import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
@@ -80,19 +81,14 @@ public class TokenResourceImpl implements TokenResource {
 			throw new AuthenticationException("invalid_request", "Parameters missing from the request, valid parameters are Base64 encoded: username:password or client_id:client_secret");
 		}
 		
-		OAuthGrantRequestAuthenticationResult result = null;
+		AuthResult result = null;
 		
 		//
 		// call the identity service provider to authenticate
 		//
 		
 		if (CLIENT_CREDENTIALS.equals(grantType)) {
-			ApiKey apiKey = ApiKeys.builder()
-					.setId(params[0])
-					.setSecret(params[1])
-					.build();
 			
-			result = identityProviderService.authenticate(apiKey);
 		} else if (PASSWORD.equals(grantType)) {
 			result = identityProviderService.authenticate(params[0], params[1]);
 		} else {
@@ -109,7 +105,7 @@ public class TokenResourceImpl implements TokenResource {
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findByAccountHref(result.getAccessToken().getAccount().getHref());
+		AccountProfile accountProfile = accountProfileService.findByAccountHref(result.get);
 
 		//
 		// create the token
@@ -180,12 +176,8 @@ public class TokenResourceImpl implements TokenResource {
 	 * @return authentication token
 	 */
 	
-	private Token createToken(OAuthGrantRequestAuthenticationResult result, String subject) {
-		
-		Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-				.parseClaimsJws(result.getAccessToken().getJwt()); 
-		
+	private Token createToken(AuthResult result, String subject) {
+				
 		Set<String> groups = new HashSet<String>();
 		result.getAccessToken().getAccount().getGroups().forEach(g -> 
 			groups.add(g.getName())
@@ -212,7 +204,7 @@ public class TokenResourceImpl implements TokenResource {
 		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
 		token.setId(uri.toString());
 		token.setAccessToken(jwt);
-		token.setExpiresIn(result.getExpiresIn());
+		token.setExpiresIn(result.getExpiresAt().getMillis());
 		token.setRefreshToken(result.getRefreshTokenString());
 		token.setTokenType(result.getTokenType());
         

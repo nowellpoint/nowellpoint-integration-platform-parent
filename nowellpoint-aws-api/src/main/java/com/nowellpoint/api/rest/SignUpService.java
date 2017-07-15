@@ -47,4 +47,24 @@ public interface SignUpService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken);
 	
+	
+	@PermitAll
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+    public Response signUp(
+    		@FormParam("firstName") String firstName,
+    		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
+    		@FormParam("email") @Email String email,
+    		@FormParam("domain") String domain,
+    		@FormParam("countryCode") @NotEmpty String countryCode);
+	
+	@PermitAll
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+    public Response setPassword(
+    		@FormParam("password") String password, 
+    		@FormParam("confirmPassword") String confirmPassword);
+	
 }

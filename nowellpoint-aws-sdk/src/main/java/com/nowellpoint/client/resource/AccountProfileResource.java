@@ -147,7 +147,6 @@ public class AccountProfileResource extends AbstractResource {
 				.parameter("department", accountProfileRequest.getDepartment())
 				.parameter("title", accountProfileRequest.getTitle())
 				.parameter("email", accountProfileRequest.getEmail())
-				.parameter("fax", accountProfileRequest.getFax())
 				.parameter("mobilePhone", accountProfileRequest.getMobilePhone())
 				.parameter("phone", accountProfileRequest.getPhone())
 				.parameter("extension", accountProfileRequest.getExtension())

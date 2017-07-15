@@ -55,26 +55,6 @@
     <version>0.0.4</version>
 </dependency>
 		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-api</artifactId>
-			<version>${version.stormpath.sdk}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-impl</artifactId>
-			<version>${version.stormpath.sdk}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-httpclient</artifactId>
-			<version>${version.stormpath.sdk}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-oauth</artifactId>
-			<version>${version.stormpath.sdk}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.11</version>
