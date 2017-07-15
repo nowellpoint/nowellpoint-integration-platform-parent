@@ -1,5 +1,7 @@
 package com.nowellpoint.okta;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 
 import org.junit.BeforeClass;
@@ -81,10 +83,7 @@ public class TestOktaAuthentication {
 			AuthApiClient authApiClient = new AuthApiClient(config);		
 			AuthResult result = authApiClient.authenticate("nowellpoint@mailinator.com", "MuwKNl26k0Ee", null);
 			
-			ObjectMapper mapper = new ObjectMapper();
-			
-			System.out.println(result.getSessionToken());
-			System.out.println(mapper.writeValueAsString(result.getEmbedded()));
+			assertNotNull(result.getSessionToken());
 			
 			passwordCredential = client.instantiate(PasswordCredential.class)
 					.setValue("MuwKNl26k0Ed");
@@ -105,6 +104,9 @@ public class TestOktaAuthentication {
 		} catch (ResourceException e) {
 			System.out.println(e.getOktaError().getCode());
 			System.out.println(e.getOktaError().getMessage());
+			System.out.println(e.getOktaError().getStatus());
+			System.out.println(e.getCode());
+			System.out.println(e.getId());
 			e.getOktaError().getCauses().forEach(error -> {
 				System.out.println(error.getSummary());
 			});
