@@ -412,7 +412,7 @@ public class SignUpServiceImpl implements SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByAccountHref(user.getResourceHref()));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByIdpId(user.getResourceHref()));
 		
 		if (! query.isPresent()) {
 			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", user.getResourceHref()));

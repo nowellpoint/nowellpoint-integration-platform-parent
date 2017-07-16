@@ -23,7 +23,7 @@ public interface AccountProfileService {
 	
 	public AccountProfile findById(String id);
 	
-	public AccountProfile findByAccountHref(String accountHref);
+	public AccountProfile findByIdpId(String accountHref);
 	
 	public AccountProfile findByUsername(String username);
 	

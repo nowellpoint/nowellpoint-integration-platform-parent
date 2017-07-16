@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Locale;
 
+import org.jboss.logging.Logger;
+
 import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.util.MessageProvider;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.util.Properties;
 import com.okta.sdk.authc.credentials.ClientCredentials;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
@@ -29,6 +34,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
 public class IdentityProviderServiceImpl implements IdentityProviderService {
+	
+	private static final Logger LOG = Logger.getLogger(IdentityProviderService.class);
 	
 	private static Client client;
 	
@@ -81,6 +88,19 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
 	@Override
 	public AuthResult authenticate(String username, String password) {	
+		
+		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("token")
+				.parameter("grant_type", "password")
+				.parameter("username", username)
+				.parameter("password", password)
+				.parameter("scope", "offline_access")
+				.execute();
+		
 		
 		ApiClientConfiguration config = new ApiClientConfiguration(System.getProperty(Properties.OKTA_ORG_URL), System.getProperty(Properties.OKTA_API_KEY));
 		AuthApiClient authApiClient = new AuthApiClient(config);
@@ -252,7 +272,17 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	 */
 	
 	@Override
-	public void revokeToken(String bearerToken) {		
+	public void revokeToken(String bearerToken) {
+		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("revoke")
+				.parameter("token", bearerToken)
+				.parameter("token_type_hint", "access_token")
+				.execute();
 		
+		LOG.info("Revoke Token: " + httpResponse.getStatusCode());
 	}
 }

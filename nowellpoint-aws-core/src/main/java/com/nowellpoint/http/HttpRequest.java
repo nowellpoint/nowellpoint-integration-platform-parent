@@ -162,10 +162,8 @@ public abstract class HttpRequest {
 			sb.append(path);
 		}
 		
-		URIBuilder builder = new URIBuilder()
-				.setPath(sb.toString())
-				.addParameters(queryParameters);
-		
+		URIBuilder builder = new URIBuilder(sb.toString()).addParameters(queryParameters);
+
 		return builder.build();
 	}
 	
@@ -189,7 +187,7 @@ public abstract class HttpRequest {
 		
 		public HttpResponseImpl() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 			
-			URI uri = buildTarget();
+			URI target = buildTarget();
 			
 			SSLContextBuilder builder = new SSLContextBuilder();
 		    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
@@ -199,10 +197,10 @@ public abstract class HttpRequest {
 			
 			CloseableHttpResponse httpResponse = null;
 			
-			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));
+			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, target.getPath()));
 			
 			if (HttpMethod.POST.equals(httpMethod)) {
-				HttpPost post = new HttpPost(uri);
+				HttpPost post = new HttpPost(target);
 				post.setHeaders(addHeaders());
 				if (Optional.ofNullable(post.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
 					HttpEntity entity = addBody(post.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
@@ -210,7 +208,7 @@ public abstract class HttpRequest {
 				}
 		        httpResponse = httpClient.execute(post);
 			} else if (HttpMethod.PUT.equals(httpMethod)) {
-				HttpPut put = new HttpPut(uri);
+				HttpPut put = new HttpPut(target);
 				put.setHeaders(addHeaders());
 				if (! Optional.ofNullable(put.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
 					throw new IOException("Missing content type header");
@@ -219,11 +217,11 @@ public abstract class HttpRequest {
 		        put.setEntity(entity);
 		        httpResponse = httpClient.execute(put);
 			} else if (HttpMethod.GET.equals(httpMethod)) {
-				HttpGet get = new HttpGet(uri);
+				HttpGet get = new HttpGet(target);
 				get.setHeaders(addHeaders());
 		        httpResponse = httpClient.execute(get);
 			} else if (HttpMethod.DELETE.equals(httpMethod)) {
-				HttpDelete delete = new HttpDelete(uri);
+				HttpDelete delete = new HttpDelete(target);
 				delete.setHeaders(addHeaders());
 		        httpResponse = httpClient.execute(delete);
 			} else {
@@ -232,7 +230,7 @@ public abstract class HttpRequest {
 			}
 			
 			statusCode = httpResponse.getStatusLine().getStatusCode();
-			url = uri.toURL();
+			url = target.toURL();
 			
 			if (httpResponse.getEntity() != null) {
 				entity = httpResponse.getEntity().getContent();

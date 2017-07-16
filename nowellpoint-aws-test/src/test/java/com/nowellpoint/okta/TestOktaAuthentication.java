@@ -1,13 +1,16 @@
 package com.nowellpoint.okta;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.okta.sdk.authc.credentials.ClientCredentials;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
@@ -20,7 +23,6 @@ import com.okta.sdk.resource.ResourceException;
 import com.okta.sdk.resource.group.Group;
 import com.okta.sdk.resource.group.GroupProfile;
 import com.okta.sdk.resource.user.PasswordCredential;
-import com.okta.sdk.resource.user.Role;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserCredentials;
 import com.okta.sdk.resource.user.UserProfile;
@@ -46,6 +48,42 @@ public class TestOktaAuthentication {
 	}
 	
 	@Test
+	public void testAuthenticate() {
+		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
+				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("token")
+				.parameter("grant_type", "password")
+				.parameter("username", System.getenv("NOWELLPOINT_USERNAME"))
+				.parameter("password", System.getenv("NOWELLPOINT_PASSWORD"))
+				.parameter("scope", "offline_access")
+				.execute();
+		
+		Token token = httpResponse.getEntity(Token.class);
+		
+		assertNotNull(token.getAccessToken());
+		assertNotNull(token.getExpiresIn());
+		assertNotNull(token.getRefreshToken());
+		assertNotNull(token.getScope());
+		assertNotNull(token.getTokenType());
+		
+		httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
+				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("revoke")
+				.parameter("token", token.getAccessToken())
+				.parameter("token_type_hint", "access_token")
+				.execute();
+		
+		assertEquals(httpResponse.getStatusCode(), 200);
+		
+	}
+	
+	//@Test
 	public void testCreateUser() {
 		
 		try {

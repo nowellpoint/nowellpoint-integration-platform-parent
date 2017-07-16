@@ -513,8 +513,8 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	 */
 	
 	@Override
-	public AccountProfile findByAccountHref(String accountHref) {
-		return super.findByAccountHref(accountHref);
+	public AccountProfile findByIdpId(String idpId) {
+		return super.findByIdpId(idpId);
 	}
 	
 	/**

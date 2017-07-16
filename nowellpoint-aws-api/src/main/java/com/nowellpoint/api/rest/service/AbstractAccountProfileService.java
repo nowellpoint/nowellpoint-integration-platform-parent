@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.service;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.elemMatch;
 
 import javax.inject.Inject;
 
@@ -31,14 +32,14 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
 		accountProfile.fromDocument(document);
-		set(accountProfile.getId(), document);
+		set( accountProfile.getId(), document );
 	}
 	
 	protected void delete(AccountProfile accountProfile) {
 		MongoDocument document = accountProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.deleteOne(document);
-		del(accountProfile.getId());
+		documentManager.deleteOne( document );
+		del( accountProfile.getId() );
 	}
 	
 	protected AccountProfile findById(String id) {
@@ -52,9 +53,9 @@ abstract class AbstractAccountProfileService extends AbstractCacheService {
 		return accountProfile;
 	}
 	
-	protected AccountProfile findByAccountHref(String accountHref) {
+	protected AccountProfile findByIdpId(String idpId) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, eq ( "accountHref", accountHref ) );
+		com.nowellpoint.api.model.document.AccountProfile document = documentManager.findOne(com.nowellpoint.api.model.document.AccountProfile.class, elemMatch ( "referenceLinks", eq ( "name", idpId )));
 		AccountProfile accountProfile = AccountProfile.of( document );
 		return accountProfile;
 	}

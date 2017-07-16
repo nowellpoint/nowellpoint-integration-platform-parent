@@ -88,11 +88,11 @@ public class TokenResourceImpl implements TokenResource {
 		//
 		
 		if (CLIENT_CREDENTIALS.equals(grantType)) {
-			
+			throw new AuthenticationException("invalid_grant", "Invalid Grant Type: client_credentials is not supported.");
 		} else if (PASSWORD.equals(grantType)) {
 			result = identityProviderService.authenticate(params[0], params[1]);
 		} else {
-			throw new AuthenticationException("invalid_grant", "Please provide a valid grant_type, supported types are : client_credentials, password, refresh_token.");
+			throw new AuthenticationException("invalid_grant", String.format("Invalid Grant Type: %d. Please provide a valid grant_type, supported types are : client_credentials, password, refresh_token.", grantType));
 		}
 
 		//
@@ -105,7 +105,7 @@ public class TokenResourceImpl implements TokenResource {
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findByAccountHref(result.get);
+		AccountProfile accountProfile = accountProfileService.findById(result.getSessionToken());
 
 		//
 		// create the token
@@ -179,6 +179,7 @@ public class TokenResourceImpl implements TokenResource {
 	private Token createToken(AuthResult result, String subject) {
 				
 		Set<String> groups = new HashSet<String>();
+		
 		result.getAccessToken().getAccount().getGroups().forEach(g -> 
 			groups.add(g.getName())
         );

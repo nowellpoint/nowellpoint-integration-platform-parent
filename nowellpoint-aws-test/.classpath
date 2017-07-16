@@ -40,17 +40,10 @@
   <classpathentry kind="var" path="M2_REPO/com/okta/okta-sdk/0.0.4/okta-sdk-0.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.5.0/jackson-datatype-joda-2.5.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/google/guava/guava/18.0/guava-18.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-api/1.2.3/stormpath-sdk-api-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-impl/1.2.3/stormpath-sdk-impl-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-httpclient/1.2.3/stormpath-sdk-httpclient-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/stormpath/sdk/stormpath-sdk-oauth/1.2.3/stormpath-sdk-oauth-1.2.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.authzserver/1.0.2/org.apache.oltu.oauth2.authzserver-1.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.common/1.0.2/org.apache.oltu.oauth2.common-1.0.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/oltu/oauth2/org.apache.oltu.oauth2.resourceserver/1.0.2/org.apache.oltu.oauth2.resourceserver-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/itextpdf/itextpdf/5.5.11/itextpdf-5.5.11.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.71.0/braintree-java-2.71.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sdk"/>
   <classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.4.6/builder-2.4.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.4.6/value-fixture-2.4.6.jar"/>
