@@ -48,7 +48,7 @@ public class UserContext {
 	
 	private static Jws<Claims> parseClaims(String accessToken) {
 		Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
+				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.OKTA_CLIENT_SECRET).getBytes()))
 				.parseClaimsJws(accessToken); 
 		
 		return claims;

@@ -2,8 +2,6 @@ package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
 import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -15,6 +13,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.nowellpoint.api.idp.TokenResponse;
+import com.nowellpoint.api.idp.TokenVerificationResponse;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
@@ -22,16 +22,6 @@ import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.util.Properties;
-import com.okta.sdk.models.auth.AuthResult;
-import com.stormpath.sdk.api.ApiKey;
-import com.stormpath.sdk.api.ApiKeys;
-import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 public class TokenResourceImpl implements TokenResource {
 	
@@ -81,7 +71,7 @@ public class TokenResourceImpl implements TokenResource {
 			throw new AuthenticationException("invalid_request", "Parameters missing from the request, valid parameters are Base64 encoded: username:password or client_id:client_secret");
 		}
 		
-		AuthResult result = null;
+		TokenResponse result = null;
 		
 		//
 		// call the identity service provider to authenticate
@@ -102,10 +92,16 @@ public class TokenResourceImpl implements TokenResource {
 		params = null;
 		
 		//
+		// 
+		//
+		
+		TokenVerificationResponse verification = identityProviderService.verify(result.getAccessToken());
+		
+		//
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findById(result.getSessionToken());
+		AccountProfile accountProfile = accountProfileService.findByIdpId(verification.getUserId());
 
 		//
 		// create the token
@@ -176,25 +172,7 @@ public class TokenResourceImpl implements TokenResource {
 	 * @return authentication token
 	 */
 	
-	private Token createToken(AuthResult result, String subject) {
-				
-		Set<String> groups = new HashSet<String>();
-		
-		result.getAccessToken().getAccount().getGroups().forEach(g -> 
-			groups.add(g.getName())
-        );
-		
-		String jwt = Jwts.builder()
-        		.setId(claims.getBody().getId())
-        		.setHeaderParam("typ", "JWT")
-        		.setIssuer(claims.getBody().getIssuer())
-        		.setAudience(uriInfo.getBaseUri().toString())
-        		.setSubject(subject)
-        		.setIssuedAt(claims.getBody().getIssuedAt())
-        		.setExpiration(claims.getBody().getExpiration())
-        		.signWith(SignatureAlgorithm.HS512, Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-        		.claim("scope", groups.toArray(new String[groups.size()]))
-        		.compact();	 
+	private Token createToken(TokenResponse tokenResponse, String subject) {
 				
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(IdentityResource.class)
@@ -204,10 +182,10 @@ public class TokenResourceImpl implements TokenResource {
 		Token token = new Token();
 		token.setEnvironmentUrl(uriInfo.getBaseUri().toString());
 		token.setId(uri.toString());
-		token.setAccessToken(jwt);
-		token.setExpiresIn(result.getExpiresAt().getMillis());
-		token.setRefreshToken(result.getRefreshTokenString());
-		token.setTokenType(result.getTokenType());
+		token.setAccessToken(tokenResponse.getAccessToken());
+		token.setExpiresIn(tokenResponse.getExpiresIn());
+		token.setRefreshToken(tokenResponse.getRefreshToken());
+		token.setTokenType(tokenResponse.getTokenType());
         
         return token;
 	}

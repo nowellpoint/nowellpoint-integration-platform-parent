@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.nowellpoint.client.model.TokenResponse;
+import com.nowellpoint.client.model.TokenVerificationResponse;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -49,6 +51,7 @@ public class TestOktaAuthentication {
 	
 	@Test
 	public void testAuthenticate() {
+		
 		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
 				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
 				.accept(MediaType.APPLICATION_JSON)
@@ -61,13 +64,38 @@ public class TestOktaAuthentication {
 				.parameter("scope", "offline_access")
 				.execute();
 		
-		Token token = httpResponse.getEntity(Token.class);
+		if (httpResponse.getStatusCode() != 200) {
+			System.out.println(httpResponse.getAsString());
+			return;
+		}
+		
+		TokenResponse token = httpResponse.getEntity(TokenResponse.class);
 		
 		assertNotNull(token.getAccessToken());
 		assertNotNull(token.getExpiresIn());
 		assertNotNull(token.getRefreshToken());
 		assertNotNull(token.getScope());
 		assertNotNull(token.getTokenType());
+		
+		long start = System.currentTimeMillis();
+		
+		httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
+				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("introspect")
+				.parameter("token", "kdjfdkjfdkj")
+				.parameter("token_type_hint", "access_token")
+				.execute();
+		
+		System.out.println(System.currentTimeMillis() - start);
+		
+		TokenVerificationResponse verification = httpResponse.getEntity(TokenVerificationResponse.class);
+		
+		if (! verification.getGroups().isEmpty()) {
+			System.out.println(verification.getGroups().get(0));
+		}
 		
 		httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
 				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))

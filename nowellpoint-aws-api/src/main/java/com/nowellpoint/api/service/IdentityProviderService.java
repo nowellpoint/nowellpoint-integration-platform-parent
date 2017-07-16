@@ -1,12 +1,13 @@
 package com.nowellpoint.api.service;
 
-import com.okta.sdk.models.auth.AuthResult;
+import com.nowellpoint.api.idp.TokenResponse;
+import com.nowellpoint.api.idp.TokenVerificationResponse;
 import com.okta.sdk.resource.user.User;
 
 public interface IdentityProviderService {
 	
 	
-	public AuthResult authenticate(String username, String password);
+	public TokenResponse authenticate(String username, String password);
 	
 	/**
 	 * 
@@ -26,11 +27,11 @@ public interface IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param bearerToken
+	 * @param accessToken
 	 * @return
 	 */
 	
-	//public String verify(String bearerToken);
+	public TokenVerificationResponse verify(String accessToken);
 	
 	/**
 	 * 
