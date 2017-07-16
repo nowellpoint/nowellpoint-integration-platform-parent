@@ -18,7 +18,6 @@
 
 package com.nowellpoint.client.auth;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.nowellpoint.client.auth.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Token;
@@ -27,6 +26,7 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
+import com.nowellpoint.client.model.Error;
 
 public class Authenticators {
 	
@@ -55,8 +55,8 @@ public class Authenticators {
 		    	return response;
 		    	
 	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
-	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
-	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -84,8 +84,8 @@ public class Authenticators {
 		    	return response;
 		    	
 	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
-	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
-	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	} else {
 	    		throw new ServiceUnavailableException(httpResponse.getAsString());
 	    	}
@@ -103,8 +103,8 @@ public class Authenticators {
 	    	int statusCode = httpResponse.getStatusCode();
 	    	
 	    	if (statusCode != Status.NO_CONTENT) {
-	    		JsonNode error = httpResponse.getEntity(JsonNode.class);
-	    		throw new OauthException(error.get("error").asText(), error.get("error_description").asText());
+	    		Error error = httpResponse.getEntity(Error.class);
+	    		throw new OauthException(error.getCode(), error.getErrorMessage());
 	    	}
 		}
 	}

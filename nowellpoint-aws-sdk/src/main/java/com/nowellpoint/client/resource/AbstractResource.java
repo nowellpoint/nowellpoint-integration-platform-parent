@@ -85,7 +85,7 @@ public abstract class AbstractResource {
 		
 		protected Boolean isSuccess;
 		
-		protected Integer error;
+		protected String error;
 		
 		protected String errorMessage;
 		
@@ -105,7 +105,7 @@ public abstract class AbstractResource {
 		}
 
 		@Override
-		public Integer getError() {
+		public String getError() {
 			return error;
 		}
 

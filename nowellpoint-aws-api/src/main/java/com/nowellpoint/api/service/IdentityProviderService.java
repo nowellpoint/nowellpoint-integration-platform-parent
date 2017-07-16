@@ -23,7 +23,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	//public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken);
+	public TokenResponse refreshToken(String refreshToken);
 	
 	/**
 	 * 

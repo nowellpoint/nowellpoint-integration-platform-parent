@@ -1,16 +1,12 @@
 package com.nowellpoint.api.rest.service;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Locale;
-
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.api.idp.Error;
 import com.nowellpoint.api.idp.TokenResponse;
 import com.nowellpoint.api.idp.TokenVerificationResponse;
 import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -27,10 +23,6 @@ import com.okta.sdk.resource.user.UserCredentials;
 import com.okta.sdk.resource.user.UserList;
 import com.okta.sdk.resource.user.UserProfile;
 import com.okta.sdk.resource.user.UserStatus;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 
 public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
@@ -87,7 +79,6 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
 	@Override
 	public TokenResponse authenticate(String username, String password) {	
-		
 		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
 				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
 				.accept(MediaType.APPLICATION_JSON)
@@ -105,8 +96,8 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			response = httpResponse.getEntity(TokenResponse.class);
 		} else {
-			String errorMessage = MessageProvider.getMessage(Locale.US, "login.error");		
-			throw new AuthenticationException("invalid_credentials", errorMessage);
+			Error error = httpResponse.getEntity(Error.class);	
+			throw new AuthenticationException(error);
 		}
 		
 		return response;
@@ -118,18 +109,30 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	 * @return
 	 */
 	
-//	@Override
-//	public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken) {		
-//		OAuthRefreshTokenRequestAuthentication refreshRequest = OAuthRequests.OAUTH_REFRESH_TOKEN_REQUEST.builder()
-//				  .setRefreshToken(refreshToken)
-//				  .build();
-//		
-//		OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_REFRESH_TOKEN_REQUEST_AUTHENTICATOR
-//				  .forApplication(application)
-//				  .authenticate(refreshRequest);
-//		
-//		return result;
-//	}
+	@Override
+	public TokenResponse refreshToken(String refreshToken) {		
+		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
+				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("token")
+				.parameter("grant_type", "refresh_token")
+				.parameter("refresh_token", refreshToken)
+				.parameter("scope", "offline_access")
+				.execute();
+		
+		TokenResponse response = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			response = httpResponse.getEntity(TokenResponse.class);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);	
+			throw new AuthenticationException(error);
+		}
+		
+		return response;
+	}
 	
 	/**
 	 * 

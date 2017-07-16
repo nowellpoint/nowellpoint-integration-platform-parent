@@ -18,6 +18,8 @@
 
 package com.nowellpoint.api.rest.domain;
 
+import com.nowellpoint.api.idp.Error;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AuthenticationException extends RuntimeException {
@@ -38,6 +40,12 @@ public class AuthenticationException extends RuntimeException {
 		super();
 		this.error = error;
 		this.errorDescription = errorDescription;
+	}
+	
+	public AuthenticationException(Error error) {
+		super();
+		this.error = error.getError();
+		this.errorDescription = error.getErrorDescription();	
 	}
 
 	public String getError() {

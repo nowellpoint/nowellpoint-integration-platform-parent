@@ -71,6 +71,7 @@ public class TestOktaAuthentication {
 		
 		TokenResponse token = httpResponse.getEntity(TokenResponse.class);
 		
+		assertNotNull(token);
 		assertNotNull(token.getAccessToken());
 		assertNotNull(token.getExpiresIn());
 		assertNotNull(token.getRefreshToken());
@@ -78,6 +79,26 @@ public class TestOktaAuthentication {
 		assertNotNull(token.getTokenType());
 		
 		long start = System.currentTimeMillis();
+		
+		httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
+				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path("v1")
+				.path("token")
+				.parameter("grant_type", "refresh_token")
+				.parameter("refresh_token", token.getRefreshToken())
+				.parameter("scope", "offline_access")
+				.execute();
+		
+		token = httpResponse.getEntity(TokenResponse.class);
+		
+		assertNotNull(token);
+		assertNotNull(token.getAccessToken());
+		assertNotNull(token.getExpiresIn());
+		assertNotNull(token.getRefreshToken());
+		assertNotNull(token.getScope());
+		assertNotNull(token.getTokenType());
 		
 		httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
 				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))

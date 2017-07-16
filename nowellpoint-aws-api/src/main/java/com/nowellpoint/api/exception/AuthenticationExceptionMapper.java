@@ -18,20 +18,25 @@
 
 package com.nowellpoint.api.exception;
 
+import java.util.Locale;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.nowellpoint.api.rest.domain.AuthenticationException;
+import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.util.MessageProvider;
 
 @Provider
 public class AuthenticationExceptionMapper implements ExceptionMapper<AuthenticationException> {
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
+		Error error = new Error(exception.getError(), MessageProvider.getMessage(Locale.US, "login.error"));
 		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(exception);
+		builder.entity(error);
 		return builder.build();
 	}
 }
