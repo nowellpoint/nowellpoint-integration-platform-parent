@@ -13,12 +13,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import com.nowellpoint.api.idp.TokenResponse;
-import com.nowellpoint.api.idp.TokenVerificationResponse;
+import com.nowellpoint.api.idp.model.AuthenticationException;
+import com.nowellpoint.api.idp.model.TokenResponse;
+import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
 import com.nowellpoint.api.rest.domain.AccountProfile;
-import com.nowellpoint.api.rest.domain.AuthenticationException;
 import com.nowellpoint.api.rest.domain.Token;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -78,7 +78,7 @@ public class TokenResourceImpl implements TokenResource {
 		//
 		
 		if (CLIENT_CREDENTIALS.equals(grantType)) {
-			throw new AuthenticationException("invalid_grant", "Invalid Grant Type: client_credentials is not supported.");
+			result = identityProviderService.authenticate("");
 		} else if (PASSWORD.equals(grantType)) {
 			result = identityProviderService.authenticate(params[0], params[1]);
 		} else {

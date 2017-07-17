@@ -1,30 +1,27 @@
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.idp;
 
 import org.jboss.logging.Logger;
 
-import com.nowellpoint.api.idp.Error;
-import com.nowellpoint.api.idp.TokenResponse;
-import com.nowellpoint.api.idp.TokenVerificationResponse;
-import com.nowellpoint.api.rest.domain.AuthenticationException;
+import com.nowellpoint.api.idp.model.AuthenticationException;
+import com.nowellpoint.api.idp.model.Error;
+import com.nowellpoint.api.idp.model.TokenResponse;
+import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.util.Properties;
-import com.okta.sdk.authc.credentials.ClientCredentials;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
-import com.okta.sdk.client.ClientBuilder;
 import com.okta.sdk.client.Clients;
 import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserCredentials;
-import com.okta.sdk.resource.user.UserList;
 import com.okta.sdk.resource.user.UserProfile;
 import com.okta.sdk.resource.user.UserStatus;
 
-public class IdentityProviderServiceImpl implements IdentityProviderService {
+public class OktaIdentityProviderService implements IdentityProviderService {
 	
 	private static final Logger LOG = Logger.getLogger(IdentityProviderService.class);
 	
@@ -32,11 +29,8 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
 	static {
 		
-		ClientBuilder builder = Clients.builder();
-		
-		ClientCredentials<String> credentials = new TokenClientCredentials(System.getProperty(Properties.OKTA_API_KEY));
-		
-		client = builder.setClientCredentials(credentials)
+		client = Clients.builder()
+				.setClientCredentials(new TokenClientCredentials(System.getProperty(Properties.OKTA_API_KEY)))
 				.setOrgUrl(System.getProperty(Properties.OKTA_ORG_URL))
 				.build();
 	}
@@ -47,28 +41,10 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	 * @return
 	 */
 	
-//	@Override
-//	public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey) {
-//		
-//		OAuthClientCredentialsGrantRequestAuthentication request = OAuthRequests.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST
-//				.builder()
-//				.setApiKeyId(apiKey.getId())
-//				.setApiKeySecret(apiKey.getSecret())
-//				.build();
-//		
-//		try {
-//			
-//			OAuthGrantRequestAuthenticationResult result = Authenticators.OAUTH_CLIENT_CREDENTIALS_GRANT_REQUEST_AUTHENTICATOR
-//					.forApplication(application)
-//					.authenticate(request);
-//			
-//			return result;
-//			
-//		} catch (ResourceException e) {
-//			String errorMessage = MessageProvider.getMessage(Locale.US, "login.error");		
-//			throw new AuthenticationException("invalid_credentials", errorMessage);
-//		}
-//	}
+	@Override
+	public TokenResponse authenticate(String apiKey) {
+		throw new AuthenticationException("invalid_grant", "Invalid Grant Type: client_credentials is not supported.");
+	}
 	
 	/**
 	 * 
@@ -255,23 +231,7 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param username
-	 * @return
-	 */
-	
-	@Override
-	public User findByUsername(String username) {
-		UserList users = client.listUsers();
-				
-		
-
-		
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param bearerToken
+	 * @param accessToken
 	 */
 	
 	@Override
@@ -286,6 +246,8 @@ public class IdentityProviderServiceImpl implements IdentityProviderService {
 				.parameter("token_type_hint", "access_token")
 				.execute();
 		
-		LOG.info("Revoke Token: " + httpResponse.getStatusCode());
+		if (httpResponse.getStatusCode() != Status.OK) {
+			LOG.error("Revoke Token Error: " + httpResponse.getAsString());
+		}
 	}
 }

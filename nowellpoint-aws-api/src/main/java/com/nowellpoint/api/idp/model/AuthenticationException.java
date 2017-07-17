@@ -16,11 +16,9 @@
  * 
  */
 
-package com.nowellpoint.api.rest.domain;
+package com.nowellpoint.api.idp.model;
 
-import com.nowellpoint.api.idp.Error;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nowellpoint.api.idp.model.Error;
 
 public class AuthenticationException extends RuntimeException {
 
@@ -30,10 +28,8 @@ public class AuthenticationException extends RuntimeException {
 	
 	private static final long serialVersionUID = -199984852210399810L;
 	
-	@JsonProperty(value="error")
 	private String error;
 	
-	@JsonProperty(value="error_description")
 	private String errorDescription;
 	
 	public AuthenticationException(String error, String errorDescription) {

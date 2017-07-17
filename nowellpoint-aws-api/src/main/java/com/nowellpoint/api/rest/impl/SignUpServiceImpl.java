@@ -121,13 +121,13 @@ public class SignUpServiceImpl implements SignUpService {
 			
 		} catch (DocumentNotFoundException e) {
 			
-			User user = identityProviderService.findByUsername(email);
+			//User user = identityProviderService.findByUsername(email);
 			
-			if (isNotNull(user)) {
-				user.delete();
-			} 
+			//if (isNotNull(user)) {
+			//	user.delete();
+			//} 
 			
-			user = identityProviderService.createUser(email, firstName, lastName, password);
+			User user = identityProviderService.createUser(email, firstName, lastName, password);
 					
 			accountProfile = AccountProfile.createAccountProfile();
 			accountProfile.setAccountHref(user.getResourceHref());

@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.AuthenticationException;
+import com.nowellpoint.api.idp.model.AuthenticationException;
 import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.api.util.MessageProvider;
 

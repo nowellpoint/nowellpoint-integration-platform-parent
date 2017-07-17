@@ -1,4 +1,4 @@
-package com.nowellpoint.api.idp;
+package com.nowellpoint.api.idp.model;
 
 import javax.annotation.Nullable;
 

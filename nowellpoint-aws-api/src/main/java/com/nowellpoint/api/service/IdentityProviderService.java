@@ -1,7 +1,7 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.idp.TokenResponse;
-import com.nowellpoint.api.idp.TokenVerificationResponse;
+import com.nowellpoint.api.idp.model.TokenResponse;
+import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.okta.sdk.resource.user.User;
 
 public interface IdentityProviderService {
@@ -15,7 +15,7 @@ public interface IdentityProviderService {
 	 * @return
 	 */
 	
-	//public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey);
+	public TokenResponse authenticate(String apiKey);
 	
 	/**
 	 * 
@@ -82,14 +82,6 @@ public interface IdentityProviderService {
 	 */
 	
 	public void deleteUser(String id);
-	
-	/**
-	 * 
-	 * @param username
-	 * @return
-	 */
-	
-	public User findByUsername(String username);
 	
 	/**
 	 * 
