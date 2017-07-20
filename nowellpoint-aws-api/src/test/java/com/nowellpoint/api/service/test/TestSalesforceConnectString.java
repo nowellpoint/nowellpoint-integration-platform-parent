@@ -64,7 +64,7 @@ public class TestSalesforceConnectString {
 			} else {
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
 		
 	@Test

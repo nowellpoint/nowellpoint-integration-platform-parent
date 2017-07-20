@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -71,18 +72,16 @@ public class UserContext {
 	static class UserPrincipalSecurityContext implements SecurityContext {
 		
 		private Principal principal;
-		private String authenticationScheme;
-		private ArrayList<String> scope;
+		private List<String> scope;
 		
-		public UserPrincipalSecurityContext(String subject, ArrayList<String> scope) {
-			this.authenticationScheme = subject.split("-")[0];
+		public UserPrincipalSecurityContext(String subject, List<String> scope) {
 			this.principal = new UserPrincipal(subject);
 			this.scope = scope;
 		}
 
 		@Override
 		public String getAuthenticationScheme() {
-			return authenticationScheme;
+			return "Bearer";
 		}
 
 		@Override

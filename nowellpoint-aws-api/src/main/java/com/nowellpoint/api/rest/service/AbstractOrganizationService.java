@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
