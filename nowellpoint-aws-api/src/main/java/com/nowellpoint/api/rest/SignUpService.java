@@ -50,14 +50,15 @@ public interface SignUpService {
 	
 	@PermitAll
 	@POST
+	@Path("registration")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
     public Response signUp(
     		@FormParam("firstName") String firstName,
-    		@FormParam("lastName") @NotEmpty(message="Last Name must be filled in") String lastName,
+    		@FormParam("lastName") String lastName,
     		@FormParam("email") @Email String email,
-    		@FormParam("domain") String domain,
-    		@FormParam("countryCode") @NotEmpty String countryCode);
+    		@FormParam("countryCode") String countryCode,
+    		@FormParam("planId") String planId);
 	
 	@PermitAll
 	@POST

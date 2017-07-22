@@ -25,6 +25,12 @@ public class Error {
 	}
 	
 	public Error(Integer code, String[] messages) {
+		setCode(code);
+		this.messages = messages;
+	}
+	
+	public Error(String code, String[] messages) {
+		this.code = code;
 		this.messages = messages;
 	}
 

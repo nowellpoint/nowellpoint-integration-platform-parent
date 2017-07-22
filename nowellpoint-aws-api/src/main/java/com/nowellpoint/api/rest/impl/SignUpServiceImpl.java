@@ -5,9 +5,13 @@ import static com.nowellpoint.util.Assert.isNull;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.text.RandomStringGenerator;
 import org.jboss.logging.Logger;
 
 import com.braintreegateway.AddressRequest;
@@ -36,13 +41,18 @@ import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.Subscription;
-import com.nowellpoint.api.rest.service.AccountProfileServiceImpl;
+import com.nowellpoint.api.rest.domain.ValidationException;
+import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.api.service.RegistrationService;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
 import com.okta.sdk.resource.ResourceException;
@@ -53,10 +63,13 @@ public class SignUpServiceImpl implements SignUpService {
 	private static final Logger LOGGER = Logger.getLogger(SignUpServiceImpl.class);
 	
 	@Inject
+	private RegistrationService registrationService;
+	
+	@Inject
 	private EmailService emailService;
 	
 	@Inject
-	private AccountProfileServiceImpl accountProfileServiceImpl;
+	private AccountProfileService accountProfileService;
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -110,7 +123,7 @@ public class SignUpServiceImpl implements SignUpService {
 		
 		try {
 			
-			accountProfile = accountProfileServiceImpl.findByUsername(email);
+			accountProfile = accountProfileService.findByUsername(email);
 			
 			if (accountProfile.getIsActive()) {
 				Error error = new Error(1000, "Account for email is already enabled");
@@ -144,9 +157,9 @@ public class SignUpServiceImpl implements SignUpService {
 			accountProfile.setAddress(address);
 			
 			if (isNull(accountProfile.getId())) {	
-				accountProfileServiceImpl.createAccountProfile( accountProfile );
+				accountProfileService.createAccountProfile( accountProfile );
 			} else {
-				accountProfileServiceImpl.updateAccountProfile( accountProfile );
+				accountProfileService.updateAccountProfile( accountProfile );
 			}
 		}
 		
@@ -316,7 +329,7 @@ public class SignUpServiceImpl implements SignUpService {
 		
 		accountProfile.setSubscription(subscription);
 		
-		accountProfileServiceImpl.updateAccountProfile( accountProfile );
+		accountProfileService.updateAccountProfile( accountProfile );
 		
 		/**
 		 * 
@@ -351,47 +364,17 @@ public class SignUpServiceImpl implements SignUpService {
     		String firstName,
     		String lastName,
     		String email,
-    		String domain,
-    		String countryCode) {
+    		String countryCode,
+    		String planId) {
     	
-    	if (Assert.isNullOrEmpty(domain)) {
-    		Error error = new Error(1000, "Domain cannot be empty or null");
-			ResponseBuilder builder = Response.status(Status.CONFLICT);
-			builder.entity(error);
-			throw new WebApplicationException(builder.build());
-    	}
+		Registration registration = registrationService.register(
+				firstName, 
+				lastName, 
+				email, 
+				countryCode, 
+				planId);
     	
-    	Organization organization = null;
-    	
-    	try {
-    		organization = organizationService.findByDomain(domain);
-    	} catch (DocumentNotFoundException e) {
-    		organization = Organization.createOrganization(domain);
-    	}
-    	
-    	AccountProfile accountProfile = null;
-		
-		try {
-			
-			accountProfile = accountProfileServiceImpl.findByUsername(email);
-			
-			if (accountProfile.getIsActive()) {
-				Error error = new Error(1000, "Account for email is already enabled");
-				ResponseBuilder builder = Response.status(Status.CONFLICT);
-				builder.entity(error);
-				throw new WebApplicationException(builder.build());
-			}
-			
-		} catch (DocumentNotFoundException e) {
-			
-			accountProfile = AccountProfile.of(firstName, lastName, email, organization.getId(), countryCode);
-			
-			
-		}
-		
-		// send email verification link
-    	
-    	return Response.ok(accountProfile)
+    	return Response.ok(registration)
 				.build();
     }
     
@@ -412,7 +395,7 @@ public class SignUpServiceImpl implements SignUpService {
 			throw new WebApplicationException(builder.build());
 		}
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileServiceImpl.findByIdpId(user.getResourceHref()));
+		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findByIdpId(user.getResourceHref()));
 		
 		if (! query.isPresent()) {
 			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", user.getResourceHref()));
@@ -425,7 +408,7 @@ public class SignUpServiceImpl implements SignUpService {
 		accountProfile.setIsActive(Boolean.TRUE);
 		accountProfile.setEmailVerificationToken(null);
 		
-		accountProfileServiceImpl.updateAccountProfile(accountProfile);
+		accountProfileService.updateAccountProfile(accountProfile);
 		
 		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
 		
