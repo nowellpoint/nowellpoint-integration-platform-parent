@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.service;
 
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.text.RandomStringGenerator;
 import org.jboss.logging.Logger;
@@ -24,6 +26,7 @@ import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
@@ -77,12 +80,17 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.build()
 				.generate(24);
 		
+		URI emailVerificationHref = buildEmailVerificationHref(emailVerificationToken);
+		
+		LOGGER.info(emailVerificationHref);
+		
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
+				.emailVerificationHref(emailVerificationHref)
 				.createdOn(Date.from(Instant.now()))
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
@@ -93,9 +101,15 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				email, 
 				firstName, 
 				lastName, 
-				emailVerificationToken);
+				emailVerificationHref);
 		
 		return registration;
+	}
+	
+	private URI buildEmailVerificationHref(String emailVerificationToken) {
+		return UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
+				.queryParam("emailVerificationToken", "{emailVerificationToken}")
+				.build(emailVerificationToken);
 	}
 	
 	private void publish(String email) {
@@ -104,8 +118,8 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		snsClient.publish(publishRequest);
 	}
 	
-	private void sendEmail(String email, String firstName, String lastName, String emailVerificationToken) {
+	private void sendEmail(String email, String firstName, String lastName, URI emailVerificationHref) {		
 		String name = Assert.isNotNullOrEmpty(firstName) ? firstName.concat(" ").concat(lastName) : lastName; 
-		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
+		emailService.sendEmailVerificationMessage(email, name, emailVerificationHref);
 	}
 }

@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.net.URI;
 import java.util.Date;
 
 import javax.annotation.Nullable;
@@ -7,6 +8,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -20,9 +22,10 @@ public abstract class AbstractRegistration extends AbstractResource {
 	public abstract String getLastName();
 	public abstract String getEmail();
 	public abstract String getCountryCode();
-	public abstract String getEmailVerificationToken();
+	public abstract @JsonIgnore String getEmailVerificationToken();
 	public abstract Date getCreatedOn();
 	public abstract Date getLastUpdatedOn();
+	public abstract URI getEmailVerificationHref();
 	
 	@Override
 	public String toString() {
