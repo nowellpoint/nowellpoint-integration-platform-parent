@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
-@Value.Style(typeImmutable = "*")
+@Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = Registration.class)
 @JsonDeserialize(as = Registration.class)
 public abstract class AbstractRegistration extends AbstractResource {

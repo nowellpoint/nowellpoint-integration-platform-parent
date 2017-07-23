@@ -18,16 +18,14 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.AccountProfileService;
+import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.RegistrationService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
-import com.nowellpoint.mongodb.DocumentManager;
-import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
-public class RegistrationServiceImpl implements RegistrationService {
+public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
 	private static final Logger LOGGER = Logger.getLogger(RegistrationServiceImpl.class);
 	
@@ -35,7 +33,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	private AccountProfileService accountProfileService;
 	
 	@Inject
-	protected DocumentManagerFactory documentManagerFactory;
+	private EmailService emailService;
 
 	@Override
 	public Registration register(String firstName, String lastName, String email, String countryCode, String planId) {
@@ -70,7 +68,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 			
 		} catch (DocumentNotFoundException ignore) {
 			publish(email);
-			LOGGER.info(String.format("registration received for email address: %s", email));
+			LOGGER.info(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_RECEIVED), email));
 		}
 		
 		String emailVerificationToken = new RandomStringGenerator.Builder()
@@ -89,18 +87,25 @@ public class RegistrationServiceImpl implements RegistrationService {
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
-		MongoDocument document = registration.toDocument();
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		documentManager.insertOne( document );
+		create(registration);
 		
-		registration.fromDocument( document );
+		sendEmail(
+				email, 
+				firstName, 
+				lastName, 
+				emailVerificationToken);
 		
 		return registration;
 	}
 	
 	private void publish(String email) {
 		AmazonSNS snsClient = AmazonSNSClient.builder().build(); 
-		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:REGISTRATION", String.format("Registration received for email address: %s", email));
+		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:REGISTRATION", MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_RECEIVED), email);
 		snsClient.publish(publishRequest);
+	}
+	
+	private void sendEmail(String email, String firstName, String lastName, String emailVerificationToken) {
+		String name = Assert.isNotNullOrEmpty(firstName) ? firstName.concat(" ").concat(lastName) : lastName; 
+		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
 	}
 }
