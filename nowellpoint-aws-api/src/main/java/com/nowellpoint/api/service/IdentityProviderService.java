@@ -46,10 +46,9 @@ public interface IdentityProviderService {
 	 * @param email
 	 * @param firstName
 	 * @param lastName
-	 * @param password
 	 */
 	
-	public User createUser(String email, String firstName, String lastName, String password);
+	public User createUser(String email, String firstName, String lastName);
 	
 	/**
 	 * 

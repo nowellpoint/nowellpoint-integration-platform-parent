@@ -11,12 +11,15 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
+import com.mongodb.client.model.Filters;
+import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.AccountProfileService;
@@ -26,7 +29,6 @@ import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
@@ -75,14 +77,19 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 		
 		String emailVerificationToken = new RandomStringGenerator.Builder()
-				.withinRange('a', 'z')
+				.withinRange('0', 'z')
+				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
 				.usingRandom(new SecureRandom()::nextInt)
 				.build()
 				.generate(24);
 		
-		URI emailVerificationHref = buildEmailVerificationHref(emailVerificationToken);
+		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
+				.path(SignUpService.class)
+				.path("verify-email")
+				.path("{emailVerificationToken}")
+				.build(emailVerificationToken);
 		
-		LOGGER.info(emailVerificationHref);
+		LOGGER.info(emailVerificationTokenUri);
 		
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
@@ -90,36 +97,40 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
-				.emailVerificationHref(emailVerificationHref)
+				.emailVerificationHref(emailVerificationTokenUri)
 				.createdOn(Date.from(Instant.now()))
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		create(registration);
 		
-		sendEmail(
-				email, 
-				firstName, 
-				lastName, 
-				emailVerificationHref);
+		sendEmail(registration.getEmail(), registration.getName(), registration.getEmailVerificationToken());
 		
 		return registration;
 	}
 	
-	private URI buildEmailVerificationHref(String emailVerificationToken) {
-		return UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
-				.queryParam("emailVerificationToken", "{emailVerificationToken}")
-				.build(emailVerificationToken);
+	public Registration findByEmailVerificationToken(String emailVerificationToken) {
+		Registration registration = null;
+		try {
+			registration = findOne( Filters.eq ( "emailVerificationToken", emailVerificationToken ) );
+		} catch (DocumentNotFoundException e) {
+			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_OR_EXPIRED));
+		}
+		return registration;
 	}
 	
 	private void publish(String email) {
-		AmazonSNS snsClient = AmazonSNSClient.builder().build(); 
-		PublishRequest publishRequest = new PublishRequest("arn:aws:sns:us-east-1:600862814314:REGISTRATION", MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_RECEIVED), email);
-		snsClient.publish(publishRequest);
+		if (Boolean.valueOf(System.getProperty("registration.send.notification"))) {
+			AmazonSNS snsClient = AmazonSNSClient.builder().build(); 
+			PublishRequest publishRequest = new PublishRequest(
+					"arn:aws:sns:us-east-1:600862814314:REGISTRATION", 
+					MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_RECEIVED), email);
+			
+			snsClient.publish(publishRequest);
+		}
 	}
 	
-	private void sendEmail(String email, String firstName, String lastName, URI emailVerificationHref) {		
-		String name = Assert.isNotNullOrEmpty(firstName) ? firstName.concat(" ").concat(lastName) : lastName; 
-		emailService.sendEmailVerificationMessage(email, name, emailVerificationHref);
+	private void sendEmail(String email, String name, String emailVerificationToken) {		
+		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
 	}
 }

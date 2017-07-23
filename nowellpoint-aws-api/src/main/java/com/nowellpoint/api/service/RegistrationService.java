@@ -10,4 +10,5 @@ public interface RegistrationService {
     		String countryCode,
     		String planId);
 
+	public Registration findByEmailVerificationToken(String emailVerificationToken);
 }

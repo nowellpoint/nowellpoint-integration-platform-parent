@@ -5,6 +5,7 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.Provider;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
@@ -41,6 +42,22 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 				return source == null ? null : source.toString();
 			}
 		});
+		
+		modelMapper.createTypeMap(com.nowellpoint.api.model.document.Registration.class, Registration.class).setProvider(
+				new Provider<Registration>() {
+					public Registration get(ProvisionRequest<Registration> request) {
+						com.nowellpoint.api.model.document.Registration source = com.nowellpoint.api.model.document.Registration.class.cast(request.getSource());
+						return Registration.builder()
+								.countryCode(source.getCountryCode())
+								.createdOn(source.getCreatedOn())
+								.email(source.getEmail())
+								.emailVerificationToken(source.getEmailVerificationToken())
+								.firstName(source.getFirstName())
+								.lastName(source.getLastName())
+								.lastUpdatedOn(source.getLastUpdatedOn())
+								.build();
+					}
+		        });
 	}
 	
 	protected String id;

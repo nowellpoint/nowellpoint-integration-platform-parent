@@ -1,5 +1,8 @@
 package com.nowellpoint.api.idp;
 
+import java.security.SecureRandom;
+
+import org.apache.commons.text.RandomStringGenerator;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.idp.model.AuthenticationException;
@@ -151,7 +154,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	 */
 	
 	@Override
-	public User createUser(String email, String firstName, String lastName, String password) {	
+	public User createUser(String email, String firstName, String lastName) {	
 		
 		UserProfile userProfile = client.instantiate(UserProfile.class)
 			    .setEmail(email)
@@ -160,7 +163,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 			    .setLastName(lastName);
 		
 		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
-				.setValue(password);
+				.setValue(generateTemporaryPassword(24));
 		
 		UserCredentials userCredentials = client.instantiate(UserCredentials.class)
 				.setPassword(passwordCredential);
@@ -170,7 +173,11 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 				.setStatus(UserStatus.ACTIVE)
 				.setCredentials(userCredentials);
 		
-		return client.createUser(user);
+		user = client.createUser(user);
+		
+		client.getUser(user.getId()).addToGroup(System.getProperty("okta.group.id"));
+		
+		return user;
 	}
 	
 	/**
@@ -249,5 +256,13 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 		if (httpResponse.getStatusCode() != Status.OK) {
 			LOG.error("Revoke Token Error: " + httpResponse.getAsString());
 		}
+	}
+	
+	private static String generateTemporaryPassword(int length) {
+		return new RandomStringGenerator.Builder()
+				.withinRange('0', 'z')
+				.usingRandom(new SecureRandom()::nextInt)
+				.build()
+				.generate(length);
 	}
 }

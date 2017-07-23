@@ -28,48 +28,6 @@ public class SendGridEmailService implements EmailService {
 	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
 	
 	@Override
-	public void sendEmailVerificationMessage(String email, String name, URI emailVerificationHref) {
-		Executors.newSingleThreadExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				Email from = new Email();
-				from.setEmail("administrator@nowellpoint.com");
-				from.setName("Nowellpoint Support");
-			    
-			    Email to = new Email();
-			    to.setEmail(email);
-			    to.setName(name);
-			    
-			    Content content = new Content();
-			    content.setType("text/html");
-			    content.setValue("<html><body>some text here</body></html>");
-			    
-			    Personalization personalization = new Personalization();
-			    personalization.addTo(to);
-			    personalization.addSubstitution("%name%", name);
-			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationHref.toString());
-			    
-			    Mail mail = new Mail();
-			    mail.setFrom(from);
-			    mail.addContent(content);
-			    mail.setTemplateId("3e2b0449-2ff8-40cb-86eb-32cad32886de");
-			    mail.addPersonalization(personalization);
-			    
-			    Request request = new Request();
-			    try {
-			    	request.method = Method.POST;
-			    	request.endpoint = "mail/send";
-			    	request.body = mail.build();
-			    	Response response = sendgrid.api(request);
-			    	LOGGER.info("sendEmailVerificationMessage: " + response.statusCode + " " + response.body);
-			    } catch (IOException e) {
-			    	LOGGER.error(e);
-			    }
-			}
-		});
-	}
-	
-	@Override
 	public void sendEmailVerificationMessage(String email, String name, String emailVerificationToken) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
@@ -86,16 +44,10 @@ public class SendGridEmailService implements EmailService {
 			    content.setType("text/html");
 			    content.setValue("<html><body>some text here</body></html>");
 			    
-			    URI emailVerificationUrl = UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
-						.queryParam("emailVerificationToken", "{emailVerificationToken}")
-						.build(emailVerificationToken);
-				
-				LOGGER.info(emailVerificationUrl);
-			    
 			    Personalization personalization = new Personalization();
 			    personalization.addTo(to);
 			    personalization.addSubstitution("%name%", name);
-			    personalization.addSubstitution("%emailVerificationToken%", emailVerificationUrl.toString());
+			    personalization.addSubstitution("%emailVerificationToken%", buildEmailVerificationHref(emailVerificationToken).toString());
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);
@@ -207,5 +159,11 @@ public class SendGridEmailService implements EmailService {
 			    }
 			}
 		});	
+	}
+	
+	private URI buildEmailVerificationHref(String emailVerificationToken) {
+		return UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
+				.queryParam("emailVerificationToken", "{emailVerificationToken}")
+				.build(emailVerificationToken);
 	}
 }

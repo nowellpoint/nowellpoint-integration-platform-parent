@@ -9,5 +9,14 @@ swarm:
         port: 5100 
 propertyStore:
     name: production
+okta:
+    group:
+        id: 00gax5bbgstAuY3Zo0h7     
+registration:
+    send:
+      notification: true    
 api:
     hostname: https://api.nowellpoint.com/rest
+verify:
+    email:
+      redirect: https://www.nowellpoint.com/verify-email

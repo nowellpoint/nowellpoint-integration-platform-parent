@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -140,7 +141,7 @@ public class SignUpServiceImpl implements SignUpService {
 			//	user.delete();
 			//} 
 			
-			User user = identityProviderService.createUser(email, firstName, lastName, password);
+			User user = identityProviderService.createUser(email, firstName, lastName);
 					
 			accountProfile = AccountProfile.createAccountProfile();
 			accountProfile.setAccountHref(user.getResourceHref());
@@ -338,8 +339,6 @@ public class SignUpServiceImpl implements SignUpService {
 		 * 
 		 */
 		
-		emailService.sendEmailVerificationMessage(accountProfile.getEmail(), accountProfile.getName(), accountProfile.getEmailVerificationToken());
-		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SignUpService.class)
 				.path("verify-email")
@@ -384,43 +383,37 @@ public class SignUpServiceImpl implements SignUpService {
 	
 	public Response verifyEmail(String emailVerificationToken) {
 		
+		Registration registration = registrationService.findByEmailVerificationToken(emailVerificationToken);
+		
 		User user = null;
 		
 		try {
-			user = null; //identityProviderService.verifyEmail(emailVerificationToken);
+			user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName());
+			LOGGER.info(String.format("created user: %s", user.getId()));
 		} catch (ResourceException e) {
 			Error error = new Error(e.getCode(), e.getMessage());
 			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 			builder.entity(error);
 			throw new WebApplicationException(builder.build());
 		}
+//		
+//		AccountProfile accountProfile = new AccountProfile();
+//		accountProfile.setIsActive(Boolean.TRUE);
+//		accountProfile.setEmailVerificationToken(null);
+//		
+//		accountProfileService.updateAccountProfile(accountProfile);
 		
-		Optional<AccountProfile> query = Optional.ofNullable(accountProfileService.findByIdpId(user.getResourceHref()));
+//		emailService.sendWelcomeMessage(registration.getEmail(), registration.getEmail(), registration.getName());
 		
-		if (! query.isPresent()) {
-			Error error = new Error(1001, String.format("AccountProfile for href: %s was not found", user.getResourceHref()));
-			ResponseBuilder builder = Response.status(Status.NOT_FOUND);
-			builder.entity(error);
-			throw new WebApplicationException(builder.build());
-		}
-		
-		AccountProfile accountProfile = query.get();
-		accountProfile.setIsActive(Boolean.TRUE);
-		accountProfile.setEmailVerificationToken(null);
-		
-		accountProfileService.updateAccountProfile(accountProfile);
-		
-		emailService.sendWelcomeMessage(accountProfile.getEmail(), accountProfile.getUsername(), accountProfile.getName());
-		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(AccountProfileResource.class)
-				.path("/{id}")
-				.build(accountProfile.getId());
+//		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
+//				.path(AccountProfileResource.class)
+//				.path("/{id}")
+//				.build(accountProfile.getId());
 		
 		Map<String,Object> response = new HashMap<String,Object>();
-		response.put("href", uri);
+//		response.put("href", uri);
 		
-		return Response.ok(response)
+		return Response.ok(registration)
 				.build();
 	}
 }
