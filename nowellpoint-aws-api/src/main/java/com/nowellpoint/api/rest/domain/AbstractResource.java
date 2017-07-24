@@ -47,15 +47,19 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 				new Provider<Registration>() {
 					public Registration get(ProvisionRequest<Registration> request) {
 						com.nowellpoint.api.model.document.Registration source = com.nowellpoint.api.model.document.Registration.class.cast(request.getSource());
-						return Registration.builder()
+						Registration destination = Registration.builder()
+								.id(source.getId() == null ? null : source.getId().toString())
 								.countryCode(source.getCountryCode())
 								.createdOn(source.getCreatedOn())
 								.email(source.getEmail())
 								.emailVerificationToken(source.getEmailVerificationToken())
+								.siteName(source.getSiteName())
 								.firstName(source.getFirstName())
 								.lastName(source.getLastName())
 								.lastUpdatedOn(source.getLastUpdatedOn())
 								.build();
+						
+						return destination;
 					}
 		        });
 	}

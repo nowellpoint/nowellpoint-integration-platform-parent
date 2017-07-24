@@ -9,6 +9,8 @@ public interface RegistrationService {
     		String email,
     		String countryCode,
     		String planId);
-
-	public Registration findByEmailVerificationToken(String emailVerificationToken);
+	
+	public Registration addSite(String id, String siteName);
+	
+	public Registration verifyEmail(String emailVerificationToken);
 }

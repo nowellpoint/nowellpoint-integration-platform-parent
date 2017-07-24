@@ -70,7 +70,7 @@ public class SendGridEmailService implements EmailService {
 	}
 	
 	@Override
-	public void sendWelcomeMessage(String email, String username, String name) {
+	public void sendWelcomeMessage(String email, String username, String name, String temporaryPassword) {
 		Executors.newSingleThreadExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -90,6 +90,7 @@ public class SendGridEmailService implements EmailService {
 			    personalization.addTo(to);
 			    personalization.addSubstitution("%name%", name);
 			    personalization.addSubstitution("%username%", username);
+			    personalization.addSubstitution("%temporaryPassword%", temporaryPassword);
 			    
 			    Mail mail = new Mail();
 			    mail.setFrom(from);

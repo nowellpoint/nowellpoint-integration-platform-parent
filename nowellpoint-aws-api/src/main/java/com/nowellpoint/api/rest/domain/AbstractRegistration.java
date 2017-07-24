@@ -20,11 +20,13 @@ import com.nowellpoint.util.Assert;
 @JsonSerialize(as = Registration.class)
 @JsonDeserialize(as = Registration.class)
 public abstract class AbstractRegistration extends AbstractResource {
+	public abstract @Nullable String getId();
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();
 	public abstract String getCountryCode();
 	public abstract @JsonIgnore String getEmailVerificationToken();
+	public abstract @Nullable String getSiteName();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract @Nullable URI getEmailVerificationHref();

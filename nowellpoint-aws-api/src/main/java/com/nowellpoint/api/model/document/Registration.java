@@ -13,6 +13,7 @@ public class Registration extends MongoDocument {
 	private String email;
 	private String countryCode;
 	private String emailVerificationToken;
+	private String siteName;
 
 	public Registration() {
 		
@@ -57,8 +58,12 @@ public class Registration extends MongoDocument {
 	public void setEmailVerificationToken(String emailVerificationToken) {
 		this.emailVerificationToken = emailVerificationToken;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	
+	public String getSiteName() {
+		return siteName;
+	}
+	
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
 	}
 }

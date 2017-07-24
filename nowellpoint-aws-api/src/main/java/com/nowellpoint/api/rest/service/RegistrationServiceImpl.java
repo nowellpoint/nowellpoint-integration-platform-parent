@@ -24,11 +24,13 @@ import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
+import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.RegistrationService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
+import com.okta.sdk.resource.user.User;
 
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
@@ -39,6 +41,9 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	
 	@Inject
 	private EmailService emailService;
+	
+	@Inject
+	private IdentityProviderService identityProviderService;
 
 	@Override
 	public Registration register(String firstName, String lastName, String email, String countryCode, String planId) {
@@ -83,33 +88,61 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.build()
 				.generate(24);
 		
-		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
-				.path(SignUpService.class)
-				.path("verify-email")
-				.path("{emailVerificationToken}")
-				.build(emailVerificationToken);
-		
-		LOGGER.info(emailVerificationTokenUri);
-		
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
-				.emailVerificationHref(emailVerificationTokenUri)
 				.createdOn(Date.from(Instant.now()))
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		create(registration);
 		
-		sendEmail(registration.getEmail(), registration.getName(), registration.getEmailVerificationToken());
+		return registration;
+	}
+	
+	@Override
+	public Registration addSite(String id, String siteName) {
+		Registration original = findById(id);
+		
+		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
+				.path(SignUpService.class)
+				.path("verify-email")
+				.path("{emailVerificationToken}")
+				.build(original.getEmailVerificationToken());
+		
+		LOGGER.info(emailVerificationTokenUri);
+		
+		Registration registration = Registration.builder()
+				.from(original)
+				.siteName(siteName)
+				.emailVerificationHref(emailVerificationTokenUri)
+				.lastUpdatedOn(Date.from(Instant.now()))
+				.build();
+		
+		update(registration);
+		
+		sendVerificationEmail(registration.getEmail(), registration.getName(), registration.getEmailVerificationToken());
 		
 		return registration;
 	}
 	
-	public Registration findByEmailVerificationToken(String emailVerificationToken) {
+	@Override
+	public Registration verifyEmail(String emailVerificationToken) {
+		Registration registration = findByEmailVerificationToken(emailVerificationToken);
+		
+		User user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName());
+		
+		//System.out.println(user.getCredentials().getPassword().getValue());
+		
+		emailService.sendWelcomeMessage(registration.getEmail(), registration.getEmail(), registration.getName(), user.getCredentials().getPassword().getValue());
+		
+		return registration;
+	}
+	
+	private Registration findByEmailVerificationToken(String emailVerificationToken) {
 		Registration registration = null;
 		try {
 			registration = findOne( Filters.eq ( "emailVerificationToken", emailVerificationToken ) );
@@ -130,7 +163,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private void sendEmail(String email, String name, String emailVerificationToken) {		
+	private void sendVerificationEmail(String email, String name, String emailVerificationToken) {		
 		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
 	}
 }
