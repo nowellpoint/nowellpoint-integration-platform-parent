@@ -2,6 +2,8 @@ package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
@@ -13,12 +15,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.mongodb.document.MongoDocument; 
 
 @JsonInclude(Include.NON_NULL)
-public abstract class AbstractResource implements Resource, Createable, Updateable {
+@JsonPropertyOrder({ "id", "createdOn", "lastUpdatedOn" })
+public abstract class AbstractImmutableResource implements Resource, Createable, Updateable {
 
 	protected static final ModelMapper modelMapper = new ModelMapper();
 	
@@ -57,7 +61,6 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 								.firstName(source.getFirstName())
 								.lastName(source.getLastName())
 								.lastUpdatedOn(source.getLastUpdatedOn())
-								.meta(new Meta())
 								.build();
 						
 						return destination;
@@ -65,51 +68,9 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		        });
 	}
 	
-	protected String id;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	protected Date createdOn;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	protected Date lastUpdatedOn;
-	
-	protected Meta meta;
-		
-	public AbstractResource() {
-		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public Date getCreatedOn() {
-		return createdOn;
-	}
-
-	public void setCreatedOn(Date createdOn) {
-		this.createdOn = createdOn;
-	}
-
-	public Date getLastUpdatedOn() {
-		return lastUpdatedOn;
-	}
-
-	public void setLastUpdatedOn(Date lastUpdatedOn) {
-		this.lastUpdatedOn = lastUpdatedOn;
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
+	public abstract @Nullable String getId();
+	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
+	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	
 	@JsonIgnore
 	public String toJson() throws JsonProcessingException {

@@ -1,14 +1,12 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
-import java.util.Date;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -19,16 +17,13 @@ import com.nowellpoint.util.Assert;
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = Registration.class)
 @JsonDeserialize(as = Registration.class)
-public abstract class AbstractRegistration extends AbstractResource {
-	public abstract @Nullable String getId();
+public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();
 	public abstract String getCountryCode();
 	public abstract @JsonIgnore String getEmailVerificationToken();
 	public abstract @Nullable String getSiteName();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract @Nullable URI getEmailVerificationHref();
 	
 	public String getName() {
@@ -37,6 +32,10 @@ public abstract class AbstractRegistration extends AbstractResource {
 	
 	public static Registration of(MongoDocument document) {
 		return modelMapper.map(document, Registration.class);
+	}
+	
+	public void fromDocument(MongoDocument document) {
+		modelMapper.map(document, this);
 	}
 	
 	@Override

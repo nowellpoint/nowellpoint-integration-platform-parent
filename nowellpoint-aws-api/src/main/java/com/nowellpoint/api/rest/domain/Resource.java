@@ -1,5 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
+import javax.annotation.Nullable;
+
 public interface Resource {
-	Meta getMeta();
+	@Nullable Meta getMeta();
 }
