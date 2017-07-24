@@ -218,8 +218,9 @@ public class JobResourceImpl implements JobResource {
 				.path("/{id}")
 				.build(job.getId());
 		
-		Meta meta = new Meta();
-		meta.setHref(uri.toString());
+		Meta meta = Meta.builder()
+				.href(uri.toString())
+				.build();
 		
 		job.setMeta(meta);
 		

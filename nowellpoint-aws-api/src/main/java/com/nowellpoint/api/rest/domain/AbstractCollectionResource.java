@@ -15,7 +15,7 @@ public abstract class AbstractCollectionResource<R extends AbstractResource, D e
 	private static final Logger LOGGER = Logger.getLogger(AbstractCollectionResource.class);
 	
 	private Set<R> items = new HashSet<R>();
-	private Meta meta = new Meta();
+	//private Meta meta = new Meta();
 	
 	public AbstractCollectionResource(Set<D> documents) {
 		if (documents != null && ! documents.isEmpty()) {
@@ -37,7 +37,7 @@ public abstract class AbstractCollectionResource<R extends AbstractResource, D e
 	
 	@Override
 	public Meta getMeta() {
-		return meta;
+		return null;
 	}
 
 	@Override

@@ -60,8 +60,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.path("/{id}")
 				.build(salesforceConnector.getId());
 		
-		Meta meta = new Meta();
-		meta.setHref(uri.toString());
+		Meta meta = Meta.builder()
+				.href(uri.toString())
+				.build();
 		
 		salesforceConnector.setMeta(meta);
 		
@@ -92,8 +93,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.path("/{id}")
 				.build(salesforceConnector.getId());
 		
-		Meta meta = new Meta();
-		meta.setHref(uri.toString());
+		Meta meta = Meta.builder()
+				.href(uri.toString())
+				.build();
 		
 		salesforceConnector.setMeta(meta);
 		
@@ -119,8 +121,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.path("/{id}")
 				.build(salesforceConnector.getId());
 		
-		Meta meta = new Meta();
-		meta.setHref(uri.toString());
+		Meta meta = Meta.builder()
+				.href(uri.toString())
+				.build();
 		
 		salesforceConnector.setMeta(meta);
 		

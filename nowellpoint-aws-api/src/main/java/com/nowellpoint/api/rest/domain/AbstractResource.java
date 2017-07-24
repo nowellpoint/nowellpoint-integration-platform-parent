@@ -57,7 +57,6 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 								.firstName(source.getFirstName())
 								.lastName(source.getLastName())
 								.lastUpdatedOn(source.getLastUpdatedOn())
-								.meta(new Meta())
 								.build();
 						
 						return destination;
