@@ -1,6 +1,6 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.OrganizationOld;
 
 /**
  * 
@@ -12,12 +12,12 @@ import com.nowellpoint.api.rest.domain.Organization;
 
 public interface OrganizationService {
 
-	public Organization findById(String id);
+	public OrganizationOld findById(String id);
 	
-	public Organization findByDomain(String domain);
+	public OrganizationOld findByDomain(String domain);
 	
-	public Organization createOrganization(String domain);
+	public OrganizationOld createOrganization(String domain);
 	
-	public Organization updateOrganization(Organization organization);
+	public OrganizationOld updateOrganization(OrganizationOld organizationOld);
 	
 }

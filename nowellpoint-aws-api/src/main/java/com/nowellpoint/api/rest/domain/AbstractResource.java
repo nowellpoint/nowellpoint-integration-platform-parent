@@ -28,40 +28,17 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 		modelMapper.getConfiguration().setFieldMatchingEnabled(true);
 		modelMapper.getConfiguration().setFieldAccessLevel(AccessLevel.PRIVATE);
 		modelMapper.addConverter(new AbstractConverter<String, ObjectId>() {
-			
 			@Override
 			protected ObjectId convert(String source) {
 				return source == null ? null : new ObjectId(source);
 			}
 		});
-		
 		modelMapper.addConverter(new AbstractConverter<ObjectId, String>() {		
-			
 			@Override
 			protected String convert(ObjectId source) {
 				return source == null ? null : source.toString();
 			}
 		});
-		
-		modelMapper.createTypeMap(com.nowellpoint.api.model.document.Registration.class, Registration.class).setProvider(
-				new Provider<Registration>() {
-					public Registration get(ProvisionRequest<Registration> request) {
-						com.nowellpoint.api.model.document.Registration source = com.nowellpoint.api.model.document.Registration.class.cast(request.getSource());
-						Registration destination = Registration.builder()
-								.id(source.getId() == null ? null : source.getId().toString())
-								.countryCode(source.getCountryCode())
-								.createdOn(source.getCreatedOn())
-								.email(source.getEmail())
-								.emailVerificationToken(source.getEmailVerificationToken())
-								.siteName(source.getSiteName())
-								.firstName(source.getFirstName())
-								.lastName(source.getLastName())
-								.lastUpdatedOn(source.getLastUpdatedOn())
-								.build();
-						
-						return destination;
-					}
-		        });
 	}
 	
 	protected String id;

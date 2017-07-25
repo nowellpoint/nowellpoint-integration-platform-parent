@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.OrganizationOld;
 import com.nowellpoint.mongodb.annotation.Document;
 import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
@@ -107,7 +107,7 @@ public class AccountProfile extends MongoDocument {
 	
 	private Boolean isPasswordVerified;
 	
-	private Organization organization;
+	private OrganizationOld organizationOld;
 	
 	private Boolean enableSalesforceLogin;
 	
@@ -379,12 +379,12 @@ public class AccountProfile extends MongoDocument {
 		this.isPasswordVerified = isPasswordVerified;
 	}
 
-	public Organization getOrganization() {
-		return organization;
+	public OrganizationOld getOrganization() {
+		return organizationOld;
 	}
 
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
+	public void setOrganization(OrganizationOld organizationOld) {
+		this.organizationOld = organizationOld;
 	}
 
 	public void addTransaction(Transaction transaction) {

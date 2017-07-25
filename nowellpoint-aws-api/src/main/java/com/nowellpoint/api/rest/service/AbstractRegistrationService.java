@@ -10,6 +10,7 @@ import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 public class AbstractRegistrationService extends AbstractCacheService {
 	
@@ -40,8 +41,12 @@ public class AbstractRegistrationService extends AbstractCacheService {
 	}
 	
 	protected Registration findById(String id) {
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.Registration document = documentManager.fetch( com.nowellpoint.api.model.document.Registration.class, new ObjectId( id ) );
+		com.nowellpoint.api.model.document.Registration document = get(com.nowellpoint.api.model.document.Registration.class, id);
+		if (Assert.isNull(document)) {
+			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+			document = documentManager.fetch( com.nowellpoint.api.model.document.Registration.class, new ObjectId( id ) );
+			set(id, document);
+		}
 		Registration registration = Registration.of( document );
 		return registration;
 	}

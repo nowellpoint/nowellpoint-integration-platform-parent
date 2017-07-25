@@ -8,9 +8,10 @@ public interface RegistrationService {
     		String lastName,
     		String email,
     		String countryCode,
+    		String domain,
     		String planId);
 	
-	public Registration addSite(String id, String siteName);
+	public Registration updateRegistration(String id, String domain);
 	
 	public Registration verifyEmail(String emailVerificationToken);
 }

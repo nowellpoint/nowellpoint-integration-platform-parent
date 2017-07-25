@@ -1,86 +1,21 @@
 package com.nowellpoint.api.rest.impl;
 
-import static com.nowellpoint.util.Assert.isNotNull;
-import static com.nowellpoint.util.Assert.isNull;
-
-import java.math.BigDecimal;
-import java.net.URI;
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
 
 import javax.inject.Inject;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.text.RandomStringGenerator;
-import org.jboss.logging.Logger;
-
-import com.braintreegateway.AddressRequest;
-import com.braintreegateway.CreditCardRequest;
-import com.braintreegateway.CustomerRequest;
-import com.braintreegateway.Result;
-import com.braintreegateway.SubscriptionRequest;
-import com.braintreegateway.exceptions.NotFoundException;
-import com.nowellpoint.api.model.document.Address;
-import com.nowellpoint.api.rest.AccountProfileResource;
 import com.nowellpoint.api.rest.SignUpService;
-import com.nowellpoint.api.rest.domain.AccountProfile;
-import com.nowellpoint.api.rest.domain.CreditCard;
-import com.nowellpoint.api.rest.domain.Error;
-import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
-import com.nowellpoint.api.rest.domain.Subscription;
-import com.nowellpoint.api.rest.domain.ValidationException;
-import com.nowellpoint.api.service.AccountProfileService;
-import com.nowellpoint.api.service.EmailService;
-import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.api.service.OrganizationService;
-import com.nowellpoint.api.service.PaymentGatewayService;
-import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.api.service.RegistrationService;
-import com.nowellpoint.api.util.MessageConstants;
-import com.nowellpoint.api.util.MessageProvider;
-import com.nowellpoint.mongodb.document.DocumentNotFoundException;
-import com.nowellpoint.util.Assert;
-import com.okta.sdk.resource.ResourceException;
-import com.okta.sdk.resource.user.User;
 
 public class SignUpServiceImpl implements SignUpService {
 	
-	private static final Logger LOGGER = Logger.getLogger(SignUpServiceImpl.class);
-	
 	@Inject
 	private RegistrationService registrationService;
-	
-	@Inject
-	private EmailService emailService;
-	
-	@Inject
-	private AccountProfileService accountProfileService;
-	
-	@Inject
-	private PaymentGatewayService paymentGatewayService;
-	
-	@Inject
-	private PlanService planService;
-	
-	@Inject
-	private OrganizationService organizationService;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -358,11 +293,12 @@ public class SignUpServiceImpl implements SignUpService {
 //	}
     
 	@Override
-    public Response signUp(
+    public Response createRegistration(
     		String firstName,
     		String lastName,
     		String email,
     		String countryCode,
+    		String domain,
     		String planId) {
     	
 		Registration registration = registrationService.register(
@@ -370,6 +306,7 @@ public class SignUpServiceImpl implements SignUpService {
 				lastName, 
 				email, 
 				countryCode, 
+				domain,
 				planId);
     	
     	return Response.ok(registration)
@@ -377,11 +314,11 @@ public class SignUpServiceImpl implements SignUpService {
     }
 	
 	@Override
-	public Response addSite(String id, String siteName) {
+	public Response updateRegistration(String id, String domain) {
 		
-		Registration registration = registrationService.addSite(
+		Registration registration = registrationService.updateRegistration(
 				id, 
-				siteName);
+				domain);
 		
 		return Response.ok(registration)
 				.build();

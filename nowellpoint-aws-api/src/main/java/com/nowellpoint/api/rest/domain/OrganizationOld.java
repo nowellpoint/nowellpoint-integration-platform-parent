@@ -12,7 +12,7 @@ import com.nowellpoint.api.model.document.Contact;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public class Organization extends AbstractResource {
+public class OrganizationOld extends AbstractResource {
 
 	private Meta meta;
 	
@@ -36,34 +36,34 @@ public class Organization extends AbstractResource {
 	
 	private Set<Transaction> transactions = new HashSet<>();
 	
-	public Organization() {
+	public OrganizationOld() {
 		
 	}
 	
-	private Organization(String id) {
+	private OrganizationOld(String id) {
 		this.id = id;
 	}
 	
-	private <T> Organization(T document) {
+	private <T> OrganizationOld(T document) {
 		modelMapper.map(document, this);
 	}
 	
-	public static Organization of(MongoDocument document) {
-		return new Organization(document);
+	public static OrganizationOld of(MongoDocument document) {
+		return new OrganizationOld(document);
 	}
 	
-	public static Organization of(String id) {
-		return new Organization(id);
+	public static OrganizationOld of(String id) {
+		return new OrganizationOld(id);
 	}
 	
-	public static Organization createOrganization(String domain) {
-		Organization organization = new Organization();
-		organization.setDomain(domain);
-		organization.setCreatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
-		organization.setCreatedOn(Date.from(Instant.now()));
-		organization.setLastUpdatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
-		organization.setLastUpdatedOn(Date.from(Instant.now()));
-		return organization;
+	public static OrganizationOld createOrganization(String domain) {
+		OrganizationOld organizationOld = new OrganizationOld();
+		organizationOld.setDomain(domain);
+		organizationOld.setCreatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
+		organizationOld.setCreatedOn(Date.from(Instant.now()));
+		organizationOld.setLastUpdatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
+		organizationOld.setLastUpdatedOn(Date.from(Instant.now()));
+		return organizationOld;
 	}
 
 	public Meta getMeta() {

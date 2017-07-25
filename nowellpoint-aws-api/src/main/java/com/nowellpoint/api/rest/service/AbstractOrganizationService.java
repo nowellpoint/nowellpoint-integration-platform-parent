@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.OrganizationOld;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -17,37 +17,37 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
 	
-	protected void create(Organization organization) {
-		MongoDocument document = organization.toDocument();
+	protected void create(OrganizationOld organizationOld) {
+		MongoDocument document = organizationOld.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		organization.fromDocument( document );
-		set( organization.getId(), document );
+		organizationOld.fromDocument( document );
+		set( organizationOld.getId(), document );
 	}
 	
-	protected void update(Organization organization) {
-		MongoDocument document = organization.toDocument();
+	protected void update(OrganizationOld organizationOld) {
+		MongoDocument document = organizationOld.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		organization.fromDocument( document );
-		set( organization.getId(), document );
+		organizationOld.fromDocument( document );
+		set( organizationOld.getId(), document );
 	}
 	
-	protected Organization findById(String id) {
+	protected OrganizationOld findById(String id) {
 		com.nowellpoint.api.model.document.Organization document = get(com.nowellpoint.api.model.document.Organization.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 			document = documentManager.fetch( com.nowellpoint.api.model.document.Organization.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		Organization organization = Organization.of( document );
-		return organization;
+		OrganizationOld organizationOld = OrganizationOld.of( document );
+		return organizationOld;
 	}
 	
-	protected Organization query(Bson query) {
+	protected OrganizationOld query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
-		Organization organization = Organization.of( document );
-		return organization;
+		OrganizationOld organizationOld = OrganizationOld.of( document );
+		return organizationOld;
 	}
 }

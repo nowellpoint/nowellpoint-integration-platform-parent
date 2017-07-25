@@ -26,11 +26,12 @@ public interface SignUpService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response signUp(
+    public Response createRegistration(
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") String lastName,
     		@FormParam("email") @Email String email,
     		@FormParam("countryCode") String countryCode,
+    		@FormParam("domain") String domain,
     		@FormParam("planId") String planId);
 	
 	@PermitAll
@@ -38,7 +39,7 @@ public interface SignUpService {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response addSite(@PathParam("id") String id, @FormParam("siteName") String siteName);
+    public Response updateRegistration(@PathParam("id") String id, @FormParam("domain") String domain);
 	
 	@PermitAll
 	@POST

@@ -72,7 +72,7 @@ public class AccountProfile extends AbstractResource {
 	@JsonIgnore
 	private Boolean isPasswordVerified;
 	
-	private Organization organization;
+	private OrganizationOld organizationOld;
 	
 	private Photos photos;
 	
@@ -104,7 +104,7 @@ public class AccountProfile extends AbstractResource {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.organization = Organization.of(organizationId);
+		this.organizationOld = OrganizationOld.of(organizationId);
 		this.address = Address.of(countryCode);
 		this.isPasswordVerified = Boolean.FALSE;
 	}
@@ -333,12 +333,12 @@ public class AccountProfile extends AbstractResource {
 		this.isPasswordVerified = isPasswordVerified;
 	}
 
-	public Organization getOrganization() {
-		return organization;
+	public OrganizationOld getOrganization() {
+		return organizationOld;
 	}
 
-	public void setOrganization(Organization organization) {
-		this.organization = organization;
+	public void setOrganization(OrganizationOld organizationOld) {
+		this.organizationOld = organizationOld;
 	}
 
 	public Photos getPhotos() {

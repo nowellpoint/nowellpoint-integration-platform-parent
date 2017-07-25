@@ -57,10 +57,11 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 								.createdOn(source.getCreatedOn())
 								.email(source.getEmail())
 								.emailVerificationToken(source.getEmailVerificationToken())
-								.siteName(source.getSiteName())
+								.domain(source.getDomain())
 								.firstName(source.getFirstName())
 								.lastName(source.getLastName())
 								.lastUpdatedOn(source.getLastUpdatedOn())
+								.expiresAt(source.getExpiresAt())
 								.build();
 						
 						return destination;

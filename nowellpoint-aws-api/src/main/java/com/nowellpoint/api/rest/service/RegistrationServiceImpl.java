@@ -46,7 +46,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	private IdentityProviderService identityProviderService;
 
 	@Override
-	public Registration register(String firstName, String lastName, String email, String countryCode, String planId) {
+	public Registration register(String firstName, String lastName, String email, String countryCode, String domain, String planId) {
 		
 		List<String> errors = new ArrayList<>();
     	
@@ -78,7 +78,6 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 			
 		} catch (DocumentNotFoundException ignore) {
 			publish(email);
-			LOGGER.info(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_RECEIVED), email));
 		}
 		
 		String emailVerificationToken = new RandomStringGenerator.Builder()
@@ -96,15 +95,29 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.lastName(lastName)
 				.createdOn(Date.from(Instant.now()))
 				.lastUpdatedOn(Date.from(Instant.now()))
+				.domain(Assert.isNotNullOrEmpty(domain) ? domain : emailVerificationToken)
+				.expiresAt(Instant.now().plusSeconds(1209600).toEpochMilli())
 				.build();
 		
 		create(registration);
+		
+		if (Assert.isNotNullOrEmpty(domain)) {
+			sendVerificationEmail(
+					registration.getEmail(), 
+					registration.getName(), 
+					registration.getEmailVerificationToken());
+		}
 		
 		return registration;
 	}
 	
 	@Override
-	public Registration addSite(String id, String siteName) {
+	public Registration updateRegistration(String id, String domain) {
+		
+		if (Assert.isNullOrEmpty(domain)) {
+			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_DOMAIN));
+		}
+		
 		Registration original = findById(id);
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
@@ -117,14 +130,17 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Registration registration = Registration.builder()
 				.from(original)
-				.siteName(siteName)
+				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		update(registration);
 		
-		sendVerificationEmail(registration.getEmail(), registration.getName(), registration.getEmailVerificationToken());
+		sendVerificationEmail(
+				registration.getEmail(), 
+				registration.getName(), 
+				registration.getEmailVerificationToken());
 		
 		return registration;
 	}
@@ -133,11 +149,13 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	public Registration verifyEmail(String emailVerificationToken) {
 		Registration registration = findByEmailVerificationToken(emailVerificationToken);
 		
-		User user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName());
+		isExpired(registration.getExpiresAt());
 		
-		//System.out.println(user.getCredentials().getPassword().getValue());
+		String password = generateTemporaryPassword(24);
 		
-		emailService.sendWelcomeMessage(registration.getEmail(), registration.getEmail(), registration.getName(), user.getCredentials().getPassword().getValue());
+		User user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName(), password);
+		
+		sendWelcomeMessage(registration.getEmail(), registration.getEmail(), registration.getName(), password);
 		
 		return registration;
 	}
@@ -163,7 +181,25 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
+	private static String generateTemporaryPassword(int length) {
+		return new RandomStringGenerator.Builder()
+				.withinRange('0', 'z')
+				.usingRandom(new SecureRandom()::nextInt)
+				.build()
+				.generate(length);
+	}
+	
 	private void sendVerificationEmail(String email, String name, String emailVerificationToken) {		
 		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
+	}
+	
+	private void sendWelcomeMessage(String email, String username, String name, String temporaryPassword) {
+		emailService.sendWelcomeMessage(email, username, name, temporaryPassword);
+	}
+	
+	private void isExpired(Long expiresAt) {
+		if (Instant.ofEpochMilli(expiresAt).isAfter(Instant.now())) {
+			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_OR_EXPIRED));
+		}
 	}
 }
