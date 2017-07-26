@@ -17,10 +17,10 @@ public class Organization extends MongoDocument {
 	@EmbedOne
 	private Meta meta;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;	
 	
 	private String number;

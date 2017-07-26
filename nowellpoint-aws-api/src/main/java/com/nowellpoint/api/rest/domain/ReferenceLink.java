@@ -19,8 +19,8 @@ public class ReferenceLink {
 		this.id = id;
 	}
 	
-	public static ReferenceLink of (String name, String id) {
-		return new ReferenceLink(name, id);
+	public static ReferenceLink of (ReferenceLinkTypes type, String id) {
+		return new ReferenceLink(type.name(), id);
 	}
 	
 	public String getId() {

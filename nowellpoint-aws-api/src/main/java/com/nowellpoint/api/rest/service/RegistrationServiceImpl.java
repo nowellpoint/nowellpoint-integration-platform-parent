@@ -21,11 +21,12 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Registration;
+import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.ValidationException;
-import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.RegistrationService;
+import com.nowellpoint.api.service.UserProfileService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
@@ -37,13 +38,13 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	private static final Logger LOGGER = Logger.getLogger(RegistrationServiceImpl.class);
 	
 	@Inject
-	private AccountProfileService accountProfileService;
-	
-	@Inject
 	private EmailService emailService;
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
+	
+	@Inject
+	private UserProfileService userProfileService;
 
 	@Override
 	public Registration register(String firstName, String lastName, String email, String countryCode, String domain, String planId) {
@@ -72,7 +73,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		try {
 			
-			accountProfileService.findByUsername(email);
+			userProfileService.findByUsername(email);
 			
 			throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_ACCOUNT_CONFLICT), email));
 			
@@ -120,6 +121,8 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Registration original = findById(id);
 		
+		isExpired(original.getExpiresAt());
+		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
 				.path(SignUpService.class)
 				.path("verify-email")
@@ -155,7 +158,16 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		User user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName(), password);
 		
-		sendWelcomeMessage(registration.getEmail(), registration.getEmail(), registration.getName(), password);
+		UserProfile userProfile = createUserProfile(
+				user.getId(), 
+				registration.getFirstName(), 
+				registration.getLastName(), 
+				registration.getEmail(), 
+				registration.getCountryCode());
+		
+		sendWelcomeMessage(userProfile.getEmail(), userProfile.getEmail(), userProfile.getName(), password);
+		
+		//expire the registration
 		
 		return registration;
 	}
@@ -198,8 +210,12 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	}
 	
 	private void isExpired(Long expiresAt) {
-		if (Instant.ofEpochMilli(expiresAt).isAfter(Instant.now())) {
+		if (Instant.ofEpochMilli(expiresAt).isBefore(Instant.now())) {
 			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_OR_EXPIRED));
 		}
+	}
+	
+	private UserProfile createUserProfile(String userId, String firstName, String lastName, String email, String countryCode) {
+		return userProfileService.createUserProfile(userId, firstName, lastName, email, countryCode);
 	}
 }
