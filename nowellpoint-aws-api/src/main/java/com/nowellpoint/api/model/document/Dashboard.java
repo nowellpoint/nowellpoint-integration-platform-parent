@@ -19,7 +19,6 @@
 package com.nowellpoint.api.model.document;
 
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
@@ -29,9 +28,6 @@ public class Dashboard extends MongoDocument {
 	private static final long serialVersionUID = 3163086585922281575L;
 	
 	private Integer connectors;
-	
-	@EmbedOne
-	private Meta meta;
 	
 	@Reference(referenceClass = Dashboard.class)
 	private UserRef createdBy;
@@ -49,14 +45,6 @@ public class Dashboard extends MongoDocument {
 
 	public void setConnectors(Integer connectors) {
 		this.connectors = connectors;
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

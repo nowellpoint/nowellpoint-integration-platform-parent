@@ -31,9 +31,6 @@ public class Plan extends MongoDocument {
 
 	private static final long serialVersionUID = -7569793449815113870L;
 	
-	@EmbedOne
-	private Meta meta;
-	
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
 	
@@ -62,14 +59,6 @@ public class Plan extends MongoDocument {
 	
 	public Plan() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public Boolean getRecommendedPlan() {

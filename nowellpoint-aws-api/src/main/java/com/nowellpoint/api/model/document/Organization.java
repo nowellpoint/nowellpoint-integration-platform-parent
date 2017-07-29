@@ -14,9 +14,6 @@ public class Organization extends MongoDocument {
 
 	private static final long serialVersionUID = 1L;
 	
-	@EmbedOne
-	private Meta meta;
-	
 	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
@@ -46,14 +43,6 @@ public class Organization extends MongoDocument {
 	
 	public Organization() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

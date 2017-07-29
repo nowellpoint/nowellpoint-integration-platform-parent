@@ -18,6 +18,7 @@ import com.nowellpoint.util.Assert;
 @JsonSerialize(as = Registration.class)
 @JsonDeserialize(as = Registration.class)
 public abstract class AbstractRegistration extends AbstractImmutableResource {
+	public abstract @Nullable Meta getMeta();
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();
@@ -26,6 +27,9 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract @Nullable String getDomain();
 	public abstract @Nullable URI getEmailVerificationHref();
 	public abstract Long getExpiresAt();
+	public abstract @Nullable String getIdentityHref(); 
+	public abstract UserInfo getCreatedBy();
+	public abstract UserInfo getLastUpdatedBy();
 	
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 

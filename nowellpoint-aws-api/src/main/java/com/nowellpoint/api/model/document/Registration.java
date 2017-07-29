@@ -1,6 +1,7 @@
 package com.nowellpoint.api.model.document;
 
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Document(collectionName="registrations")
@@ -8,6 +9,8 @@ public class Registration extends MongoDocument {
 
 	private static final long serialVersionUID = -1912405794198820540L;
 	
+	private @Reference(referenceClass = UserProfile.class) UserRef createdBy;
+	private @Reference(referenceClass = UserProfile.class) UserRef lastUpdatedBy;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -15,9 +18,26 @@ public class Registration extends MongoDocument {
 	private String emailVerificationToken;
 	private String domain;
 	private Long expiresAt;
+	private String identityHref;
 
 	public Registration() {
 		
+	}
+
+	public UserRef getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserRef createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserRef getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getFirstName() {
@@ -74,5 +94,13 @@ public class Registration extends MongoDocument {
 
 	public void setExpiresAt(Long expiresAt) {
 		this.expiresAt = expiresAt;
+	}
+
+	public String getIdentityHref() {
+		return identityHref;
+	}
+
+	public void setIdentityHref(String identityHref) {
+		this.identityHref = identityHref;
 	}
 }

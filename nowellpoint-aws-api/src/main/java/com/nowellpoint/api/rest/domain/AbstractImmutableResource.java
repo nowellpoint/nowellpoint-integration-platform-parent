@@ -51,6 +51,15 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				new Provider<Registration>() {
 					public Registration get(ProvisionRequest<Registration> request) {
 						com.nowellpoint.api.model.document.Registration source = com.nowellpoint.api.model.document.Registration.class.cast(request.getSource());
+						
+//						URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+//								.path(RegistrationService.class)
+//								.build(source.getId());
+//						
+//						Meta meta = Meta.builder()
+//								.href(href.toString())
+//								.build();
+						
 						Registration destination = Registration.builder()
 								.id(source.getId() == null ? null : source.getId().toString())
 								.countryCode(source.getCountryCode())
@@ -62,6 +71,10 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 								.lastName(source.getLastName())
 								.lastUpdatedOn(source.getLastUpdatedOn())
 								.expiresAt(source.getExpiresAt())
+								.createdBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
+								.lastUpdatedBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
+								.identityHref(source.getIdentityHref())
+								//.meta(meta)
 								.build();
 						
 						return destination;

@@ -19,7 +19,6 @@
 package com.nowellpoint.api.model.document;
 
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
@@ -27,9 +26,6 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 public class IsoCountry extends MongoDocument {
 
 	private static final long serialVersionUID = 2884164327750192485L;
-	
-	@EmbedOne
-	private Meta meta;
 	
 	private String language;
 	
@@ -79,14 +75,6 @@ public class IsoCountry extends MongoDocument {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

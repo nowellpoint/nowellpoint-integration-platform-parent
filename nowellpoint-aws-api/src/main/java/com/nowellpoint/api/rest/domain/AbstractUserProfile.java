@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.api.model.document.Photos;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
@@ -40,10 +39,10 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract TimeZone getTimeZone();
 	public abstract Locale getLocale();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
-	public abstract @Nullable Address getAddress();
+	public abstract Address getAddress();
 	public abstract @JsonIgnore Set<ReferenceLink> getReferenceLinks();
 	public abstract @Nullable Organization getOrganization();
-	public abstract @Nullable Photos getPhotos();
+	public abstract Photos getPhotos();
 	
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 

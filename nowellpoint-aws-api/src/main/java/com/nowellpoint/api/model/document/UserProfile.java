@@ -20,9 +20,6 @@ public class UserProfile extends MongoDocument {
 	
 	private static final long serialVersionUID = 7808753968760440908L;
 	
-	@EmbedOne
-	private Meta meta;
-	
 	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
@@ -75,14 +72,6 @@ public class UserProfile extends MongoDocument {
 	
 	public UserProfile() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

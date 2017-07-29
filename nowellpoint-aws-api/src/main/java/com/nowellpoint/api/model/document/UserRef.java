@@ -34,9 +34,6 @@ public class UserRef implements Serializable {
 	@Id
 	private ObjectId id; 
 	
-	@EmbedOne
-	private Meta meta;
-
 	private String lastName;
 
 	private String firstName;
@@ -87,14 +84,6 @@ public class UserRef implements Serializable {
 
 	public void setId(ObjectId id) {
 		this.id = id;
-	}
-	
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public String getLastName() {

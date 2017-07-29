@@ -19,19 +19,23 @@ import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.mongodb.client.model.Filters;
+import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.SignUpService;
+import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Registration;
+import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.EmailService;
-import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.RegistrationService;
 import com.nowellpoint.api.service.UserProfileService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
-import com.okta.sdk.resource.user.User;
+import com.nowellpoint.util.Properties;
 
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
@@ -41,10 +45,10 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	private EmailService emailService;
 	
 	@Inject
-	private IdentityProviderService identityProviderService;
+	private UserProfileService userProfileService;
 	
 	@Inject
-	private UserProfileService userProfileService;
+	private OrganizationService organizationService;
 
 	@Override
 	public Registration register(String firstName, String lastName, String email, String countryCode, String domain, String planId) {
@@ -81,6 +85,8 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 			publish(email);
 		}
 		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
 		String emailVerificationToken = new RandomStringGenerator.Builder()
 				.withinRange('0', 'z')
 				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
@@ -94,7 +100,9 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
+				.createdBy(userInfo)
 				.createdOn(Date.from(Instant.now()))
+				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(Date.from(Instant.now()))
 				.domain(Assert.isNotNullOrEmpty(domain) ? domain : emailVerificationToken)
 				.expiresAt(Instant.now().plusSeconds(1209600).toEpochMilli())
@@ -123,7 +131,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		isExpired(original.getExpiresAt());
 		
-		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty("api.hostname"))
+		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(SignUpService.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
@@ -131,11 +139,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		LOGGER.info(emailVerificationTokenUri);
 		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
 		Registration registration = Registration.builder()
 				.from(original)
 				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
 				.lastUpdatedOn(Date.from(Instant.now()))
+				.lastUpdatedBy(userInfo)
 				.build();
 		
 		update(registration);
@@ -150,24 +161,30 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	
 	@Override
 	public Registration verifyEmail(String emailVerificationToken) {
-		Registration registration = findByEmailVerificationToken(emailVerificationToken);
+		Registration original = findByEmailVerificationToken(emailVerificationToken);
 		
-		isExpired(registration.getExpiresAt());
-		
-		String password = generateTemporaryPassword(24);
-		
-		User user = identityProviderService.createUser(registration.getEmail(), registration.getFirstName(), registration.getLastName(), password);
+		isExpired(original.getExpiresAt());
 		
 		UserProfile userProfile = createUserProfile(
-				user.getId(), 
-				registration.getFirstName(), 
-				registration.getLastName(), 
-				registration.getEmail(), 
-				registration.getCountryCode());
+				original.getFirstName(), 
+				original.getLastName(), 
+				original.getEmail(), 
+				original.getCountryCode());
 		
-		sendWelcomeMessage(userProfile.getEmail(), userProfile.getEmail(), userProfile.getName(), password);
+		Organization organization = createOrganization(original.getDomain());
 		
-		//expire the registration
+		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+				.path(IdentityResource.class)
+				.path("/{organizationId}/{userId}")
+				.build(organization.getId(), userProfile.getId());
+		
+		Registration registration = Registration.builder()
+				.from(original)
+				.expiresAt(System.currentTimeMillis())
+				.identityHref(uri.toString())
+				.build();
+		
+		update(registration);
 		
 		return registration;
 	}
@@ -193,20 +210,8 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private static String generateTemporaryPassword(int length) {
-		return new RandomStringGenerator.Builder()
-				.withinRange('0', 'z')
-				.usingRandom(new SecureRandom()::nextInt)
-				.build()
-				.generate(length);
-	}
-	
 	private void sendVerificationEmail(String email, String name, String emailVerificationToken) {		
 		emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
-	}
-	
-	private void sendWelcomeMessage(String email, String username, String name, String temporaryPassword) {
-		emailService.sendWelcomeMessage(email, username, name, temporaryPassword);
 	}
 	
 	private void isExpired(Long expiresAt) {
@@ -215,7 +220,11 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private UserProfile createUserProfile(String userId, String firstName, String lastName, String email, String countryCode) {
-		return userProfileService.createUserProfile(userId, firstName, lastName, email, countryCode);
+	private UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode) {
+		return userProfileService.createUserProfile(firstName, lastName, email, countryCode);
+	}
+	
+	private Organization createOrganization(String domain) {
+		return organizationService.createOrganization(domain);
 	}
 }

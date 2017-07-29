@@ -1,7 +1,6 @@
 package com.nowellpoint.api.model.document;
 
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
@@ -9,9 +8,6 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 public class Lead extends MongoDocument {
 	
 	private static final long serialVersionUID = 7199045654991076942L;
-	
-	@EmbedOne
-	private Meta meta;
 	
 	@Reference(referenceClass = AccountProfile.class)
 	private UserRef createdBy;
@@ -51,14 +47,6 @@ public class Lead extends MongoDocument {
 	
 	public Lead() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

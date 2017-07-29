@@ -1,10 +1,8 @@
 package com.nowellpoint.api.rest.service;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.elemMatch;
-
 import javax.inject.Inject;
 
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.rest.domain.UserProfile;
@@ -53,16 +51,16 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 		return userProfile;
 	}
 	
-	protected UserProfile findByIdpId(String idpId) {
-		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, elemMatch ( "referenceLinks", eq ( "name", idpId )));
-		UserProfile userProfile = UserProfile.of( document );
-		return userProfile;
-	}
+//	protected UserProfile findByIdpId(String idpId) {
+//		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+//		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, elemMatch ( "referenceLinks", eq ( "name", idpId )));
+//		UserProfile userProfile = UserProfile.of( document );
+//		return userProfile;
+//	}
 	
-	protected UserProfile findByUsername(String username) {
+	protected UserProfile findOne(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, eq ( "username", username ) );			
+		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, query );			
 		UserProfile userProfile = UserProfile.of( document );
 		return userProfile;
 	}
