@@ -381,13 +381,6 @@ public class AccountProfile extends AbstractResource {
 		this.enableSalesforceLogin = enableSalesforceLogin;
 	}
 	
-	public CreditCard getPrimaryCreditCard() {
-		if (creditCards == null || creditCards.isEmpty()) {
-			return null;
-		}
-		return creditCards.stream().filter(c -> c.getPrimary()).findFirst().get();
-	}
-	
 	public void addCreditCard(CreditCard creditCard) {
 		if (creditCards == null) {
 			creditCards = new HashSet<>();

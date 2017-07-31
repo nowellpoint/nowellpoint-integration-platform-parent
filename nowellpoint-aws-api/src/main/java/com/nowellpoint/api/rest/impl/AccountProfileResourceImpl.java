@@ -101,14 +101,14 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		
 		Plan plan = planService.findById(planId);
 		
-		Subscription subscription = new Subscription();
-		subscription.setPlanId(planId);
-		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
-		subscription.setPlanCode(plan.getPlanCode());
-		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
-		subscription.setPlanName(plan.getPlanName());
-		subscription.setBillingFrequency(plan.getBillingFrequency());
-		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
+		Subscription subscription = Subscription.builder().build();
+//		subscription.setPlanId(planId);
+//		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
+//		subscription.setPlanCode(plan.getPlanCode());
+//		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
+//		subscription.setPlanName(plan.getPlanName());
+//		subscription.setBillingFrequency(plan.getBillingFrequency());
+//		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
 		
 		accountProfileService.setSubscription( id, paymentMethodToken, subscription );
 		
@@ -309,15 +309,7 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		billingAddress.setState(state);
 		billingAddress.setStreet(street);
 		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName(cardholderName);
-		creditCard.setCvv(cvv);
-		creditCard.setNumber(number);
-		creditCard.setExpirationMonth(expirationMonth);
-		creditCard.setExpirationYear(expirationYear);
-		creditCard.setPrimary(primary);
-		creditCard.setBillingContact(billingContact);
-		creditCard.setBillingAddress(billingAddress);
+		CreditCard creditCard = CreditCard.builder().build();
 		
 		accountProfileService.addCreditCard( id, creditCard );
 		
@@ -353,14 +345,7 @@ public class AccountProfileResourceImpl implements AccountProfileResource {
 		billingAddress.setState(state);
 		billingAddress.setStreet(street);
 		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setToken(token);
-		creditCard.setCardholderName(cardholderName);
-		creditCard.setExpirationMonth(expirationMonth);
-		creditCard.setExpirationYear(expirationYear);
-		creditCard.setPrimary(primary);
-		creditCard.setBillingContact(billingContact);
-		creditCard.setBillingAddress(billingAddress);
+		CreditCard creditCard = CreditCard.builder().build();
 		
 		accountProfileService.updateCreditCard( id, token, creditCard );
 		

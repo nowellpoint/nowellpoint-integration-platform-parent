@@ -22,12 +22,15 @@ import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
+import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.OrganizationService;
+import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.api.service.RegistrationService;
 import com.nowellpoint.api.service.UserProfileService;
 import com.nowellpoint.api.util.MessageConstants;
@@ -40,6 +43,9 @@ import com.nowellpoint.util.Properties;
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
 	private static final Logger LOGGER = Logger.getLogger(RegistrationServiceImpl.class);
+
+	@Inject
+	private PlanService planService;
 	
 	@Inject
 	private EmailService emailService;
@@ -49,6 +55,11 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	
 	@Inject
 	private OrganizationService organizationService;
+	
+	@Override
+	public Registration findById(String id) {
+		return super.findById(id);
+	}
 
 	@Override
 	public Registration register(String firstName, String lastName, String email, String countryCode, String domain, String planId) {
@@ -74,18 +85,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
     	if (! errors.isEmpty()) {
     		throw new ValidationException(errors);
     	}
-		
-		try {
-			
-			userProfileService.findByUsername(email);
-			
-			throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_ACCOUNT_CONFLICT), email));
-			
-		} catch (DocumentNotFoundException ignore) {
-			publish(email);
-		}
+    	
+    	Plan plan = findPlanById(planId);
+    	
+    	isUsernameRegistred(email);
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
 		
 		String emailVerificationToken = new RandomStringGenerator.Builder()
 				.withinRange('0', 'z')
@@ -94,16 +101,29 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.build()
 				.generate(24);
 		
+		Subscription subscription = Subscription.builder()
+				.planId(plan.getId())
+				.planCode(plan.getPlanCode())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.billingFrequency(plan.getBillingFrequency())
+				.addedOn(now)
+				.updatedOn(now)
+				.build();
+		
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
+				.subscription(subscription)
 				.createdBy(userInfo)
-				.createdOn(Date.from(Instant.now()))
+				.createdOn(now)
 				.lastUpdatedBy(userInfo)
-				.lastUpdatedOn(Date.from(Instant.now()))
+				.lastUpdatedOn(now)
 				.domain(Assert.isNotNullOrEmpty(domain) ? domain : emailVerificationToken)
 				.expiresAt(Instant.now().plusSeconds(1209600).toEpochMilli())
 				.build();
@@ -171,7 +191,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				original.getEmail(), 
 				original.getCountryCode());
 		
-		Organization organization = createOrganization(original.getDomain());
+		Organization organization = createOrganization(original);
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -224,7 +244,24 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		return userProfileService.createUserProfile(firstName, lastName, email, countryCode);
 	}
 	
-	private Organization createOrganization(String domain) {
-		return organizationService.createOrganization(domain);
+	private Organization createOrganization(Registration registration) {
+		return organizationService.createOrganization(registration);
+	}
+	
+	private Plan findPlanById(String planId) {
+		try {
+    		return planService.findById(planId);
+    	} catch (DocumentNotFoundException ignore) {
+    		throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_PLAN), planId));
+		}
+	}
+	
+	private void isUsernameRegistred(String username) {
+		try {
+			userProfileService.findByUsername(username);
+			throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_ACCOUNT_CONFLICT), username));
+		} catch (DocumentNotFoundException ignore) {
+			publish(username);
+		}
 	}
 }

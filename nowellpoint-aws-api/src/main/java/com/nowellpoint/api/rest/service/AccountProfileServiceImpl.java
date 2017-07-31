@@ -54,7 +54,7 @@ import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.IsoCountryService;
-import com.nowellpoint.api.service.PaymentGatewayService;
+import com.nowellpoint.api.service.PaymentGatewayServiceImpl;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 
@@ -68,7 +68,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 	private IdentityProviderService identityProviderService;
 	
 	@Inject
-	private PaymentGatewayService paymentGatewayService;
+	private PaymentGatewayServiceImpl paymentGatewayServiceImpl;
 	
 	@Inject
 	private IsoCountryService isoCountryService;
@@ -164,7 +164,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		}
 		
 		if (isNotNull(accountProfile.getSubscription())) {
-			paymentGatewayService.cancelSubscription(accountProfile.getSubscription().getSubscriptionId());
+			paymentGatewayServiceImpl.cancelSubscription(accountProfile.getSubscription().getSubscriptionId());
 		}
 		
 		updateAccountProfile( accountProfile );
@@ -367,7 +367,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 				Result<com.braintreegateway.Customer> customerResult = null;
 				
 				try {
-					customerResult = paymentGatewayService.addOrUpdateCustomer(customerRequest);
+					customerResult = paymentGatewayServiceImpl.addOrUpdateCustomer(customerRequest);
 				} catch (NotFoundException e) {
 					LOGGER.error(e);
 				}
@@ -429,10 +429,10 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		Date now = Date.from(Instant.now());
 		
 		if (subscription.getUnitPrice() == 0 && accountProfile.getSubscription() == null) {
-			subscription.setAddedOn(now);
+			//subscription.setAddedOn(now);
 		} else {
 			
-			if (subscription.getUnitPrice() > 0 && accountProfile.getPrimaryCreditCard() == null) {
+			if (subscription.getUnitPrice() > 0) {
 				throw new ValidationException("Unable to process subscription request because there is no credit card associated with the account profile");
 			}
 			
@@ -445,9 +445,9 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 					    .planId(subscription.getPlanCode())
 					    .price(new BigDecimal(subscription.getUnitPrice()));
 
-				subscriptionResult = paymentGatewayService.createSubscription(subscriptionRequest);
+				subscriptionResult = paymentGatewayServiceImpl.createSubscription(subscriptionRequest);
 				
-				subscription.setAddedOn(now);
+				//subscription.setAddedOn(now);
 				
 			} else {
 				
@@ -457,12 +457,12 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 					    .price(new BigDecimal(subscription.getUnitPrice()));
 
 				try {
-					subscriptionResult = paymentGatewayService.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
+					subscriptionResult = paymentGatewayServiceImpl.updateSubscription(accountProfile.getSubscription().getSubscriptionId(), subscriptionRequest);
 				} catch (NotFoundException e) {
 					throw new ValidationException(e.getMessage());
 				}
 				
-				subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
+				//subscription.setAddedOn(accountProfile.getSubscription().getAddedOn());
 			}
 			
 			if (! subscriptionResult.isSuccess()) {
@@ -470,10 +470,10 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 				throw new ValidationException(subscriptionResult.getMessage());
 			}
 			
-			subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
+			//subscription.setSubscriptionId(subscriptionResult.getTarget().getId());
 		}
 		
-		subscription.setUpdatedOn(now);
+		//subscription.setUpdatedOn(now);
 		
 		accountProfile.setSubscription(subscription);
 		
@@ -612,61 +612,61 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			throw new ValidationException("Unable to process credit card because it has an invalid year: " + year);
 		}
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
-				.firstName(creditCard.getBillingContact().getFirstName())
-				.lastName(creditCard.getBillingContact().getLastName())
-				.locality(creditCard.getBillingAddress().getCity())
-				.region(creditCard.getBillingAddress().getState())
-				.postalCode(creditCard.getBillingAddress().getPostalCode())
-				.streetAddress(creditCard.getBillingAddress().getStreet());
+//		AddressRequest addressRequest = new AddressRequest()
+//				.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
+//				.firstName(creditCard.getBillingContact().getFirstName())
+//				.lastName(creditCard.getBillingContact().getLastName())
+//				.locality(creditCard.getBillingAddress().getCity())
+//				.region(creditCard.getBillingAddress().getState())
+//				.postalCode(creditCard.getBillingAddress().getPostalCode())
+//				.streetAddress(creditCard.getBillingAddress().getStreet());
 		
-		Result<com.braintreegateway.Address> addressResult = paymentGatewayService.createAddress(accountProfile.getId(), addressRequest);
+//		Result<com.braintreegateway.Address> addressResult = paymentGatewayServiceImpl.createAddress(accountProfile.getId(), addressRequest);
 		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName(creditCard.getCardholderName())
-				.expirationMonth(creditCard.getExpirationMonth())
-				.expirationYear(creditCard.getExpirationYear())
-				.number(creditCard.getNumber())
-				.cvv(creditCard.getCvv())
-				.customerId(accountProfile.getId())
-				.billingAddressId(addressResult.getTarget().getId());
-		
-		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.createCreditCard(creditCardRequest);
-		
-		if (creditCardResult.isSuccess()) {
+//		CreditCardRequest creditCardRequest = new CreditCardRequest()
+//				.cardholderName(creditCard.getCardholderName())
+//				.expirationMonth(creditCard.getExpirationMonth())
+//				.expirationYear(creditCard.getExpirationYear())
+//				.number(creditCard.getNumber())
+//				.cvv(creditCard.getCvv())
+//				.customerId(accountProfile.getId())
+//				.billingAddressId(addressResult.getTarget().getId());
+//		
+//		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayServiceImpl.createCreditCard(creditCardRequest);
+//		
+//		if (creditCardResult.isSuccess()) {
 			
-			if (accountProfile.getCreditCards() == null || accountProfile.getCreditCards().size() == 0) {
-				creditCard.setPrimary(Boolean.TRUE);
-			} else if (creditCard.getPrimary()) {
-				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
-					if (c.getPrimary()) {
-						c.setPrimary(Boolean.FALSE);
-					}
-				});			
-			} else {
-				creditCard.setPrimary(Boolean.FALSE);
-			}
-			
-			creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
-			creditCard.setToken(creditCardResult.getTarget().getToken());
-			creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
-			creditCard.setLastFour(creditCardResult.getTarget().getLast4());
-			creditCard.setCardType(creditCardResult.getTarget().getCardType());
-			creditCard.setAddedOn(Date.from(Instant.now()));
-			creditCard.setUpdatedOn(Date.from(Instant.now()));
-			creditCard.setCvv(null);
-			
-			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+//			if (accountProfile.getCreditCards() == null || accountProfile.getCreditCards().size() == 0) {
+//				creditCard.setPrimary(Boolean.TRUE);
+//			} else if (creditCard.getPrimary()) {
+//				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
+//					if (c.getPrimary()) {
+//						c.setPrimary(Boolean.FALSE);
+//					}
+//				});			
+//			} else {
+//				creditCard.setPrimary(Boolean.FALSE);
+//			}
+//			
+//			creditCard.setNumber(creditCardResult.getTarget().getMaskedNumber());
+//			creditCard.setToken(creditCardResult.getTarget().getToken());
+//			creditCard.setImageUrl(creditCardResult.getTarget().getImageUrl());
+//			creditCard.setLastFour(creditCardResult.getTarget().getLast4());
+//			creditCard.setCardType(creditCardResult.getTarget().getCardType());
+//			creditCard.setAddedOn(Date.from(Instant.now()));
+//			creditCard.setUpdatedOn(Date.from(Instant.now()));
+//			creditCard.setCvv(null);
+//			
+//			creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
 			
 			accountProfile.addCreditCard(creditCard);
 			
 			updateAccountProfile( accountProfile );
 			
-		} else {
-			LOGGER.error(creditCardResult.getMessage());
-			throw new ValidationException(creditCardResult.getMessage());
-		}
+//		} else {
+//			LOGGER.error(creditCardResult.getMessage());
+//			throw new ValidationException(creditCardResult.getMessage());
+//		}
 	}
 	
 	@Override
@@ -684,15 +684,9 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			Date now = Date.from(Instant.now());
 			
 			creditCard = query.get();
-			creditCard.setPrimary(Boolean.TRUE);
-			creditCard.setUpdatedOn(now);
+//			creditCard.setPrimary(Boolean.TRUE);
+//			creditCard.setUpdatedOn(now);
 			
-			accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(token)).forEach(c -> {
-				if (c.getPrimary()) {
-					c.setPrimary(Boolean.FALSE);
-					c.setUpdatedOn(now);
-				}
-			});	
 			
 			accountProfile.setLastUpdatedOn(now);
 			accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
@@ -723,40 +717,32 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		Result<com.braintreegateway.CreditCard> creditCardResult = null;
 		
 		try {
-			creditCardResult = paymentGatewayService.updateCreditCard(token, creditCardRequest);
+			creditCardResult = paymentGatewayServiceImpl.updateCreditCard(token, creditCardRequest);
 		} catch (NotFoundException e) {
 			throw new ValidationException(e.getMessage());
 		}
 		
 		if (creditCardResult.isSuccess()) {
 			
-			AddressRequest addressRequest = new AddressRequest()
-					.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
-					.firstName(creditCard.getBillingContact().getFirstName())
-					.lastName(creditCard.getBillingContact().getLastName())
-					.locality(creditCard.getBillingAddress().getCity())
-					.region(creditCard.getBillingAddress().getState())
-					.postalCode(creditCard.getBillingAddress().getPostalCode())
-					.streetAddress(creditCard.getBillingAddress().getStreet());
-			
-			Result<com.braintreegateway.Address> addressResult = null;
-			
-			try {
-				addressResult = paymentGatewayService.updateAddress(
-						creditCardResult.getTarget().getCustomerId(), 
-						creditCardResult.getTarget().getBillingAddress().getId(), 
-						addressRequest);
-			} catch (NotFoundException e) {
-				throw new ValidationException(e.getMessage());
-			}
-			
-			if (creditCard.getPrimary()) {
-				accountProfile.getCreditCards().stream().filter(c -> ! c.getToken().equals(null)).forEach(c -> {
-					if (c.getPrimary()) {
-						c.setPrimary(Boolean.FALSE);
-					}
-				});			
-			}
+//			AddressRequest addressRequest = new AddressRequest()
+//					.countryCodeAlpha2(creditCard.getBillingAddress().getCountryCode())
+//					.firstName(creditCard.getBillingContact().getFirstName())
+//					.lastName(creditCard.getBillingContact().getLastName())
+//					.locality(creditCard.getBillingAddress().getCity())
+//					.region(creditCard.getBillingAddress().getState())
+//					.postalCode(creditCard.getBillingAddress().getPostalCode())
+//					.streetAddress(creditCard.getBillingAddress().getStreet());
+//			
+//			Result<com.braintreegateway.Address> addressResult = null;
+//			
+//			try {
+//				addressResult = paymentGatewayServiceImpl.updateAddress(
+//						creditCardResult.getTarget().getCustomerId(), 
+//						creditCardResult.getTarget().getBillingAddress().getId(), 
+//						addressRequest);
+//			} catch (NotFoundException e) {
+//				throw new ValidationException(e.getMessage());
+//			}
 			
 			CreditCard original = accountProfile.getCreditCards()
 					.stream()
@@ -764,50 +750,50 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 					.findFirst()
 					.get();
 			
-			creditCard.setAddedOn(original.getAddedOn());
-			creditCard.setNumber(original.getNumber());
-			creditCard.setLastFour(original.getLastFour());
-			creditCard.setCardType(original.getCardType());
-			creditCard.setImageUrl(original.getImageUrl());
-			creditCard.setToken(original.getToken());
-			creditCard.setUpdatedOn(Date.from(Instant.now()));
-			creditCard.setCvv(null);
-			
-			if (Assert.isNull(creditCard.getPrimary())) {
-				creditCard.setPrimary(original.getPrimary());
-			}
-			
-			if (Assert.isNull(creditCard.getBillingAddress())) {
-				creditCard.setBillingAddress(original.getBillingAddress());
-			}
-			
-			if (Assert.isNull(creditCard.getBillingContact())) {
-				creditCard.setBillingContact(original.getBillingContact());
-			}
-			
-			if (Assert.isNull(creditCard.getCardholderName())) {
-				creditCard.setCardholderName(original.getCardholderName());
-			}
-			
-			if (Assert.isNull(creditCard.getCardType())) {
-				creditCard.setCardType(original.getCardType());
-			}
-			
-			if (Assert.isNull(creditCard.getExpirationMonth())) {
-				creditCard.setExpirationMonth(original.getExpirationMonth());
-			}
-			
-			if (Assert.isNull(creditCard.getExpirationYear())) {
-				creditCard.setExpirationYear(original.getExpirationYear());
-			}
-			
-			if (Assert.isNull(creditCard.getPrimary())) {
-				creditCard.setPrimary(original.getPrimary());
-			}
-			
-			if (addressResult.isSuccess()) {
-				creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
-			}
+//			creditCard.setAddedOn(original.getAddedOn());
+//			creditCard.setNumber(original.getNumber());
+//			creditCard.setLastFour(original.getLastFour());
+//			creditCard.setCardType(original.getCardType());
+//			creditCard.setImageUrl(original.getImageUrl());
+//			creditCard.setToken(original.getToken());
+//			creditCard.setUpdatedOn(Date.from(Instant.now()));
+//			creditCard.setCvv(null);
+//			
+//			if (Assert.isNull(creditCard.getPrimary())) {
+//				creditCard.setPrimary(original.getPrimary());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getBillingAddress())) {
+//				creditCard.setBillingAddress(original.getBillingAddress());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getBillingContact())) {
+//				creditCard.setBillingContact(original.getBillingContact());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getCardholderName())) {
+//				creditCard.setCardholderName(original.getCardholderName());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getCardType())) {
+//				creditCard.setCardType(original.getCardType());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getExpirationMonth())) {
+//				creditCard.setExpirationMonth(original.getExpirationMonth());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getExpirationYear())) {
+//				creditCard.setExpirationYear(original.getExpirationYear());
+//			}
+//			
+//			if (Assert.isNull(creditCard.getPrimary())) {
+//				creditCard.setPrimary(original.getPrimary());
+//			}
+//			
+//			if (addressResult.isSuccess()) {
+//				creditCard.getBillingAddress().setCountry(addressResult.getTarget().getCountryName());
+//			}
 			
 			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			
@@ -833,16 +819,12 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		
 		AccountProfile accountProfile = findById(id);
 		
-		if (token.equals(accountProfile.getPrimaryCreditCard().getToken())) {
-			throw new ValidationException("Unable to delete credit card because it has been set as the primary card for the account profile.");
-		}
+		com.braintreegateway.CreditCard creditCard = paymentGatewayServiceImpl.findCreditCard(token);
 		
-		com.braintreegateway.CreditCard creditCard = paymentGatewayService.findCreditCard(token);
-		
-		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayService.deleteCreditCard(token);
+		Result<com.braintreegateway.CreditCard> creditCardResult = paymentGatewayServiceImpl.deleteCreditCard(token);
 		
 		if (creditCardResult.isSuccess()) {
-			paymentGatewayService.deleteAddress(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
+			paymentGatewayServiceImpl.deleteAddress(creditCard.getCustomerId(), creditCard.getBillingAddress().getId());
 			accountProfile.getCreditCards().removeIf(c -> token.equals(c.getToken()));
 			updateAccountProfile( accountProfile );
 		} else {

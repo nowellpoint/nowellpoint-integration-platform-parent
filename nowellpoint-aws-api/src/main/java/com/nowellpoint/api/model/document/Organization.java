@@ -35,14 +35,18 @@ public class Organization extends MongoDocument {
 	@EmbedOne
 	private Subscription subscription;
 	
-	@EmbedMany
-	private Set<CreditCard> creditCards = new HashSet<>();
+	@EmbedOne
+	private CreditCard creditCard;
 	
 	@EmbedMany
-	private Set<Transaction> transactions = new HashSet<>();
+	private Set<Transaction> transactions;
 	
 	public Organization() {
-		
+		billingContact = new Contact();
+		billingAddress = new Address();
+		subscription = new Subscription();
+		creditCard = new CreditCard();
+		transactions = new HashSet<>();
 	}
 
 	public UserRef getCreatedBy() {
@@ -109,12 +113,12 @@ public class Organization extends MongoDocument {
 		this.subscription = subscription;
 	}
 
-	public Set<CreditCard> getCreditCards() {
-		return creditCards;
+	public CreditCard getCreditCard() {
+		return creditCard;
 	}
 
-	public void setCreditCards(Set<CreditCard> creditCards) {
-		this.creditCards = creditCards;
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 
 	public Set<Transaction> getTransactions() {

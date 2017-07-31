@@ -78,12 +78,12 @@
 	<classpathentry kind="var" path="M2_REPO/org/jboss/msc/jboss-msc/1.2.6.Final/jboss-msc-1.2.6.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/swagger/swagger-annotations/1.5.5/swagger-annotations-1.5.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.9.9/joda-time-2.9.9.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/immutables/value/2.5.3/value-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.5.3/builder-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.5.3/value-fixture-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/immutables/gson/2.5.3/gson-2.5.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/immutables/value/2.5.5/value-2.5.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.5.5/builder-2.5.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.5.5/value-fixture-2.5.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/immutables/gson/2.5.5/gson-2.5.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/immutables/mongo/2.5.3/mongo-2.5.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/immutables/mongo/2.5.5/mongo-2.5.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/19.0/guava-19.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/code/findbugs/jsr305/3.0.1/jsr305-3.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongo-java-driver/2.12.4/mongo-java-driver-2.12.4.jar"/>
@@ -106,7 +106,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.71.0/braintree-java-2.71.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.72.1/braintree-java-2.72.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sendgrid/sendgrid-java/3.1.0/sendgrid-java-3.1.0.jar"/>
@@ -117,7 +117,7 @@
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.6/commons-lang3-3.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-text/1.1/commons-text-1.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/0.7.5/modelmapper-0.7.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/modelmapper/modelmapper/1.1.0/modelmapper-1.1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz/2.2.3/quartz-2.2.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/quartz-scheduler/quartz-jobs/2.2.3/quartz-jobs-2.2.3.jar"/>

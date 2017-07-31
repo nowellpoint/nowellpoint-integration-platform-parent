@@ -58,7 +58,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		User user = createUser(email, firstName, lastName, temporaryPassword);
 		
-		ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.OKTA, user.getId());
+		ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.USER_ID, user.getId());
 		
 		Date now = Date.from(Instant.now());
 		

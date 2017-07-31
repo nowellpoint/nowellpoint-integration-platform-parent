@@ -10,6 +10,7 @@ public class MessageConstants {
 	public static final String REGISTRATION_DOMAIN_CONFLICT = "registration.domain.conflict";
 	public static final String REGISTRATION_RECEIVED = "registration.received";
 	public static final String REGISTRATION_INVALID_OR_EXPIRED = "registration.invalid.or.expired";
+	public static final String REGISTRATION_INVALID_PLAN = "registration.invalid.plan";
 	public static final String SLACK_MESSAGE_SUBJECT = "slack.message.subject";
 	public static final String SLACK_TEST_MESSAGE = "slack.test.message";
 	public static final String SLACK_MISSING_WEBHOOK_URL = "slack.missing.webhook.url";

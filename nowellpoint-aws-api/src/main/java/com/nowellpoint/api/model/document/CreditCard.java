@@ -49,8 +49,6 @@ public class CreditCard implements Serializable {
 	@EmbedOne
 	private Contact billingContact;
 	
-	private Boolean primary;
-	
 	private Date addedOn;
 	
 	private Date updatedOn;
@@ -137,14 +135,6 @@ public class CreditCard implements Serializable {
 
 	public void setBillingContact(Contact billingContact) {
 		this.billingContact = billingContact;
-	}
-
-	public Boolean getPrimary() {
-		return primary;
-	}
-
-	public void setPrimary(Boolean primary) {
-		this.primary = primary;
 	}
 
 	public Date getAddedOn() {

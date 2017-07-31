@@ -19,6 +19,7 @@ public class Registration extends MongoDocument {
 	private String domain;
 	private Long expiresAt;
 	private String identityHref;
+	private Subscription subscription;
 
 	public Registration() {
 		
@@ -102,5 +103,13 @@ public class Registration extends MongoDocument {
 
 	public void setIdentityHref(String identityHref) {
 		this.identityHref = identityHref;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 }

@@ -17,6 +17,12 @@ public interface SignUpService {
 	
 	@PermitAll
 	@POST
+	@Path("{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getRegistration(@PathParam("id") String id);
+	
+	@PermitAll
+	@POST
 	@Path("verify-email/{emailVerificationToken}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)

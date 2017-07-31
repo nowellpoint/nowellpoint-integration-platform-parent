@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
 public enum ReferenceLinkTypes {
-	OKTA,
-	BRAINTREE
+	USER_ID,
+	CUSTOMER_ID,
+	ADDRESS_ID
 }

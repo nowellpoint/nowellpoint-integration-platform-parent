@@ -1,12 +1,7 @@
 package com.nowellpoint.api.rest.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Registration;
@@ -16,113 +11,8 @@ public class SignUpServiceImpl implements SignUpService {
 	
 	@Inject
 	private RegistrationService registrationService;
-	
-	@Context
-	private UriInfo uriInfo;
 
-//    public Response signUp(
-//    		String firstName,
-//    		String lastName,
-//    		String email,
-//    		String countryCode,
-//    		String password,
-//    		String confirmPassword,
-//    		String planId,
-//    		String cardNumber,
-//    		String expirationMonth,
-//    		String expirationYear,
-//    		String securityCode) {
-//		
-//		/**
-//		 * 
-//		 * 
-//		 * 
-//		 */
-//		
-//		if (! password.equals(confirmPassword)) {
-//			Error error = new Error(2000, "Password mismatch");
-//			ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
-//			builder.entity(error);
-//			throw new WebApplicationException(builder.build());
-//		}
-//		
-//		/**
-//		 * 
-//		 * 
-//		 * 
-//		 * 
-//		 */
-//		
-//		AccountProfile accountProfile = null;
-//		
-//		try {
-//			
-//			accountProfile = accountProfileService.findByUsername(email);
-//			
-//			if (accountProfile.getIsActive()) {
-//				Error error = new Error(1000, "Account for email is already enabled");
-//				ResponseBuilder builder = Response.status(Status.CONFLICT);
-//				builder.entity(error);
-//				throw new WebApplicationException(builder.build());
-//			}
-//			
-//		} catch (DocumentNotFoundException e) {
-//			
-//			//User user = identityProviderService.findByUsername(email);
-//			
-//			//if (isNotNull(user)) {
-//			//	user.delete();
-//			//} 
-//			
-//			User user = identityProviderService.createUser(email, firstName, lastName);
-//					
-//			accountProfile = AccountProfile.createAccountProfile();
-//			accountProfile.setAccountHref(user.getResourceHref());
-//			//accountProfile.setEmailVerificationToken(user..getEmailVerificationToken().getValue());
-//			accountProfile.setFirstName(firstName);
-//			accountProfile.setLastName(lastName);
-//			accountProfile.setEmail(email);
-//			accountProfile.setUsername(email);
-//			accountProfile.setIsActive(Boolean.FALSE);
-//				
-//			Address address = accountProfile.getAddress() != null ? accountProfile.getAddress() : new Address();
-//			address.setCountryCode(countryCode);
-//				
-//			accountProfile.setAddress(address);
-//			
-//			if (isNull(accountProfile.getId())) {	
-//				accountProfileService.createAccountProfile( accountProfile );
-//			} else {
-//				accountProfileService.updateAccountProfile( accountProfile );
-//			}
-//		}
-//		
-//		/**
-//		 * 
-//		 * 
-//		 * 
-//		 * 
-//		 */
-//		
-//		Plan plan = planService.findById(planId);
-//		
-//		Subscription subscription = new Subscription();
-//		subscription.setPlanId(planId);
-//		subscription.setCurrencyIsoCode(plan.getPrice().getCurrencyIsoCode());
-//		subscription.setPlanCode(plan.getPlanCode());
-//		subscription.setUnitPrice(plan.getPrice().getUnitPrice());
-//		subscription.setPlanName(plan.getPlanName());
-//		subscription.setBillingFrequency(plan.getBillingFrequency());
-//		subscription.setCurrencySymbol(plan.getPrice().getCurrencySymbol());
-//		subscription.setAddedOn(Date.from(Instant.now()));
-//		subscription.setUpdatedOn(Date.from(Instant.now()));
-//		
-//		/**
-//		 * 
-//		 * 
-//		 * 
-//		 * 
-//		 */
+
 //		
 //		CustomerRequest customerRequest = new CustomerRequest()
 //				.id(accountProfile.getId())
@@ -291,6 +181,15 @@ public class SignUpServiceImpl implements SignUpService {
 //		return Response.ok(response)
 //				.build();
 //	}
+	
+	@Override
+	public Response getRegistration(String id) {
+		
+		Registration registration = registrationService.findById(id);
+		
+		return Response.ok(registration)
+				.build();
+	}
     
 	@Override
     public Response createRegistration(
@@ -333,22 +232,6 @@ public class SignUpServiceImpl implements SignUpService {
 	public Response verifyEmail(String emailVerificationToken) {
 		
 		Registration registration = registrationService.verifyEmail(emailVerificationToken);
-		
-		
-		
-//		AccountProfile accountProfile = new AccountProfile();
-//		accountProfile.setIsActive(Boolean.TRUE);
-//		accountProfile.setEmailVerificationToken(null);
-//		
-//		accountProfileService.updateAccountProfile(accountProfile);
-		
-//		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-//				.path(AccountProfileResource.class)
-//				.path("/{id}")
-//				.build(accountProfile.getId());
-		
-		Map<String,Object> response = new HashMap<String,Object>();
-//		response.put("href", uri);
 		
 		return Response.ok(registration)
 				.build();
