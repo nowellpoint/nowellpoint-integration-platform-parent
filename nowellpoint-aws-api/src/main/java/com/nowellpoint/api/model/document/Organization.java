@@ -41,12 +41,16 @@ public class Organization extends MongoDocument {
 	@EmbedMany
 	private Set<Transaction> transactions;
 	
+	@EmbedMany
+	private Set<ReferenceLink> referenceLinks;
+	
 	public Organization() {
 		billingContact = new Contact();
 		billingAddress = new Address();
 		subscription = new Subscription();
 		creditCard = new CreditCard();
 		transactions = new HashSet<>();
+		referenceLinks = new HashSet<>();
 	}
 
 	public UserRef getCreatedBy() {
@@ -127,5 +131,13 @@ public class Organization extends MongoDocument {
 
 	public void setTransactions(Set<Transaction> transactions) {
 		this.transactions = transactions;
+	}
+
+	public Set<ReferenceLink> getReferenceLinks() {
+		return referenceLinks;
+	}
+
+	public void setReferenceLinks(Set<ReferenceLink> referenceLinks) {
+		this.referenceLinks = referenceLinks;
 	}
 }

@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -74,6 +75,12 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 				.updatedOn(source.getCreditCard().getUpdatedOn())
 				.build();
 		
+		Set<ReferenceLink> referenceLinks = new HashSet<>();
+		source.getReferenceLinks().forEach(l -> {
+			ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.valueOf(l.getName()), l.getId());
+			referenceLinks.add(referenceLink);
+		});
+		
 		Organization organization = Organization.builder()
 				.id(source.getId() == null ? null : source.getId().toString())
 				.billingAddress(billingAddress)
@@ -87,6 +94,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 				.meta(meta)
 				.name(source.getName())
 				.number(source.getNumber())
+				.referenceLinks(referenceLinks)
 				.build();
 		
 		return organization;
