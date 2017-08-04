@@ -45,7 +45,9 @@ public interface SignUpService {
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response updateRegistration(@PathParam("id") String id, @FormParam("domain") String domain);
+    public Response updateRegistration(
+    		@PathParam("id") String id, 
+    		@FormParam("domain") String domain);
 	
 	@PermitAll
 	@POST

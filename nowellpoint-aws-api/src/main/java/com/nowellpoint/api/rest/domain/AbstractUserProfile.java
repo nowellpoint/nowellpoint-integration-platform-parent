@@ -1,14 +1,11 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.net.URI;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
@@ -20,9 +17,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.UserProfileResource;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 @Value.Immutable
+@Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true, depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
@@ -53,68 +50,15 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
+	@Override
+	public Meta getMeta() {
+		return getMetaAs(UserProfileResource.class);
+	}
+	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {
-		
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(UserProfileResource.class)
-				.build(source.getId().toString());
-				
-		Meta meta = Meta.builder()
-				.href(href.toString())
-				.build();
-		
-		Address address = Address.builder()
-				.city(source.getAddress().getCity())
-				.country(source.getAddress().getCountry())
-				.countryCode(source.getAddress().getCountryCode())
-				.id(source.getAddress().getId())
-				.latitude(source.getAddress().getLatitude())
-				.longitude(source.getAddress().getLongitude())
-				.postalCode(source.getAddress().getPostalCode())
-				.state(source.getAddress().getState())
-				.stateCode(source.getAddress().getStateCode())
-				.street(source.getAddress().getStreet())
-				.build();
-		
-		Photos photos = Photos.builder()
-				.profilePicture(source.getPhotos().getProfilePicture())
-				.build();
-		
-		Set<ReferenceLink> referenceLinks = new HashSet<>();
-		source.getReferenceLinks().forEach(l -> {
-			ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.valueOf(l.getName()), l.getId());
-			referenceLinks.add(referenceLink);
-		});
-		
-		UserProfile userProfile = UserProfile.builder()
-				.id(source.getId().toString())
-				.address(address)
-				.company(source.getCompany())
-				.createdBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
-				.createdOn(source.getCreatedOn())
-				.lastUpdatedBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
-				.lastUpdatedOn(source.getLastUpdatedOn())
-				.department(source.getDepartment())
-				.division(source.getDivision())
-				.email(source.getEmail())
-				.extension(source.getExtension())
-				.firstName(source.getFirstName())
-				.isActive(source.getIsActive())
-				.lastLoginDate(source.getLastLoginDate())
-				.lastName(source.getLastName())
-				.locale(source.getLocale())
-				.meta(meta)
-				.mobilePhone(source.getMobilePhone())
-				.organization(modelMapper.map(source.getOrganization(), OrganizationInfo.class))
-				.phone(source.getPhone())
-				.timeZone(source.getTimeZone())
-				.title(source.getTitle())
-				.username(source.getUsername())
-				.photos(photos)
-				.referenceLinks(referenceLinks)
-				.build();
-		
-		return userProfile;
+		ModifiableUserProfile userProfile = ModifiableUserProfile.create();
+		modelMapper.map(source, userProfile);
+		return userProfile.toImmutable();
 	}
 	
 	public void fromDocument(MongoDocument document) {

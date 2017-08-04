@@ -40,14 +40,14 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			document = documentManager.fetch( com.nowellpoint.api.model.document.Organization.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		Organization organizationOld = Organization.of( document );
-		return organizationOld;
+		Organization organization = Organization.of( document );
+		return organization;
 	}
 	
 	protected Organization query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
-		Organization organizationOld = Organization.of( document );
-		return organizationOld;
+		Organization organization = Organization.of( document );
+		return organization;
 	}
 }

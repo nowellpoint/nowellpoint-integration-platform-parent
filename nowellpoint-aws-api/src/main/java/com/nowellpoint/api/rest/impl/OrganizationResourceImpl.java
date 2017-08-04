@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.OrganizationResource;
-import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.AbstractOrganization;
 import com.nowellpoint.api.service.OrganizationService;
 
 public class OrganizationResourceImpl implements OrganizationResource {
@@ -14,7 +14,7 @@ public class OrganizationResourceImpl implements OrganizationResource {
 
 	@Override
 	public Response getOrganization(String id) {
-		Organization organization = organizationService.findById(id);
+		AbstractOrganization organization = organizationService.findById(id);
 		
 		return Response.ok(organization)
 				.build();

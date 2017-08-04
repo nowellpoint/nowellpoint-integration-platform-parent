@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
+@Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = CreditCard.class)
 @JsonDeserialize(as = CreditCard.class)

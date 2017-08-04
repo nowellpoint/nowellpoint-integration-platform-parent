@@ -21,7 +21,7 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.SignUpService;
-import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.AbstractOrganization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.Subscription;
@@ -191,7 +191,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				original.getEmail(), 
 				original.getCountryCode());
 		
-		Organization organization = createOrganization(original);
+		AbstractOrganization organization = createOrganization(original);
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -244,7 +244,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		return userProfileService.createUserProfile(firstName, lastName, email, countryCode);
 	}
 	
-	private Organization createOrganization(Registration registration) {
+	private AbstractOrganization createOrganization(Registration registration) {
 		return organizationService.createOrganization(registration);
 	}
 	

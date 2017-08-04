@@ -1,7 +1,6 @@
 package com.nowellpoint.api.service;
 
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
 
 /**

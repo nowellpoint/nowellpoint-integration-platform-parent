@@ -14,7 +14,7 @@ public abstract class AbstractIdentity {
 	public abstract String getFirstName();
 	public abstract String getLastName();
 	public abstract String getName();
-	public abstract Organization getOrganization();
+	public abstract AbstractOrganization getOrganization();
 	public abstract String getTimeZone();
 	public abstract String getLocale();
 	public abstract Address getAddress();

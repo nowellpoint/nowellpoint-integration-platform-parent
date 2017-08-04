@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
+@Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = Subscription.class)
 @JsonDeserialize(as = Subscription.class)
