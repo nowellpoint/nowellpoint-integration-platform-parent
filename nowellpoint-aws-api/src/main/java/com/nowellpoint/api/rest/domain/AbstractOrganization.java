@@ -15,7 +15,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
 @JsonSerialize(as = Organization.class)
 @JsonDeserialize(as = Organization.class)
 public abstract class AbstractOrganization extends AbstractImmutableResource {
@@ -37,8 +37,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	}
 	
 	public static Organization of(com.nowellpoint.api.model.document.Organization source) {
-		ModifiableOrganization organization = ModifiableOrganization.create();
-		modelMapper.map(source, organization);
+		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
 		return organization.toImmutable();
 	}
 	

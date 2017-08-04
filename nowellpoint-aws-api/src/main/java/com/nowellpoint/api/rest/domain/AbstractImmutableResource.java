@@ -9,9 +9,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.Provider;
-import org.modelmapper.Provider.ProvisionRequest;
-import org.modelmapper.TypeMap;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
@@ -19,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.nowellpoint.api.model.document.Subscription;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties; 
@@ -54,25 +50,42 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, AbstractSubscription>() {
 
 			@Override
-			protected AbstractSubscription convert(Subscription source) {
+			protected AbstractSubscription convert(com.nowellpoint.api.model.document.Subscription source) {
 				ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
 				return subscription.toImmutable();
 			}
 			
 		});
 		
-//		modelMapper.createTypeMap(com.nowellpoint.api.model.document.Subscription.class, AbstractSubscription.class).setProvider(
-//				new Provider<AbstractSubscription>() {
-//					@Override
-//					public AbstractSubscription get(ProvisionRequest<AbstractSubscription> request) {
-//						System.out.println("made it");
-//						com.nowellpoint.api.model.document.Subscription source = com.nowellpoint.api.model.document.Subscription.class.cast(request.getSource());
-//						ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
-//						return subscription.toImmutable();
-//					}
-//				});
-		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, AbstractAddress>() {
 
+			@Override
+			protected AbstractAddress convert(com.nowellpoint.api.model.document.Address source) {
+				ModifiableAddress address = modelMapper.map(source, ModifiableAddress.class);
+				return address.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.CreditCard, AbstractCreditCard>() {
+
+			@Override
+			protected AbstractCreditCard convert(com.nowellpoint.api.model.document.CreditCard source) {
+				ModifiableCreditCard creditCard = modelMapper.map(source, ModifiableCreditCard.class);
+				return creditCard.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Contact, AbstractContact>() {
+
+			@Override
+			protected AbstractContact convert(com.nowellpoint.api.model.document.Contact source) {
+				ModifiableContact contact = modelMapper.map(source, ModifiableContact.class);
+				return contact.toImmutable();
+			}
+			
+		});
 	}
 	
 	public abstract @Nullable String getId();
@@ -84,6 +97,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 	protected <T> Meta getMetaAs(Class<T> resourceClass) {
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(resourceClass)
+				.path("/{id}")
 				.build(Assert.isNotNullOrEmpty(getId()) ? getId() : "{id}");
 				
 		Meta meta = Meta.builder()

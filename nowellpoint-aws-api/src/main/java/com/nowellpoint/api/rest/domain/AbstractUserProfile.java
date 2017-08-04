@@ -20,7 +20,7 @@ import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
@@ -41,7 +41,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract TimeZone getTimeZone();
 	public abstract Locale getLocale();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
-	public abstract Address getAddress();
+	public abstract AbstractAddress getAddress();
 	public abstract @JsonIgnore Set<ReferenceLink> getReferenceLinks();
 	public abstract @Nullable OrganizationInfo getOrganization();
 	public abstract Photos getPhotos();
@@ -56,8 +56,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	}
 	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {
-		ModifiableUserProfile userProfile = ModifiableUserProfile.create();
-		modelMapper.map(source, userProfile);
+		ModifiableUserProfile userProfile = modelMapper.map(source, ModifiableUserProfile.class);
 		return userProfile.toImmutable();
 	}
 	

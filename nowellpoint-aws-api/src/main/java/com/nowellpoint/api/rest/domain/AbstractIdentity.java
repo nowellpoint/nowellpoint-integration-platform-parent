@@ -17,7 +17,7 @@ public abstract class AbstractIdentity {
 	public abstract AbstractOrganization getOrganization();
 	public abstract String getTimeZone();
 	public abstract String getLocale();
-	public abstract Address getAddress();
+	public abstract AbstractAddress getAddress();
 	public abstract Resources getResources();
 	public abstract Meta getMeta();
 }

@@ -44,7 +44,6 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	
 	public static Registration of(com.nowellpoint.api.model.document.Registration source) {
 		ModifiableRegistration registration = modelMapper.map(source, ModifiableRegistration.class);
-		System.out.println(registration.getId());
 		return registration.toImmutable();
 	}
 	
