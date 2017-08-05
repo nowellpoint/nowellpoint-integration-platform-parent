@@ -15,9 +15,9 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class AccountProfile extends AbstractResource {
 
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;
+	private AbstractUserInfo lastUpdatedBy;
 
 	private String username;
 
@@ -125,19 +125,19 @@ public class AccountProfile extends AbstractResource {
 		return new AccountProfile(document);
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

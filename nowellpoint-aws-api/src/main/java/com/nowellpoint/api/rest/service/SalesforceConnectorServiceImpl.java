@@ -55,7 +55,7 @@ import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.service.VaultEntryService;
@@ -140,7 +140,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 				token.getId(), 
 				SalesforceConnectionString.REFRESH_TOKEN);
 		
-		UserInfo createdBy = new UserInfo(UserContext.getPrincipal().getName());
+		AbstractUserInfo createdBy = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
 		SalesforceConnector salesforceConnector = SalesforceConnector.of( 
 				createdBy,

@@ -50,7 +50,7 @@ import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.IsoCountry;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Token;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.AccountProfileService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.IsoCountryService;
@@ -134,14 +134,14 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 
 		accountProfile.setPhotos(photos);
 		
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		//AbstractUserInfo abstractUserInfo = new AbstractUserInfo(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
 		accountProfile.setCreatedOn(now);
-		accountProfile.setCreatedBy(userInfo);
+		//accountProfile.setCreatedBy(abstractUserInfo);
 		accountProfile.setLastUpdatedOn(now);
-		accountProfile.setLastUpdatedBy(userInfo);
+		//accountProfile.setLastUpdatedBy(abstractUserInfo);
 		
 		create( accountProfile );
 	}
@@ -331,7 +331,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 		accountProfile.setLastUpdatedOn(now);
 		accountProfile.setUsername(accountProfile.getEmail());
 		accountProfile.setName(accountProfile.getFirstName() != null ? accountProfile.getFirstName().concat(" ").concat(accountProfile.getLastName()) : accountProfile.getLastName());
-		accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
+		//accountProfile.setLastUpdatedBy(new AbstractUserInfo(UserContext.getPrincipal().getName()));
 		
 		update(accountProfile);
 		
@@ -689,7 +689,7 @@ public class AccountProfileServiceImpl extends AbstractAccountProfileService imp
 			
 			
 			accountProfile.setLastUpdatedOn(now);
-			accountProfile.setLastUpdatedBy(new UserInfo(UserContext.getPrincipal().getName()));
+			//accountProfile.setLastUpdatedBy(new AbstractUserInfo(UserContext.getPrincipal().getName()));
 			
 			update(accountProfile);
 		}

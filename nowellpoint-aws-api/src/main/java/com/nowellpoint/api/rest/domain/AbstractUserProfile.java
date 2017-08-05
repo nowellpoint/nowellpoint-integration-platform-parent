@@ -24,8 +24,8 @@ import com.nowellpoint.util.Assert;
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
-	public abstract UserInfo getCreatedBy();
-	public abstract UserInfo getLastUpdatedBy();
+	public abstract AbstractUserInfo getCreatedBy();
+	public abstract AbstractUserInfo getLastUpdatedBy();
 	public abstract String getUsername();
 	public abstract String getLastName();
 	public abstract String getFirstName();

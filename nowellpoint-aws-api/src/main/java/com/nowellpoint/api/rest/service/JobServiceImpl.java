@@ -51,7 +51,7 @@ import com.nowellpoint.api.rest.domain.JobOutput;
 import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.api.rest.domain.JobStatus;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.CommunicationService;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.util.MessageConstants;
@@ -181,9 +181,9 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 			throw new ValidationException(errorMessage);
 		}
 		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 
-		Job job = Job.of(jobRequest, userInfo);
+		Job job = Job.of(jobRequest, abstractUserInfo);
 		
 		createJob(job);
 		
@@ -197,9 +197,9 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		
 		Job job = findById(jobRequest.getId());
 		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
-		job.setLastUpdatedBy(userInfo);
+		job.setLastUpdatedBy(abstractUserInfo);
 		job.setLastUpdatedOn(Date.from(Instant.now()));
 		job.setDescription(jobRequest.getDescription().orElse(null));
 		job.setNotificationEmail(jobRequest.getNotificationEmail().orElse(null));

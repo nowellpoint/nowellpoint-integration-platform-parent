@@ -2,8 +2,8 @@ package com.nowellpoint.api.rest.domain;
 
 public class OrganizationInfo {
 	
-	private UserInfo createdBy;
-	private UserInfo lastUpdatedBy;	
+	private AbstractUserInfo createdBy;
+	private AbstractUserInfo lastUpdatedBy;	
 	private String number;
 	private String domain;
 	private Contact billingContact;
@@ -14,19 +14,19 @@ public class OrganizationInfo {
 		
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

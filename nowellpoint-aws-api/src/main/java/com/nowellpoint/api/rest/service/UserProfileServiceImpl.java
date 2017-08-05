@@ -16,7 +16,7 @@ import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -52,7 +52,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode, Locale locale, TimeZone timeZone) {
 		String country = getCountry(countryCode);
 		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
 		String temporaryPassword = generateTemporaryPassword(24);
 		
@@ -80,9 +80,9 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.locale(Locale.getDefault())
 				.timeZone(TimeZone.getDefault())
 				.isActive(Boolean.FALSE)
-				.createdBy(userInfo)
+				.createdBy(abstractUserInfo)
 				.createdOn(now)
-				.lastUpdatedBy(userInfo)
+				.lastUpdatedBy(abstractUserInfo)
 				.lastUpdatedOn(now)
 				.photos(photos)
 				.addReferenceLink(referenceLink)

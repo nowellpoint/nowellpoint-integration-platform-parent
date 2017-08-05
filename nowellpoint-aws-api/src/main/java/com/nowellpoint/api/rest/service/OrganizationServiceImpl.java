@@ -10,7 +10,7 @@ import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.Registration;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.api.util.UserContext;
@@ -33,7 +33,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public Organization createOrganization(Registration registration) {
 		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
@@ -50,9 +50,9 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.domain(registration.getDomain())
 				.subscription(registration.getSubscription())
 				.addReferenceLink(referenceLink)
-				.createdBy(userInfo)
+				.createdBy(abstractUserInfo)
 				.createdOn(now)
-				.lastUpdatedBy(userInfo)
+				.lastUpdatedBy(abstractUserInfo)
 				.lastUpdatedOn(now)
 				.build();
 		

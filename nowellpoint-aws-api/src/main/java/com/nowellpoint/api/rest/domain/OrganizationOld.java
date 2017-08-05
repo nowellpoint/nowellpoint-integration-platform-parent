@@ -16,9 +16,9 @@ public class OrganizationOld extends AbstractResource {
 
 	private Meta meta;
 	
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;	
+	private AbstractUserInfo lastUpdatedBy;	
 	
 	private String number;
 	
@@ -59,9 +59,9 @@ public class OrganizationOld extends AbstractResource {
 	public static OrganizationOld createOrganization(String domain) {
 		OrganizationOld organizationOld = new OrganizationOld();
 		organizationOld.setDomain(domain);
-		organizationOld.setCreatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
+		organizationOld.setCreatedBy(AbstractUserInfo.of(UserContext.getPrincipal().getName()));
 		organizationOld.setCreatedOn(Date.from(Instant.now()));
-		organizationOld.setLastUpdatedBy(UserInfo.of(UserContext.getPrincipal().getName()));
+		organizationOld.setLastUpdatedBy(AbstractUserInfo.of(UserContext.getPrincipal().getName()));
 		organizationOld.setLastUpdatedOn(Date.from(Instant.now()));
 		return organizationOld;
 	}
@@ -74,19 +74,19 @@ public class OrganizationOld extends AbstractResource {
 		this.meta = meta;
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

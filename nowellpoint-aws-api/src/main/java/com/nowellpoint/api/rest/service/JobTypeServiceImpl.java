@@ -6,7 +6,7 @@ import java.util.Date;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.JobTypeList;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.JobTypeService;
 import com.nowellpoint.api.util.UserContext;
 
@@ -33,14 +33,14 @@ public class JobTypeServiceImpl extends AbstractJobTypeService implements JobTyp
 	
 	@Override
 	public void createScheduledJobType(JobType jobType) {
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
 		jobType.setCreatedOn(now);
-		jobType.setCreatedBy(userInfo);
+		jobType.setCreatedBy(abstractUserInfo);
 		jobType.setLastUpdatedOn(now);
-		jobType.setLastUpdatedBy(userInfo);
+		jobType.setLastUpdatedBy(abstractUserInfo);
 		
 		create(jobType);
 	}
@@ -49,12 +49,12 @@ public class JobTypeServiceImpl extends AbstractJobTypeService implements JobTyp
 	public void updateScheduledJobType(String id, JobType jobType) {
 		jobType.setId(id);
 		
-		UserInfo userInfo = new UserInfo(UserContext.getPrincipal().getName());
+		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 				
 		jobType.setLastUpdatedOn(now);
-		jobType.setLastUpdatedBy(userInfo);
+		jobType.setLastUpdatedBy(abstractUserInfo);
 		
 		update(jobType);
 	}

@@ -50,7 +50,10 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, AbstractSubscription>() {
 
 			@Override
-			protected AbstractSubscription convert(com.nowellpoint.api.model.document.Subscription source) {
+			protected Subscription convert(com.nowellpoint.api.model.document.Subscription source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
 				ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
 				return subscription.toImmutable();
 			}
@@ -60,7 +63,10 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, AbstractAddress>() {
 
 			@Override
-			protected AbstractAddress convert(com.nowellpoint.api.model.document.Address source) {
+			protected Address convert(com.nowellpoint.api.model.document.Address source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
 				ModifiableAddress address = modelMapper.map(source, ModifiableAddress.class);
 				return address.toImmutable();
 			}
@@ -70,7 +76,10 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.CreditCard, AbstractCreditCard>() {
 
 			@Override
-			protected AbstractCreditCard convert(com.nowellpoint.api.model.document.CreditCard source) {
+			protected CreditCard convert(com.nowellpoint.api.model.document.CreditCard source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
 				ModifiableCreditCard creditCard = modelMapper.map(source, ModifiableCreditCard.class);
 				return creditCard.toImmutable();
 			}
@@ -80,9 +89,38 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Contact, AbstractContact>() {
 
 			@Override
-			protected AbstractContact convert(com.nowellpoint.api.model.document.Contact source) {
+			protected Contact convert(com.nowellpoint.api.model.document.Contact source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
 				ModifiableContact contact = modelMapper.map(source, ModifiableContact.class);
 				return contact.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, AbstractUserInfo>() {
+
+			@Override
+			protected UserInfo convert(com.nowellpoint.api.model.document.UserRef source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableUserInfo userInfo = modelMapper.map(source, ModifiableUserInfo.class);
+				return userInfo.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Photos, AbstractPhotos>() {
+
+			@Override
+			protected Photos convert(com.nowellpoint.api.model.document.Photos source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiablePhotos photos = modelMapper.map(source, ModifiablePhotos.class);
+				return photos.toImmutable();
 			}
 			
 		});

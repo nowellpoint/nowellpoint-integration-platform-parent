@@ -19,8 +19,8 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 @JsonSerialize(as = Organization.class)
 @JsonDeserialize(as = Organization.class)
 public abstract class AbstractOrganization extends AbstractImmutableResource {
-	public abstract UserInfo getCreatedBy();
-	public abstract UserInfo getLastUpdatedBy();
+	public abstract AbstractUserInfo getCreatedBy();
+	public abstract AbstractUserInfo getLastUpdatedBy();
 	public abstract @Nullable String getNumber();
 	public abstract String getDomain();
 	public abstract @Nullable String getName();

@@ -30,8 +30,8 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract Long getExpiresAt();
 	public abstract AbstractSubscription getSubscription();
 	public abstract @Nullable String getIdentityHref(); 
-	public abstract UserInfo getCreatedBy();
-	public abstract UserInfo getLastUpdatedBy();
+	public abstract AbstractUserInfo getCreatedBy();
+	public abstract AbstractUserInfo getLastUpdatedBy();
 	
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 

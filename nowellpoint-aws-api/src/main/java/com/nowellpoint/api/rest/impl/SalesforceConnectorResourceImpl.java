@@ -19,7 +19,7 @@ import com.nowellpoint.api.rest.domain.Meta;
 import com.nowellpoint.api.rest.domain.SalesforceConnector;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
-import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.client.sforce.model.Token;
@@ -104,8 +104,8 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	public Response updateSalesforceConnector(String id, String name, String tag, String ownerId) {	
 		
-		UserInfo owner = Assert.isEmpty(ownerId) ? null : UserInfo.of(ownerId);
-		UserInfo lastUpdatedBy = UserInfo.of(securityContext.getUserPrincipal().getName());
+		AbstractUserInfo owner = Assert.isEmpty(ownerId) ? null : AbstractUserInfo.of(ownerId);
+		AbstractUserInfo lastUpdatedBy = AbstractUserInfo.of(securityContext.getUserPrincipal().getName());
 		
 		UpdateSalesforceConnectorRequest request = UpdateSalesforceConnectorRequest.builder()
 				.name(Assert.isEmpty(name) ? null : name)

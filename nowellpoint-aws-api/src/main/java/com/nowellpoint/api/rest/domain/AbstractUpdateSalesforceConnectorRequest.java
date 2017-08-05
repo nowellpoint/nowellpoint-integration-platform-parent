@@ -11,6 +11,6 @@ import org.immutables.value.Value;
 public abstract class AbstractUpdateSalesforceConnectorRequest {
 	public abstract @Nullable String getName();
 	public abstract Optional<String> getTag();
-	public abstract @Nullable UserInfo getOwner();
-	public abstract UserInfo getLastUpdatedBy();
+	public abstract @Nullable AbstractUserInfo getOwner();
+	public abstract AbstractUserInfo getLastUpdatedBy();
 }
