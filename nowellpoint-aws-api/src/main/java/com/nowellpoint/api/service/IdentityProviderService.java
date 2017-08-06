@@ -1,5 +1,6 @@
 package com.nowellpoint.api.service;
 
+import com.nowellpoint.api.idp.model.Keys;
 import com.nowellpoint.api.idp.model.TokenResponse;
 import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.okta.sdk.resource.user.User;
@@ -32,6 +33,13 @@ public interface IdentityProviderService {
 	 */
 	
 	public TokenVerificationResponse verify(String accessToken);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public Keys getKeys();
 	
 	/**
 	 * 

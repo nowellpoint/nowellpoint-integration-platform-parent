@@ -14,7 +14,7 @@ public interface RegistrationService {
     		String domain,
     		String planId);
 	
-	public Registration updateRegistration(String id, String domain);
+	public Registration updateRegistration(String id, String domain, String planId);
 	
 	public Registration verifyEmail(String emailVerificationToken);
 }

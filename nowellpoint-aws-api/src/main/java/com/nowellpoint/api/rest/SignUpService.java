@@ -3,6 +3,7 @@ package com.nowellpoint.api.rest;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -16,7 +17,7 @@ import org.hibernate.validator.constraints.Email;
 public interface SignUpService {
 	
 	@PermitAll
-	@POST
+	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getRegistration(@PathParam("id") String id);
@@ -47,7 +48,8 @@ public interface SignUpService {
 	@Produces(MediaType.APPLICATION_JSON)
     public Response updateRegistration(
     		@PathParam("id") String id, 
-    		@FormParam("domain") String domain);
+    		@FormParam("domain") String domain,
+    		@FormParam("planId") String planId);
 	
 	@PermitAll
 	@POST

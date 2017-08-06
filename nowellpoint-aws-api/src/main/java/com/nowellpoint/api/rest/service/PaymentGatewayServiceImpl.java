@@ -1,4 +1,4 @@
-package com.nowellpoint.api.service;
+package com.nowellpoint.api.rest.service;
 
 import com.braintreegateway.SubscriptionRequest;
 import com.braintreegateway.Address;
@@ -12,6 +12,7 @@ import com.braintreegateway.Subscription;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
+import com.nowellpoint.api.service.PaymentGatewayService;
 import com.nowellpoint.util.Properties;
 
 public class PaymentGatewayServiceImpl implements PaymentGatewayService {

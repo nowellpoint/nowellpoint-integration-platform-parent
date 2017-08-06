@@ -21,7 +21,7 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.SignUpService;
-import com.nowellpoint.api.rest.domain.AbstractOrganization;
+import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.Subscription;
@@ -141,7 +141,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	}
 	
 	@Override
-	public Registration updateRegistration(String id, String domain) {
+	public Registration updateRegistration(String id, String domain, String planId) {
 		
 		if (Assert.isNullOrEmpty(domain)) {
 			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_DOMAIN));
@@ -159,14 +159,31 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		LOGGER.info(emailVerificationTokenUri);
 		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName()); 
+		
+		Date now = Date.from(Instant.now());
+		
+		Plan plan = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : original.getSubscription().getPlanId());
+		
+		Subscription subscription = Subscription.builder()
+				.from(original.getSubscription())
+				.planId(plan.getId())
+				.planCode(plan.getPlanCode())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.billingFrequency(plan.getBillingFrequency())
+				.updatedOn(now)
+				.build();
 		
 		Registration registration = Registration.builder()
 				.from(original)
 				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
-				.lastUpdatedOn(Date.from(Instant.now()))
+				.lastUpdatedOn(now)
 				.lastUpdatedBy(userInfo)
+				.subscription(subscription)
 				.build();
 		
 		update(registration);
@@ -191,7 +208,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				original.getEmail(), 
 				original.getCountryCode());
 		
-		AbstractOrganization organization = createOrganization(original);
+		Organization organization = createOrganization(original);
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -244,7 +261,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		return userProfileService.createUserProfile(firstName, lastName, email, countryCode);
 	}
 	
-	private AbstractOrganization createOrganization(Registration registration) {
+	private Organization createOrganization(Registration registration) {
 		return organizationService.createOrganization(registration);
 	}
 	

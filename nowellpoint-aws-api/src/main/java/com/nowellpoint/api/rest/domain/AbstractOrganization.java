@@ -69,15 +69,14 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 			
 			if (! subscriptionEvent.get("transaction").get("creditCard").isNull()) {
 				
-				CreditCard creditCard = CreditCard.builder()
-						.lastFour(subscriptionEvent.get("transaction").get("creditCard").get("last4").asText())
-						.cardType(subscriptionEvent.get("transaction").get("creditCard").get("cardType").asText())
-						.cardholderName(subscriptionEvent.get("transaction").get("creditCard").get("cardholderName").asText())
-						.expirationMonth(subscriptionEvent.get("transaction").get("creditCard").get("expirationMonth").asText())
-						.expirationYear(subscriptionEvent.get("transaction").get("creditCard").get("expirationYear").asText())
-						.imageUrl(subscriptionEvent.get("transaction").get("creditCard").get("imageUrl").asText())
-						.token(subscriptionEvent.get("transaction").get("creditCard").get("token").asText())
-						.build();
+				ModifiableCreditCard creditCard = ModifiableCreditCard.create()
+						.setLastFour(subscriptionEvent.get("transaction").get("creditCard").get("last4").asText())
+						.setCardType(subscriptionEvent.get("transaction").get("creditCard").get("cardType").asText())
+						.setCardholderName(subscriptionEvent.get("transaction").get("creditCard").get("cardholderName").asText())
+						.setExpirationMonth(subscriptionEvent.get("transaction").get("creditCard").get("expirationMonth").asText())
+						.setExpirationYear(subscriptionEvent.get("transaction").get("creditCard").get("expirationYear").asText())
+						.setImageUrl(subscriptionEvent.get("transaction").get("creditCard").get("imageUrl").asText())
+						.setToken(subscriptionEvent.get("transaction").get("creditCard").get("token").asText());
 				
 				transaction.setCreditCard(creditCard);
 			}

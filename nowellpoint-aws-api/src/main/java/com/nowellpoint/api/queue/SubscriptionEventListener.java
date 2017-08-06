@@ -38,15 +38,15 @@ public class SubscriptionEventListener implements MessageListener {
 		try {
 			
 			if (textMessage.getStringProperty("WEBHOOK_NOTIFICATION_INSTANCE").equals(System.getProperty(Properties.BRAINTREE_ENVIRONMENT))) {
-				JsonNode subscriptionMessage = new ObjectMapper().readValue(textMessage.getText(), JsonNode.class);
+				JsonNode subscriptionEvent = new ObjectMapper().readValue(textMessage.getText(), JsonNode.class);
 				
-				String id = subscriptionMessage.get("id").asText();
+				String id = subscriptionEvent.get("id").asText();
 				
 				LOGGER.info(String.format("Recevied SubscriptionEvent for Subscription %s", id));
 				
 				com.nowellpoint.api.model.document.Organization document = documentManager.findOne(com.nowellpoint.api.model.document.Organization.class, eq ( "subscription.subscriptionId", id ));
 				
-				Organization organization = Organization.updateSubscription(document, subscriptionMessage);
+				Organization organization = Organization.updateSubscription(document, subscriptionEvent);
 				
 				updateOrganization(organization);
 				

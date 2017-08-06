@@ -30,6 +30,7 @@ public class Properties {
 	public static final String SALESFORCE_API_VERSION = "salesforce.api.version";
 	public static final String OKTA_API_KEY = "okta.api.key";
 	public static final String OKTA_ORG_URL = "okta.org.url";
+	public static final String OKTA_GROUP_ID = "okta.group.id";
 	public static final String OKTA_CLIENT_ID = "okta.client.id";
 	public static final String OKTA_CLIENT_SECRET = "okta.client.secret";
 	public static final String OKTA_AUTHORIZATION_SERVER = "okta.authorization.server";

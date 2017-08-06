@@ -213,11 +213,12 @@ public class SignUpServiceImpl implements SignUpService {
     }
 	
 	@Override
-	public Response updateRegistration(String id, String domain) {
+	public Response updateRegistration(String id, String domain, String planId) {
 		
 		Registration registration = registrationService.updateRegistration(
 				id, 
-				domain);
+				domain,
+				planId);
 		
 		return Response.ok(registration)
 				.build();

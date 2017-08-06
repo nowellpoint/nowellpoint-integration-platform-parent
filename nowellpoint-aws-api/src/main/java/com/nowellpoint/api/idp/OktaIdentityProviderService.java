@@ -4,6 +4,7 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.idp.model.AuthenticationException;
 import com.nowellpoint.api.idp.model.Error;
+import com.nowellpoint.api.idp.model.Keys;
 import com.nowellpoint.api.idp.model.TokenResponse;
 import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -77,6 +78,27 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 		}
 		
 		return response;
+	}
+	
+	@Override
+	public Keys getKeys() {
+		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+				.accept(MediaType.APPLICATION_JSON)
+				.path("v1")
+				.path("keys")
+				.execute();
+		
+		Keys keys = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			keys = httpResponse.getEntity(Keys.class);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);	
+			throw new AuthenticationException(error);
+		}
+		
+		return keys;
 	}
 	
 	/**
@@ -172,7 +194,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 		
 		user = client.createUser(user);
 		
-		client.getUser(user.getId()).addToGroup(System.getProperty("okta.group.id"));
+		client.getUser(user.getId()).addToGroup(System.getProperty(Properties.OKTA_GROUP_ID));
 		
 		return user;
 	}
