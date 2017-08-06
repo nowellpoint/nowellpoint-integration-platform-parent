@@ -166,7 +166,7 @@ public class Dashboard extends AbstractResource {
 
 	@Override
 	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.AccountProfile.class);
+		return modelMapper.map(this, com.nowellpoint.api.model.document.Dashboard.class);
 	}
 	
 	@Override

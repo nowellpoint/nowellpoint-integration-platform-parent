@@ -28,10 +28,10 @@ public class JobType extends MongoDocument {
 
 	private static final long serialVersionUID = -5368597023270502005L;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 	
 	private String name;

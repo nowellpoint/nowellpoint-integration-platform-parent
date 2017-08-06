@@ -2,6 +2,7 @@ package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -123,6 +124,19 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				return photos.toImmutable();
 			}
 			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, AbstractTransaction>() {
+
+			@Override
+			protected Transaction convert(com.nowellpoint.api.model.document.Transaction source) {
+				if (Optional.ofNullable(source).isPresent()) {
+					ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
+					return transaction.toImmutable();
+				} else {
+					return null;
+				}
+			}
 		});
 	}
 	

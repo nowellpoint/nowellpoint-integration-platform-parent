@@ -2,6 +2,9 @@ package com.nowellpoint.api.rest.service;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
@@ -9,13 +12,25 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
+import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.text.RandomStringGenerator;
+import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
+import com.amazonaws.util.IOUtils;
 import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
@@ -26,6 +41,8 @@ import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
 public class UserProfileServiceImpl extends AbstractUserProfileService implements UserProfileService {
+	
+	private static final Logger LOGGER = Logger.getLogger(AbstractUserProfileService.class);
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -132,6 +149,53 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		update(userProfile);
 		
 		return userProfile;
+	}
+	
+	public byte[] getInvoice(String id, String invoiceNumber) {
+		if (UserContext.getPrincipal().getName().equals(id)) {
+			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
+			builder.setBucket("nowellpoint-invoices");
+			builder.setKey(invoiceNumber);
+			
+			GetObjectRequest request = new GetObjectRequest(builder.build());
+			AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+			
+			S3Object object = s3client.getObject(request);
+			InputStream inputStream = object.getObjectContent();
+			
+			try {
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				inputStream.close();
+				return bytes;
+			} catch (IOException e) {
+				LOGGER.error(e);
+			}
+		}
+		
+		return null;
+	}
+	
+	public void addSalesforceProfilePicture(String userId, String profileHref) {
+		
+		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
+		
+		try {
+			URL url = new URL( profileHref );
+			
+			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			String contentType = connection.getHeaderField("Content-Type");
+			
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+	    	objectMetadata.setContentLength(connection.getContentLength());
+	    	objectMetadata.setContentType(contentType);
+			
+	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", userId, connection.getInputStream(), objectMetadata);
+	    	
+	    	s3Client.putObject(putObjectRequest);
+			
+		} catch (IOException e) {
+			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	private User createUser(String email, String firstName, String lastName, String temporaryPassword) {

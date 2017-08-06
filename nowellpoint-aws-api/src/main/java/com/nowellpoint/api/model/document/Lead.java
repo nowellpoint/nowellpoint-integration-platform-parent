@@ -9,10 +9,10 @@ public class Lead extends MongoDocument {
 	
 	private static final long serialVersionUID = 7199045654991076942L;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 	
 	private String firstName;

@@ -38,13 +38,13 @@ public class Job extends MongoDocument {
 	@EmbedOne
 	private Source source;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef owner;
 	
 	private String description;

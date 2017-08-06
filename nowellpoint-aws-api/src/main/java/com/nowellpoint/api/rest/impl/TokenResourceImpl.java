@@ -18,10 +18,10 @@ import com.nowellpoint.api.idp.model.TokenResponse;
 import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.TokenResource;
-import com.nowellpoint.api.rest.domain.AccountProfile;
 import com.nowellpoint.api.rest.domain.Token;
-import com.nowellpoint.api.service.AccountProfileService;
+import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.UserProfileService;
 
 public class TokenResourceImpl implements TokenResource {
 	
@@ -32,7 +32,7 @@ public class TokenResourceImpl implements TokenResource {
 	private IdentityProviderService identityProviderService;
 	
 	@Inject
-	private AccountProfileService accountProfileService;
+	private UserProfileService userProfileService;
 	
 	@Inject
 	private Event<Token> loggedInEvent;
@@ -101,13 +101,13 @@ public class TokenResourceImpl implements TokenResource {
 		// lookup account profile
 		//
 		
-		AccountProfile accountProfile = accountProfileService.findByIdpId(verification.getUserId());
+		UserProfile userProfile = userProfileService.findById(verification.getUserId());
 
 		//
 		// create the token
 		//
 		
-        Token token = createToken(result, accountProfile.getId());
+        Token token = createToken(result, userProfile.getId());
 
 		//
 		// fire event for handling login functions

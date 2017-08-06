@@ -31,10 +31,10 @@ public class Plan extends MongoDocument {
 
 	private static final long serialVersionUID = -7569793449815113870L;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 	
 	private Boolean recommendedPlan;
