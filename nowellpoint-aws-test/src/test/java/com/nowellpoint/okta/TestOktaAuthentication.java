@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.model.TokenResponse;
 import com.nowellpoint.client.model.TokenVerificationResponse;
 import com.nowellpoint.http.HttpResponse;
@@ -29,6 +31,23 @@ import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserCredentials;
 import com.okta.sdk.resource.user.UserProfile;
 import com.okta.sdk.resource.user.UserStatus;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.SigningKeyResolverAdapter;
+
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestOktaAuthentication {
 	
@@ -77,6 +96,59 @@ public class TestOktaAuthentication {
 		assertNotNull(token.getRefreshToken());
 		assertNotNull(token.getScope());
 		assertNotNull(token.getTokenType());
+		
+		final String modulusString = null;
+		final String exponentString = null;
+		
+        SigningKeyResolver resolver = new SigningKeyResolverAdapter() {
+        	@SuppressWarnings("rawtypes")
+			public Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
+                try {
+                    BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(modulusString));
+                    BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(exponentString));
+
+                    return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
+                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        };
+
+        try {
+            Jws<Claims> jwsClaims = Jwts.parser()
+                .setSigningKeyResolver(resolver)
+                .parseClaimsJws(token.getAccessToken());
+
+            System.out.println("Verified Access Token");
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jwsClaims));
+            
+            String compactJws = Jwts.builder()
+            		.setHeaderParam("kid", jwsClaims.getHeader().get("kid"))
+            		.setId(jwsClaims.getBody().getId())
+            		.setIssuer(jwsClaims.getBody().getIssuer())
+            		.setAudience("organizationId")
+            		.setSubject("userId")
+            		.setExpiration(jwsClaims.getBody().getExpiration())
+            		.setIssuedAt(jwsClaims.getBody().getIssuedAt())
+            		.claim("scope", jwsClaims.getBody().get("groups"))
+            		.signWith(SignatureAlgorithm.HS512, jwsClaims.getHeader().get("kid").toString())
+            		.compact();
+            
+            System.out.println(compactJws);
+            
+            jwsClaims = Jwts.parser()
+                    .setSigningKey(jwsClaims.getHeader().get("kid").toString())
+                    .parseClaimsJws(compactJws);
+
+                System.out.println("Verified Access Token");
+                mapper = new ObjectMapper();
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jwsClaims));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		
 		long start = System.currentTimeMillis();
 		
