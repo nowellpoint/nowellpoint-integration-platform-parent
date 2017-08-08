@@ -57,8 +57,8 @@ public class TokenServiceImpl implements TokenService {
 		
 		UserProfile userProfile = lookupUserProfile(jwsClaims.getBody().getSubject());
 		
-		String organizationId = userProfile.getOrganization().getId();
 		String userId = userProfile.getId();
+		String organizationId = userProfile.getOrganization().getId();
 		
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -104,7 +104,7 @@ public class TokenServiceImpl implements TokenService {
 	}
 	
 	private UserProfile lookupUserProfile(String userId) {
-		UserProfile userProfile = userProfileService.findById(userId);
+		UserProfile userProfile = userProfileService.findByReferenceId(userId);
 		return userProfile;
 	}
 	

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
@@ -59,6 +60,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile findByUsername(String username) {
 		return findOne(eq ( "username", username ));
 	}
+	
+	@Override
+	public UserProfile findByReferenceId(String referenceId) {
+		return findOne(eq ( "referenceLink.id", referenceId ));
+	}
 
 	@Override
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode) {
@@ -102,7 +108,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.photos(photos)
-				.addReferenceLink(referenceLink)
+				.referenceLink(referenceLink)
 				.build();
 		
 		create(userProfile);
@@ -196,6 +202,15 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	public void loggedInEvent(@Observes UserProfile userProfile) {		
+		UserProfile instance = UserProfile.builder()
+				.from(userProfile)
+				.lastLoginDate(Date.from(Instant.now()))
+				.build();
+		
+		this.update(instance);
 	}
 	
 	private User createUser(String email, String firstName, String lastName, String temporaryPassword) {

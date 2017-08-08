@@ -2,7 +2,6 @@ package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
@@ -20,7 +19,7 @@ import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
@@ -42,7 +41,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract Locale getLocale();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
 	public abstract Address getAddress();
-	public abstract @JsonIgnore Set<ReferenceLink> getReferenceLinks();
+	public abstract @JsonIgnore ReferenceLink getReferenceLink();
 	public abstract @Nullable OrganizationInfo getOrganization();
 	public abstract Photos getPhotos();
 	
