@@ -41,14 +41,13 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	}
 	
 	protected String id;
+	protected Meta meta;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	protected Date createdOn;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	protected Date lastUpdatedOn;
-	
-	protected Meta meta;
 		
 	public AbstractResource() {
 		
@@ -77,14 +76,6 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	public void setLastUpdatedOn(Date lastUpdatedOn) {
 		this.lastUpdatedOn = lastUpdatedOn;
 	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
 	
 	@JsonIgnore
 	public String toJson() throws JsonProcessingException {
@@ -97,4 +88,13 @@ public abstract class AbstractResource implements Resource, Createable, Updateab
 	}
 	
 	public abstract MongoDocument toDocument();
+	
+	@Override
+	public Meta getMeta() {
+		return meta;
+	}
+	
+	public void setMeta(Meta meta) {
+		this.meta = meta;
+	}
 }

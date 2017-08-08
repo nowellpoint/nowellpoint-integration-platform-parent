@@ -24,8 +24,8 @@ import com.nowellpoint.util.Assert;
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
-	public abstract AbstractUserInfo getCreatedBy();
-	public abstract AbstractUserInfo getLastUpdatedBy();
+	public abstract UserInfo getCreatedBy();
+	public abstract UserInfo getLastUpdatedBy();
 	public abstract String getUsername();
 	public abstract String getLastName();
 	public abstract String getFirstName();
@@ -41,7 +41,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract TimeZone getTimeZone();
 	public abstract Locale getLocale();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
-	public abstract AbstractAddress getAddress();
+	public abstract Address getAddress();
 	public abstract @JsonIgnore Set<ReferenceLink> getReferenceLinks();
 	public abstract @Nullable OrganizationInfo getOrganization();
 	public abstract Photos getPhotos();

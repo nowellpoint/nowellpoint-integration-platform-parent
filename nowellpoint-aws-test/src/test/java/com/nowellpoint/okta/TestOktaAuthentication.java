@@ -46,8 +46,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
 
 public class TestOktaAuthentication {
 	

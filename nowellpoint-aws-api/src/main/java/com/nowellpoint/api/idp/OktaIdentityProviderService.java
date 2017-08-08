@@ -1,17 +1,6 @@
 package com.nowellpoint.api.idp;
 
-import org.jboss.logging.Logger;
-
-import com.nowellpoint.api.idp.model.AuthenticationException;
-import com.nowellpoint.api.idp.model.Error;
-import com.nowellpoint.api.idp.model.Keys;
-import com.nowellpoint.api.idp.model.TokenResponse;
-import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
-import com.nowellpoint.http.Status;
 import com.nowellpoint.util.Properties;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
@@ -24,8 +13,6 @@ import com.okta.sdk.resource.user.UserStatus;
 
 public class OktaIdentityProviderService implements IdentityProviderService {
 	
-	private static final Logger LOG = Logger.getLogger(IdentityProviderService.class);
-	
 	private static Client client;
 	
 	static {
@@ -34,124 +21,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 				.setClientCredentials(new TokenClientCredentials(System.getProperty(Properties.OKTA_API_KEY)))
 				.setOrgUrl(System.getProperty(Properties.OKTA_ORG_URL))
 				.build();
-	}
-	
-	/**
-	 * 
-	 * @param apiKey
-	 * @return
-	 */
-	
-	@Override
-	public TokenResponse authenticate(String apiKey) {
-		throw new AuthenticationException("invalid_grant", "Invalid Grant Type: client_credentials is not supported.");
-	}
-	
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 */
-	
-	@Override
-	public TokenResponse authenticate(String username, String password) {	
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("v1")
-				.path("token")
-				.parameter("grant_type", "password")
-				.parameter("username", username)
-				.parameter("password", password)
-				.parameter("scope", "offline_access")
-				.execute();
-		
-		TokenResponse response = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			response = httpResponse.getEntity(TokenResponse.class);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);	
-			throw new AuthenticationException(error);
-		}
-		
-		return response;
-	}
-	
-	@Override
-	public Keys getKeys() {
-		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
-				.accept(MediaType.APPLICATION_JSON)
-				.path("v1")
-				.path("keys")
-				.execute();
-		
-		Keys keys = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			keys = httpResponse.getEntity(Keys.class);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);	
-			throw new AuthenticationException(error);
-		}
-		
-		return keys;
-	}
-	
-	/**
-	 * 
-	 * @param refreshToken
-	 * @return
-	 */
-	
-	@Override
-	public TokenResponse refreshToken(String refreshToken) {		
-		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
-				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("v1")
-				.path("token")
-				.parameter("grant_type", "refresh_token")
-				.parameter("refresh_token", refreshToken)
-				.parameter("scope", "offline_access")
-				.execute();
-		
-		TokenResponse response = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			response = httpResponse.getEntity(TokenResponse.class);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);	
-			throw new AuthenticationException(error);
-		}
-		
-		return response;
-	}
-	
-	/**
-	 * 
-	 * @param accessToken
-	 * @return TokenVerificationResponse
-	 */
-	
-	@Override
-	public TokenVerificationResponse verify(String accessToken) {		
-		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
-				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("v1")
-				.path("introspect")
-				.parameter("token", accessToken)
-				.parameter("token_type_hint", "access_token")
-				.execute();
-		
-		return httpResponse.getEntity(TokenVerificationResponse.class);
-	}
+	}	
 	
 	/**
 	 * 
@@ -253,27 +123,5 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	@Override
 	public void deleteUser(String id) {
 		client.getUser(id).delete();
-	}
-	
-	/**
-	 * 
-	 * @param accessToken
-	 */
-	
-	@Override
-	public void revokeToken(String accessToken) {
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("v1")
-				.path("revoke")
-				.parameter("token", accessToken)
-				.parameter("token_type_hint", "access_token")
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			LOG.error("Revoke Token Error: " + httpResponse.getAsString());
-		}
 	}
 }

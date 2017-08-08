@@ -2,7 +2,6 @@ package com.nowellpoint.api.util;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import com.nowellpoint.util.Properties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 
 public class UserContext {
 	
@@ -23,9 +21,7 @@ public class UserContext {
 	    }
 	};
 	
-	public static void setUserContext(String accessToken) {
-		Jws<Claims> claims = parseClaims(accessToken); 
-		
+	public static void setUserContext(Jws<Claims> claims) {		
 		String subject = claims.getBody().getSubject();
 		
 		@SuppressWarnings("unchecked")
@@ -45,14 +41,6 @@ public class UserContext {
 	
 	public static void clear() {
 		threadLocal.remove();
-	}
-	
-	private static Jws<Claims> parseClaims(String accessToken) {
-		Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.OKTA_CLIENT_SECRET).getBytes()))
-				.parseClaimsJws(accessToken); 
-		
-		return claims;
 	}
 	
 	static class UserPrincipal implements Principal {

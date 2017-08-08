@@ -1,45 +1,8 @@
 package com.nowellpoint.api.service;
 
-import com.nowellpoint.api.idp.model.Keys;
-import com.nowellpoint.api.idp.model.TokenResponse;
-import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.okta.sdk.resource.user.User;
 
 public interface IdentityProviderService {
-	
-	
-	public TokenResponse authenticate(String username, String password);
-	
-	/**
-	 * 
-	 * @param apiKey
-	 * @return
-	 */
-	
-	public TokenResponse authenticate(String apiKey);
-	
-	/**
-	 * 
-	 * @param refreshToken
-	 * @return
-	 */
-	
-	public TokenResponse refreshToken(String refreshToken);
-	
-	/**
-	 * 
-	 * @param accessToken
-	 * @return
-	 */
-	
-	public TokenVerificationResponse verify(String accessToken);
-	
-	/**
-	 * 
-	 * @return
-	 */
-	
-	public Keys getKeys();
 	
 	/**
 	 * 
@@ -89,11 +52,4 @@ public interface IdentityProviderService {
 	 */
 	
 	public void deleteUser(String id);
-	
-	/**
-	 * 
-	 * @param bearerToken
-	 */
-	
-	public void revokeToken(String bearerToken);
 }

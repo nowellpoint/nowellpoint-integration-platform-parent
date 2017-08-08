@@ -138,6 +138,19 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				}
 			}
 		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Organization, AbstractOrganizationInfo>() {
+
+			@Override
+			protected OrganizationInfo convert(com.nowellpoint.api.model.document.Organization source) {
+				if (Optional.ofNullable(source).isPresent()) {
+					ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
+					return organizationInfo.toImmutable();
+				} else {
+					return null;
+				}
+			}
+		});
 	}
 	
 	public abstract @Nullable String getId();
@@ -145,6 +158,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract void fromDocument(MongoDocument document);
 	public abstract MongoDocument toDocument();
+	public abstract @Nullable Meta getMeta();
 	
 	protected <T> Meta getMetaAs(Class<T> resourceClass) {
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))

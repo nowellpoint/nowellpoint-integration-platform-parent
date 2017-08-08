@@ -23,12 +23,13 @@ import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.api.idp.model.TokenVerificationResponse;
-import com.nowellpoint.api.service.IdentityProviderService;
+import com.nowellpoint.api.service.TokenService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.data.LogManager;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 
@@ -44,7 +45,7 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 	private HttpServletRequest httpRequest;
 	
 	@Inject
-	private IdentityProviderService identityProviderService;
+	private TokenService tokenService;
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -68,11 +69,10 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 			}
 			
 			String accessToken = authorization.get().replaceFirst("Bearer", "").trim();
-			
-			TokenVerificationResponse response = identityProviderService.verify(accessToken);
 				
 			try {
-				UserContext.setUserContext(accessToken);
+				Jws<Claims> claims = tokenService.verifyToken(accessToken);
+				UserContext.setUserContext(claims);
 				requestContext.setSecurityContext(UserContext.getSecurityContext());
 			} catch (MalformedJwtException e) {
 				LOG.error(e);

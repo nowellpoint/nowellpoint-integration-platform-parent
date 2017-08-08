@@ -23,6 +23,7 @@ import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
+import com.nowellpoint.api.rest.domain.UserInfo;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -31,7 +32,6 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
 import com.amazonaws.util.IOUtils;
-import com.nowellpoint.api.rest.domain.AbstractUserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -69,7 +69,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode, Locale locale, TimeZone timeZone) {
 		String country = getCountry(countryCode);
 		
-		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
 		String temporaryPassword = generateTemporaryPassword(24);
 		
@@ -97,9 +97,9 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.locale(Locale.getDefault())
 				.timeZone(TimeZone.getDefault())
 				.isActive(Boolean.FALSE)
-				.createdBy(abstractUserInfo)
+				.createdBy(userInfo)
 				.createdOn(now)
-				.lastUpdatedBy(abstractUserInfo)
+				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.photos(photos)
 				.addReferenceLink(referenceLink)

@@ -16,7 +16,7 @@ import com.nowellpoint.util.Properties;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
+@Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = UserInfo.class)
 @JsonDeserialize(as = UserInfo.class)
 public abstract class AbstractUserInfo {
@@ -49,7 +49,7 @@ public abstract class AbstractUserInfo {
 	
 	public static UserInfo of(String id) {
 		Assert.assertNotNullOrEmpty(id, "User Id cannot be null or empty");
-		ModifiableUserInfo userInfo = new ModifiableUserInfo().setId(id);
+		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(id);
 		return userInfo.toImmutable();
 	}	
 }
