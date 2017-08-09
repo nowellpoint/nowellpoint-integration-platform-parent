@@ -31,6 +31,11 @@ public interface SignUpService {
 	
 	@PermitAll
 	@POST
+	@Path("{id}/verify-email")
+	public Response resendVerificationEmail(@PathParam("id") String id);
+	
+	@PermitAll
+	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
     public Response createRegistration(

@@ -16,7 +16,7 @@ public abstract class AbstractTransaction {
 	public abstract @Nullable Double getAmount();
 	public abstract @Nullable String getCurrencyIsoCode();
 	public abstract String getStatus();
-	public abstract @Nullable AbstractCreditCard getCreditCard();
+	public abstract @Nullable CreditCard getCreditCard();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 }

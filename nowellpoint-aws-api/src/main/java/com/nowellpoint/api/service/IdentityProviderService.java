@@ -40,11 +40,20 @@ public interface IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param href
+	 * @param id
 	 * @param password
 	 */
 	
-	public void changePassword(String id, String password);
+	public void setPassword(String id, String password);
+	
+	/**
+	 * 
+	 * @param id
+	 * @param oldPassword
+	 * @param newPassword
+	 */
+	
+	public void changePassword(String id, String oldPassword, String newPassword);
 	
 	/**
 	 * 

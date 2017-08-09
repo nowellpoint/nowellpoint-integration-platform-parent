@@ -18,7 +18,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"referenceLink:referenceLinks, transaction:transactions"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"transaction:transactions"})
 @JsonSerialize(as = Organization.class)
 @JsonDeserialize(as = Organization.class)
 public abstract class AbstractOrganization extends AbstractImmutableResource {
@@ -27,12 +27,9 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable String getNumber();
 	public abstract String getDomain();
 	public abstract @Nullable String getName();
-	public abstract @Nullable AbstractSubscription getSubscription();
-	public abstract @Nullable AbstractCreditCard getCreditCard();
-	public abstract @Nullable AbstractAddress getBillingAddress();
-	public abstract @Nullable AbstractContact getBillingContact();
+	public abstract @Nullable Subscription getSubscription();
 	public abstract @Nullable Set<Transaction> getTransactions();
-	public abstract @JsonIgnore Set<ReferenceLink> getReferenceLinks();
+	public abstract @Nullable @JsonIgnore ReferenceLink getReferenceLink();
 	
 	@Override
 	public Meta getMeta() {
@@ -78,13 +75,13 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 						.setImageUrl(subscriptionEvent.get("transaction").get("creditCard").get("imageUrl").asText())
 						.setToken(subscriptionEvent.get("transaction").get("creditCard").get("token").asText());
 				
-				transaction.setCreditCard(creditCard);
+				transaction.setCreditCard(creditCard.toImmutable());
 			}
 			
 			organization.addTransaction(transaction.toImmutable());	
 		}
 		
-		organization.setSubscription(subscription);
+		organization.setSubscription(subscription.toImmutable());
 		
 		return organization.toImmutable();
 	}

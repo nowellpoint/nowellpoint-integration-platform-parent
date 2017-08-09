@@ -28,4 +28,7 @@ public abstract class AbstractSubscription {
 	public abstract String getBillingFrequency();
 	public abstract @Nullable String getStatus();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getNextBillingDate();
+	public abstract @Nullable CreditCard getCreditCard();
+	public abstract @Nullable Address getBillingAddress();
+	public abstract @Nullable Contact getBillingContact();
 }

@@ -213,6 +213,13 @@ public class SignUpServiceImpl implements SignUpService {
     }
 	
 	@Override
+	public Response resendVerificationEmail(String id) {
+		registrationService.resentVerificationEmail(id);
+		return Response.noContent()
+				.build();
+	}
+	
+	@Override
 	public Response updateRegistration(String id, String domain, String planId) {
 		
 		Registration registration = registrationService.updateRegistration(

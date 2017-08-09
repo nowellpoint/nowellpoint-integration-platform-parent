@@ -5,6 +5,7 @@ import com.nowellpoint.util.Properties;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
+import com.okta.sdk.resource.user.ChangePasswordRequest;
 import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserCredentials;
@@ -101,12 +102,10 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param href
-	 * @param password
 	 */
 	
 	@Override
-	public void changePassword(String id, String password) {
+	public void setPassword(String id, String password) {
 		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
 				.setValue(password);
 		
@@ -114,6 +113,21 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 				.setPassword(passwordCredential);
 		
 		client.getUser(id).setCredentials(userCredentials).update();
+	}
+	
+	/**
+	 * 
+	 */
+	
+	@Override
+	public void changePassword(String id, String oldPassword, String newPassword) {
+		ChangePasswordRequest changePasswordRequest = client.instantiate(ChangePasswordRequest.class)
+				.setNewPassword(client.instantiate(PasswordCredential.class)
+						.setValue(newPassword))
+				.setOldPassword(client.instantiate(PasswordCredential.class)
+						.setValue(oldPassword));
+		
+		client.getUser(id).changePassword(changePasswordRequest);
 	}
 	
 	/**

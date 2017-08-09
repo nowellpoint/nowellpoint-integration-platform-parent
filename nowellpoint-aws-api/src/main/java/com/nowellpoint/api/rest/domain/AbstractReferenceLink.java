@@ -13,11 +13,4 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public abstract class AbstractReferenceLink {
 	public abstract String getId();
 	public abstract String getType();
-	
-	public static ReferenceLink of(ReferenceLinkTypes type, String id) {
-		return ReferenceLink.builder()
-				.id(id)
-				.type(type.name())
-				.build();
-	}
 }

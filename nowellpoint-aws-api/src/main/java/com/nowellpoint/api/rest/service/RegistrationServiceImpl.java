@@ -226,6 +226,16 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		return registration;
 	}
 	
+	@Override
+	public void resentVerificationEmail(String id) {
+		Registration registration = findById(id);
+		
+		sendVerificationEmail(
+				registration.getEmail(), 
+				registration.getName(), 
+				registration.getEmailVerificationToken());
+	}
+	
 	private Registration findByEmailVerificationToken(String emailVerificationToken) {
 		Registration registration = null;
 		try {
@@ -262,7 +272,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	}
 	
 	private Organization createOrganization(Registration registration) {
-		return organizationService.createOrganization(registration);
+		return organizationService.createOrganization(registration.getDomain(), registration.getSubscription());
 	}
 	
 	private Plan findPlanById(String planId) {

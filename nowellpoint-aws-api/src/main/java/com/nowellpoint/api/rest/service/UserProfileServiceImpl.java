@@ -81,7 +81,10 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		User user = createUser(email, firstName, lastName, temporaryPassword);
 		
-		ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.USER_ID, user.getId());
+		ReferenceLink referenceLink = ReferenceLink.builder()
+				.id(user.getId())
+				.type(ReferenceLinkTypes.USER_ID.name())
+				.build();
 		
 		Date now = Date.from(Instant.now());
 		
@@ -155,6 +158,18 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		update(userProfile);
 		
 		return userProfile;
+	}
+	
+	@Override
+	public void setPassword(String id, String password) {
+		UserProfile userProfile = findById(id);
+		identityProviderService.setPassword(userProfile.getReferenceLink().getId(), password);
+	}
+	
+	@Override
+	public void changePassword(String id, String oldPassword, String newPassword) {
+		UserProfile userProfile = findById(id);
+		identityProviderService.changePassword(userProfile.getReferenceLink().getId(), oldPassword, newPassword);
 	}
 	
 	public byte[] getInvoice(String id, String invoiceNumber) {

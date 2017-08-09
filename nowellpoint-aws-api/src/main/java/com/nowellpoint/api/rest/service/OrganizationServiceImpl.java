@@ -10,6 +10,7 @@ import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.Registration;
+import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PaymentGatewayService;
@@ -31,28 +32,33 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 
 	@Override
-	public Organization createOrganization(Registration registration) {
+	public Organization createOrganization(String domain, Subscription subscription) {
 		
-		UserInfo abstractUserInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
-		String customerId = addCustomer(
+		/**
+		 * String customerId = addCustomer(
 				registration.getDomain(), 
 				registration.getEmail(), 
 				registration.getFirstName(), 
 				registration.getLastName(), 
 				null);
 		
-		ReferenceLink referenceLink = ReferenceLink.of(ReferenceLinkTypes.CUSTOMER_ID, customerId);
+		ReferenceLink referenceLink = ReferenceLink.builder()
+				.id(customerId)
+				.type(ReferenceLinkTypes.USER_ID.name())
+				.build();
+		 */
 
 		Organization organization = Organization.builder()
-				.domain(registration.getDomain())
-				.subscription(registration.getSubscription())
-				.addReferenceLink(referenceLink)
-				.createdBy(abstractUserInfo)
+				.domain(domain)
+				.subscription(subscription)
+				//.referenceLink(referenceLink)
+				.createdBy(userInfo)
 				.createdOn(now)
-				.lastUpdatedBy(abstractUserInfo)
+				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.build();
 		
@@ -77,11 +83,16 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 	
 	@Override
+	public Organization updateSubscription(String id, String planId, String cardholderName, String cardType, String expirationMonth, String expirationYear, String number, Boolean primary) {
+		return null;
+	}
+	
+	@Override
 	public Organization addCreditCard(String id, String cardholderName, String cardType, String expirationMonth, String expirationYear, String number, Boolean primary) {
 		
 		Organization original = findById(id);
 		
-		paymentGatewayService.addCreditCard(original.getId(), original.getBillingAddress().getId(), cardholderName, number, expirationMonth, expirationYear);
+		paymentGatewayService.addCreditCard(original.getId(), original.getSubscription().getBillingAddress().getId(), cardholderName, number, expirationMonth, expirationYear);
 		
 		Organization organization = Organization.builder()
 				.from(original)
