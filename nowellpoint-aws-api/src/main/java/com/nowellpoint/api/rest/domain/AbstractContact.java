@@ -1,5 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,4 +15,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public abstract class AbstractContact {
 	public abstract String getFirstName();
 	public abstract String getLastName();
+	public abstract String getEmail();
+	public abstract @Nullable String getPhone();
 }

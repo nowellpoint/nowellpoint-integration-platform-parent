@@ -9,6 +9,7 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
+import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 
@@ -22,8 +23,14 @@ public class TestImmutables {
 				.setEnvironment(Environment.SANDBOX)
 				.build();
 		
-		OauthAuthenticationResponse response = Authenticators.CLIENT_CREDENTIALS_GRANT_AUTHENTICATOR
-				.authenticate(request);
+		PasswordGrantRequest passwordGrantRequest = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
+				.setEnvironment(Environment.SANDBOX)
+				.setPassword(System.getenv("NOWELLPOINT_PASSWORD"))
+				.setUsername(System.getenv("NOWELLPOINT_USERNAME"))
+				.build();
+		
+		OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
+				.authenticate(passwordGrantRequest);
 		
 		Token token = response.getToken();
 		

@@ -24,7 +24,6 @@ import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
-import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.ValidationException;
@@ -101,25 +100,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.build()
 				.generate(24);
 		
-		Subscription subscription = Subscription.builder()
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
-				.addedOn(now)
-				.updatedOn(now)
-				.build();
-		
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)
-				.subscription(subscription)
+				.verified(Boolean.FALSE)
+				.planId(plan.getId())
 				.createdBy(userInfo)
 				.createdOn(now)
 				.lastUpdatedBy(userInfo)
@@ -147,15 +135,15 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_DOMAIN));
 		}
 		
-		Registration original = findById(id);
+		Registration registration = findById(id);
 		
-		isExpired(original.getExpiresAt());
+		isExpired(registration.getExpiresAt());
 		
 		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(SignUpService.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
-				.build(original.getEmailVerificationToken());
+				.build(registration.getEmailVerificationToken());
 		
 		LOGGER.info(emailVerificationTokenUri);
 		
@@ -163,67 +151,40 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Date now = Date.from(Instant.now());
 		
-		Plan plan = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : original.getSubscription().getPlanId());
+		Plan plan = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : registration.getPlanId());
 		
-		Subscription subscription = Subscription.builder()
-				.from(original.getSubscription())
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
-				.updatedOn(now)
-				.build();
-		
-		Registration registration = Registration.builder()
-				.from(original)
+		Registration instance = Registration.builder()
+				.from(registration)
 				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
 				.lastUpdatedOn(now)
 				.lastUpdatedBy(userInfo)
-				.subscription(subscription)
+				.planId(plan.getId())
 				.build();
 		
-		update(registration);
+		update(instance);
 		
 		sendVerificationEmail(
-				registration.getEmail(), 
-				registration.getName(), 
-				registration.getEmailVerificationToken());
+				instance.getEmail(), 
+				instance.getName(), 
+				instance.getEmailVerificationToken());
 		
-		return registration;
+		return instance;
 	}
 	
 	@Override
 	public Registration verifyEmail(String emailVerificationToken) {
-		Registration original = findByEmailVerificationToken(emailVerificationToken);
+		Registration registration = findByEmailVerificationToken(emailVerificationToken);
 		
-		isExpired(original.getExpiresAt());
-		
-		UserProfile userProfile = createUserProfile(
-				original.getFirstName(), 
-				original.getLastName(), 
-				original.getEmail(), 
-				original.getCountryCode());
-		
-		Organization organization = createOrganization(original);
-		
-		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(IdentityResource.class)
-				.path("/{organizationId}/{userId}")
-				.build(organization.getId(), userProfile.getId());
-		
-		Registration registration = Registration.builder()
-				.from(original)
+		Registration instance = Registration.builder()
+				.from(registration)
 				.expiresAt(System.currentTimeMillis())
-				.identityHref(uri.toString())
+				.verified(Boolean.TRUE)
 				.build();
 		
-		update(registration);
+		update(instance);
 		
-		return registration;
+		return instance;
 	}
 	
 	@Override
@@ -236,10 +197,54 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				registration.getEmailVerificationToken());
 	}
 	
+	@Override
+	public Registration provision(
+			String id, 
+			String cardholderName, 
+			String expirationMonth, 
+			String expirationYear,
+			String number, 
+			String cvv) {
+		
+		Registration registration = findById(id);
+		
+		UserProfile userProfile = createUserProfile(registration);
+		
+		Organization organization = createOrganization(
+				registration.getDomain(), 
+				registration.getPlanId(), 
+				registration.getFirstName(),
+				registration.getLastName(),
+				registration.getEmail(),
+				registration.getPhone(),
+				registration.getCountryCode(),
+				cardholderName, 
+				expirationMonth, 
+				expirationYear, 
+				number, 
+				cvv);
+		
+		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+				.path(IdentityResource.class)
+				.path("/{organizationId}/{userId}")
+				.build(organization.getId(), userProfile.getId());
+		
+		Registration instance = Registration.builder()
+				.from(registration)
+				.identityHref(uri.toString())
+				.build();
+		
+		update(instance);
+		
+		return instance;
+		
+	}
+	
 	private Registration findByEmailVerificationToken(String emailVerificationToken) {
 		Registration registration = null;
 		try {
 			registration = findOne( Filters.eq ( "emailVerificationToken", emailVerificationToken ) );
+			isExpired(registration.getExpiresAt());
 		} catch (DocumentNotFoundException e) {
 			throw new ValidationException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_OR_EXPIRED));
 		}
@@ -267,12 +272,12 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode) {
-		return userProfileService.createUserProfile(firstName, lastName, email, countryCode);
+	private UserProfile createUserProfile(Registration registration) {
+		return userProfileService.createUserProfile(registration.getFirstName(), registration.getLastName(), registration.getEmail(), registration.getCountryCode());
 	}
 	
-	private Organization createOrganization(Registration registration) {
-		return organizationService.createOrganization(registration.getDomain(), registration.getSubscription());
+	private Organization createOrganization(String domain, String planId, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
+		return organizationService.createOrganization(domain, planId, firstName, lastName, email, phone, countryCode, cardholderName, expirationMonth, expirationYear, number, cvv);
 	}
 	
 	private Plan findPlanById(String planId) {

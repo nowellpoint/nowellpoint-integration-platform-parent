@@ -19,4 +19,12 @@ public interface RegistrationService {
 	public Registration verifyEmail(String emailVerificationToken);
 	
 	public void resentVerificationEmail(String id);
+	
+	public Registration provision(
+			String id, 
+			String cardholderName, 
+			String expirationMonth, 
+			String expirationYear,
+			String number, 
+			String cvv);
 }

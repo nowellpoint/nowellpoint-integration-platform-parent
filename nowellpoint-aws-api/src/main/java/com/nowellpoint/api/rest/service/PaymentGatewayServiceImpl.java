@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.service;
 
 import com.braintreegateway.SubscriptionRequest;
+
 import com.braintreegateway.Address;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
@@ -29,35 +30,32 @@ public class PaymentGatewayServiceImpl implements PaymentGatewayService {
 	}
 	
 	@Override
-	public Result<CreditCard> addCreditCard(String customerId, String billingAddressId, String cardholderName, String number, String expirationMonth, String expirationYear) {
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName(cardholderName)
-				.expirationMonth(expirationMonth)
-				.expirationYear(expirationYear)
-				.number(number)
-				.customerId(customerId)
-				.billingAddressId(billingAddressId);
-		
-		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
-		return creditCardResult;
+	public Result<CreditCard> addCreditCard(CreditCardRequest creditCardRequest) {
+		Result<CreditCard> result = gateway.creditCard().create(creditCardRequest);
+		return result;
 	}
 	
-	@Override
-	public Result<CreditCard> updateCreditCard(String customerId, String billingAddressId, String token, String cardholderName, String number, String expirationMonth, String expirationYear) {
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.cardholderName(cardholderName)
-				.expirationMonth(expirationMonth)
-				.expirationYear(expirationYear)
-				.number(number)
-				.token(token)
-				.customerId(customerId)
-				.billingAddressId(billingAddressId);
-		
-		Result<CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
-		return creditCardResult;
+	public Result<CreditCard> updateCreditCard(String token, CreditCardRequest creditCardRequest) {
+		Result<CreditCard> result = gateway.creditCard().update(token, creditCardRequest);
+		return result;
 	}
+	
+	
+//	@Override
+//	public Result<CreditCard> updateCreditCard(String customerId, String billingAddressId, String token, String cardholderName, String number, String expirationMonth, String expirationYear) {
+//		
+//		CreditCardRequest creditCardRequest = new CreditCardRequest()
+//				.cardholderName(cardholderName)
+//				.expirationMonth(expirationMonth)
+//				.expirationYear(expirationYear)
+//				.number(number)
+//				.token(token)
+//				.customerId(customerId)
+//				.billingAddressId(billingAddressId);
+//		
+//		Result<CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
+//		return creditCardResult;
+//	}
 	
 	@Override
 	public Result<Customer> addCustomer(String company, String email, String firstName, String lastName, String phone) {
@@ -121,22 +119,17 @@ public class PaymentGatewayServiceImpl implements PaymentGatewayService {
 		return addressResult;
 	}
 	
-	public CreditCard findCreditCard(String token) {
+	public com.braintreegateway.CreditCard findCreditCard(String token) {
 		return gateway.creditCard().find(token);
 	}
 	
-	public Result<CreditCard> createCreditCard(CreditCardRequest creditCardRequest) {
-		Result<CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
+	public Result<com.braintreegateway.CreditCard> createCreditCard(CreditCardRequest creditCardRequest) {
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().create(creditCardRequest);
 		return creditCardResult;
 	}
 	
-	public Result<CreditCard> updateCreditCard(String token, CreditCardRequest creditCardRequest) {
-		Result<CreditCard> creditCardResult = gateway.creditCard().update(token, creditCardRequest);
-		return creditCardResult;
-	}
-	
-	public Result<CreditCard> deleteCreditCard(String token) {
-		Result<CreditCard> creditCardResult = gateway.creditCard().delete(token);
+	public Result<com.braintreegateway.CreditCard> deleteCreditCard(String token) {
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().delete(token);
 		return creditCardResult;
 	}
 	

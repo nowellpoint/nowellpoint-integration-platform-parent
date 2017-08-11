@@ -23,15 +23,17 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();
+	public abstract @Nullable String getPhone();
 	public abstract String getCountryCode();
 	public abstract @JsonIgnore String getEmailVerificationToken();
 	public abstract @Nullable String getDomain();
 	public abstract @Nullable URI getEmailVerificationHref();
 	public abstract Long getExpiresAt();
-	public abstract Subscription getSubscription();
+	public abstract String getPlanId();
 	public abstract @Nullable String getIdentityHref(); 
 	public abstract UserInfo getCreatedBy();
 	public abstract UserInfo getLastUpdatedBy();
+	public abstract Boolean getVerified();
 	
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 

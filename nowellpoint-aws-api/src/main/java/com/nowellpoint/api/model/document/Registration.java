@@ -19,6 +19,7 @@ public class Registration extends MongoDocument {
 	private String domain;
 	private Long expiresAt;
 	private String identityHref;
+	private Boolean verified;
 	private Subscription subscription;
 
 	public Registration() {
@@ -103,6 +104,14 @@ public class Registration extends MongoDocument {
 
 	public void setIdentityHref(String identityHref) {
 		this.identityHref = identityHref;
+	}
+
+	public Boolean getVerified() {
+		return verified;
+	}
+
+	public void setVerified(Boolean verified) {
+		this.verified = verified;
 	}
 
 	public Subscription getSubscription() {

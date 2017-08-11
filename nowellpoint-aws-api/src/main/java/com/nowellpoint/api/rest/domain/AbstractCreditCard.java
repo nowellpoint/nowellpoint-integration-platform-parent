@@ -22,9 +22,9 @@ public abstract class AbstractCreditCard {
 	public abstract String getNumber();
 	public abstract String getExpirationMonth();
 	public abstract String getExpirationYear();
-	public abstract String getLastFour();
-	public abstract String getToken();
-	public abstract String getImageUrl();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	public abstract @Nullable String getLastFour();
+	public abstract @Nullable String getToken();
+	public abstract @Nullable String getImageUrl();
+	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
+	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 }
