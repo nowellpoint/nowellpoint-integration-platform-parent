@@ -10,7 +10,10 @@ import com.nowellpoint.client.auth.ClientCredentialsGrantRequest;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.Identity;
+import com.nowellpoint.client.model.Registration;
+import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.Token;
 
 public class TestImmutables {
@@ -56,5 +59,24 @@ public class TestImmutables {
 		assertNull(token.getExpiresIn());
 		assertNull(token.getId());
 		assertNull(token.getTokenType());
+	}
+	
+	@Test
+	public void testCreateFreePlan() {
+		
+		SignUpRequest signUpRequest = SignUpRequest.builder()
+				.countryCode("US")
+				.email("jherson@aim.com")
+				.firstName("John")
+				.lastName("Herson")
+				.planId("57fa74a601936217bb99643c")
+				.build();
+		
+		CreateResult<Registration> registration = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.signUp(signUpRequest);
+		
+		
+		
 	}
 }

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
@@ -19,9 +20,14 @@ public abstract class AbstractResource {
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 	
 	protected Token token;
+	protected Environment environment;
 	
 	public AbstractResource(Token token) {
 		this.token = token;
+	}
+	
+	public AbstractResource(Environment environment) {
+		this.environment = environment;
 	}
 	
 	protected String formatDate(Date value) {

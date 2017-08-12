@@ -10,6 +10,7 @@ public interface RegistrationService {
 			String firstName,
     		String lastName,
     		String email,
+    		String phone,
     		String countryCode,
     		String domain,
     		String planId);

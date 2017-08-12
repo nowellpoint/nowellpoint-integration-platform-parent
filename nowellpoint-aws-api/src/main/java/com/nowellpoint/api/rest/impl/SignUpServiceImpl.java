@@ -1,7 +1,10 @@
 package com.nowellpoint.api.rest.impl;
 
+import java.net.URI;
+
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Registration;
@@ -26,6 +29,7 @@ public class SignUpServiceImpl implements SignUpService {
     		String firstName,
     		String lastName,
     		String email,
+    		String phone,
     		String countryCode,
     		String domain,
     		String planId) {
@@ -34,11 +38,15 @@ public class SignUpServiceImpl implements SignUpService {
 				firstName, 
 				lastName, 
 				email, 
+				phone,
 				countryCode, 
 				domain,
 				planId);
-    	
-    	return Response.ok(registration)
+		
+		URI uri = UriBuilder.fromPath(registration.getMeta().getHref()).build();
+		
+		return Response.created(uri)
+				.entity(registration)
 				.build();
     }
 	

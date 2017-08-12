@@ -42,6 +42,7 @@ public interface SignUpService {
     		@FormParam("firstName") String firstName,
     		@FormParam("lastName") String lastName,
     		@FormParam("email") @Email String email,
+    		@FormParam("phone") String phone,
     		@FormParam("countryCode") String countryCode,
     		@FormParam("domain") String domain,
     		@FormParam("planId") String planId);

@@ -28,6 +28,7 @@ import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.JobTypeResource;
 import com.nowellpoint.client.resource.OrganizationResource;
 import com.nowellpoint.client.resource.PlanResource;
+import com.nowellpoint.client.resource.RegistrationResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
 
@@ -35,10 +36,7 @@ import com.nowellpoint.client.resource.SalesforceResource;
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
 public abstract class NowellpointClient  {
 	abstract Token token();
-	
-	public static Builder builder() {
-		return ImmutableNowellpointClient.builder();
-	}
+	abstract Environment environment();
 	
 	public static NowellpointClient defaultClient(Token token) {
 		return ImmutableNowellpointClient.builder()
@@ -46,9 +44,14 @@ public abstract class NowellpointClient  {
 				.build();
 	}
 	
-	public interface Builder {
-		Builder token(Token token);
-		NowellpointClient build();
+	public static NowellpointClient defaultClient(Environment environment) {
+		return ImmutableNowellpointClient.builder()
+				.environment(environment)
+				.build();
+	}
+	
+	public RegistrationResource registration() {
+		return new RegistrationResource(environment());
 	}
 	
 	public DashboardResource dashboard() {

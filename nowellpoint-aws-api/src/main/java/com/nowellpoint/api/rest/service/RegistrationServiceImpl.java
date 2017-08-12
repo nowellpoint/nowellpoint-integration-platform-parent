@@ -61,7 +61,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	}
 
 	@Override
-	public Registration register(String firstName, String lastName, String email, String countryCode, String domain, String planId) {
+	public Registration register(String firstName, String lastName, String email, String phone, String countryCode, String domain, String planId) {
 		
 		List<String> errors = new ArrayList<>();
     	
@@ -103,6 +103,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
+				.phone(phone)
 				.emailVerificationToken(emailVerificationToken)
 				.firstName(firstName)
 				.lastName(lastName)

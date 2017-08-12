@@ -14,7 +14,6 @@ public class IdentityResource extends AbstractResource {
 	
 	/**
 	 * 
-	 * @param environment
 	 * @param token
 	 */
 	
