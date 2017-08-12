@@ -14,10 +14,10 @@ public abstract class AbstractIdentity {
 	public abstract String getFirstName();
 	public abstract String getLastName();
 	public abstract String getName();
-	public abstract AbstractOrganization getOrganization();
+	public abstract Organization getOrganization();
 	public abstract String getTimeZone();
 	public abstract String getLocale();
-	public abstract AbstractAddress getAddress();
+	public abstract Address getAddress();
 	public abstract Resources getResources();
 	public abstract Meta getMeta();
 }

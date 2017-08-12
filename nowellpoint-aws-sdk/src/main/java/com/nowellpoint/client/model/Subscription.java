@@ -38,8 +38,16 @@ public class Subscription implements Serializable {
 	
 	private Date nextBillingDate;
 	
+    private Contact billingContact;
+	
+	private Address billingAddress;
+	
+	private CreditCard creditCard;
+	
 	public Subscription() {
-		
+		billingContact = new Contact();
+		billingAddress = new Address();
+		creditCard = new CreditCard();
 	}
 
 	public String getPlanId() {
@@ -136,5 +144,29 @@ public class Subscription implements Serializable {
 
 	public void setNextBillingDate(Date nextBillingDate) {
 		this.nextBillingDate = nextBillingDate;
+	}
+
+	public Contact getBillingContact() {
+		return billingContact;
+	}
+
+	public void setBillingContact(Contact billingContact) {
+		this.billingContact = billingContact;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

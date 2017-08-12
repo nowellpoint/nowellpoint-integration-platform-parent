@@ -44,9 +44,10 @@ public class TestImmutables {
 				.identity()
 				.get(token.getId());
 		
-		assertNotNull(identity.getSubscription());
-		assertNotNull(identity.getSubscription().getPlanId());
-		assertNotNull(identity.getSubscription().getPlanName());
+		assertNotNull(identity.getOrganization());
+		assertNotNull(identity.getOrganization().getSubscription());
+		assertNotNull(identity.getOrganization().getSubscription().getPlanId());
+		assertNotNull(identity.getOrganization().getSubscription().getPlanName());
 		
 		token.delete();
 		

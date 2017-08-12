@@ -46,7 +46,7 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
-import com.nowellpoint.www.app.view.AccountProfileController;
+import com.nowellpoint.www.app.view.UserProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.DashboardController;
@@ -137,23 +137,23 @@ public class Application implements SparkApplication {
 		// account profile routes
 		//
 		
-		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> AccountProfileController.listPlans(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.viewAccountProfile(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.reviewPlan(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> AccountProfileController.currentPlan(configuration, request, response));
-		get(Path.Route.ACCOUNT_PROFILE_INVOICE_DOWNLOAD, (request, response) -> AccountProfileController.downloadInvoice(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> AccountProfileController.setPlan(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> AccountProfileController.updateAccountProfile(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.confirmDeactivateAccountProfile(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> AccountProfileController.deactivateAccountProfile(configuration, request, response));
-        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> AccountProfileController.removeProfilePicture(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> AccountProfileController.updateAccountProfileAddress(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> AccountProfileController.addCreditCard(configuration, request, response));  
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> AccountProfileController.getCreditCard(configuration, request, response));
-        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> AccountProfileController.editCreditCard(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.updateCreditCard(configuration, request, response));
-        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> AccountProfileController.setPrimaryCreditCard(configuration, request, response));
-        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> AccountProfileController.removeCreditCard(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_LIST_PLANS, (request, response) -> UserProfileController.listPlans(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE, (request, response) -> UserProfileController.viewAccountProfile(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> UserProfileController.reviewPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_CURRENT_PLAN, (request, response) -> UserProfileController.currentPlan(configuration, request, response));
+		get(Path.Route.ACCOUNT_PROFILE_INVOICE_DOWNLOAD, (request, response) -> UserProfileController.downloadInvoice(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PLAN, (request, response) -> UserProfileController.setPlan(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE, (request, response) -> UserProfileController.updateAccountProfile(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.confirmDeactivateAccountProfile(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.deactivateAccountProfile(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PICTURE, (request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_ADDRESS, (request, response) -> UserProfileController.updateAddress(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS, (request, response) -> UserProfileController.addCreditCard(configuration, request, response));  
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> UserProfileController.getCreditCard(configuration, request, response));
+        get(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> UserProfileController.editCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.updateCreditCard(configuration, request, response));
+        post(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> UserProfileController.setPrimaryCreditCard(configuration, request, response));
+        delete(Path.Route.ACCOUNT_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.removeCreditCard(configuration, request, response));
 		
 		//
 		// authentication routes

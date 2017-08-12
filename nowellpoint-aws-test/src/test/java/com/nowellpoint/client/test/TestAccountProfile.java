@@ -51,7 +51,7 @@ public class TestAccountProfile {
 				.withLastName("Herson");
 		
 		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.accountProfile()
+				.userProfile()
 				.creditCard()
 				.add(createCreditCardRequest);
 		
@@ -74,14 +74,14 @@ public class TestAccountProfile {
 				.withLastName("Herson");
 		
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.accountProfile()
+				.userProfile()
 				.creditCard()
 				.update(udpateCreditCardRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
 		
 		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.accountProfile()
+				.userProfile()
 				.creditCard()
 				.delete(identity.getId(), updateResult.getTarget().getToken());
 		

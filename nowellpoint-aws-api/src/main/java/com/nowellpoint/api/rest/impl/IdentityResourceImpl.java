@@ -13,7 +13,7 @@ import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.Identity;
-import com.nowellpoint.api.rest.domain.AbstractOrganization;
+import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Resources;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.UserProfileService;
@@ -42,7 +42,7 @@ public class IdentityResourceImpl implements IdentityResource {
 		
 		UserProfile userProfile = findUser(userId);
 		
-		AbstractOrganization organization = findOrganization(organizationId);
+		Organization organization = findOrganization(organizationId);
 		
 		String organizationHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(OrganizationResource.class)
@@ -86,7 +86,7 @@ public class IdentityResourceImpl implements IdentityResource {
 		return userProfileService.findById(userId);
 	}
 	
-	private AbstractOrganization findOrganization(String organizationId) {
+	private Organization findOrganization(String organizationId) {
 		return organizationService.findById(organizationId);
 	}
 }

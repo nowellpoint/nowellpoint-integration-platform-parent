@@ -21,7 +21,7 @@ package com.nowellpoint.client;
 import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.client.resource.AccountProfileResource;
+import com.nowellpoint.client.resource.UserProfileResource;
 import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
@@ -74,8 +74,8 @@ public abstract class NowellpointClient  {
 		return new JobTypeResource(token());
 	}
 	
-	public AccountProfileResource accountProfile() {
-		return new AccountProfileResource(token());
+	public UserProfileResource userProfile() {
+		return new UserProfileResource(token());
 	}
 	
 	public SalesforceResource salesforce() {

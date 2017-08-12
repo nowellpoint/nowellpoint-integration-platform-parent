@@ -28,14 +28,14 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
-import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.UserProfile;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
 
 public class TestGenerateDocument {
 	
 	private static Token token;
-	private static AccountProfile accountProfile;
+	private static UserProfile userProfile;
 	
 	private Font HELVETICA_10_NORMAL_LIGHT_BLUE = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, new BaseColor(27, 150, 254));
     private Font HELVETICA_10_NORMAL_GRAY = new Font(Font.FontFamily.HELVETICA, 10.0f, Font.NORMAL, new BaseColor(79,79,79));
@@ -49,8 +49,8 @@ public class TestGenerateDocument {
 				.identity()
 				.get(token.getId());
 		
-		accountProfile = NowellpointClient.defaultClient(token)
-				.accountProfile()
+		userProfile = NowellpointClient.defaultClient(token)
+				.userProfile()
 				.get(identity.getId());
 	}
     
@@ -129,22 +129,22 @@ public class TestGenerateDocument {
         table.addCell(getCell("Bill To", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_LIGHT_BLUE));
         
-        table.addCell(getCell(accountProfile.getCompany(), PdfPCell.ALIGN_LEFT, HELVETICA_10_BOLD_GRAY));
+        table.addCell(getCell(userProfile.getCompany(), PdfPCell.ALIGN_LEFT, HELVETICA_10_BOLD_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(String.format("ATTN: %s", accountProfile.getName()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(String.format("ATTN: %s", userProfile.getName()), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(accountProfile.getAddress().getStreet(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(userProfile.getAddress().getStreet(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         table.addCell(getCell("Suite 300", PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(accountProfile.getAddress().getCity(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(userProfile.getAddress().getCity(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
-        table.addCell(getCell(accountProfile.getAddress().getCountry(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
+        table.addCell(getCell(userProfile.getAddress().getCountry(), PdfPCell.ALIGN_LEFT, HELVETICA_10_NORMAL_GRAY));
         table.addCell(getCell("", PdfPCell.ALIGN_RIGHT, HELVETICA_10_NORMAL_GRAY));
         
         return table;

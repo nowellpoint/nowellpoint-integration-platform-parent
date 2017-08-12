@@ -49,6 +49,10 @@ public class UserProfile extends AbstractResource {
 		photos = new Photos();
 		organization = new Organization();
 	}
+	
+	public UserProfile(String id) {
+		setId(id);
+	}
 
 	public String getUsername() {
 		return username;

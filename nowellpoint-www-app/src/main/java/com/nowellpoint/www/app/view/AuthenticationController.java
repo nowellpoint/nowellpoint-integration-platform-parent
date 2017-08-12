@@ -198,8 +198,8 @@ public class AuthenticationController extends AbstractStaticController {
 	
 	private static TimeZone getDefaultTimeZone(Identity identity) {		
 		TimeZone timeZone = null;
-		if (identity != null && identity.getTimeZoneSidKey() != null) {
-			timeZone = TimeZone.getTimeZone(identity.getTimeZoneSidKey());
+		if (identity != null && identity.getTimeZone() != null) {
+			timeZone = TimeZone.getTimeZone(identity.getTimeZone());
 		} else {
 			timeZone = TimeZone.getDefault();
 		}
@@ -216,8 +216,8 @@ public class AuthenticationController extends AbstractStaticController {
 	
 	private static Locale getDefaultLocale(Identity identity) {
 		Locale locale = null;
-		if (identity != null && identity.getLocaleSidKey() != null) {
-			String[] attrs = identity.getLocaleSidKey().split("_");
+		if (identity != null && identity.getLocale() != null) {
+			String[] attrs = identity.getLocale().split("_");
 			if (attrs.length == 1) {
 				locale = new Locale(attrs[0]);
 			} else if (attrs.length == 2) {

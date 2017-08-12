@@ -11,21 +11,12 @@ public class Organization extends AbstractResource {
 	
 	private String domain;
 	
-	private Contact billingContact;
-	
-	private Address billingAddress;
-	
 	private Subscription subscription;
-	
-	private CreditCard creditCard;
 	
 	private List<Transaction> transactions;
 	
 	public Organization() {
-		billingContact = new Contact();
-		billingAddress = new Address();
 		subscription = new Subscription();
-		creditCard = new CreditCard();
 		transactions = new ArrayList<Transaction>();
 	}
 
@@ -53,36 +44,12 @@ public class Organization extends AbstractResource {
 		this.domain = domain;
 	}
 
-	public Contact getBillingContact() {
-		return billingContact;
-	}
-
-	public void setBillingContact(Contact billingContact) {
-		this.billingContact = billingContact;
-	}
-
-	public Address getBillingAddress() {
-		return billingAddress;
-	}
-
-	public void setBillingAddress(Address billingAddress) {
-		this.billingAddress = billingAddress;
-	}
-
 	public Subscription getSubscription() {
 		return subscription;
 	}
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
-	}
-
-	public CreditCard getCreditCard() {
-		return creditCard;
-	}
-
-	public void setCreditCard(CreditCard creditCard) {
-		this.creditCard = creditCard;
 	}
 
 	public List<Transaction> getTransactions() {

@@ -27,30 +27,18 @@ public class Organization extends MongoDocument {
 	private String domain;
 	
 	@EmbedOne
-	private Contact billingContact;
-	
-	@EmbedOne
-	private Address billingAddress;
-	
-	@EmbedOne
 	private Subscription subscription;
-	
-	@EmbedOne
-	private CreditCard creditCard;
 	
 	@EmbedMany
 	private Set<Transaction> transactions;
 	
-	@EmbedMany
-	private Set<ReferenceLink> referenceLinks;
+	@EmbedOne
+	private ReferenceLink referenceLink;
 	
 	public Organization() {
-		billingContact = new Contact();
-		billingAddress = new Address();
 		subscription = new Subscription();
-		creditCard = new CreditCard();
 		transactions = new HashSet<>();
-		referenceLinks = new HashSet<>();
+		referenceLink = new ReferenceLink();
 	}
 
 	public UserRef getCreatedBy() {
@@ -93,36 +81,12 @@ public class Organization extends MongoDocument {
 		this.domain = domain;
 	}
 
-	public Contact getBillingContact() {
-		return billingContact;
-	}
-
-	public void setBillingContact(Contact billingContact) {
-		this.billingContact = billingContact;
-	}
-
-	public Address getBillingAddress() {
-		return billingAddress;
-	}
-
-	public void setBillingAddress(Address billingAddress) {
-		this.billingAddress = billingAddress;
-	}
-
 	public Subscription getSubscription() {
 		return subscription;
 	}
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
-	}
-
-	public CreditCard getCreditCard() {
-		return creditCard;
-	}
-
-	public void setCreditCard(CreditCard creditCard) {
-		this.creditCard = creditCard;
 	}
 
 	public Set<Transaction> getTransactions() {
@@ -133,11 +97,11 @@ public class Organization extends MongoDocument {
 		this.transactions = transactions;
 	}
 
-	public Set<ReferenceLink> getReferenceLinks() {
-		return referenceLinks;
+	public ReferenceLink getReferenceLink() {
+		return referenceLink;
 	}
 
-	public void setReferenceLinks(Set<ReferenceLink> referenceLinks) {
-		this.referenceLinks = referenceLinks;
+	public void setReferenceLink(ReferenceLink referenceLink) {
+		this.referenceLink = referenceLink;
 	}
 }

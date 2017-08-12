@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.amazonaws.util.IOUtils;
-import com.nowellpoint.client.model.AccountProfile;
+import com.nowellpoint.client.model.UserProfile;
 import com.nowellpoint.client.model.AccountProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
@@ -28,9 +28,9 @@ import com.nowellpoint.client.model.Token;
  * @author jherson
  *
  */
-public class AccountProfileResource extends AbstractResource {
+public class UserProfileResource extends AbstractResource {
 	
-	private static final String RESOURCE_CONTEXT = "account-profile";
+	private static final String RESOURCE_CONTEXT = "user-profile";
 	
 	/**
 	 * 
@@ -38,7 +38,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @param accessToken
 	 */
 	
-	public AccountProfileResource(Token token) {
+	public UserProfileResource(Token token) {
 		super(token);
 	}
 	
@@ -48,7 +48,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public AccountProfile get(String id) {
+	public UserProfile get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -56,10 +56,10 @@ public class AccountProfileResource extends AbstractResource {
 				.path(id)
 				.execute();
 		
-		AccountProfile resource = null;
+		UserProfile resource = null;
     	
     	if (httpResponse.getStatusCode() == Status.OK) {
-    		resource = httpResponse.getEntity(AccountProfile.class);
+    		resource = httpResponse.getEntity(UserProfile.class);
     	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
@@ -133,7 +133,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public UpdateResult<AccountProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
+	public UpdateResult<UserProfile> update(String accountProfileId, AccountProfileRequest accountProfileRequest) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -156,14 +156,14 @@ public class AccountProfileResource extends AbstractResource {
 				.parameter("enableSalesforceLogin", accountProfileRequest.getEnableSalesforceLogin())
 				.execute();
 		
-		UpdateResult<AccountProfile> result = null;
+		UpdateResult<UserProfile> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			AccountProfile resource = httpResponse.getEntity(AccountProfile.class);
-			result = new UpdateResultImpl<AccountProfile>(resource);
+			UserProfile resource = httpResponse.getEntity(UserProfile.class);
+			result = new UpdateResultImpl<UserProfile>(resource);
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<AccountProfile>(error);
+			result = new UpdateResultImpl<UserProfile>(error);
 		}
 		
 		return result;
@@ -175,7 +175,7 @@ public class AccountProfileResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public UpdateResult<AccountProfile> removeProfilePicture(String accountProfileId) {
+	public UpdateResult<UserProfile> removeProfilePicture(String accountProfileId) {
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
     			.bearerAuthorization(token.getAccessToken())
         		.path("account-profile")
@@ -183,14 +183,14 @@ public class AccountProfileResource extends AbstractResource {
         		.path("photo")
         		.execute();
 		
-		UpdateResult<AccountProfile> result = null;
+		UpdateResult<UserProfile> result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			AccountProfile resource = httpResponse.getEntity(AccountProfile.class);
-			result = new UpdateResultImpl<AccountProfile>(resource);
+			UserProfile resource = httpResponse.getEntity(UserProfile.class);
+			result = new UpdateResultImpl<UserProfile>(resource);
 		} else {
 			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<AccountProfile>(error);
+			result = new UpdateResultImpl<UserProfile>(error);
 		}
 		
 		return result;
