@@ -234,7 +234,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 					number, 
 					cvv);
 		} else {
-			//orgnization = createFreePlan()
+			organization = createOrganization(
+					plan,
+					registration.getDomain(), 
+					registration.getFirstName(),
+					registration.getLastName(),
+					registration.getEmail(),
+					registration.getPhone(),
+					registration.getCountryCode());
 		}
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
@@ -287,6 +294,10 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	
 	private UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode) {
 		return userProfileService.createUserProfile(firstName, lastName, email, phone, countryCode);
+	}
+	
+	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode) {
+		return organizationService.createOrganization(plan, domain, firstName, lastName, email, phone, countryCode);
 	}
 	
 	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
