@@ -60,140 +60,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 
 	@Override
-	public Organization createOrganization(
-			String domain, 
-			String planId, 
-			String firstName,
-			String lastName,
-			String email,
-			String phone,
-			String countryCode,
-			String cardholderName, 
-			String expirationMonth, 
-			String expirationYear,
-			String number, 
-			String cvv) {
-		
-		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
-		
-		Date now = Date.from(Instant.now());
-		
-		Plan plan = findPlanById(planId);
-		
-		if (plan.getPrice().getUnitPrice() > 0) {
-			
-			CustomerRequest customerRequest = new CustomerRequest()
-					.company(domain)
-					.email(email)
-					.firstName(firstName)
-					.lastName(lastName)
-					.phone(phone)
-					.creditCard()
-						.cardholderName(cardholderName)
-						.cvv(cvv)
-						.expirationMonth(expirationMonth)
-						.expirationYear(expirationYear)
-						.number(number)
-						.billingAddress()
-							.countryCodeAlpha2(countryCode)
-							.done()
-						.done();
-			
-			Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
-			
-			SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-					.paymentMethodToken(customerResult.getTarget().getCreditCards().get(0).getToken())
-					.planId(plan.getPlanCode())
-					.price(new BigDecimal(plan.getPrice().getUnitPrice()));
-			
-			Result<com.braintreegateway.Subscription> subscriptionResult = createSubscription(subscriptionRequest);
-			
-			ReferenceLink referenceLink = ReferenceLink.builder()
-					.id(customerResult.getTarget().getId())
-					.type(ReferenceLinkTypes.CUSTOMER_ID.name())
-					.build();
-			
-			CreditCard creditCard = CreditCard.builder()
-					.addedOn(now)
-					.cardholderName(cardholderName)
-					.cardType(customerResult.getTarget().getCreditCards().get(0).getCardType())
-					.expirationMonth(expirationMonth)
-					.expirationYear(expirationYear)
-					.imageUrl(customerResult.getTarget().getCreditCards().get(0).getImageUrl())
-					.lastFour(customerResult.getTarget().getCreditCards().get(0).getLast4())
-					.token(customerResult.getTarget().getCreditCards().get(0).getToken())
-					.build();
-			
-			Address billingAddress = Address.builder()
-					.id(customerResult.getTarget().getCreditCards().get(0).getBillingAddress().getId())
-					.countryCode(countryCode)
-					.build();
-			
-			Subscription subscription = Subscription.builder()
-					.subscriptionId(subscriptionResult.getTarget().getId())
-					.addedOn(now)
-					.planId(plan.getId())
-					.planCode(plan.getPlanCode())
-					.planName(plan.getPlanName())
-					.unitPrice(plan.getPrice().getUnitPrice())
-					.currencySymbol(plan.getPrice().getCurrencySymbol())
-					.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-					.billingFrequency(plan.getBillingFrequency())
-					.creditCard(creditCard)
-					.billingAddress(billingAddress)
-					.updatedOn(now)
-					.build();
-
-			Organization organization = Organization.builder()
-					.domain(domain)
-					.subscription(subscription)
-					.referenceLink(referenceLink)
-					.createdBy(userInfo)
-					.createdOn(now)
-					.lastUpdatedBy(userInfo)
-					.lastUpdatedOn(now)
-					.build();
-			
-			super.create(organization);
-			
-			return organization;
-			
-		} else {
-			
-			Address billingAddress = Address.builder()
-					.countryCode(countryCode)
-					.build();
-			
-			Subscription subscription = Subscription.builder()
-					.addedOn(now)
-					.planId(plan.getId())
-					.planCode(plan.getPlanCode())
-					.planName(plan.getPlanName())
-					.unitPrice(plan.getPrice().getUnitPrice())
-					.currencySymbol(plan.getPrice().getCurrencySymbol())
-					.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-					.billingFrequency(plan.getBillingFrequency())
-					.billingAddress(billingAddress)
-					.updatedOn(now)
-					.build();
-
-			Organization organization = Organization.builder()
-					.domain(domain)
-					.subscription(subscription)
-					.createdBy(userInfo)
-					.createdOn(now)
-					.lastUpdatedBy(userInfo)
-					.lastUpdatedOn(now)
-					.build();
-			
-			super.create(organization);
-			
-			return organization;
-			
-		}
-	}
-
-	@Override
 	public Organization updateOrganization(String id, String domain) {
 		
 		Organization organization = findById(id);
@@ -353,6 +219,178 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		return newInstance;
 
+	}
+	
+	@Override
+	public Organization createOrganization(
+			Plan plan,
+			String domain,  
+			String firstName,
+			String lastName,
+			String email,
+			String phone,
+			String countryCode) {
+		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.company(domain)
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone);
+		
+		Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
+		
+		ReferenceLink referenceLink = ReferenceLink.builder()
+				.id(customerResult.getTarget().getId())
+				.type(ReferenceLinkTypes.CUSTOMER_ID.name())
+				.build();
+		
+		Address billingAddress = Address.builder()
+				.countryCode(countryCode)
+				.build();
+		
+		Contact billingContact = Contact.builder()
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone)
+				.build();
+		
+		Subscription subscription = Subscription.builder()
+				.addedOn(now)
+				.planId(plan.getId())
+				.planCode(plan.getPlanCode())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.billingFrequency(plan.getBillingFrequency())
+				.billingAddress(billingAddress)
+				.billingContact(billingContact)
+				.updatedOn(now)
+				.build();
+		
+		Organization organization = Organization.builder()
+				.domain(domain)
+				.subscription(subscription)
+				.referenceLink(referenceLink)
+				.createdBy(userInfo)
+				.createdOn(now)
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
+				.build();
+			
+		super.create(organization);
+		
+		return organization;
+	}
+	
+	@Override
+	public Organization createOrganization(
+			Plan plan,
+			String domain, 
+			String firstName,
+			String lastName,
+			String email,
+			String phone,
+			String countryCode,
+			String cardholderName, 
+			String expirationMonth, 
+			String expirationYear,
+			String number, 
+			String cvv) {
+		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		CustomerRequest customerRequest = new CustomerRequest()
+				.company(domain)
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone)
+				.creditCard()
+					.cardholderName(cardholderName)
+					.cvv(cvv)
+					.expirationMonth(expirationMonth)
+					.expirationYear(expirationYear)
+					.number(number)
+					.billingAddress()
+						.countryCodeAlpha2(countryCode)
+						.done()
+					.done();
+			
+		Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
+			
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				.paymentMethodToken(customerResult.getTarget().getCreditCards().get(0).getToken())
+				.planId(plan.getPlanCode())
+				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+			
+		Result<com.braintreegateway.Subscription> subscriptionResult = createSubscription(subscriptionRequest);
+		
+		ReferenceLink referenceLink = ReferenceLink.builder()
+				.id(customerResult.getTarget().getId())
+				.type(ReferenceLinkTypes.CUSTOMER_ID.name())
+				.build();
+		
+		CreditCard creditCard = CreditCard.builder()
+				.addedOn(now)
+				.cardholderName(cardholderName)
+				.cardType(customerResult.getTarget().getCreditCards().get(0).getCardType())
+				.expirationMonth(expirationMonth)
+				.expirationYear(expirationYear)
+				.imageUrl(customerResult.getTarget().getCreditCards().get(0).getImageUrl())
+				.lastFour(customerResult.getTarget().getCreditCards().get(0).getLast4())
+				.token(customerResult.getTarget().getCreditCards().get(0).getToken())
+				.build();
+		
+		Address billingAddress = Address.builder()
+				.id(customerResult.getTarget().getCreditCards().get(0).getBillingAddress().getId())
+				.countryCode(countryCode)
+				.build();
+		
+		Contact billingContact = Contact.builder()
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone)
+				.build();
+		
+		Subscription subscription = Subscription.builder()
+				.subscriptionId(subscriptionResult.getTarget().getId())
+				.addedOn(now)
+				.planId(plan.getId())
+				.planCode(plan.getPlanCode())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.billingFrequency(plan.getBillingFrequency())
+				.creditCard(creditCard)
+				.billingAddress(billingAddress)
+				.billingContact(billingContact)
+				.updatedOn(now)
+				.build();
+		
+		Organization organization = Organization.builder()
+				.domain(domain)
+				.subscription(subscription)
+				.referenceLink(referenceLink)
+				.createdBy(userInfo)
+				.createdOn(now)
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
+				.build();
+			
+		super.create(organization);
+		
+		return organization;
 	}
 	
 	private Result<com.braintreegateway.Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {

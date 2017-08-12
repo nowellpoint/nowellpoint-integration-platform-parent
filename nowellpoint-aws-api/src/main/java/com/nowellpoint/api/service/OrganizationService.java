@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service;
 
 import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.Plan;
 
 /**
  * 
@@ -16,8 +17,17 @@ public interface OrganizationService {
 	public Organization findByDomain(String domain);
 	
 	public Organization createOrganization(
-			String domain, 
-			String planId, 
+			Plan plan,
+			String domain,  
+			String firstName,
+			String lastName,
+			String email,
+			String phone,
+			String countryCode);
+	
+	public Organization createOrganization(
+			Plan plan,
+			String domain,  
 			String firstName,
 			String lastName,
 			String email,

@@ -37,7 +37,6 @@ import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.UserProfileService;
-import com.nowellpoint.api.util.CountryProvider;
 import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
@@ -67,13 +66,12 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	}
 
 	@Override
-	public UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode) {
-		return createUserProfile(firstName, lastName, email, countryCode, Locale.getDefault(), TimeZone.getDefault());
+	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode) {
+		return createUserProfile(firstName, lastName, email, phone, countryCode, Locale.getDefault(), TimeZone.getDefault());
 	}
 	
 	@Override
-	public UserProfile createUserProfile(String firstName, String lastName, String email, String countryCode, Locale locale, TimeZone timeZone) {
-		String country = getCountry(countryCode);
+	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Locale locale, TimeZone timeZone) {
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
@@ -90,7 +88,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		Address address = Address.builder()
 				.countryCode(countryCode)
-				.country(country)
 				.build();
 		
 		Photos photos = Photos.builder()
@@ -125,13 +122,10 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile updateAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
 		UserProfile original = findById(id);
 		
-		String country = getCountry(countryCode);
-		
 		Address address = Address.builder()
 				.from(original.getAddress())
 				.city(city)
 				.countryCode(countryCode)
-				.country(country)
 				.stateCode(state)
 				.street(street)
 				.build();
@@ -230,10 +224,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	
 	private User createUser(String email, String firstName, String lastName, String temporaryPassword) {
 		return identityProviderService.createUser(email, firstName, lastName, temporaryPassword);
-	}
-	
-	private String getCountry(String countryCode) {
-		return CountryProvider.getCountry(Locale.getDefault(), countryCode);
 	}
 	
 	private static String generateTemporaryPassword(int length) {

@@ -208,21 +208,34 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Registration registration = findById(id);
 		
-		UserProfile userProfile = createUserProfile(registration);
+		Plan plan = findPlanById(registration.getPlanId());
 		
-		Organization organization = createOrganization(
-				registration.getDomain(), 
-				registration.getPlanId(), 
-				registration.getFirstName(),
-				registration.getLastName(),
-				registration.getEmail(),
+		UserProfile userProfile = createUserProfile(
+				registration.getFirstName(), 
+				registration.getLastName(), 
+				registration.getEmail(), 
 				registration.getPhone(),
-				registration.getCountryCode(),
-				cardholderName, 
-				expirationMonth, 
-				expirationYear, 
-				number, 
-				cvv);
+				registration.getCountryCode());
+		
+		Organization organization = null;
+		
+		if (plan.getPrice().getUnitPrice() > 0) {
+			organization = createOrganization(
+					plan,
+					registration.getDomain(), 
+					registration.getFirstName(),
+					registration.getLastName(),
+					registration.getEmail(),
+					registration.getPhone(),
+					registration.getCountryCode(),
+					cardholderName, 
+					expirationMonth, 
+					expirationYear, 
+					number, 
+					cvv);
+		} else {
+			//orgnization = createFreePlan()
+		}
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -272,12 +285,12 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private UserProfile createUserProfile(Registration registration) {
-		return userProfileService.createUserProfile(registration.getFirstName(), registration.getLastName(), registration.getEmail(), registration.getCountryCode());
+	private UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode) {
+		return userProfileService.createUserProfile(firstName, lastName, email, phone, countryCode);
 	}
 	
-	private Organization createOrganization(String domain, String planId, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
-		return organizationService.createOrganization(domain, planId, firstName, lastName, email, phone, countryCode, cardholderName, expirationMonth, expirationYear, number, cvv);
+	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
+		return organizationService.createOrganization(plan, domain, firstName, lastName, email, phone, countryCode, cardholderName, expirationMonth, expirationYear, number, cvv);
 	}
 	
 	private Plan findPlanById(String planId) {

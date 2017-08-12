@@ -1,5 +1,8 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -20,7 +23,10 @@ public abstract class AbstractAddress {
 	public abstract @Nullable String getState();
 	public abstract @Nullable String getPostalCode();
 	public abstract String getCountryCode();
-	public abstract String getCountry();
 	public abstract @Nullable String getLatitude();
 	public abstract @Nullable String getLongitude();
+	
+	public String getCountry() {
+		return ResourceBundle.getBundle("countries", Locale.getDefault()).getString(getCountryCode());
+	}
 }

@@ -38,8 +38,6 @@ public class Address implements Serializable {
 
 	private String countryCode;
 	
-	private String country;
-	
 	private String latitude;
 
 	private String longitude;
@@ -110,14 +108,6 @@ public class Address implements Serializable {
 
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
 	}
 
 	public String getLatitude() {
