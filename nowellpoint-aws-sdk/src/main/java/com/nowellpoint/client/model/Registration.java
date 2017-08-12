@@ -1,16 +1,7 @@
-package com.nowellpoint.api.model.document;
+package com.nowellpoint.client.model;
 
-import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.Reference;
-import com.nowellpoint.mongodb.document.MongoDocument;
+public class Registration extends AbstractResource {
 
-@Document(collectionName="registrations")
-public class Registration extends MongoDocument {
-
-	private static final long serialVersionUID = -1912405794198820540L;
-	
-	private @Reference(referenceClass = UserProfile.class) UserRef createdBy;
-	private @Reference(referenceClass = UserProfile.class) UserRef lastUpdatedBy;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -21,25 +12,9 @@ public class Registration extends MongoDocument {
 	private String identityHref;
 	private Boolean verified;
 	private String planId;
-
+	
 	public Registration() {
 		
-	}
-
-	public UserRef getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(UserRef createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public UserRef getLastUpdatedBy() {
-		return lastUpdatedBy;
-	}
-
-	public void setLastUpdatedBy(UserRef lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public String getFirstName() {
