@@ -8,7 +8,7 @@
         </div>
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
-                <a href="${links['account.profile']}/${accountProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
+                <a href="${links['user.profile']}/${userProfile.id}/plans" id="update-plan" class="btn btn-success" role="button">${labels["change.plan"]}</a>
             </div>
         </div>
         <br>
@@ -20,13 +20,13 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["plan.name"]}</dt>
-                    <dd>${(accountProfile.subscription.planName)!}&emsp;</dd>
+                    <dd>${(userProfile.subscription.planName)!}&emsp;</dd>
                     <hr>
                     <dt>${labels["price"]}</dt>
-                    <dd>${(accountProfile.subscription.currencySymbol)!}&nbsp;${(accountProfile.subscription.unitPrice?string["0.00"])!}&emsp;</dd>
+                    <dd>${(userProfile.subscription.currencySymbol)!}&nbsp;${(userProfile.subscription.unitPrice?string["0.00"])!}&emsp;</dd>
                     <hr>
                     <dt>${labels["billed"]}&emsp;</dt>
-                    <dd>${(accountProfile.subscription.billingFrequency)!}
+                    <dd>${(userProfile.subscription.billingFrequency)!}
                 </dl>
 
             </div>
@@ -35,10 +35,10 @@
 
                 <dl class="dl-vertical">
                     <dt>${labels["next.billing.date"]}</dt>
-                    <dd>${(accountProfile.subscription.nextBillingDate?date?string.long)!}&emsp;
+                    <dd>${(userProfile.subscription.nextBillingDate?date?string.long)!}&emsp;
                         <hr>
                         <dt>${labels["status"]}</dt>
-                        <dd>${(accountProfile.subscription.status)!}&emsp;
+                        <dd>${(userProfile.subscription.status)!}&emsp;
                             <hr>
                             <dt>&emsp;</dt>
                             <dd>&emsp;</dd>
@@ -69,14 +69,14 @@
                             <th class="text-right">${labels["action"]}</th>
                         </thead>
                         <tbody>
-                            <#list accountProfile.transactions?sort_by( "createdOn")?reverse as transaction>
+                            <#list userProfile.transactions?sort_by( "createdOn")?reverse as transaction>
                                 <tr>
                                     <td>${transaction.id}</td>
-                                    <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['account.profile']}/${accountProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                    <td><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['user.profile']}/${userProfile.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
                                     <td class="text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}</td>
                                     <td>${(transaction.updatedOn?date?string.long)!}</td>
                                     <td>${transaction.status}</td>
-                                    <td class="text-right"><a href="${links['account.profile']}/${accountProfile.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                    <td class="text-right"><a href="${links['user.profile']}/${userProfile.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
                                 </tr>
                             </#list>
                         </tbody>

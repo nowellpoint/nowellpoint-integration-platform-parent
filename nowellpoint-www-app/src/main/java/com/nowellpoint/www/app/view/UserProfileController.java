@@ -41,10 +41,10 @@ import spark.Response;
 public class UserProfileController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String USER_PROFILE_ME = String.format(APPLICATION_CONTEXT, "account-profile-me.html");
-		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "account-profile.html");
-		public static final String USER_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "account-profile-plans.html");
-		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "account-profile-deactivate.html");
+		public static final String USER_PROFILE_ME = String.format(APPLICATION_CONTEXT, "user-profile-me.html");
+		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
+		public static final String USER_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "user-profile-plans.html");
+		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
 	}
