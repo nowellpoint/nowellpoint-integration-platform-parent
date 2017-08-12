@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 public class SubscriptionRequest {
 	
-	private String accountProfileId;
+	private String userProfileId;
 	
 	private String planId;
 	
@@ -12,12 +12,12 @@ public class SubscriptionRequest {
 		
 	}
 
-	public String getAccountProfileId() {
-		return accountProfileId;
+	public String getUserProfileId() {
+		return userProfileId;
 	}
 
-	public void setAccountProfileId(String accountProfileId) {
-		this.accountProfileId = accountProfileId;
+	public void setUserProfileId(String userProfileId) {
+		this.userProfileId = userProfileId;
 	}
 
 	public String getPlanId() {
@@ -36,8 +36,8 @@ public class SubscriptionRequest {
 		this.paymentMethodToken = paymentMethodToken;
 	}
 
-	public SubscriptionRequest withAccountProfileId(String accountProfileId) {
-		setAccountProfileId(accountProfileId);
+	public SubscriptionRequest withUserProfileId(String userProfileId) {
+		setUserProfileId(userProfileId);
 		return this;
 	}
 	

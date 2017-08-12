@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.AccountProfileRequest;
+import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
@@ -279,12 +279,12 @@ public class UserProfileController extends AbstractStaticController {
 		String paymentMethodToken = request.queryParams("paymentMethodToken");
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				.withAccountProfileId(userProfile.getId())
+				.withUserProfileId(userProfile.getId())
 				.withPaymentMethodToken(paymentMethodToken)
 				.withPlanId(planId);
 		
 		UpdateResult<Subscription> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
 				.subscription()
 				.set(subscriptionRequest);
 		
@@ -307,7 +307,7 @@ public class UserProfileController extends AbstractStaticController {
 	public static String updateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AccountProfileRequest userProfileRequest = new AccountProfileRequest()
+		UserProfileRequest userProfileRequest = new UserProfileRequest()
 				.withFirstName(request.queryParams("firstName"))
 				.withLastName(request.queryParams("lastName"))
 				.withCompany(request.queryParams("company"))
@@ -318,10 +318,8 @@ public class UserProfileController extends AbstractStaticController {
 				.withMobilePhone(request.queryParams("mobilePhone"))
 				.withPhone(request.queryParams("phone"))
 				.withExtension(request.queryParams("extension"))
-				.withLanguageSidKey(request.queryParams("languageSidKey"))
-				.withLocaleSidKey(request.queryParams("localeSidKey"))
-				.withTimeZoneSidKey(request.queryParams("timeZoneSidKey"))
-				.withEnableSalesforceLogin(request.queryParams("enableSalesforceLogin") != null ? Boolean.TRUE : Boolean.FALSE);
+				.withLocale(request.queryParams("locale"))
+				.withTimeZone(request.queryParams("timeZone"));
 
 		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
@@ -446,7 +444,8 @@ public class UserProfileController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
 		
@@ -470,7 +469,8 @@ public class UserProfileController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.get(request.params(":id"), request.params(":token"));
 		
@@ -514,7 +514,7 @@ public class UserProfileController extends AbstractStaticController {
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withAccountProfileId(id)
+				.withOrganizationId(id)
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
 				.withExpirationYear(expirationYear)
@@ -530,7 +530,8 @@ public class UserProfileController extends AbstractStaticController {
 				.withLastName(lastName);
 		
 		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.add(creditCardRequest);
 		
@@ -552,7 +553,7 @@ public class UserProfileController extends AbstractStaticController {
 	public static String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		String accountProfileId = request.params(":id");
+		String organizationId = request.params(":id");
 		String creditCardToken = request.params(":token");
 		
 		String cardholderName = request.queryParams("cardholderName");
@@ -568,7 +569,7 @@ public class UserProfileController extends AbstractStaticController {
 		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withAccountProfileId(accountProfileId)
+				.withOrganizationId(organizationId)
 				.withToken(creditCardToken)
 				.withCardholderName(cardholderName)
 				.withExpirationMonth(expirationMonth)
@@ -583,7 +584,8 @@ public class UserProfileController extends AbstractStaticController {
 				.withLastName(lastName);
 		
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.update(creditCardRequest);
 		
@@ -606,7 +608,8 @@ public class UserProfileController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.setPrimary(request.params(":id"), request.params(":token"));
 		
@@ -629,7 +632,8 @@ public class UserProfileController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.delete(request.params(":id"), request.params(":token"));
 			

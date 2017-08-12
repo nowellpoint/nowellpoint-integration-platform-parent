@@ -35,7 +35,7 @@ public class TestAccountProfile {
 				.get(token.getId());
 		
 		CreditCardRequest createCreditCardRequest = new CreditCardRequest()
-				.withAccountProfileId(identity.getId())
+				.withOrganizationId(identity.getOrganization().getId())
 				.withCardholderName("John Herson")
 				.withExpirationMonth("12")
 				.withExpirationYear("2018")
@@ -51,14 +51,15 @@ public class TestAccountProfile {
 				.withLastName("Herson");
 		
 		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.add(createCreditCardRequest);
 		
 		Assert.assertTrue(createResult.isSuccess());
 		
 		CreditCardRequest udpateCreditCardRequest = new CreditCardRequest()
-				.withAccountProfileId(identity.getId())
+				.withOrganizationId(identity.getOrganization().getId())
 				.withToken(createResult.getTarget().getToken())
 				.withCardholderName("John Herson")
 				.withExpirationMonth("12")
@@ -74,14 +75,16 @@ public class TestAccountProfile {
 				.withLastName("Herson");
 		
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.update(udpateCreditCardRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
 		
 		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+				.organization()
+				.subscription()
 				.creditCard()
 				.delete(identity.getId(), updateResult.getTarget().getToken());
 		

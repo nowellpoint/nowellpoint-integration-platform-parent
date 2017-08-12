@@ -26,6 +26,7 @@ import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.JobTypeResource;
+import com.nowellpoint.client.resource.OrganizationResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
@@ -80,5 +81,9 @@ public abstract class NowellpointClient  {
 	
 	public SalesforceResource salesforce() {
 		return new SalesforceResource(token());
+	}
+	
+	public OrganizationResource organization() {
+		return new OrganizationResource(token());
 	}
 }
