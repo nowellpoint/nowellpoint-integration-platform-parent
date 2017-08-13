@@ -66,9 +66,7 @@ public class Subscription implements Serializable {
 	private CreditCard creditCard;
 	
 	public Subscription() {
-		billingContact = new Contact();
-		billingAddress = new Address();
-		creditCard = new CreditCard();
+		
 	}
 
 	public String getSubscriptionId() {

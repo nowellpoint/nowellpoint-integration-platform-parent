@@ -18,6 +18,8 @@
 
 package com.nowellpoint.client;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
@@ -35,8 +37,8 @@ import com.nowellpoint.client.resource.SalesforceResource;
 @Value.Immutable
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
 public abstract class NowellpointClient  {
-	abstract Token token();
-	abstract Environment environment();
+	abstract @Nullable Token token();
+	abstract @Nullable Environment environment();
 	
 	public static NowellpointClient defaultClient(Token token) {
 		return ImmutableNowellpointClient.builder()

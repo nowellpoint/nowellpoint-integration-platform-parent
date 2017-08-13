@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.SignUpService;
@@ -25,7 +24,7 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract String getEmail();
 	public abstract @Nullable String getPhone();
 	public abstract String getCountryCode();
-	public abstract @JsonIgnore String getEmailVerificationToken();
+	public abstract String getEmailVerificationToken();
 	public abstract @Nullable String getDomain();
 	public abstract @Nullable URI getEmailVerificationHref();
 	public abstract Long getExpiresAt();

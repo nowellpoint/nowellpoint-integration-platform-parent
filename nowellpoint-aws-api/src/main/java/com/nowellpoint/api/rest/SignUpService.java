@@ -2,6 +2,7 @@ package com.nowellpoint.api.rest;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -25,7 +26,6 @@ public interface SignUpService {
 	@PermitAll
 	@POST
 	@Path("verify-email/{emailVerificationToken}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response verifyEmail(@PathParam("emailVerificationToken") String emailVerificationToken);
 	
@@ -59,7 +59,7 @@ public interface SignUpService {
 	
 	@PermitAll
 	@POST
-	@Path("{id}")
+	@Path("{id}/provision")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
     public Response provision(
@@ -78,5 +78,10 @@ public interface SignUpService {
     public Response setPassword(
     		@FormParam("password") String password, 
     		@FormParam("confirmPassword") String confirmPassword);
+	
+	@PermitAll
+	@DELETE
+	@Path("{id}")
+    public Response deleteRegistration(@PathParam("id") String id);
 	
 }

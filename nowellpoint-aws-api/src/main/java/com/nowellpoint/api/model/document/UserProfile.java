@@ -2,11 +2,9 @@ package com.nowellpoint.api.model.document;
 
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TimeZone;
 
 import com.nowellpoint.mongodb.annotation.Document;
-import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -61,8 +59,8 @@ public class UserProfile extends MongoDocument {
 	@EmbedOne
 	private Address address;
 	
-	@EmbedMany
-	private Set<ReferenceLink> referenceLinks;
+	@EmbedOne
+	private ReferenceLink referenceLink;
 	
 	@EmbedOne
 	private Photos photos;
@@ -226,12 +224,12 @@ public class UserProfile extends MongoDocument {
 		this.address = address;
 	}
 
-	public Set<ReferenceLink> getReferenceLinks() {
-		return referenceLinks;
+	public ReferenceLink getReferenceLink() {
+		return referenceLink;
 	}
 
-	public void setReferenceLinks(Set<ReferenceLink> referenceLinks) {
-		this.referenceLinks = referenceLinks;
+	public void setReferenceLink(ReferenceLink referenceLink) {
+		this.referenceLink = referenceLink;
 	}
 
 	public Photos getPhotos() {

@@ -78,8 +78,16 @@ public class SignUpServiceImpl implements SignUpService {
 			String number, 
 			String cvv) {
 		
-		// TODO Auto-generated method stub
-		return null;
+		Registration registration = registrationService.provision(
+				id, 
+				cardholderName, 
+				expirationMonth, 
+				expirationYear, 
+				number, 
+				cvv);
+		
+		return Response.ok(registration)
+				.build();
 	}
     
 	@Override
@@ -88,11 +96,15 @@ public class SignUpServiceImpl implements SignUpService {
     }
 	
 	@Override
-	public Response verifyEmail(String emailVerificationToken) {
-		
+	public Response verifyEmail(String emailVerificationToken) {	
 		Registration registration = registrationService.verifyEmail(emailVerificationToken);
-		
 		return Response.ok(registration)
 				.build();
+	}
+
+	@Override
+	public Response deleteRegistration(String id) {
+		registrationService.deleteRegistration(id);
+		return Response.ok().build();
 	}
 }

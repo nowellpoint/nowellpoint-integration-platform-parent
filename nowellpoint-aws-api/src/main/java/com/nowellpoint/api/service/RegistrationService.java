@@ -31,4 +31,6 @@ public interface RegistrationService {
 			String expirationYear,
 			String number, 
 			String cvv);
+	
+	public void deleteRegistration(String id);
 }

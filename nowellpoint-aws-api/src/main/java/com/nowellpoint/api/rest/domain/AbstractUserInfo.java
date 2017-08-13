@@ -1,7 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
-import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -28,11 +27,7 @@ public abstract class AbstractUserInfo {
 	public abstract @Nullable String getEmail();
 	public abstract @Nullable String getPhone();
 	public abstract @Nullable String getMobilePhone();
-	public abstract @Nullable AbstractPhotos getPhotos();
-	public abstract @Nullable AbstractUserInfo getCreatedBy();
-	public abstract @Nullable AbstractUserInfo getLastUpdatedBy();
-	public abstract @Nullable Date getCreatedOn();
-	public abstract @Nullable Date getLastUpdatedOn();
+	public abstract @Nullable Photos getPhotos();
 	
 	public Meta getMeta() {
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))

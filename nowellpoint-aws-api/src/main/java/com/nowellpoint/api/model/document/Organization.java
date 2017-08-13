@@ -1,6 +1,5 @@
 package com.nowellpoint.api.model.document;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.nowellpoint.mongodb.annotation.Document;
@@ -36,9 +35,7 @@ public class Organization extends MongoDocument {
 	private ReferenceLink referenceLink;
 	
 	public Organization() {
-		subscription = new Subscription();
-		transactions = new HashSet<>();
-		referenceLink = new ReferenceLink();
+		
 	}
 
 	public UserRef getCreatedBy() {

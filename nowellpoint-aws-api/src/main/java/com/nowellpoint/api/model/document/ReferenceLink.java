@@ -8,7 +8,7 @@ public class ReferenceLink implements Serializable {
 
 	private String id;
 	
-	private String name;
+	private String type;
 	
 	public ReferenceLink() {
 		
@@ -22,11 +22,11 @@ public class ReferenceLink implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getType() {
+		return type;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setType(String type) {
+		this.type = type;
 	}
 }

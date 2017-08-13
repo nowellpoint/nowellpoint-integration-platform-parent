@@ -14,25 +14,11 @@ public class UserInfo {
 
 	private String company;
 
-	private String division;
-
-	private String department;
-
-	private String title;
-
 	private String email;
 
 	private String phone;
 
-	private String extension;
-
-	private String fax;
-
 	private String mobilePhone;
-
-	private Boolean isActive;
-	
-	private Address address;
 	
 	private Photos photos;
 	
@@ -92,30 +78,6 @@ public class UserInfo {
 		this.company = company;
 	}
 
-	public String getDivision() {
-		return division;
-	}
-
-	public void setDivision(String division) {
-		this.division = division;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -132,44 +94,12 @@ public class UserInfo {
 		this.phone = phone;
 	}
 
-	public String getExtension() {
-		return extension;
-	}
-
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
-
-	public String getFax() {
-		return fax;
-	}
-
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
-
 	public String getMobilePhone() {
 		return mobilePhone;
 	}
 
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
 	}
 
 	public Photos getPhotos() {

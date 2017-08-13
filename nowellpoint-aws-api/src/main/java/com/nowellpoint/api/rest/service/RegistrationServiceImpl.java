@@ -261,6 +261,12 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 	}
 	
+	@Override
+	public void deleteRegistration(String id) {
+		Registration registration = findById(id);
+		super.delete(registration);
+	}
+	
 	private Registration findByEmailVerificationToken(String emailVerificationToken) {
 		Registration registration = null;
 		try {

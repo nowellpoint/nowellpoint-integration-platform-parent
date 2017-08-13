@@ -1,6 +1,10 @@
 package com.nowellpoint.client;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Ignore;
+
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
@@ -11,14 +15,18 @@ import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Registration;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateRegistrationRequest;
+import com.nowellpoint.client.model.UpdateResult;
 
-public class TestImmutables {
+public class RegistrationTest {
 	
 	@Test
+	@Ignore
 	public void testClient() {
 		ClientCredentialsGrantRequest request = OauthRequests.CLIENT_CREDENTIALS_GRANT_REQUEST.builder()
 				.setApiKeyId(System.getenv("STORMPATH_API_KEY_ID"))
@@ -72,11 +80,47 @@ public class TestImmutables {
 				.planId("57fa74a601936217bb99643c")
 				.build();
 		
-		CreateResult<Registration> registration = NowellpointClient.defaultClient(Environment.SANDBOX)
+		CreateResult<Registration> result = NowellpointClient.defaultClient(Environment.SANDBOX)
 				.registration()
 				.signUp(signUpRequest);
 		
+		assertNotNull(result.getTarget());
+		assertNotNull(result.getTarget().getId());
 		
+		UpdateRegistrationRequest updateRegistrationRequest = UpdateRegistrationRequest.builder()
+				.domain("nowellpoint")
+				.build();
+		
+		UpdateResult<Registration> updateResult = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.update(result.getTarget().getId(), updateRegistrationRequest);
+		
+		assertTrue(updateResult.isSuccess());
+		assertNotNull(updateResult.getTarget().getEmailVerificationToken());
+		
+		UpdateResult<Registration> verificationResult = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.verifyRegistration(updateResult.getTarget().getEmailVerificationToken());
+		
+		assertTrue(verificationResult.isSuccess());
+		
+		Registration registration = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.get(result.getTarget().getId());
+		
+		assertNotNull(registration);
+		
+		UpdateResult<Registration> provisionResult = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.provisionFreePlan(result.getTarget().getId());
+		
+		assertTrue(provisionResult.isSuccess());
+		
+		DeleteResult deleteResult = NowellpointClient.defaultClient(Environment.SANDBOX)
+				.registration()
+				.delete(result.getTarget().getId());
+		
+		assertTrue(deleteResult.isSuccess());
 		
 	}
 }

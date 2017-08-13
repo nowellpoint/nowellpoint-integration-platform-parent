@@ -48,7 +48,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, AbstractSubscription>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, Subscription>() {
 
 			@Override
 			protected Subscription convert(com.nowellpoint.api.model.document.Subscription source) {
@@ -61,7 +61,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, AbstractAddress>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, Address>() {
 
 			@Override
 			protected Address convert(com.nowellpoint.api.model.document.Address source) {
@@ -74,7 +74,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.CreditCard, AbstractCreditCard>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.CreditCard, CreditCard>() {
 
 			@Override
 			protected CreditCard convert(com.nowellpoint.api.model.document.CreditCard source) {
@@ -87,7 +87,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Contact, AbstractContact>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Contact, Contact>() {
 
 			@Override
 			protected Contact convert(com.nowellpoint.api.model.document.Contact source) {
@@ -100,7 +100,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, AbstractUserInfo>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, UserInfo>() {
 
 			@Override
 			protected UserInfo convert(com.nowellpoint.api.model.document.UserRef source) {
@@ -113,7 +113,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Photos, AbstractPhotos>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Photos, Photos>() {
 
 			@Override
 			protected Photos convert(com.nowellpoint.api.model.document.Photos source) {
@@ -126,7 +126,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.ReferenceLink, AbstractReferenceLink>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.ReferenceLink, ReferenceLink>() {
 
 			@Override
 			protected ReferenceLink convert(com.nowellpoint.api.model.document.ReferenceLink source) {
@@ -139,7 +139,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, AbstractTransaction>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, Transaction>() {
 
 			@Override
 			protected Transaction convert(com.nowellpoint.api.model.document.Transaction source) {
@@ -152,7 +152,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Organization, AbstractOrganizationInfo>() {
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Organization, OrganizationInfo>() {
 
 			@Override
 			protected OrganizationInfo convert(com.nowellpoint.api.model.document.Organization source) {
