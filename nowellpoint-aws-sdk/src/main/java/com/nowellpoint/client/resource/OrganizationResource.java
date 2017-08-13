@@ -103,31 +103,6 @@ public class OrganizationResource extends AbstractResource {
 	
 	/**
 	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	public DeleteResult deactivate(String id) {
-		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.execute();
-		
-		DeleteResult result = null;
-			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			result = new DeleteResultImpl();
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new DeleteResultImpl(error);
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * 
 	 * @param accountProfileId
 	 * @param userProfileRequest
 	 * @return
@@ -165,6 +140,25 @@ public class OrganizationResource extends AbstractResource {
 		}
 		
 		return result;
+	}
+	
+	public DeleteResult delete(String id) {
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.path(RESOURCE_CONTEXT)
+    			.path(id)
+    			.execute();
+		
+		DeleteResult deleteResult = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			deleteResult = new DeleteResultImpl();
+		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
+			Error error = httpResponse.getEntity(Error.class);
+			deleteResult = new DeleteResultImpl(error);
+		}
+		
+		return deleteResult;
 	}
 	
 	/**

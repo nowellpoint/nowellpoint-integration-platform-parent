@@ -115,12 +115,5 @@ public class RegistrationTest {
 				.provisionFreePlan(result.getTarget().getId());
 		
 		assertTrue(provisionResult.isSuccess());
-		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(Environment.SANDBOX)
-				.registration()
-				.delete(result.getTarget().getId());
-		
-		assertTrue(deleteResult.isSuccess());
-		
 	}
 }
