@@ -25,6 +25,13 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		set( organization.getId(), document );
 	}
 	
+	protected void delete(Organization organization) {
+		MongoDocument document = organization.toDocument();
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		documentManager.deleteOne(document);
+		del(organization.getId());
+	}
+	
 	protected void update(Organization organization) {
 		MongoDocument document = organization.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();

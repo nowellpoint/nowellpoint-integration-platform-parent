@@ -3,7 +3,6 @@ package com.nowellpoint.api.rest.service;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -18,21 +17,16 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.text.RandomStringGenerator;
-import org.jboss.logging.Logger;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.UserInfo;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
-import com.amazonaws.util.IOUtils;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
@@ -41,8 +35,6 @@ import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
 public class UserProfileServiceImpl extends AbstractUserProfileService implements UserProfileService {
-	
-	private static final Logger LOGGER = Logger.getLogger(AbstractUserProfileService.class);
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -142,16 +134,18 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	
 	@Override
 	public UserProfile deactivateUserProfile(String id) {
-		UserProfile original = findById(id);
+		UserProfile userProfile = findById(id);
 		
-		UserProfile userProfile = UserProfile.builder()
-				.from(original)
+		UserProfile instance = UserProfile.builder()
+				.from(userProfile)
 				.isActive(Boolean.FALSE)
 				.build();
 		
-		update(userProfile);
+		update(instance);
 		
-		return userProfile;
+		identityProviderService.deactivateUser(userProfile.getReferenceLink().getId());
+		
+		return instance;
 	}
 	
 	@Override
@@ -166,28 +160,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		identityProviderService.changePassword(userProfile.getReferenceLink().getId(), oldPassword, newPassword);
 	}
 	
-	public byte[] getInvoice(String id, String invoiceNumber) {
-		if (UserContext.getPrincipal().getName().equals(id)) {
-			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
-			builder.setBucket("nowellpoint-invoices");
-			builder.setKey(invoiceNumber);
-			
-			GetObjectRequest request = new GetObjectRequest(builder.build());
-			AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
-			
-			S3Object object = s3client.getObject(request);
-			InputStream inputStream = object.getObjectContent();
-			
-			try {
-				byte[] bytes = IOUtils.toByteArray(inputStream);
-				inputStream.close();
-				return bytes;
-			} catch (IOException e) {
-				LOGGER.error(e);
-			}
-		}
-		
-		return null;
+	@Override
+	public void deleteUserProfile(String id) {
+		UserProfile userProfile = findById(id);
+		identityProviderService.deleteUser(userProfile.getReferenceLink().getId());
+		super.delete(userProfile);
 	}
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {

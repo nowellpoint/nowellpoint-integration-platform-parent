@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -61,4 +62,9 @@ public interface OrganizationResource {
 			@FormParam("lastName") String lastName,
 			@FormParam("email") String email,
 			@FormParam("phone") String phone);
+	
+	@DELETE
+	@Path("{id}")
+	public Response deleteOrganization(@PathParam("id") String id);
+	
 }

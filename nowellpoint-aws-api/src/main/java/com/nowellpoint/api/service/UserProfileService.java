@@ -13,6 +13,7 @@ public interface UserProfileService {
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Locale locale, TimeZone timeZone);
 	public UserProfile updateAddress(String id, String street, String city, String state, String postalCode, String countryCode);
 	public UserProfile deactivateUserProfile(String id);
+	public void deleteUserProfile(String id);
 	public void setPassword(String id, String password);
 	public void changePassword(String id, String oldPassword, String newPassword);
 }

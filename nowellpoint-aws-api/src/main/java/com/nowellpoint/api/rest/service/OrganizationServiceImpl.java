@@ -1,12 +1,21 @@
 package com.nowellpoint.api.rest.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.jboss.logging.Logger;
+
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
+import com.amazonaws.util.IOUtils;
 import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCardRequest;
@@ -24,16 +33,14 @@ import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
-import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PlanService;
-import com.nowellpoint.api.util.MessageConstants;
-import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Properties;
 
 public class OrganizationServiceImpl extends AbstractOrganizationService implements OrganizationService {
+	
+	private static final Logger LOGGER = Logger.getLogger(OrganizationServiceImpl.class);
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
@@ -393,12 +400,49 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return organization;
 	}
 	
+	@Override
+	public void deleteOrganization(String id) {
+		Organization organization = findById(id);
+		deleteSubscription(organization.getReferenceLink().getId(), organization.getSubscription().getSubscriptionId());
+		removeCustomer(organization.getReferenceLink().getId());
+		super.delete(organization);
+	}
+	
+	@Override
+	public byte[] getInvoice(String id, String invoiceNumber) {
+		if (UserContext.getPrincipal().getName().equals(id)) {
+			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
+			builder.setBucket("nowellpoint-invoices");
+			builder.setKey(invoiceNumber);
+			
+			GetObjectRequest request = new GetObjectRequest(builder.build());
+			AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+			
+			S3Object object = s3client.getObject(request);
+			InputStream inputStream = object.getObjectContent();
+			
+			try {
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				inputStream.close();
+				return bytes;
+			} catch (IOException e) {
+				LOGGER.error(e);
+			}
+		}
+		
+		return null;
+	}
+	
 	private Result<com.braintreegateway.Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {
 		return gateway.subscription().create(subscriptionRequest);
 	}
 	
 	private Result<com.braintreegateway.Subscription> updateSubscription(String id, SubscriptionRequest subscriptionRequest) {
 		return gateway.subscription().update(id, subscriptionRequest);
+	}
+	
+	private Result<com.braintreegateway.Subscription> deleteSubscription(String customerId, String subscriptionId) {
+		return gateway.subscription().delete(customerId, subscriptionId);
 	}
 	
 	public Result<com.braintreegateway.Address> updateAddress(String customerId, String billingAddressId, AddressRequest addressRequest) {
@@ -421,11 +465,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return result;
 	}
 	
-	private Plan findPlanById(String planId) {
-		try {
-    		return planService.findById(planId);
-    	} catch (DocumentNotFoundException ignore) {
-    		throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_INVALID_PLAN), planId));
-		}
+	private Result<com.braintreegateway.Customer> removeCustomer(String customerId) {
+		Result<com.braintreegateway.Customer> result = gateway.customer().delete(customerId);
+		return result;
 	}
 }

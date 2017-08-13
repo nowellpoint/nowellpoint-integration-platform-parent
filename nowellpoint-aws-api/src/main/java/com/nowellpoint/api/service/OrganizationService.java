@@ -54,4 +54,8 @@ public interface OrganizationService {
 	public Organization updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode);
 	
 	public Organization updateBillingContact(String id, String firstName, String lastName, String email, String phone);
+	
+	public void deleteOrganization(String id);
+	
+	public byte[] getInvoice(String id, String invoiceNumber);
 }

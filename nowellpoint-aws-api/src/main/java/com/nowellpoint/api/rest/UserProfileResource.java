@@ -80,7 +80,5 @@ public interface UserProfileResource {
 
 	@DELETE
 	@Path("{id}")
-    public Response deactivateUserProfile(@PathParam("id") String id);
-	
-	
+    public Response deactivateUserProfile(@PathParam("id") String id);	
 }

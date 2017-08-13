@@ -51,13 +51,6 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 		return userProfile;
 	}
 	
-//	protected UserProfile findByIdpId(String idpId) {
-//		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
-//		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, elemMatch ( "referenceLinks", eq ( "name", idpId )));
-//		UserProfile userProfile = UserProfile.of( document );
-//		return userProfile;
-//	}
-	
 	protected UserProfile findOne(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, query );			

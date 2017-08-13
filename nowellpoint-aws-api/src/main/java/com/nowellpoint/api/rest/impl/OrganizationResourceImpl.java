@@ -46,4 +46,10 @@ public class OrganizationResourceImpl implements OrganizationResource {
 		return Response.ok(organization)
 				.build();
 	}
+
+	@Override
+	public Response deleteOrganization(String id) {
+		organizationService.deleteOrganization(id);
+		return Response.ok().build();
+	}
 }
