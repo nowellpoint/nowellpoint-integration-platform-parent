@@ -55,23 +55,57 @@
                         <p class="form-group">
                             <input type="email" name="email" id="email" placeholder="${labels['email']}" value="${email!}" required class="field">
                         </p>
-
                         <p class="form-group">
-                            <input type="password" name="password" id="password" placeholder="${labels['password']}" value="${password!}" required autocomplete="off" class="field">
-                        </p>
-                        <p class="form-group">
-                            <input type="password" name="confirmPassword" id="confirmPassword" placeholder="${labels['retype.password']}" required autocomplete="off" class="field">
+                            <input type="text" name="phone" id="phone" placeholder="${labels['phone']}" value="${phone!}" required class="field">
                         </p>
                         <p class="form-group">
                             <select id="countryCode" name="countryCode" required>
-                                <#list countryList as country>
-                                    <#if country.iso2Code==countryCode>
-                                        <option value="${country.iso2Code}" selected="selected">${country.name}</option>
-                                    </#if>
-                                    <#if country.iso2Code !=countryCode>
-                                        <option value="${country.iso2Code}">${country.name}</option>
-                                    </#if>
-                                </#list>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AL">Albania</option>
+                                <option value="DZ">Algeria</option>
+                                <option value="AS">American Samoa</option>
+                                <option value="AD">Andorra</option>
+                                <option value="AO">Angola</option>
+                                
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+                                <option value="AF">Afghanistan</option>
+
+=
+=
+=
+=
+AI=Anguilla
+AQ=Antarctica
+AG=Antigua and Barbuda
+AR=Argentina
+AM=Armenia
+AW=Aruba
+AU=Australia
+AT=Austria
+AZ=Azerbaijan
+BS=Bahamas
+BH=Bahrain
+BD=Bangladesh
+BB=Barbados
+BY=Belarus
+BE=Belgium
+BZ=Belize
+BJ=Benin
+BM=Bermuda
+BT=Bhutan
+BO=Bolivia
+BA=Bosnia And Herzegowina
+BW=Botswana
+                                
+                                <option value="CA">Canada</option>
+                                <option value="GB">Great Britan</option>
+                                <option value="US" selected="selected">United States</option>
+                                
                             </select>
                         </p>
 

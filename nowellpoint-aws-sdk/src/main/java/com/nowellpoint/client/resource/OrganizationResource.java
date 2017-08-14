@@ -108,25 +108,13 @@ public class OrganizationResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public UpdateResult<Organization> update(String accountProfileId, UserProfileRequest userProfileRequest) {
+	public UpdateResult<Organization> update(String organizationId, UserProfileRequest userProfileRequest) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path(RESOURCE_CONTEXT)
-				.path(accountProfileId)
-				.parameter("firstName", userProfileRequest.getFirstName())
-				.parameter("lastName", userProfileRequest.getLastName())
-				.parameter("company", userProfileRequest.getCompany())
-				.parameter("division", userProfileRequest.getDivision())
-				.parameter("department", userProfileRequest.getDepartment())
-				.parameter("title", userProfileRequest.getTitle())
-				.parameter("email", userProfileRequest.getEmail())
-				.parameter("mobilePhone", userProfileRequest.getMobilePhone())
-				.parameter("phone", userProfileRequest.getPhone())
-				.parameter("extension", userProfileRequest.getExtension())
-				.parameter("locale", userProfileRequest.getLocale())
-				.parameter("timeZone", userProfileRequest.getTimeZone())
+				.path(organizationId)
 				.execute();
 		
 		UpdateResult<Organization> result = null;

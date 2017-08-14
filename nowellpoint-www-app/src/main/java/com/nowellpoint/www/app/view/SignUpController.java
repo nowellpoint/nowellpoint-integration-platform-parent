@@ -1,7 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +11,17 @@ import java.util.stream.Collectors;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.Environment;
+import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.PlanList;
+import com.nowellpoint.client.model.Registration;
+import com.nowellpoint.client.model.SignUpRequest;
+import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
@@ -31,6 +32,8 @@ import spark.Request;
 import spark.Response;
 
 public class SignUpController extends AbstractStaticController {
+	
+	private static final Environment ENVIRONMENT = Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT"));
 	
 	public static class Template {
 		public static final String PLANS = "plans.html";
@@ -49,7 +52,7 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String plans(Configuration configuration, Request request, Response response) {
 		
-		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
 				.path("plans")
 				.queryParameter("locale", "en_US")
 				.queryParameter("language", "en_US")
@@ -85,7 +88,7 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String freeAccount(Configuration configuration, Request request, Response response) {
 		
-		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
 				.path("plans")
 				.queryParameter("locale", "en_US")
 				.queryParameter("language", "en_US")
@@ -141,7 +144,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		if (planId != null) {
 			
-			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
 					.path("plans")
 					.path(planId)
 					.execute();
@@ -176,7 +179,7 @@ public class SignUpController extends AbstractStaticController {
 			
 		} else {
 			
-			HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
+			HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
 					.path("plans")
 					.queryParameter("locale", Locale.getDefault().toString())
 					.queryParameter("language", "en_US")
@@ -224,85 +227,73 @@ public class SignUpController extends AbstractStaticController {
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
 		String email = request.queryParams("email");
-		String password = request.queryParams("password");
-		String confirmPassword = request.queryParams("confirmPassword");
+//		String password = request.queryParams("password");
+		String phone = request.queryParams("phone");
+//		String confirmPassword = request.queryParams("confirmPassword");
 		String countryCode = request.queryParams("countryCode");
 		String planId = request.queryParams("planId");
-		String cardNumber = request.queryParams("cardNumber");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String securityCode = request.queryParams("securityCode");
+//		String cardNumber = request.queryParams("cardNumber");
+//		String expirationMonth = request.queryParams("expirationMonth");
+//		String expirationYear = request.queryParams("expirationYear");
+//		String securityCode = request.queryParams("securityCode");
 		
 		Map<String, Object> model = getModel();
 		
-		try {
-			HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.acceptCharset("UTF-8")
-					.path("signup")
-					.parameter("firstName", URLEncoder.encode(firstName, "UTF-8"))
-					.parameter("lastName", URLEncoder.encode(lastName, "UTF-8"))
-					.parameter("email", email)
-					.parameter("countryCode", countryCode)
-					.parameter("password", URLEncoder.encode(password, "UTF-8"))
-					.parameter("confirmPassword", URLEncoder.encode(confirmPassword, "UTF-8"))
-					.parameter("planId", planId)
-					.parameter("cardNumber", cardNumber)
-					.parameter("expirationMonth", expirationMonth)
-					.parameter("expirationYear", expirationYear)
-					.parameter("securityCode", securityCode)
-					.execute();
-	    	
-	    	if (httpResponse.getStatusCode() != Status.OK) {
-	    		
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		
-	    		httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-						.path("plans")
-						.path(planId)
-						.execute();
-	    		
-	    		Plan plan = httpResponse.getEntity(Plan.class);
-	    		
-	    		model.put("action", "createAccount");
-	    		model.put("firstName", firstName);
-	    		model.put("lastName", lastName);
-	    		model.put("email", email);
-	    		model.put("password", password);
-	    		model.put("countryCode", countryCode);
-	    		model.put("planId", planId);
-	    		model.put("plan", plan);
-	    		model.put("errorMessage", error.getErrorMessage());
-	    		
-	    	} else {
-	    		
-	    		model.put("email", email);
-	        	
-	        	return TemplateBuilder.template()
-	    				.configuration(configuration)
-	    				.controllerClass(SignUpController.class)
-	    				.identity(getIdentity(request))
-	    				.locale(getLocale(request))
-	    				.model(model)
-	    				.templateName(Template.SIGN_UP_CONFIRM)
-	    				.timeZone(getTimeZone(request))
-	    				.build();
-	    	}
-	    	
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return null;
-		}
 		
-		return TemplateBuilder.template()
-				.configuration(configuration)
-				.controllerClass(SignUpController.class)
-				.identity(getIdentity(request))
-				.locale(getLocale(request))
-				.model(model)
-				.templateName(Template.SIGN_UP)
-				.timeZone(getTimeZone(request))
+		SignUpRequest signUpRequest = SignUpRequest.builder()
+				.countryCode(countryCode)
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.planId(planId)
+				.phone(phone)
 				.build();
+		
+		CreateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT)
+				.registration()
+				.signUp(signUpRequest);
+		
+		if (result.isSuccess()) {
+			model.put("email", email);
+        	
+        	return TemplateBuilder.template()
+    				.configuration(configuration)
+    				.controllerClass(SignUpController.class)
+    				.identity(getIdentity(request))
+    				.locale(getLocale(request))
+    				.model(model)
+    				.templateName(Template.SIGN_UP_CONFIRM)
+    				.timeZone(getTimeZone(request))
+    				.build();
+		} else {
+    		
+			HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
+					.path("plans")
+					.path(planId)
+					.execute();
+    		
+    		Plan plan = httpResponse.getEntity(Plan.class);
+    		
+    		model.put("action", "createAccount");
+    		model.put("firstName", firstName);
+    		model.put("lastName", lastName);
+    		model.put("email", email);
+    		//model.put("password", password);
+    		model.put("countryCode", countryCode);
+    		model.put("planId", planId);
+    		model.put("plan", plan);
+    		model.put("errorMessage", result.getErrorMessage());
+    		
+    		return TemplateBuilder.template()
+    				.configuration(configuration)
+    				.controllerClass(SignUpController.class)
+    				.identity(getIdentity(request))
+    				.locale(getLocale(request))
+    				.model(model)
+    				.templateName(Template.SIGN_UP)
+    				.timeZone(getTimeZone(request))
+    				.build();
+		}
 	}
 	/**
 	 * 
@@ -316,17 +307,13 @@ public class SignUpController extends AbstractStaticController {
 		
 		String emailVerificationToken = request.queryParams("emailVerificationToken");
 		
-		HttpResponse httpResponse = RestResource.post(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path("signup")
-				.path("verify-email")
-				.path(emailVerificationToken)
-				.execute();
+		UpdateResult<Registration> verificationResult = NowellpointClient.defaultClient(ENVIRONMENT)
+				.registration()
+				.verifyRegistration(emailVerificationToken);
 		
 		Map<String,Object> model = getModel();
     	
-    	if (httpResponse.getStatusCode() == Status.OK) {
+    	if (verificationResult.isSuccess()) {
     		model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
     	} else {
     		model.put("errorMessage", MessageProvider.getMessage(Locale.US, "email.verification.failure"));
