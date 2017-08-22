@@ -12,37 +12,47 @@
 
     <title>${messages["application.title"]}</title>
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
-    <link rel="stylesheet" href="css/media.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/v4/dist/toolkit-light.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/custom.css" type="text/css" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <script src="/v4/dist/toolkit.min.js"></script>
 
 </head>
 
 <body>
 
-    <div class="DesignHolder">
-        <div class="LayoutFrame">
-            <div id="container">
-                <div class="About_sec" id="about">
-                    <div class="Center">
-                        <div class="leftside">
-                            <h1 class="success">${labels["almost"]}</h1>
-                            <h4 class="success">${labels["check.email"]}: ${email}</h4>
-                        </div>
+    <div id="wrapper">
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="container">
+            <div id="page-content-wrapper">
+                <div class="row">
+                    <div class="w-100">
+                        <h3>${labels["almost"]}</h3>
+                        <h4>${labels["check.email"]}: ${email}</h4>
                     </div>
                 </div>
-                <div class="clear"></div>
             </div>
         </div>
     </div>
 
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 
 </body>
 

@@ -14,6 +14,7 @@ public class Registration extends MongoDocument {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private String phone;
 	private String countryCode;
 	private String emailVerificationToken;
 	private String domain;
@@ -64,6 +65,14 @@ public class Registration extends MongoDocument {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public String getCountryCode() {

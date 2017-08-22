@@ -146,14 +146,24 @@ public class SignUpController extends AbstractStaticController {
 			
 			HttpResponse httpResponse = RestResource.get(ENVIRONMENT.getEnvironmentUrl())
 					.path("plans")
-					.path(planId)
+					.queryParameter("locale", "en_US")
+					.queryParameter("language", "en_US")
 					.execute();
 			
-			if (httpResponse.getStatusCode() != Status.OK) {
-				throw new BadRequestException(httpResponse.getAsString());
+			PlanList planList = null;
+			
+			if (httpResponse.getStatusCode() == Status.OK) {
+				planList = httpResponse.getEntity(PlanList.class);
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
 			}
 			
-			Plan plan = httpResponse.getEntity(Plan.class);
+			Optional<Plan> optional = planList.getItems()
+					.stream()
+					.filter(plan -> plan.getId().equals(planId))
+					.findFirst();
+			
+			Plan plan = optional.get();
 			
 			CreditCard creditCard = new CreditCard();
 			creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));

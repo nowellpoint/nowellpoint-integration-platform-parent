@@ -1,137 +1,175 @@
-<!DOCTYPE HTML>
-<html lang="en">
+<#import "template.html" as t>
+    <@t.page>
 
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>${messages["application.title"]}</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
-    <link rel="stylesheet" href="css/media.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
-
-</head>
-
-<body>
-
-
-    <div class="login_container">
-        <div class="login_section" id="signup">
-            <div class="center">
-                <div class="site-logo">
-                    <h1><a href="/">${messages["application.title"]}</a></h1>
-                </div>
-            </div>
-
-            <p class="success">${successMessage!}</p>
-            <p class="error">${errorMessage!}</p>
-            <br>
-
-            <div class="mid">
-
-                <form id="signup-form" role="form" method="post" action="/signup">
-                    <fieldset>
-
-                        <h3>${labels["account"]}</h3>
-
-                        <input type="hidden" name="planId" value="${planId!}" />
-
-                        <p class="form-group">
-                            <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${firstName!}" autofocus class="field">
-                        </p>
-                        <p class="form-group">
-                            <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${lastName!}" required data-msg="${messages['last.name.required']}" class="field">
-                        </p>
-                        <p class="form-group">
-                            <input type="email" name="email" id="email" placeholder="${labels['email']}" value="${email!}" required class="field">
-                        </p>
-                        <p class="form-group">
-                            <input type="text" name="phone" id="phone" placeholder="${labels['phone']}" value="${phone!}" required class="field">
-                        </p>
-                        <p class="form-group">
-                            <select id="countryCode" name="countryCode" required>
-                                <option value="AF">Afghanistan</option>
-                                <option value="AL">Albania</option>
-                                <option value="DZ">Algeria</option>
-                                <option value="AS">American Samoa</option>
-                                <option value="AD">Andorra</option>
-                                <option value="AO">Angola</option>
-                                <option value="AI">Anguilla</option>
-                                <option value="AQ">Antarctica</option>
-                                <option value="AG">Antigua and Barbuda</option>
-                                <option value="AR">Argentina</option>
-                                <option value="AM">Armenia</option>
-                                <option value="AW">Aruba</option>
-                                <option value="AU">Australia</option>
-                                <option value="AT">Austria</option>
-                                <option value="AZ">Azerbaijan</option>
-                                <option value="BS">Bahamas</option>
-                                <option value="BH">Bahrain</option>
-                                <option value="BD">Bangladesh</option>
-                                <option value="BB">Barbados</option>
-                                <option value="BY">Belarus</option>
-                                <option value="BE">Belgium</option>
-                                <option value="BZ">Belize</option>
-                                <option value="BJ">Benin</option>
-                                <option value="BM">Bermuda</option>
-                                <option value="BT">Bhutan</option>
-                                <option value="BO">Bolivia</option>
-                                <option value="BA">Bosnia And Herzegowina</option>
-                                <option value="BW">Botswana</option>
-                                
-
-                                
-                                <option value="CA">Canada</option>
-                                <option value="GB">Great Britan</option>
-                                <option value="US" selected="selected">United States</option>
-                                
-                            </select>
-                        </p>
-
-                        <#if plan.price.unitPrice gt 0>
-
-                            <h3>${labels["credit.card"]}</h3>
-
-                            <p class="form-group">
-                                <input type="text" class="field" name="cardNumber" id="cardNumber" placeholder="${labels['number']}">
-                            </p>
-
-                            <p class="form-group">
-                                <input type="text" class="number" name="expirationMonth" id="expirationMonth" required placeholder="${labels['month']}">
-                                <input type="text" class="number" name="expirationYear" id="expirationYear" required placeholder="${labels['year']}">
-                                <input type="text" class="cvv" name="securityCode" id="securityCode" required placeholder="${labels['cvv']}">
-                            </p>
-
-                        </#if>
-
-                        <p class="form-group">
-                            <input type="submit" id="submit" value="${labels['sign.up']}" class="button">
-                        </p>
-                    </fieldset>
-                </form>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-center">${labels['signup.title']}</h3>
             </div>
         </div>
-    </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-4">
+                
+                <h3>${labels["user.profile"]}</h3>
+
+                <form id="signup-form" role="form" method="post" action="/signup">
 
 
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+                    <input type="hidden" name="planId" value="${planId!}" />
 
-    <script>
-        $("#signup-form").validate();
-    </script>
+                    <div class="form-group">
+                        <input type="text" name="firstName" id="firstName" class="form-control" placeholder="${labels['first.name']}" value="${firstName!}" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="lastName" id="lastName" class="form-control" placeholder="${labels['last.name']}" value="${lastName!}" required data-msg="${messages['last.name.required']}">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" class="form-control" placeholder="${labels['email']}" value="${email!}" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="phone" id="phone" class="form-control" placeholder="${labels['phone']}" value="${phone!}">
+                    </div>
+                    <div class="form-group">
+                        <select id="countryCode" name="countryCode" class="form-control" required>
+                            <option value="XX" selected="selected">${labels['select.country']}</option>
+                            <option value="AF">Afghanistan</option>
+                            <option value="AL">Albania</option>
+                            <option value="DZ">Algeria</option>
+                            <option value="AS">American Samoa</option>
+                            <option value="AD">Andorra</option>
+                            <option value="AO">Angola</option>
+                            <option value="AI">Anguilla</option>
+                            <option value="AQ">Antarctica</option>
+                            <option value="AG">Antigua and Barbuda</option>
+                            <option value="AR">Argentina</option>
+                            <option value="AM">Armenia</option>
+                            <option value="AW">Aruba</option>
+                            <option value="AU">Australia</option>
+                            <option value="AT">Austria</option>
+                            <option value="AZ">Azerbaijan</option>
+                            <option value="BS">Bahamas</option>
+                            <option value="BH">Bahrain</option>
+                            <option value="BD">Bangladesh</option>
+                            <option value="BB">Barbados</option>
+                            <option value="BY">Belarus</option>
+                            <option value="BE">Belgium</option>
+                            <option value="BZ">Belize</option>
+                            <option value="BJ">Benin</option>
+                            <option value="BM">Bermuda</option>
+                            <option value="BT">Bhutan</option>
+                            <option value="BO">Bolivia</option>
+                            <option value="BA">Bosnia And Herzegowina</option>
+                            <option value="BW">Botswana</option>
 
-</body>
 
-</html>
+
+                            <option value="CA">Canada</option>
+                            <option value="GB">Great Britan</option>
+                            <option value="US">United States</option>
+
+                        </select>
+                    </div>
+
+                    <#if plan.price.unitPrice gt 0>
+
+                        <h3>${labels["credit.card"]}</h3>
+                        
+                        <div class="form-group">
+                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="cardNumber" id="cardNumber" class="form-control" placeholder="${labels['number']}">
+                        </div>
+
+                        <div class="row no-gutters">
+                            <div class="form-group col-4">
+                                <input type="text" name="expirationMonth" id="expirationMonth" class="form-control" required placeholder="${labels['month']}">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="text" name="expirationYear" id="expirationYear" class="form-control" required placeholder="${labels['year']}">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="text" name="securityCode" id="securityCode" class="form-control" required placeholder="${labels['cvv']}">
+                            </div>
+                        </div>
+
+
+                    </#if>
+
+                    <div class="form-group">
+                        <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
+                    </div>
+
+                </form>
+
+            </div>
+            
+            <div class="col col-lg-1"></div>
+
+            <div class="col col-lg-2">
+                
+                <div class="row">
+                
+                <br>
+
+
+                <div class="statcard p-3">
+                    <span class="statcard-desc">${labels['plan.name']}</span>
+                    <h3 class="statcard-number">${plan.planName}</h3>
+
+                </div>
+                <div class="statcard p-3">
+                    <span class="statcard-desc">${labels['price']}</span>
+                    <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
+                </div>
+
+            </div>
+
+            <div class="col col-lg-2">
+                
+                <br>
+
+                <#list plan.features?sort_by( "sortOrder") as feature>
+
+                    <div class="statcard p-3">
+                        <#if feature.code=="SALESFORCE_ORGANIZATIONS">
+                            <span class="statcard-desc">${labels["organizations"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </#if>
+
+                        <#if feature.code=="SALESFORCE_SANDBOXES">
+                            <span class="statcard-desc">${labels["sandboxes"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </#if>
+
+                        <#if feature.code=="USERS">
+                            <span class="statcard-desc">${labels["users"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </#if>
+
+                        <#if feature.code=="DISK_SPACE">
+                            <span class="statcard-desc">${labels["disk.space"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </#if>
+                    </div>
+
+                </#list>
+
+            </div>   
+                
+            </div>    
+
+        </div>
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    </@t.page>
