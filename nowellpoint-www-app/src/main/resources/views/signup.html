@@ -36,6 +36,10 @@
                         <input type="text" name="phone" id="phone" class="form-control" placeholder="${labels['phone']}" value="${phone!}">
                     </div>
                     <div class="form-group">
+                        <input type="text" name="domain" id="domain" class="form-control" placeholder="${labels['domain']}" value="${domain!}" data-toggle="tooltip">
+                        <i class="glyphicon glyphicon-user form-control-feedback"></i>
+                    </div>    
+                    <div class="form-group">
                         <select id="countryCode" name="countryCode" class="form-control" required>
                             <option value="XX" selected="selected">${labels['select.country']}</option>
                             <option value="AF">Afghanistan</option>
@@ -115,7 +119,6 @@
 
             <div class="col col-lg-2">
                 
-                <div class="row">
                 
                 <br>
 
@@ -125,46 +128,58 @@
                     <h3 class="statcard-number">${plan.planName}</h3>
 
                 </div>
-                <div class="statcard p-3">
-                    <span class="statcard-desc">${labels['price']}</span>
-                    <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
-                </div>
+                
+                <#list plan.features?sort_by( "sortOrder") as feature>
+
+                    
+                        <#if feature.code=="SALESFORCE_ORGANIZATIONS">
+                            <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["organizations"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                            </div>    
+                        </#if>
+
+                        <#if feature.code=="SALESFORCE_SANDBOXES">
+                            <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["sandboxes"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                            </div>    
+                        </#if>
+
+                </#list>
+                
 
             </div>
 
             <div class="col col-lg-2">
                 
                 <br>
+                
+                <div class="statcard p-3">
+                    <span class="statcard-desc">${labels['price']}</span>
+                    <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
+                </div>
 
                 <#list plan.features?sort_by( "sortOrder") as feature>
 
-                    <div class="statcard p-3">
-                        <#if feature.code=="SALESFORCE_ORGANIZATIONS">
-                            <span class="statcard-desc">${labels["organizations"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </#if>
-
-                        <#if feature.code=="SALESFORCE_SANDBOXES">
-                            <span class="statcard-desc">${labels["sandboxes"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </#if>
 
                         <#if feature.code=="USERS">
+                            <div class="statcard p-3">
                             <span class="statcard-desc">${labels["users"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
+                            </div>    
                         </#if>
 
                         <#if feature.code=="DISK_SPACE">
+                            <div class="statcard p-3">
                             <span class="statcard-desc">${labels["disk.space"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
+                            </div>    
                         </#if>
-                    </div>
 
                 </#list>
 
             </div>   
-                
-            </div>    
 
         </div>
 

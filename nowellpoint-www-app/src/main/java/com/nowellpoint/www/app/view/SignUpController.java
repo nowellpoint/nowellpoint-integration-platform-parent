@@ -242,6 +242,7 @@ public class SignUpController extends AbstractStaticController {
 //		String confirmPassword = request.queryParams("confirmPassword");
 		String countryCode = request.queryParams("countryCode");
 		String planId = request.queryParams("planId");
+		String domain = request.queryParams("domain");
 //		String cardNumber = request.queryParams("cardNumber");
 //		String expirationMonth = request.queryParams("expirationMonth");
 //		String expirationYear = request.queryParams("expirationYear");
@@ -257,6 +258,7 @@ public class SignUpController extends AbstractStaticController {
 				.lastName(lastName)
 				.planId(planId)
 				.phone(phone)
+				.domain(domain)
 				.build();
 		
 		CreateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT)
