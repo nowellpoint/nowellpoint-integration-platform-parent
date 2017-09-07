@@ -49,12 +49,12 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 
 	@Override
 	public UserProfile findByUsername(String username) {
-		return findOne(eq ( "username", username ));
+		return findOne( eq ( "username", username ) );
 	}
 	
 	@Override
 	public UserProfile findByReferenceId(String referenceId) {
-		return findOne(eq ( "referenceLink.id", referenceId ));
+		return findOne( eq ( "referenceLink.id", referenceId ));
 	}
 
 	@Override

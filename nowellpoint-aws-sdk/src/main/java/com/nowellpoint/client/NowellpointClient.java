@@ -65,7 +65,7 @@ public abstract class NowellpointClient  {
 	}
 	
 	public PlanResource plan() {
-		return new PlanResource(token());
+		return new PlanResource(environment());
 	}
 	
 	public JobResource job() {

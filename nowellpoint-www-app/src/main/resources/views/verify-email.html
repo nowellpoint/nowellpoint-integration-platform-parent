@@ -1,48 +1,149 @@
-<!DOCTYPE HTML>
-<html lang="en">
+<#import "template.html" as t>
+    <@t.page>
 
-<head>
+        <br>
+        <br>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <div class="row justify-content-md-center">
 
-    <title>${messages["application.title"]}</title>
+            <!-- <#if errorMessage??> -->
 
-    <link rel="stylesheet" href="css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="css/media.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+            <div class="col col-lg-12">
+                <p class="text-danger text-center"><span class="icon icon-cross fa fa-4x"></span></p>
+            </div>
+            <div class="col col-lg-12">
+                <h3 class="text-danger text-center">${errorMessage}</h3>
+            </div>
+            <div class="col col-lg-12">
+                <br>
+                <br>
+                <h4 class="text-center"><a href="/plans">${labels["register"]}</a></h4>
+            </div>
 
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
+        </div>
 
-</head>
+        <!--<#else> -->
 
-<body>
-
-    <div class="DesignHolder">
-        <div class="LayoutFrame">
-
-            <div id="container">
-                <div class="About_sec" id="about">
-                    <div class="Center">
-                        <h1 class="success">${labels["welcome"]}</h1>
-                        <h4 class="success">${labels["account.success"]}</h4>
-                        <a href="/login">${labels["login"]}</a>
-                    </div>
-                </div>
-                <div class="clear"></div>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-center">${labels["welcome"]}</h3>
+                <h3 class="text-center">${labels["account.success"]}</h3>
             </div>
         </div>
-    </div>
 
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
 
-</body>
+        <div class="row justify-content-md-center">
 
-</html>
+            <div class="col col-lg-4">
+
+                <form id="provision-form" role="form" method="post" action="/provision">
+
+                    <#if plan.price.unitPrice gt 0>
+
+                        <h3>${labels["credit.card"]}</h3>
+                        <div class="form-group">
+                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="cardNumber" id="cardNumber" class="form-control" placeholder="${labels['number']}">
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="form-group col-4">
+                                <input type="text" name="expirationMonth" id="expirationMonth" class="form-control" required placeholder="${labels['month']}">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="text" name="expirationYear" id="expirationYear" class="form-control" required placeholder="${labels['year']}">
+                            </div>
+                            <div class="form-group col-4">
+                                <input type="text" name="securityCode" id="securityCode" class="form-control" required placeholder="${labels['cvv']}">
+                            </div>
+                        </div>
+                    </#if>
+
+
+                    <input type="hidden" name="planId" value="${planId!}" />
+
+                    <div class="form-group">
+                        <button type="submit" id="submit" class="btn btn-primary">${labels['submit']}</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="col col-lg-1"></div>
+
+            <div class="col col-lg-2">
+
+                <br>
+
+                <div class="statcard p-3">
+                    <span class="statcard-desc">${labels['plan.name']}</span>
+                    <h3 class="statcard-number">${plan.planName}</h3>
+
+                </div>
+
+                <#list plan.features as feature>
+
+
+                    <#if feature.code=="SALESFORCE_ORGANIZATIONS">
+                        <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["organizations"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </div>
+                    </#if>
+
+                    <#if feature.code=="SALESFORCE_SANDBOXES">
+                        <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["sandboxes"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </div>
+                    </#if>
+
+                </#list>
+
+            </div>
+
+            <div class="col col-lg-2">
+
+                <br>
+
+                <div class="statcard p-3">
+                    <span class="statcard-desc">${labels['price']}</span>
+                    <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
+                </div>
+
+                <#list plan.features as feature>
+
+                    <#if feature.code=="USERS">
+                        <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["users"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </div>
+                    </#if>
+
+                    <#if feature.code=="DISK_SPACE">
+                        <div class="statcard p-3">
+                            <span class="statcard-desc">${labels["disk.space"]}</span>
+                            <h3 class="statcard-number">${feature.quantity}</h3>
+                        </div>
+                    </#if>
+
+                </#list>
+
+            </div>
+
+
+            <!-- </#if> -->
+
+        </div>
+
+
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    </@t.page>

@@ -14,8 +14,21 @@
         <br>
 
         <div class="row justify-content-md-center">
-            <div class="col col-lg-4">
+            
+            <#if errorMessage??>
                 
+                <div class="col col-lg-9">
+                    
+                    <div class="alert alert-danger alert-dismissable">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        ${errorMessage}
+                    </div>
+                
+                </div>    
+                </#if>
+            
+            <div class="col col-lg-4">
+
                 <h3>${labels["user.profile"]}</h3>
 
                 <form id="signup-form" role="form" method="post" action="/signup">
@@ -36,9 +49,9 @@
                         <input type="text" name="phone" id="phone" class="form-control" placeholder="${labels['phone']}" value="${phone!}">
                     </div>
                     <div class="form-group">
-                        <input type="text" name="domain" id="domain" class="form-control" placeholder="${labels['domain']}" value="${domain!}" data-toggle="tooltip">
-                        <i class="glyphicon glyphicon-user form-control-feedback"></i>
-                    </div>    
+                        <small class="text-muted">${labels['domain.help.text']}</small>
+                        <input type="text" name="domain" id="domain" class="form-control" placeholder="${labels['domain']}" value="${domain!}">
+                    </div>
                     <div class="form-group">
                         <select id="countryCode" name="countryCode" class="form-control" required>
                             <option value="XX" selected="selected">${labels['select.country']}</option>
@@ -80,33 +93,6 @@
                         </select>
                     </div>
 
-                    <#if plan.price.unitPrice gt 0>
-
-                        <h3>${labels["credit.card"]}</h3>
-                        
-                        <div class="form-group">
-                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}">
-                        </div>
-
-                        <div class="form-group">
-                            <input type="text" name="cardNumber" id="cardNumber" class="form-control" placeholder="${labels['number']}">
-                        </div>
-
-                        <div class="row no-gutters">
-                            <div class="form-group col-4">
-                                <input type="text" name="expirationMonth" id="expirationMonth" class="form-control" required placeholder="${labels['month']}">
-                            </div>
-                            <div class="form-group col-4">
-                                <input type="text" name="expirationYear" id="expirationYear" class="form-control" required placeholder="${labels['year']}">
-                            </div>
-                            <div class="form-group col-4">
-                                <input type="text" name="securityCode" id="securityCode" class="form-control" required placeholder="${labels['cvv']}">
-                            </div>
-                        </div>
-
-
-                    </#if>
-
                     <div class="form-group">
                         <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
                     </div>
@@ -114,72 +100,68 @@
                 </form>
 
             </div>
-            
+
             <div class="col col-lg-1"></div>
 
             <div class="col col-lg-2">
-                
-                
-                <br>
 
+                <br>
 
                 <div class="statcard p-3">
                     <span class="statcard-desc">${labels['plan.name']}</span>
                     <h3 class="statcard-number">${plan.planName}</h3>
 
                 </div>
-                
-                <#list plan.features?sort_by( "sortOrder") as feature>
 
-                    
-                        <#if feature.code=="SALESFORCE_ORGANIZATIONS">
-                            <div class="statcard p-3">
+                <#list plan.features as feature>
+
+
+                    <#if feature.code=="SALESFORCE_ORGANIZATIONS">
+                        <div class="statcard p-3">
                             <span class="statcard-desc">${labels["organizations"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
-                            </div>    
-                        </#if>
+                        </div>
+                    </#if>
 
-                        <#if feature.code=="SALESFORCE_SANDBOXES">
-                            <div class="statcard p-3">
+                    <#if feature.code=="SALESFORCE_SANDBOXES">
+                        <div class="statcard p-3">
                             <span class="statcard-desc">${labels["sandboxes"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
-                            </div>    
-                        </#if>
+                        </div>
+                    </#if>
 
                 </#list>
-                
 
             </div>
 
             <div class="col col-lg-2">
-                
+
                 <br>
-                
+
                 <div class="statcard p-3">
                     <span class="statcard-desc">${labels['price']}</span>
                     <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
                 </div>
 
-                <#list plan.features?sort_by( "sortOrder") as feature>
+                <#list plan.features as feature>
 
-
-                        <#if feature.code=="USERS">
-                            <div class="statcard p-3">
+                    <#if feature.code=="USERS">
+                        <div class="statcard p-3">
                             <span class="statcard-desc">${labels["users"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
-                            </div>    
-                        </#if>
+                        </div>
+                    </#if>
 
-                        <#if feature.code=="DISK_SPACE">
-                            <div class="statcard p-3">
+                    <#if feature.code=="DISK_SPACE">
+                        <div class="statcard p-3">
                             <span class="statcard-desc">${labels["disk.space"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
-                            </div>    
-                        </#if>
+                        </div>
+                    </#if>
 
                 </#list>
 
-            </div>   
+            </div>
 
         </div>
 

@@ -87,7 +87,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
     	
     	Plan plan = findPlanById(planId);
     	
-    	isUsernameRegistred(email);
+    	isRegistred(email, domain);
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
@@ -338,12 +338,17 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private void isUsernameRegistred(String username) {
+	private void isRegistred(String username, String domain) {
 		try {
 			userProfileService.findByUsername(username);
 			throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_ACCOUNT_CONFLICT), username));
-		} catch (DocumentNotFoundException ignore) {
-			publish(username);
+		} catch (DocumentNotFoundException e) {
+			try {
+				organizationService.findByDomain(domain);
+				throw new ValidationException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_DOMAIN_CONFLICT), domain));
+			} catch (DocumentNotFoundException ignore) {
+				publish(username);
+			}
 		}
 	}
 }
