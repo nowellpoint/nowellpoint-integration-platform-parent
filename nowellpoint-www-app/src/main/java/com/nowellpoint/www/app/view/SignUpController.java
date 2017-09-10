@@ -34,7 +34,7 @@ public class SignUpController extends AbstractStaticController {
 		public static final String PLANS = "plans.html";
 		public static final String SIGN_UP = "signup.html";
 		public static final String SIGN_UP_CONFIRM = "signup-confirm.html";
-		public static final String VERIFY_EMAIL = "verify-email.html";
+		public static final String PROVISION_ACCOUNT = "provision-account.html";
 	}
 	
 	/**
@@ -188,10 +188,6 @@ public class SignUpController extends AbstractStaticController {
 		String countryCode = request.queryParams("countryCode");
 		String planId = request.queryParams("planId");
 		String domain = request.queryParams("domain");
-//		String cardNumber = request.queryParams("cardNumber");
-//		String expirationMonth = request.queryParams("expirationMonth");
-//		String expirationYear = request.queryParams("expirationYear");
-//		String securityCode = request.queryParams("securityCode");
 		
 		Map<String, Object> model = getModel();
 		
@@ -277,6 +273,44 @@ public class SignUpController extends AbstractStaticController {
     				.build();
 		}
 	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String provision(Configuration configuration, Request request, Response response) {
+		
+		String planCode = request.queryParams("planCode");
+		String registrationId = request.queryParams("registrationId");
+		String cardNumber = request.queryParams("cardNumber");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
+		String securityCode = request.queryParams("securityCode");
+		
+		if ("FREE".equalsIgnoreCase(planCode)) {
+			UpdateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionFreePlan(registrationId);
+		} else {
+			
+		}
+		
+		
+		Map<String, Object> model = getModel();
+		
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model)
+				.templateName(Template.SIGN_UP)
+				.timeZone(getTimeZone(request))
+				.build();
+	}
+	
 	/**
 	 * 
 	 * @param configuration
@@ -315,7 +349,7 @@ public class SignUpController extends AbstractStaticController {
 				.identity(getIdentity(request))
 				.locale(getLocale(request))
 				.model(model)
-				.templateName(Template.VERIFY_EMAIL)
+				.templateName(Template.PROVISION_ACCOUNT)
 				.timeZone(getTimeZone(request))
 				.build();
 	}

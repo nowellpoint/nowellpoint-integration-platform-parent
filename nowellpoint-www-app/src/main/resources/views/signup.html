@@ -6,6 +6,7 @@
         <div class="row">
             <div class="col-12">
                 <h3 class="text-center">${labels['signup.title']}</h3>
+                <h4 class="text-center">${labels['fill.form']}</h4>
             </div>
         </div>
 
@@ -27,9 +28,9 @@
                 </div>    
                 </#if>
             
-            <div class="col col-lg-4">
-
-                <h3>${labels["user.profile"]}</h3>
+            <div class="col col-lg-5">
+                
+                <br>
 
                 <form id="signup-form" role="form" method="post" action="/signup">
 
@@ -92,77 +93,19 @@
 
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
-                    </div>
-
                 </form>
-
             </div>
+        </div>
+        
+        <br>
+        <div class="hr-divider"></div>
+        <br>
 
-            <div class="col col-lg-1"></div>
-
-            <div class="col col-lg-2">
-
-                <br>
-
-                <div class="statcard p-3">
-                    <span class="statcard-desc">${labels['plan.name']}</span>
-                    <h3 class="statcard-number">${plan.planName}</h3>
-
-                </div>
-
-                <#list plan.features as feature>
-
-
-                    <#if feature.code=="SALESFORCE_ORGANIZATIONS">
-                        <div class="statcard p-3">
-                            <span class="statcard-desc">${labels["organizations"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </div>
-                    </#if>
-
-                    <#if feature.code=="SALESFORCE_SANDBOXES">
-                        <div class="statcard p-3">
-                            <span class="statcard-desc">${labels["sandboxes"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </div>
-                    </#if>
-
-                </#list>
-
+        <div class="row">
+            <div class="text-right col-12">
+                <a href="/plans">${labels['cancel']}</a>&emsp;
+                <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
             </div>
-
-            <div class="col col-lg-2">
-
-                <br>
-
-                <div class="statcard p-3">
-                    <span class="statcard-desc">${labels['price']}</span>
-                    <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
-                </div>
-
-                <#list plan.features as feature>
-
-                    <#if feature.code=="USERS">
-                        <div class="statcard p-3">
-                            <span class="statcard-desc">${labels["users"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </div>
-                    </#if>
-
-                    <#if feature.code=="DISK_SPACE">
-                        <div class="statcard p-3">
-                            <span class="statcard-desc">${labels["disk.space"]}</span>
-                            <h3 class="statcard-number">${feature.quantity}</h3>
-                        </div>
-                    </#if>
-
-                </#list>
-
-            </div>
-
         </div>
 
         <script type="text/javascript" src="js/jquery.js"></script>

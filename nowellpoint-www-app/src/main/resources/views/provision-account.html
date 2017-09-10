@@ -4,9 +4,9 @@
         <br>
         <br>
 
-        <div class="row justify-content-md-center">
+        <!-- <#if errorMessage??> -->
 
-            <!-- <#if errorMessage??> -->
+        <div class="row justify-content-md-center">
 
             <div class="col col-lg-12">
                 <p class="text-danger text-center"><span class="icon icon-cross fa fa-4x"></span></p>
@@ -43,9 +43,10 @@
 
                     <#if plan.price.unitPrice gt 0>
 
+                        <br>
                         <h3>${labels["credit.card"]}</h3>
                         <div class="form-group">
-                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}">
+                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus>
                         </div>
                         <div class="form-group">
                             <input type="text" name="cardNumber" id="cardNumber" class="form-control" placeholder="${labels['number']}">
@@ -64,11 +65,9 @@
                     </#if>
 
 
-                    <input type="hidden" name="planId" value="${planId!}" />
-
-                    <div class="form-group">
-                        <button type="submit" id="submit" class="btn btn-primary">${labels['submit']}</button>
-                    </div>
+                    <input type="hidden" name="planId" value="${plan.id!}" />
+                    <input type="hidden" name="planCode" value="${plan.planCode}" />
+                    <input type="hidden" name="registrationId" value="{registation.id}" />
 
                 </form>
 
@@ -108,38 +107,40 @@
             </div>
 
             <div class="col col-lg-2">
-
                 <br>
-
                 <div class="statcard p-3">
                     <span class="statcard-desc">${labels['price']}</span>
                     <h3 class="statcard-number">${plan.price.currencySymbol} ${plan.price.unitPrice?string["0.00"]}</h3>
                 </div>
-
                 <#list plan.features as feature>
-
                     <#if feature.code=="USERS">
                         <div class="statcard p-3">
                             <span class="statcard-desc">${labels["users"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
                         </div>
                     </#if>
-
                     <#if feature.code=="DISK_SPACE">
                         <div class="statcard p-3">
                             <span class="statcard-desc">${labels["disk.space"]}</span>
                             <h3 class="statcard-number">${feature.quantity}</h3>
                         </div>
                     </#if>
-
                 </#list>
-
             </div>
-
-
-            <!-- </#if> -->
-
         </div>
+        
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div class="row">
+            <div class="text-right col-12">
+                <a href="/plans">${labels['cancel.registration']}</a>&emsp;
+                <button type="submit" id="submit" class="btn btn-primary">${labels['provision']}</button>
+            </div>
+        </div>
+
+        <!-- </#if> -->
 
 
         <script type="text/javascript" src="js/jquery.js"></script>
