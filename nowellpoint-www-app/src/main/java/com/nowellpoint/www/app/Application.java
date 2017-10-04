@@ -194,6 +194,7 @@ public class Application implements SparkApplication {
 		get(Path.Route.SIGN_UP, (request, response) -> SignUpController.paidAccount(configuration, request, response));
 		post(Path.Route.SIGN_UP, (request, response) -> SignUpController.signUp(configuration, request, response));
 		get(Path.Route.VERIFY_EMAIL, (request, response) -> SignUpController.verifyEmail(configuration, request, response));
+		post(Path.Route.PROVISION, (request, response) -> SignUpController.provision(configuration, request, response));
         
 		
 		//

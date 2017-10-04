@@ -15,24 +15,23 @@
         <br>
 
         <div class="row justify-content-md-center">
-            
+
             <#if errorMessage??>
-                
+
                 <div class="col col-lg-9">
-                    
+
                     <div class="alert alert-danger alert-dismissable">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        ${errorMessage}
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> ${errorMessage}
                     </div>
-                
-                </div>    
-                </#if>
-            
+
+                </div>
+            </#if>
+
             <div class="col col-lg-5">
-                
-                <br>
 
                 <form id="signup-form" role="form" method="post" action="/signup">
+
+                    <br>
 
 
                     <input type="hidden" name="planId" value="${planId!}" />
@@ -85,27 +84,28 @@
                             <option value="BA">Bosnia And Herzegowina</option>
                             <option value="BW">Botswana</option>
 
-
-
                             <option value="CA">Canada</option>
                             <option value="GB">Great Britan</option>
                             <option value="US">United States</option>
 
                         </select>
                     </div>
-                </form>
-            </div>
-        </div>
-        
-        <br>
-        <div class="hr-divider"></div>
-        <br>
 
-        <div class="row">
-            <div class="text-right col-12">
-                <a href="/plans">${labels['cancel']}</a>&emsp;
-                <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
+                    <br>
+                    <div class="hr-divider"></div>
+                    <br>
+
+                    <div class="row">
+                        <div class="text-right col-12">
+                            <a href="/plans">${labels['cancel']}</a>&emsp;
+                            <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
+                        </div>
+                    </div>
+
+                </form>
+
             </div>
+
         </div>
 
         <script type="text/javascript" src="js/jquery.js"></script>

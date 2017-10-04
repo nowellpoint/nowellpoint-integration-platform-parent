@@ -16,6 +16,7 @@ import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.PlanList;
+import com.nowellpoint.client.model.ProvisionRequesst;
 import com.nowellpoint.client.model.Registration;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.UpdateResult;
@@ -35,6 +36,7 @@ public class SignUpController extends AbstractStaticController {
 		public static final String SIGN_UP = "signup.html";
 		public static final String SIGN_UP_CONFIRM = "signup-confirm.html";
 		public static final String PROVISION_ACCOUNT = "provision-account.html";
+		public static final String PROVISION_ACCOUNT_CONFIRM = "provision-account-confirm.html";
 	}
 	
 	/**
@@ -56,11 +58,16 @@ public class SignUpController extends AbstractStaticController {
 				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
 				.collect(Collectors.toList());
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("countryCode", Locale.getDefault().getCountry());
-		model.put("planList", plans);
-		
-		return render(SignUpController.class, configuration, request, response, model, Template.PLANS);
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.addToModel("countryCode", Locale.getDefault().getCountry())
+				.addToModel("planList", plans)
+				.templateName(Template.PLANS)
+				.timeZone(getTimeZone(request))
+				.build();
 	}
 	
 	/**
@@ -286,29 +293,59 @@ public class SignUpController extends AbstractStaticController {
 		
 		String planCode = request.queryParams("planCode");
 		String registrationId = request.queryParams("registrationId");
-		String cardNumber = request.queryParams("cardNumber");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String securityCode = request.queryParams("securityCode");
+		
+		UpdateResult<Registration> result = null;
 		
 		if ("FREE".equalsIgnoreCase(planCode)) {
-			UpdateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionFreePlan(registrationId);
+			result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionFreePlan(registrationId);
 		} else {
 			
+			String cardholderName = request.queryParams("cardholderName");
+			String cardNumber = request.queryParams("cardNumber");
+			String expirationMonth = request.queryParams("expirationMonth");
+			String expirationYear = request.queryParams("expirationYear");
+			String securityCode = request.queryParams("securityCode");
+			
+			ProvisionRequesst provisionRequest = ProvisionRequesst.builder()
+					.cardholderName(cardholderName)
+					.cvv(securityCode)
+					.expirationMonth(expirationMonth)
+					.expirationYear(expirationYear)
+					.number(cardNumber)
+					.build();
+			
+			result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionPaidPlan(registrationId, provisionRequest);
 		}
-		
 		
 		Map<String, Object> model = getModel();
 		
-		return TemplateBuilder.template()
-				.configuration(configuration)
-				.controllerClass(SignUpController.class)
-				.identity(getIdentity(request))
-				.locale(getLocale(request))
-				.model(model)
-				.templateName(Template.SIGN_UP)
-				.timeZone(getTimeZone(request))
-				.build();
+		if (result.isSuccess()) {
+			
+			return TemplateBuilder.template()
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.identity(getIdentity(request))
+					.locale(getLocale(request))
+					.model(model)
+					.templateName(Template.PROVISION_ACCOUNT_CONFIRM)
+					.timeZone(getTimeZone(request))
+					.build();
+			
+		} else {
+			model.put("errorMessage", result.getErrorMessage());
+			
+			return TemplateBuilder.template()
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.identity(getIdentity(request))
+					.locale(getLocale(request))
+					.model(model)
+					.templateName(Template.PROVISION_ACCOUNT)
+					.timeZone(getTimeZone(request))
+					.build();
+		}
+		
+		
 	}
 	
 	/**

@@ -35,6 +35,7 @@ public class Path {
 		public static final String SIGN_UP = "/signup";
 		public static final String FREE_ACCOUNT = "/free";
 		public static final String PLANS = "/plans";
+		public static final String PROVISION = "/provision";
 		public static final String CONTACT = "/contact";
 		public static final String HEALTH_CHECK = "/healthcheck";
 		public static final String VERIFY_EMAIL = "/verify-email";

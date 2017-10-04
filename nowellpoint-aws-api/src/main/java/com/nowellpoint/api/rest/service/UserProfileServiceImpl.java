@@ -65,6 +65,10 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	@Override
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Locale locale, TimeZone timeZone) {
 		
+		System.out.println("enter create profile");
+		
+		try {
+		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
 		String temporaryPassword = generateTemporaryPassword(24);
@@ -108,6 +112,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		sendWelcomeMessage(userProfile.getEmail(), userProfile.getEmail(), userProfile.getName(), temporaryPassword);
 		
 		return userProfile;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override

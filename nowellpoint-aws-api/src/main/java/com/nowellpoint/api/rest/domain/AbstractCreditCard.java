@@ -19,7 +19,7 @@ public abstract class AbstractCreditCard {
 	public abstract String getCardType();
 	public abstract String getCardholderName();
 	public abstract @Nullable String getCvv();
-	public abstract String getNumber();
+	//public abstract String getNumber();
 	public abstract String getExpirationMonth();
 	public abstract String getExpirationYear();
 	public abstract @Nullable String getLastFour();
