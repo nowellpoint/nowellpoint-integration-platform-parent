@@ -311,7 +311,7 @@ public class SignUpController extends AbstractStaticController {
 					.cvv(securityCode)
 					.expirationMonth(expirationMonth)
 					.expirationYear(expirationYear)
-					.number(cardNumber)
+					.cardNumber(cardNumber)
 					.build();
 			
 			result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionPaidPlan(registrationId, provisionRequest);

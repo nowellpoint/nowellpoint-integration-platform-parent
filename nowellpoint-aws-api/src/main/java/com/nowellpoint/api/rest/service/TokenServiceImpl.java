@@ -1,12 +1,6 @@
 package com.nowellpoint.api.rest.service;
 
-import java.math.BigInteger;
 import java.net.URI;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +31,7 @@ import io.jsonwebtoken.SigningKeyResolverAdapter;
 
 public class TokenServiceImpl implements TokenService {
 	
-	private static final Logger LOG = Logger.getLogger(TokenServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(TokenServiceImpl.class);
 	private static final Map<String,Key> KEY_CACHE = new ConcurrentHashMap<String,Key>();
 	
 	@Inject
@@ -118,24 +112,19 @@ public class TokenServiceImpl implements TokenService {
 	private SigningKeyResolver getSigningResolver() {
 		SigningKeyResolver resolver = new SigningKeyResolverAdapter() {
         	@SuppressWarnings("rawtypes")
-			public java.security.Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
+        	public byte[] resolveSigningKeyBytes(JwsHeader jwsHeader, Claims claims) {
         		
         		String keyId = jwsHeader.getKeyId();
+        		
         		if (! KEY_CACHE.containsKey(keyId)) {
         			addKeys();
         		}
         		
         		Key key = KEY_CACHE.get(keyId);
         		
-                try {
-                    BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getModulus()));
-                    BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getExponent()));
-                    return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
-                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-                	LOG.error(e);
-                    return null;
-                }
-            }
+        		return key.getModulus().getBytes();
+	             
+        	}
         };
         
         return resolver;

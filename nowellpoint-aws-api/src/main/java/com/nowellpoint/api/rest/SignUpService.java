@@ -67,7 +67,7 @@ public interface SignUpService {
     		@FormParam("cardholderName") String cardholderName,
 			@FormParam("expirationMonth") String expirationMonth,
 			@FormParam("expirationYear") String expirationYear,
-			@FormParam("number") String number,
+			@FormParam("cardNumber") String cardNumber,
 			@FormParam("cvv") String cvv);
 	
 	@PermitAll

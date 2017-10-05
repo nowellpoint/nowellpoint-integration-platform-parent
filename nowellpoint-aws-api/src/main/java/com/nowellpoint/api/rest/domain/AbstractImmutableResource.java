@@ -2,7 +2,6 @@ package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -143,12 +142,11 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 
 			@Override
 			protected Transaction convert(com.nowellpoint.api.model.document.Transaction source) {
-				if (Optional.ofNullable(source).isPresent()) {
-					ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
-					return transaction.toImmutable();
-				} else {
+				if (Assert.isNull(source)) {
 					return null;
 				}
+				ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
+				return transaction.toImmutable();
 			}
 		});
 		
@@ -156,12 +154,11 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 
 			@Override
 			protected OrganizationInfo convert(com.nowellpoint.api.model.document.Organization source) {
-				if (Optional.ofNullable(source).isPresent()) {
-					ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
-					return organizationInfo.toImmutable();
-				} else {
+				if (Assert.isNull(source)) {
 					return null;
 				}
+				ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
+				return organizationInfo.toImmutable();
 			}
 		});
 	}

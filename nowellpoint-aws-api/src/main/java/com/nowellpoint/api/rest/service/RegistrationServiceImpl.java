@@ -211,13 +211,6 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Plan plan = findPlanById(registration.getPlanId());
 		
-		UserProfile userProfile = createUserProfile(
-				registration.getFirstName(), 
-				registration.getLastName(), 
-				registration.getEmail(), 
-				registration.getPhone(),
-				registration.getCountryCode());
-		
 		Organization organization = null;
 		
 		if (plan.getPrice().getUnitPrice() > 0) {
@@ -244,6 +237,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 					registration.getPhone(),
 					registration.getCountryCode());
 		}
+		
+		UserProfile userProfile = createUserProfile(
+				registration.getFirstName(), 
+				registration.getLastName(), 
+				registration.getEmail(), 
+				registration.getPhone(),
+				registration.getCountryCode(),
+				organization);
 		
 		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(IdentityResource.class)
@@ -299,8 +300,8 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		}
 	}
 	
-	private UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode) {
-		return userProfileService.createUserProfile(firstName, lastName, email, phone, countryCode);
+	private UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization) {
+		return userProfileService.createUserProfile(firstName, lastName, email, phone, countryCode, organization);
 	}
 	
 	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode) {

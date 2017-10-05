@@ -46,8 +46,6 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	@Override
 	public User createUser(String email, String firstName, String lastName, String password) {	
 		
-		System.out.println(System.getProperty(Properties.OKTA_API_KEY));
-		
 		UserProfile userProfile = client.instantiate(UserProfile.class)
 			    .setEmail(email)
 			    .setLogin(email)

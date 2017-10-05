@@ -1,16 +1,24 @@
 package com.nowellpoint.api.rest.impl;
 
 import java.net.URI;
+import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.service.RegistrationService;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 
 public class SignUpServiceImpl implements SignUpService {
+	
+	private static final Logger LOGGER = Logger.getLogger(SignUpServiceImpl.class);
 	
 	@Inject
 	private RegistrationService registrationService;
@@ -75,19 +83,28 @@ public class SignUpServiceImpl implements SignUpService {
 			String cardholderName, 
 			String expirationMonth, 
 			String expirationYear,
-			String number, 
+			String cardNumber, 
 			String cvv) {
 		
-		Registration registration = registrationService.provision(
-				id, 
-				cardholderName, 
-				expirationMonth, 
-				expirationYear, 
-				number, 
-				cvv);
+		try {
+			
+			Registration registration = registrationService.provision(
+					id, 
+					cardholderName,
+					expirationMonth, 
+					expirationYear, 
+					cardNumber, 
+					cvv);
+			
+			return Response.ok(registration)
+					.build();
 		
-		return Response.ok(registration)
-				.build();
+		} catch (Exception e) {
+			
+			LOGGER.error(e);
+			
+			throw new InternalServerErrorException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.UNEXPECTED_EXCEPTION));
+		}
 	}
     
 	@Override

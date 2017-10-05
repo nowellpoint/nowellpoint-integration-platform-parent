@@ -23,6 +23,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.rest.domain.Address;
+import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.OrganizationInfo;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.ReferenceLink;
 import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
@@ -58,16 +60,12 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	}
 
 	@Override
-	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode) {
-		return createUserProfile(firstName, lastName, email, phone, countryCode, Locale.getDefault(), TimeZone.getDefault());
+	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization) {
+		return createUserProfile(firstName, lastName, email, phone, countryCode, organization, Locale.getDefault(), TimeZone.getDefault());
 	}
 	
 	@Override
-	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Locale locale, TimeZone timeZone) {
-		
-		System.out.println("enter create profile");
-		
-		try {
+	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization, Locale locale, TimeZone timeZone) {
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
@@ -90,6 +88,8 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.profilePicture("/images/person-generic.jpg")
 				.build();
 		
+		OrganizationInfo organizationInfo = OrganizationInfo.of(organization.getId());
+		
 		UserProfile userProfile = UserProfile.builder()
 				.firstName(firstName)
 				.lastName(lastName)
@@ -105,6 +105,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.lastUpdatedOn(now)
 				.photos(photos)
 				.referenceLink(referenceLink)
+				.organization(organizationInfo)
 				.build();
 		
 		create(userProfile);
@@ -112,11 +113,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		sendWelcomeMessage(userProfile.getEmail(), userProfile.getEmail(), userProfile.getName(), temporaryPassword);
 		
 		return userProfile;
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	@Override

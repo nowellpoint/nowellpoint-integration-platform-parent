@@ -152,7 +152,7 @@ public class RegistrationResource extends AbstractResource {
 				.parameter("cardholderName", request.getCardholderName())
 				.parameter("expirationMonth", request.getExpirationMonth())
 				.parameter("expirationYear", request.getExpirationYear())
-				.parameter("number", request.getNumber())
+				.parameter("cardNumber", request.getCardNumber())
 				.parameter("cvv", request.getCvv())
     			.execute();
 		

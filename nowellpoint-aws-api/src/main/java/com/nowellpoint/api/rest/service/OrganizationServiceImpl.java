@@ -282,6 +282,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.build();
 		
 		Organization organization = Organization.builder()
+				.number(customerResult.getTarget().getId())
 				.domain(domain)
 				.subscription(subscription)
 				.referenceLink(referenceLink)
@@ -386,6 +387,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.build();
 		
 		Organization organization = Organization.builder()
+				.number(customerResult.getTarget().getId())
 				.domain(domain)
 				.subscription(subscription)
 				.referenceLink(referenceLink)
