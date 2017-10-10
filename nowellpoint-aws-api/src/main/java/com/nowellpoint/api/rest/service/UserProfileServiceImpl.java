@@ -4,10 +4,10 @@ import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.TimeZone;
 
 import javax.enterprise.event.Observes;
@@ -15,8 +15,6 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.text.RandomStringGenerator;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -37,6 +35,10 @@ import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
 public class UserProfileServiceImpl extends AbstractUserProfileService implements UserProfileService {
+	
+	private static char[] chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p', 'a', 's',
+	        'd', 'f', 'g', 'h', 'j', 'k', 'l', 'y', 'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'W', 'E', 'R', 'T', 'Z', 'U', 'I', 'O', 'P', 'A',
+	        'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Y', 'X', 'C', 'V', 'B', 'N', 'M', '<', '=', '>', '?', '@' };
 	
 	@Inject
 	private IdentityProviderService identityProviderService;
@@ -209,11 +211,13 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	}
 	
 	private static String generateTemporaryPassword(int length) {
-		return new RandomStringGenerator.Builder()
-				.withinRange('0', 'z')
-				.usingRandom(new SecureRandom()::nextInt)
-				.build()
-				.generate(length);
+		
+		StringBuilder stringBuilder = new StringBuilder();
+
+	    for (int i = 0; i < length; i++) {
+	        stringBuilder.append(chars[new Random().nextInt(chars.length)]);
+	    }
+	    return stringBuilder.toString();
 	}
 	
 	private void sendWelcomeMessage(String email, String username, String name, String temporaryPassword) {

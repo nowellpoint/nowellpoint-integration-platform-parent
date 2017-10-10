@@ -1,9 +1,17 @@
 package com.nowellpoint.api.rest.service;
 
+import java.math.BigInteger;
 import java.net.URI;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
@@ -26,7 +34,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.SigningKeyResolverAdapter;
 
 public class TokenServiceImpl implements TokenService {
@@ -46,7 +53,21 @@ public class TokenServiceImpl implements TokenService {
 	@Override
 	public Token createToken(TokenResponse tokenResponse) {
 		Jws<Claims> jwsClaims = Jwts.parser()
-				.setSigningKeyResolver(getSigningResolver())
+				.setSigningKeyResolver(new SigningKeyResolverAdapter() {
+					@SuppressWarnings("rawtypes")
+					public java.security.Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
+		        		
+		        		Key key = getKey(jwsHeader.getKeyId());
+		        		
+		                try {
+		                    BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getModulus()));
+		                    BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getExponent()));
+		                    return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
+		                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+		                	LOGGER.error(e);
+		                    return null;
+		                }
+		            }})
                 .parseClaimsJws(tokenResponse.getAccessToken());
 		
 		UserProfile userProfile = lookupUserProfile(jwsClaims.getBody().getSubject());
@@ -60,6 +81,8 @@ public class TokenServiceImpl implements TokenService {
 				.path("{userId}")
 				.build(organizationId, userId);
 		
+		SecretKey key = new SecretKeySpec(KEY_CACHE.get(jwsClaims.getHeader().getKeyId()).getModulus().getBytes(), "HmacSHA512");
+		
 		String jws = Jwts.builder()
 				.setHeaderParam("kid", jwsClaims.getHeader().getKeyId())
 				.setId(jwsClaims.getBody().getId())
@@ -69,9 +92,9 @@ public class TokenServiceImpl implements TokenService {
 				.setExpiration(jwsClaims.getBody().getExpiration())
 				.setIssuedAt(jwsClaims.getBody().getIssuedAt())
 				.claim("scope", jwsClaims.getBody().get("groups"))
-				.signWith(SignatureAlgorithm.HS512, KEY_CACHE.get(jwsClaims.getHeader().getKeyId()).getModulus())
+				.signWith(SignatureAlgorithm.HS512, key)
 				.compact();
-		
+
 		Token token = Token.builder()
 				.environmentUrl(System.getProperty(Properties.API_HOSTNAME))
 				.id(href.toString())
@@ -93,8 +116,13 @@ public class TokenServiceImpl implements TokenService {
 	@Override
 	public Jws<Claims> verifyToken(String accessToken) {
 		return Jwts.parser()
-				.setSigningKeyResolver(getSigningResolver())
-                .parseClaimsJws(accessToken);
+				.setSigningKeyResolver(new SigningKeyResolverAdapter() {
+		        	@SuppressWarnings("rawtypes")
+					public java.security.Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
+		        		Key key = getKey(jwsHeader.getKeyId());
+		        		return new SecretKeySpec(key.getModulus().getBytes(), "HmacSHA512");
+		            }
+		        }).parseClaimsJws(accessToken);
 	}
 	
 	private UserProfile lookupUserProfile(String userId) {
@@ -102,31 +130,20 @@ public class TokenServiceImpl implements TokenService {
 		return userProfile;
 	}
 	
+	private Key getKey(String keyId) {
+		if (! KEY_CACHE.containsKey(keyId)) {
+			addKeys();
+		}
+		
+		Key key = KEY_CACHE.get(keyId);
+		
+		return key;
+	}
+	
 	private void addKeys() {
 		Keys keys = authenticationService.getKeys();
 		keys.getKeys().forEach(key -> {
 			KEY_CACHE.put(key.getKeyId(), key);
 		});
-	}
-	
-	private SigningKeyResolver getSigningResolver() {
-		SigningKeyResolver resolver = new SigningKeyResolverAdapter() {
-        	@SuppressWarnings("rawtypes")
-        	public byte[] resolveSigningKeyBytes(JwsHeader jwsHeader, Claims claims) {
-        		
-        		String keyId = jwsHeader.getKeyId();
-        		
-        		if (! KEY_CACHE.containsKey(keyId)) {
-        			addKeys();
-        		}
-        		
-        		Key key = KEY_CACHE.get(keyId);
-        		
-        		return key.getModulus().getBytes();
-	             
-        	}
-        };
-        
-        return resolver;
 	}
 }

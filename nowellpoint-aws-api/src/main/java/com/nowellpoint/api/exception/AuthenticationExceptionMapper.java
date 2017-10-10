@@ -34,7 +34,7 @@ public class AuthenticationExceptionMapper implements ExceptionMapper<Authentica
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
-		Error error = new Error(exception.getError(), MessageProvider.getMessage(Locale.US, "login.error"));
+		Error error = new Error(exception.getMessage(), MessageProvider.getMessage(Locale.US, "login.error"));
 		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
 		builder.entity(error);
 		return builder.build();

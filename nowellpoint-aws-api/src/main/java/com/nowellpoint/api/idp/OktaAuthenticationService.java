@@ -28,6 +28,7 @@ public class OktaAuthenticationService implements AuthenticationService {
 	private static final String INTROSPECT = "introspect";
 	private static final String KEYS = "keys";
 	private static final String GRANT_TYPE = "grant_type";
+	//private static final String CLIENT_CREDENTIALS = "client_credentials";
 	private static final String TOKEN_TYPE_HINT = "token_type_hint";
 	private static final String ACCESS_TOKEN = "access_token";
 	private static final String REFRESH_TOKEN = "refresh_token";
@@ -74,6 +75,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 			response = httpResponse.getEntity(TokenResponse.class);
 		} else {
 			Error error = httpResponse.getEntity(Error.class);	
+			LOG.debug(error.getError());
+			LOG.debug(error.getErrorDescription());
 			throw new AuthenticationException(error);
 		}
 		

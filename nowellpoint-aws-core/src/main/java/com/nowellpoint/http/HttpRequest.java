@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -52,7 +52,7 @@ public abstract class HttpRequest {
 	private String target;
 	private String path;
 	private List<Header> headers;
-	private Map<String,String> parameters;
+	private List<NameValuePair> parameters;
 	private List<NameValuePair> queryParameters;
 	private Object body;
 	
@@ -62,7 +62,7 @@ public abstract class HttpRequest {
 		this.target = target;
 		this.path = new String();
 		this.headers = new ArrayList<Header>();
-		this.parameters = new HashMap<String,String>();
+		this.parameters = new ArrayList<NameValuePair>();
 		this.queryParameters = new ArrayList<NameValuePair>();
 	}
 	
@@ -87,17 +87,12 @@ public abstract class HttpRequest {
 		return this;
 	}
 	
-	protected HttpRequest parameter(String key, String value) {
-		parameters.put(key, value);
+	protected HttpRequest parameter(String key, Object value) {
+		parameters.add(new BasicNameValuePair(key, String.valueOf(value)));
 		return this;
 	}
 	
-	protected HttpRequest parameter(String key, Boolean value) {
-		parameters.put(key, String.valueOf(value));
-		return this;
-	}
-	
-	protected HttpRequest parameters(Map<String, String> parameters) {
+	protected HttpRequest parameters(ArrayList<NameValuePair> parameters) {
 		this.parameters = parameters;
 		return this;
 	}
@@ -291,22 +286,12 @@ public abstract class HttpRequest {
 		}
 		
 		private HttpEntity addBody(String contentType) throws IOException {
-			if (! parameters.isEmpty()) {
-				
-				StringBuilder sb = new StringBuilder();
-				parameters.keySet().forEach(param -> {
-					sb.append(param);
-					sb.append("=");
-					if (parameters.get(param) != null) {
-						sb.append(parameters.get(param));
-					}
-					sb.append("&");
-				});
-				
-				body = sb.toString();
-			}
 			
 			HttpEntity httpEntity = null;
+			
+			if (contentType.equals(MediaType.APPLICATION_FORM_URLENCODED) && ! parameters.isEmpty()) {
+				httpEntity = new UrlEncodedFormEntity(parameters, "UTF-8");
+			}
 			
 			if (Optional.ofNullable(body).isPresent()) {
 				
