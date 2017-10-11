@@ -53,7 +53,7 @@ public class AuthenticationController extends AbstractStaticController {
 	
 	public static void verify(Configuration configuration, Request request, Response response) throws JsonParseException, JsonMappingException, IOException {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
-		System.out.println(cookie.isPresent());
+		
     	if (cookie.isPresent()) {
     		
     		Token token = objectMapper.readValue(cookie.get(), Token.class);
@@ -63,9 +63,6 @@ public class AuthenticationController extends AbstractStaticController {
     		Identity identity = NowellpointClient.defaultClient(token)
     				.identity()
     				.get(token.getId());
-    		
-    		System.out.println(identity.getFirstName());
-    		System.out.println(identity.getOrganization().getNumber());
     		
     		request.attribute("com.nowellpoint.auth.identity", identity);
     		request.attribute("com.nowellpoint.default.locale", getDefaultLocale(identity));
@@ -121,7 +118,6 @@ public class AuthenticationController extends AbstractStaticController {
 	    	Long expiresIn = token.getExpiresIn();
 	
 	    	try {
-	    		System.out.println(objectMapper.writeValueAsString(token));
 	    		response.cookie(AUTH_TOKEN, objectMapper.writeValueAsString(token), expiresIn.intValue(), true);
 	    	} catch (IOException e) {
 	    		throw new InternalServerErrorException(e);

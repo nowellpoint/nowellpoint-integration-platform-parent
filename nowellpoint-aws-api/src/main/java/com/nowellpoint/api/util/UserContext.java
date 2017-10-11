@@ -2,7 +2,6 @@ package com.nowellpoint.api.util;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.SecurityContext;
@@ -25,7 +24,7 @@ public class UserContext {
 		String subject = claims.getBody().getSubject();
 		
 		@SuppressWarnings("unchecked")
-		ArrayList<String> scope = (ArrayList<String>) claims.getBody().getOrDefault("scope", Collections.emptyList());
+		ArrayList<String> scope = (ArrayList<String>) claims.getBody().getOrDefault("scope", new ArrayList<String>());
 		
 		SecurityContext securityContext = new UserPrincipalSecurityContext(subject, scope);
 		threadLocal.set(securityContext);

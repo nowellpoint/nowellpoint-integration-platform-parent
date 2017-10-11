@@ -56,9 +56,7 @@ public class TokenServiceImpl implements TokenService {
 				.setSigningKeyResolver(new SigningKeyResolverAdapter() {
 					@SuppressWarnings("rawtypes")
 					public java.security.Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
-		        		
 		        		Key key = getKey(jwsHeader.getKeyId());
-		        		
 		                try {
 		                    BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getModulus()));
 		                    BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getExponent()));

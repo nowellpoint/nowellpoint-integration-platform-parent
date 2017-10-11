@@ -5,6 +5,8 @@ public class Resources {
 	private String salesforce;
 	
 	private String jobs;
+	
+	private String organization;
 
 	public Resources() {
 		
@@ -24,5 +26,13 @@ public class Resources {
 
 	public void setJobs(String jobs) {
 		this.jobs = jobs;
+	}
+	
+	public String getOrganization() {
+		return organization;
+	}
+	
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 }

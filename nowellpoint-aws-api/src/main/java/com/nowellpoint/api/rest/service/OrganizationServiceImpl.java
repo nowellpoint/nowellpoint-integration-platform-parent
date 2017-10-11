@@ -349,6 +349,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		CreditCard creditCard = CreditCard.builder()
 				.addedOn(now)
+				.updatedOn(now)
 				.cardholderName(cardholderName)
 				.cardType(customerResult.getTarget().getCreditCards().get(0).getCardType())
 				.expirationMonth(expirationMonth)

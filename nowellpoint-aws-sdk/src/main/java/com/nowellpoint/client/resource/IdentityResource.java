@@ -22,6 +22,10 @@ public class IdentityResource extends AbstractResource {
 	}
 	
 	public Identity get(String id) {
+		
+		System.out.println(id);
+		System.out.println(token.getAccessToken());
+		
 		HttpResponse httpResponse = RestResource.get(id)
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
