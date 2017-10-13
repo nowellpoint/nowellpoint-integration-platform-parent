@@ -55,11 +55,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile findByUsername(String username) {
 		return findOne( eq ( "username", username ) );
 	}
-	
-	@Override
-	public UserProfile findByReferenceId(String referenceId) {
-		return findOne( eq ( "referenceLink.id", referenceId ));
-	}
 
 	@Override
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization) {
@@ -202,6 +197,8 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.from(userProfile)
 				.lastLoginDate(Date.from(Instant.now()))
 				.build();
+		
+		System.out.println(instance.getLocale());
 		
 		this.update(instance);
 	}

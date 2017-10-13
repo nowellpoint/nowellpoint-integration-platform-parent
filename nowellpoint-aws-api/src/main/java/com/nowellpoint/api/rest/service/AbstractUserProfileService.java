@@ -41,7 +41,7 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 	}
 	
 	protected UserProfile findById(String id) {
-		com.nowellpoint.api.model.document.UserProfile document = get(com.nowellpoint.api.model.document.UserProfile.class, id);
+		com.nowellpoint.api.model.document.UserProfile document = null; //get(com.nowellpoint.api.model.document.UserProfile.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 			document = documentManager.fetch( com.nowellpoint.api.model.document.UserProfile.class, new ObjectId( id ) );

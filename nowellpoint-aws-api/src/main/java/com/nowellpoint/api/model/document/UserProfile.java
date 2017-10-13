@@ -60,9 +60,6 @@ public class UserProfile extends MongoDocument {
 	private Address address;
 	
 	@EmbedOne
-	private ReferenceLink referenceLink;
-	
-	@EmbedOne
 	private Photos photos;
 	
 	@Reference
@@ -222,14 +219,6 @@ public class UserProfile extends MongoDocument {
 
 	public void setAddress(Address address) {
 		this.address = address;
-	}
-
-	public ReferenceLink getReferenceLink() {
-		return referenceLink;
-	}
-
-	public void setReferenceLink(ReferenceLink referenceLink) {
-		this.referenceLink = referenceLink;
 	}
 
 	public Photos getPhotos() {

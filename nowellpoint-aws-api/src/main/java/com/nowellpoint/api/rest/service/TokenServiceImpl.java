@@ -105,7 +105,7 @@ public class TokenServiceImpl implements TokenService {
 		//
 		// fire event for handling login functions
 		//
-		
+		System.out.println(userProfile.getLocale());
 		loggedInEvent.fire(userProfile);
         
         return token;
@@ -123,8 +123,8 @@ public class TokenServiceImpl implements TokenService {
 		        }).parseClaimsJws(accessToken);
 	}
 	
-	private UserProfile lookupUserProfile(String userId) {
-		UserProfile userProfile = userProfileService.findByReferenceId(userId);
+	private UserProfile lookupUserProfile(String username) {
+		UserProfile userProfile = userProfileService.findByUsername(username);
 		return userProfile;
 	}
 	

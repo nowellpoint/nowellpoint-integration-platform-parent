@@ -125,19 +125,6 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.ReferenceLink, ReferenceLink>() {
-
-			@Override
-			protected ReferenceLink convert(com.nowellpoint.api.model.document.ReferenceLink source) {
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiableReferenceLink referenceLink = modelMapper.map(source, ModifiableReferenceLink.class);
-				return referenceLink.toImmutable();
-			}
-			
-		});
-		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, Transaction>() {
 
 			@Override

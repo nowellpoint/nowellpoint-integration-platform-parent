@@ -31,9 +31,6 @@ public class Organization extends MongoDocument {
 	@EmbedMany
 	private Set<Transaction> transactions;
 	
-	@EmbedOne
-	private ReferenceLink referenceLink;
-	
 	public Organization() {
 		
 	}
@@ -92,13 +89,5 @@ public class Organization extends MongoDocument {
 
 	public void setTransactions(Set<Transaction> transactions) {
 		this.transactions = transactions;
-	}
-
-	public ReferenceLink getReferenceLink() {
-		return referenceLink;
-	}
-
-	public void setReferenceLink(ReferenceLink referenceLink) {
-		this.referenceLink = referenceLink;
 	}
 }
