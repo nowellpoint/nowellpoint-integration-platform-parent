@@ -52,16 +52,16 @@ public class UserProfileResource extends AbstractResource {
 				.execute();
 		
 		UserProfile resource = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		resource = httpResponse.getEntity(UserProfile.class);
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(UserProfile.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return resource;
+		}
+		
+		return resource;
 	} 
 	
 	
@@ -214,33 +214,6 @@ public class UserProfileResource extends AbstractResource {
 		
 		public AddressResource(Token token) {
 			super(token);
-		}
-		
-		/**
-		 * 
-		 * @param accountProfileId
-		 * @return
-		 */
-		
-		public Address get(String userProfileId) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path(userProfileId)
-					.path("address")
-					.execute();
-			
-			Address resource = null;
-	    	
-	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		resource = httpResponse.getEntity(Address.class);
-	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
-	    	
-	    	return resource;
 		}
 		
 		/**

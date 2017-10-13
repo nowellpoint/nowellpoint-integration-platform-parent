@@ -22,11 +22,6 @@ public interface UserProfileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserProfile(@PathParam("id") String id);
 	
-	@GET
-	@Path("{id}/address")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response getAddress(@PathParam("id") String id);
-	
 	@POST
 	@Path("{id}/address")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)

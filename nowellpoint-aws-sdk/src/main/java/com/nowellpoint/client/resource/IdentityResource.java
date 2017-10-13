@@ -21,11 +21,13 @@ public class IdentityResource extends AbstractResource {
 		super(token);
 	}
 	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	
 	public Identity get(String id) {
-		
-		System.out.println(id);
-		System.out.println(token.getAccessToken());
-		
 		HttpResponse httpResponse = RestResource.get(id)
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -42,7 +44,7 @@ public class IdentityResource extends AbstractResource {
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 	    }
-	    	
-    	return resource;
+		
+		return resource;
 	} 
 }

@@ -100,7 +100,7 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String viewAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String viewUserProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
