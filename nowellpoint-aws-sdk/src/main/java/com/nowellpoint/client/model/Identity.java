@@ -1,5 +1,8 @@
 package com.nowellpoint.client.model;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 public class Identity {
 
 	private String id;
@@ -10,9 +13,9 @@ public class Identity {
 	
 	private String name;
 	
-	private String timeZone;
+	private TimeZone timeZone;
 
-	private String locale;
+	private Locale locale;
 	
 	private Organization organization;
 	
@@ -58,19 +61,19 @@ public class Identity {
 		this.name = name;
 	}
 
-	public String getTimeZone() {
+	public TimeZone getTimeZone() {
 		return timeZone;
 	}
 
-	public void setTimeZone(String timeZone) {
+	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
 	}
 
-	public String getLocale() {
+	public Locale getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
 

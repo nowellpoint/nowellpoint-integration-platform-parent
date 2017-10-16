@@ -255,11 +255,11 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			if (field.isAnnotationPresent(Id.class)) {
 				setFieldValue(field.getDeclaringClass(), object, field, bson.get(ID));
 			} else if (field.isAnnotationPresent(Reference.class)) {
-		    	setFieldValue(field.getDeclaringClass(), object, field, parseReference(field, bson.get(field.getName())));
-		    } else if (field.isAnnotationPresent(EmbedOne.class)) {
-		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
-		    } else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
-		    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
+				setFieldValue(field.getDeclaringClass(), object, field, parseReference(field, bson.get(field.getName())));
+			} else if (field.isAnnotationPresent(EmbedOne.class)) {
+				setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
+			} else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(List.class) || field.getType().isAssignableFrom(Set.class)) {
+				setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
 			} else if (mappedClasses.contains(field.getType()) || field.getType().isPrimitive()) {
 				setFieldValue(field.getDeclaringClass(), object, field, bson.get(field.getName()));
 			} else {
@@ -326,50 +326,54 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	
 	@SuppressWarnings("unchecked")
 	private <T> T parseReference(Field referenceField, Object value) {
-		
+
 		if (value != null) {
 			Object object = referenceCache.get(value);
 			if (object == null) {
 				object = instantiate(referenceField.getType());
 
-				Class<?> referenceClass = referenceField.getAnnotation(Reference.class).referenceClass().equals(Object.class) ? referenceField.getType() : referenceField.getAnnotation(Reference.class).referenceClass();
-				
+				Class<?> referenceClass = referenceField.getAnnotation(Reference.class).referenceClass()
+						.equals(Object.class) ? referenceField.getType()
+								: referenceField.getAnnotation(Reference.class).referenceClass();
+
 				MongoCollection<Document> collection = null;
 				try {
-					collection = documentManagerFactory.getCollection( referenceClass );
+					collection = documentManagerFactory.getCollection(referenceClass);
 				} catch (IllegalArgumentException e) {
 					throw new DocumentManagerException(e);
 				}
-				
-				Document bson = findOne(collection, Filters.eq ( ID, value ));
-				
+
+				Document bson = findOne(collection, Filters.eq(ID, value));
+
 				if (bson == null) {
-					throw new DocumentManagerException(String.format("Unable to find reference document from collection %s with id %s", documentManagerFactory.resolveCollectionName( referenceClass ), value.toString()));
+					throw new DocumentManagerException(
+							String.format("Unable to find reference document from collection %s with id %s",
+									documentManagerFactory.resolveCollectionName(referenceClass), value.toString()));
 				}
-				
+
 				Set<Field> fields = getAllFields(object);
 				for (Field field : fields) {
-					if (! referenceField.getType().equals(field.getType())) {
+					if (!referenceField.getType().equals(field.getType())) {
 						if (field.isAnnotationPresent(Id.class)) {
 							setFieldValue(object.getClass(), object, field, bson.get(ID));
 						} else if (field.isAnnotationPresent(EmbedOne.class)) {
 							setFieldValue(field.getDeclaringClass(), object, field, parseEmbedOne(field.getType(), bson.get(field.getName(), Document.class)));
 						} else if (field.isAnnotationPresent(EmbedMany.class) || field.getType().isAssignableFrom(Collection.class)) {
-					    	setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
+							setFieldValue(field.getDeclaringClass(), object, field, parseEmbedMany(field, bson.get(field.getName(), ArrayList.class)));
 						} else {
 							setFieldValue(object.getClass(), object, field, bson.get(field.getName()));
 						}
 					}
-				};
-				
+				}
+
 				referenceCache.put(value, object);
 			}
-			
+
 			return (T) object;
 		}
-		
+
 		return null;
-		
+
 	}
 
 	/**
@@ -427,11 +431,14 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 	protected void setIdValue(Object object, Object id) {
 		Set<Field> fields = getAllFields(object);
 		for (Field field : fields) {
-			if (field.isAnnotationPresent(Id.class)) {					
+			if (field.isAnnotationPresent(Id.class)) {
 				try {
-					Method method = object.getClass().getMethod("set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1), new Class[] {field.getType()});
-					method.invoke(object, new Object[] {id});
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					Method method = object.getClass().getMethod(
+							"set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1),
+							new Class[] { field.getType() });
+					method.invoke(object, new Object[] { id });
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
 					throw new DocumentManagerException(e);
 				}
 			}
@@ -454,33 +461,33 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			method = resolveGetter(object, field);
 		} catch (NoSuchMethodException e) {
 			LOGGER.debug(String.format("Unable to find set method for mapped property field %s", field.getName()));
-			return null;			
-		} 
-		
-		try {	
-		    Object value = method.invoke(object, new Object[] {});
-		    if (field.getType().isAssignableFrom(ObjectId.class)) {
-		    	if (value == null) {
-		    		value = new ObjectId();
-		    	} else {
-		    		value = new ObjectId(String.valueOf(value));
-		    	}
-		    } else {
-		    	if (value != null) {
-		    		if (field.getType().isAssignableFrom(Locale.class)) {            	
-				    	value = String.valueOf(value);
-				    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
-				    	value = String.valueOf(value);
-				    } else if (field.getType().isAssignableFrom(Currency.class)) {
-				    	value = String.valueOf(value);
-				    } else if (field.getType().isAssignableFrom(URL.class)) {
-				    	value = String.valueOf(value);
-				    } else if (field.getType().isAssignableFrom(TimeUnit.class)) {
-				    	value = String.valueOf(value);
-				    }
-		    	}
-		    }
-            return value;
+			return null;
+		}
+
+		try {
+			Object value = method.invoke(object, new Object[] {});
+			if (field.getType().isAssignableFrom(ObjectId.class)) {
+				if (value == null) {
+					value = new ObjectId();
+				} else {
+					value = new ObjectId(value.toString());
+				}
+			} else {
+				if (value != null) {
+					if (field.getType().isAssignableFrom(Locale.class)) {
+						value = String.valueOf(value);
+					} else if (field.getType().isAssignableFrom(TimeZone.class)) {
+						value = String.valueOf(value);
+					} else if (field.getType().isAssignableFrom(Currency.class)) {
+						value = String.valueOf(value);
+					} else if (field.getType().isAssignableFrom(URL.class)) {
+						value = String.valueOf(value);
+					} else if (field.getType().isAssignableFrom(TimeUnit.class)) {
+						value = String.valueOf(value);
+					}
+				}
+			}
+			return value;
 		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new DocumentManagerException(e);
 		}
@@ -504,27 +511,30 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 				method = resolveSetter(clazz, field);
 			} catch (NoSuchMethodException e) {
 				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
-				return;				
-			} 
-			
+				return;
+			}
+
 			try {
-			    if (field.getType().isAssignableFrom(Locale.class)) {
-			    	value = Locale.forLanguageTag(value.toString());
-			    } else if (field.getType().isAssignableFrom(Double.class)) {
-			    	value = Double.valueOf(value.toString());
-			    } else if (field.getType().isAssignableFrom(TimeZone.class)) {
-			    	value = TimeZone.getTimeZone(value.toString());
-			    } else if (field.getType().isAssignableFrom(Currency.class)) {
-			    	value = Currency.getInstance(value.toString());
-			    } else if (field.getType().isAssignableFrom(URL.class)) {
-			    	value = new URL(value.toString());
-			    } else if (field.getType().isAssignableFrom(ObjectId.class)) {
-			    	value = new ObjectId(value.toString());
-			    } else if (field.getType().isAssignableFrom(TimeUnit.class)) {
-			    	value = TimeUnit.valueOf(value.toString());
-			    }
-			    method.invoke(object, new Object[] {value});
+				if (field.getType().isAssignableFrom(Locale.class)) {
+					value = new Locale(value.toString());
+				} else if (field.getType().isAssignableFrom(Double.class)) {
+					value = Double.valueOf(value.toString());
+				} else if (field.getType().isAssignableFrom(TimeZone.class)) {
+					value = TimeZone.getTimeZone(value.toString());
+				} else if (field.getType().isAssignableFrom(Currency.class)) {
+					value = Currency.getInstance(value.toString());
+				} else if (field.getType().isAssignableFrom(URL.class)) {
+					value = new URL(value.toString());
+				} else if (field.getType().isAssignableFrom(ObjectId.class)) {
+					System.out.println(value.toString());
+					value = new ObjectId(value.toString());
+				} else if (field.getType().isAssignableFrom(TimeUnit.class)) {
+					value = TimeUnit.valueOf(value.toString());
+				}
+				method.invoke(object, new Object[] { value });
 			} catch (IllegalArgumentException e) {
+				System.out.println(clazz.getName());
+				System.out.println(value);
 				LOGGER.info("Illegal Argument for " + field.getName() + " invalid type " + value.getClass().getName());
 				return;
 			} catch (SecurityException | IllegalAccessException | InvocationTargetException | MalformedURLException e) {

@@ -29,8 +29,6 @@ import com.nowellpoint.api.rest.domain.Contact;
 import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
-import com.nowellpoint.api.rest.domain.ReferenceLink;
-import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
@@ -129,7 +127,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.expirationYear(expirationYear)
 				.number(number)
 				.cvv(cvv)
-				.customerId(organization.getReferenceLink().getId())
+				.customerId(organization.getNumber())
 				.billingAddressId(organization.getSubscription().getBillingAddress().getId());
 		
 		Result<com.braintreegateway.CreditCard> result = updateCreditCard(organization.getSubscription().getCreditCard().getToken(), creditCardRequest);
@@ -173,7 +171,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.locality(city)
 				.countryCodeAlpha2(countryCode);
 		
-		updateAddress(organization.getReferenceLink().getId(), organization.getSubscription().getBillingAddress().getId(), addressRequest);
+		updateAddress(organization.getNumber(), organization.getSubscription().getBillingAddress().getId(), addressRequest);
 		
 		Address billingAddress = Address.builder().from(organization.getSubscription()
 				.getBillingAddress())
@@ -251,11 +249,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
 		
-		ReferenceLink referenceLink = ReferenceLink.builder()
-				.id(customerResult.getTarget().getId())
-				.type(ReferenceLinkTypes.CUSTOMER_ID.name())
-				.build();
-		
 		Address billingAddress = Address.builder()
 				.countryCode(countryCode)
 				.build();
@@ -285,7 +278,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.number(customerResult.getTarget().getId())
 				.domain(domain)
 				.subscription(subscription)
-				.referenceLink(referenceLink)
 				.createdBy(userInfo)
 				.createdOn(now)
 				.lastUpdatedBy(userInfo)
@@ -342,11 +334,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			
 		Result<com.braintreegateway.Subscription> subscriptionResult = createSubscription(subscriptionRequest);
 		
-		ReferenceLink referenceLink = ReferenceLink.builder()
-				.id(customerResult.getTarget().getId())
-				.type(ReferenceLinkTypes.CUSTOMER_ID.name())
-				.build();
-		
 		CreditCard creditCard = CreditCard.builder()
 				.addedOn(now)
 				.updatedOn(now)
@@ -391,7 +378,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.number(customerResult.getTarget().getId())
 				.domain(domain)
 				.subscription(subscription)
-				.referenceLink(referenceLink)
 				.createdBy(userInfo)
 				.createdOn(now)
 				.lastUpdatedBy(userInfo)
@@ -406,8 +392,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public void deleteOrganization(String id) {
 		Organization organization = findById(id);
-		deleteSubscription(organization.getReferenceLink().getId(), organization.getSubscription().getSubscriptionId());
-		removeCustomer(organization.getReferenceLink().getId());
+		deleteSubscription(organization.getNumber(), organization.getSubscription().getSubscriptionId());
+		removeCustomer(organization.getNumber());
 		super.delete(organization);
 	}
 	

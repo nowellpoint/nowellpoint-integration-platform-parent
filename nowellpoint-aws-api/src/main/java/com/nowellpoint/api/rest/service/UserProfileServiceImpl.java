@@ -24,8 +24,6 @@ import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.OrganizationInfo;
 import com.nowellpoint.api.rest.domain.Photos;
-import com.nowellpoint.api.rest.domain.ReferenceLink;
-import com.nowellpoint.api.rest.domain.ReferenceLinkTypes;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.EmailService;
@@ -70,11 +68,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		User user = createUser(email, firstName, lastName, temporaryPassword);
 		
-		ReferenceLink referenceLink = ReferenceLink.builder()
-				.id(user.getId())
-				.type(ReferenceLinkTypes.USER_ID.name())
-				.build();
-		
 		Date now = Date.from(Instant.now());
 		
 		Address address = Address.builder()
@@ -101,7 +94,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.photos(photos)
-				.referenceLink(referenceLink)
+				.referenceId(user.getId())
 				.organization(organizationInfo)
 				.build();
 		
@@ -145,7 +138,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		update(instance);
 		
-		identityProviderService.deactivateUser(userProfile.getReferenceLink().getId());
+		identityProviderService.deactivateUser(userProfile.getReferenceId());
 		
 		return instance;
 	}
@@ -153,40 +146,41 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	@Override
 	public void setPassword(String id, String password) {
 		UserProfile userProfile = findById(id);
-		identityProviderService.setPassword(userProfile.getReferenceLink().getId(), password);
+		identityProviderService.setPassword(userProfile.getReferenceId(), password);
 	}
 	
 	@Override
 	public void changePassword(String id, String oldPassword, String newPassword) {
 		UserProfile userProfile = findById(id);
-		identityProviderService.changePassword(userProfile.getReferenceLink().getId(), oldPassword, newPassword);
+		identityProviderService.changePassword(userProfile.getReferenceId(), oldPassword, newPassword);
 	}
 	
 	@Override
 	public void deleteUserProfile(String id) {
 		UserProfile userProfile = findById(id);
-		identityProviderService.deleteUser(userProfile.getReferenceLink().getId());
+		identityProviderService.deleteUser(userProfile.getReferenceId());
 		super.delete(userProfile);
 	}
 	
 	public void addSalesforceProfilePicture(String userId, String profileHref) {
-		
+
 		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
-		
+
 		try {
-			URL url = new URL( profileHref );
-			
+			URL url = new URL(profileHref);
+
 			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 			String contentType = connection.getHeaderField("Content-Type");
-			
+
 			ObjectMetadata objectMetadata = new ObjectMetadata();
-	    	objectMetadata.setContentLength(connection.getContentLength());
-	    	objectMetadata.setContentType(contentType);
-			
-	    	PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", userId, connection.getInputStream(), objectMetadata);
-	    	
-	    	s3Client.putObject(putObjectRequest);
-			
+			objectMetadata.setContentLength(connection.getContentLength());
+			objectMetadata.setContentType(contentType);
+
+			PutObjectRequest putObjectRequest = new PutObjectRequest("aws-microservices", userId,
+					connection.getInputStream(), objectMetadata);
+
+			s3Client.putObject(putObjectRequest);
+
 		} catch (IOException e) {
 			throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
 		}
@@ -197,8 +191,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.from(userProfile)
 				.lastLoginDate(Date.from(Instant.now()))
 				.build();
-		
-		System.out.println(instance.getLocale());
 		
 		this.update(instance);
 	}

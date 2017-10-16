@@ -69,7 +69,7 @@ public class UserProfileController extends AbstractStaticController {
 				.get(id);
 		
 		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguage(identity.getLocale())
+				.withLanguage(identity.getLocale().getLanguage())
 				.withLocale(identity.getLocale());
 		
 		List<Plan> plans = NowellpointClient.defaultClient(token)
@@ -132,12 +132,8 @@ public class UserProfileController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("userProfile", userProfile);
 		model.put("creditCard", creditCard);
-		model.put("locales", getLocales(identity.getLocale()));
-		model.put("languages", getSupportedLanguages());
 		model.put("successMessage", request.cookie("update.profile.success"));
-		
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 		
 		if (userProfile.getId().equals(identity.getId())) {
@@ -652,8 +648,8 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return Locale map 
 	 */
 	
-	private static Map<String,String> getLocales(String locale) {
-		Locale.setDefault(new Locale(locale));
+	private static Map<String,String> getLocales(Locale locale) {
+		Locale.setDefault(locale);
 		
 		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
 				.stream()

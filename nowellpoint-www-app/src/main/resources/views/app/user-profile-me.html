@@ -8,7 +8,7 @@
         <br>
         <div class="btn-toolbar" role="toolbar">
             <button type="button" id="edit-user-profile" class="btn btn-primary" data-toggle="modal" data-target="#user-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
-            <a href="${links['user.profile']}/${accountProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+            <a href="${links['user.profile']}/${userProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
         </div>
         <br>
         <div class="hr-divider"></div>
@@ -33,11 +33,11 @@
                     <dt>${labels["division"]}</dt>
                     <dd>${userProfile.division!}&emsp;</dd>
                     <hr>
-                    <dt>${labels["language.key"]}</dt>
-                    <dd>${languages[userProfile.languageSidKey]!}&emsp;</dd>
+                    <dt>&emsp;</dt>
+                    <dd>&emsp;</dd>
                     <hr>
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${links['userProfile.profile']}/${userProfile.createdBy.id}">${userProfile.createdBy.name}</a>, ${userProfile.createdOn?date?string.long!} ${userProfile.createdOn?time?string.medium!}</dd>
+                    <dd><a href="${links['user.profile']}/${userProfile.createdBy.id}">${userProfile.createdBy.name}</a>, ${userProfile.createdOn?date?string.long!} ${userProfile.createdOn?time?string.medium!}</dd>
                 </dl>
             </div>
 
@@ -57,13 +57,13 @@
                     <dd>${userProfile.extension!}&emsp;</dd>
                     <hr>
                     <dt>${labels["locale.key"]}</dt>
-                    <dd>${locales[userProfile.localeSidKey]!}&emsp;</dd>
+                    <dd>${locales[userProfile.locale]!}&emsp;</dd>
                     <hr>
                     <dt>${labels["timezone.key"]}</dt>
-                    <dd>${userProfile.timeZoneSidKey!}&emsp;</dd>
+                    <dd>${userProfile.timeZone.ID!}&emsp;</dd>
                     <hr>
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd><a href="${links['userProfile.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>
+                    <dd><a href="${links['user.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
 
@@ -109,32 +109,32 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post" action="${links['user.profile']}/${accountProfile.id}/address">
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post" >
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="street">${labels["street"]}</label>
-                                    <input type="text" class="form-control" name="street" id="street" value="${(accountProfile.address.street)!}" />
+                                    <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="city">${labels["city"]}</label>
-                                    <input type="text" class="form-control" name="city" id="city" value="${(accountProfile.address.city)!}" />
+                                    <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="state">${labels["state"]}</label>
-                                    <input type="text" class="form-control" name="state" id="state" value="${(accountProfile.address.state)!}" />
+                                    <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="postalCode">${labels["zip.postal.code"]}</label>
-                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(accountProfile.address.postalCode)!}" />
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
                                 </div>
                             </div>
 
@@ -143,10 +143,10 @@
                                     <label class="control-label" for="countryCode">${labels["country"]}*</label>
                                     <select id="countryCode" name="countryCode" class="form-control" required>
                                         <#list countryList as country>
-                                            <#if country.iso2Code==accountProfile.address.countryCode>
+                                            <#if country.iso2Code==userProfile.address.countryCode>
                                                 <option value="${country.iso2Code}" selected="selected">${country.name}</option>
                                             </#if>
-                                            <#if country.iso2Code !=accountProfile.address.countryCode>
+                                            <#if country.iso2Code !=userProfile.address.countryCode>
                                                 <option value="${country.iso2Code}">${country.name}</option>
                                             </#if>
                                         </#list>
@@ -173,80 +173,60 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="user-profile-form" id="user-profile-form" role="form" method="post" action="${links['user.profile']}/${accountProfile.id}">
-                            <input type="hidden" name="username" id="username" value="${accountProfile.username!}" />
+                        <form class="form-vertical" name="user-profile-form" id="user-profile-form" role="form" method="post" >
+                            <input type="hidden" name="username" id="username" value="${userProfile.username!}" />
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="firstName">${labels["first.name"]}</label>
-                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${accountProfile.firstName!}" />
+                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${userProfile.firstName!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="lastName">${labels["last.name"]}</label>
-                                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${accountProfile.lastName!}" />
+                                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${userProfile.lastName!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="company">${labels["company"]}</label>
-                                    <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${accountProfile.company!}" />
+                                    <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${userProfile.company!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="division">${labels["division"]}</label>
-                                    <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${accountProfile.division!}" />
+                                    <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${userProfile.division!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="department">${labels["department"]}</label>
-                                    <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${accountProfile.department!}" />
+                                    <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${userProfile.department!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="title">${labels["title"]}</label>
-                                    <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${accountProfile.title!}" />
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${userProfile.title!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="email">${labels["email"]}</label>
-                                    <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${accountProfile.email!}" />
+                                    <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${userProfile.email!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="mobilPhone">${labels["mobile.phone"]}</label>
-                                    <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${accountProfile.mobilePhone!}" />
+                                    <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${userProfile.mobilePhone!}" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="phone">${labels["phone"]}</label>
-                                    <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${accountProfile.phone!}" />
+                                    <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${userProfile.phone!}" />
                                 </div>
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="extension">${labels["extension"]}</label>
-                                    <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${accountProfile.extension!}" />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="fax">${labels["fax"]}</label>
-                                    <input type="text" class="form-control" name="fax" id="fax" placeholder="${labels['fax']}" value="${accountProfile.fax!}" />
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label class="control-label" for="languageSidKey">${labels["language.key"]}</label>
-                                    <select id="languageSidKey" name="languageSidKey" class="form-control" required>
-                                        <#list languages?keys as key>
-                                            <#if accountProfile.languageSidKey==key>
-                                                <option value="${key}" selected="selected">${languages[key]}</option>
-                                            </#if>
-                                            <#if accountProfile.languageSidKey !=key>
-                                                <option value="${key}">${languages[key]}</option>
-                                            </#if>
-                                        </#list>
-                                    </select>
+                                    <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${userProfile.extension!}" />
                                 </div>
                             </div>
 
@@ -255,10 +235,10 @@
                                     <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
                                     <select id="localeSidKey" name="localeSidKey" class="form-control" required>
                                         <#list locales?keys as key>
-                                            <#if accountProfile.localeSidKey==key>
+                                            <#if userProfile.locale==key>
                                                 <option value="${key}" selected="selected">${locales[key]}</option>
                                             </#if>
-                                            <#if accountProfile.localeSidKey !=key>
+                                            <#if userProfile.locale !=key>
                                                 <option value="${key}">${locales[key]}</option>
                                             </#if>
                                         </#list>
@@ -268,10 +248,10 @@
                                     <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
                                     <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
                                         <#list timeZones as timeZone>
-                                            <#if accountProfile.timeZoneSidKey==timeZone>
+                                            <#if userProfile.timeZone==timeZone>
                                                 <option value="${timeZone}" selected="selected">${timeZone}</option>
                                             </#if>
-                                            <#if accountProfile.timeZoneSidKey !=timeZone>
+                                            <#if userProfile.timeZone !=timeZone>
                                                 <option value="${timeZone}">${timeZone}</option>
                                             </#if>
                                         </#list>
@@ -298,7 +278,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${links['user.profile']}/${accountProfile.id}/payment-methods">
+                        <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/payment-methods">
 
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -427,7 +407,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${links['user.profile']}/${accountProfile.id}";
+                                    location.href = "${links['user.profile']}/${userProfile.id}";
                                 });
                             }, 1000);
                         } else {
@@ -455,7 +435,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${links['user.profile']}/${accountProfile.id}";
+                                    location.href = "${links['user.profile']}/${userProfile.id}";
                                 });
                             }, 1000);
                         } else {
@@ -484,7 +464,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function() {
                                 $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${links['user.profile']}/${accountProfile.id}";
+                                    location.href = "${links['user.profile']}/${userProfile.id}";
                                 });
                             }, 1000);
                         } else {
@@ -496,21 +476,21 @@
             });
 
             $("#edit-user-profile").click(function(e) {
-                var accountProfile = JSON.parse(sessionStorage.getItem("accountProfile"));
-                $("#firstName").val(accountProfile.firstName);
-                $("#lastName").val(accountProfile.lastName);
-                $("#division").val(accountProfile.division);
-                $("#company").val(accountProfile.company);
-                $("#department").val(accountProfile.department);
-                $("#title").val(accountProfile.title);
-                $("#email").val(accountProfile.email);
-                $("#mobilePhone").val(accountProfile.mobilePhone);
-                $("#phone").val(accountProfile.phone);
-                $("#extension").val(accountProfile.extension);
-                $("#fax").val(accountProfile.fax);
-                $("#languageSidKey").val(accountProfile.languageSidKey);
-                $("#localeSidKey").val(accountProfile.localeSidKey);
-                $("#timeZoneSidKey").val(accountProfile.timeZoneSidKey);
+                var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
+                $("#firstName").val(userProfile.firstName);
+                $("#lastName").val(userProfile.lastName);
+                $("#division").val(userProfile.division);
+                $("#company").val(userProfile.company);
+                $("#department").val(userProfile.department);
+                $("#title").val(userProfile.title);
+                $("#email").val(userProfile.email);
+                $("#mobilePhone").val(userProfile.mobilePhone);
+                $("#phone").val(userProfile.phone);
+                $("#extension").val(userProfile.extension);
+                $("#fax").val(userProfile.fax);
+                $("#languageSidKey").val(userProfile.languageSidKey);
+                $("#localeSidKey").val(userProfile.localeSidKey);
+                $("#timeZoneSidKey").val(userProfile.timeZoneSidKey);
             });
 
             $('#user-profile-dialog').on('shown.bs.modal', function() {
@@ -525,30 +505,30 @@
                 $('#cardholderName').focus();
             });
 
-            var accountProfile = {
+            var userProfile = {
                 basePath: "${links['user.profile']}",
-                id: "${accountProfile.id!}",
-                firstName: "${accountProfile.firstName!}",
-                lastName: "${accountProfile.lastName!}",
-                street: "${(accountProfile.address.street)!}",
-                city: "${(accountProfile.address.city)!}",
-                state: "${(accountProfile.address.state)!}",
-                postalCode: "${(accountProfile.address.postalCode)!}",
-                countryCode: "${(accountProfile.address.countryCode)!}",
-                company: "${(accountProfile.company)!}",
-                department: "${(accountProfile.department)!}",
-                title: "${(accountProfile.title)!}",
-                email: "${(accountProfile.email)!}",
-                mobilePhone: "${(accountProfile.mobilePhone)!}",
-                phone: "${(accountProfile.phone)!}",
-                extension: "${(accountProfile.extension)!}",
-                fax: "${(accountProfile.fax)!}",
-                languageSidKey: "${(accountProfile.languageSidKey)!}",
-                localeSidKey: "${(accountProfile.localeSidKey)!}",
-                timeZoneSidKey: "${(accountProfile.timeZoneSidKey)!}"
+                id: "${userProfile.id!}",
+                firstName: "${userProfile.firstName!}",
+                lastName: "${userProfile.lastName!}",
+                street: "${(userProfile.address.street)!}",
+                city: "${(userProfile.address.city)!}",
+                state: "${(userProfile.address.state)!}",
+                postalCode: "${(userProfile.address.postalCode)!}",
+                countryCode: "${(userProfile.address.countryCode)!}",
+                company: "${(userProfile.company)!}",
+                department: "${(userProfile.department)!}",
+                title: "${(userProfile.title)!}",
+                email: "${(userProfile.email)!}",
+                mobilePhone: "${(userProfile.mobilePhone)!}",
+                phone: "${(userProfile.phone)!}",
+                extension: "${(userProfile.extension)!}",
+                fax: "${(userProfile.fax)!}",
+                languageSidKey: "${(userProfile.languageSidKey)!}",
+                localeSidKey: "${(userProfile.localeSidKey)!}",
+                timeZoneSidKey: "${(userProfile.timeZoneSidKey)!}"
             }
 
-            sessionStorage.setItem("accountProfile", JSON.stringify(accountProfile));
+            sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
         </script>
 
         <script src="/js/user-profile.js"></script>

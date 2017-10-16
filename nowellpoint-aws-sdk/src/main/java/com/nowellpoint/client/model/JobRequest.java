@@ -2,6 +2,7 @@ package com.nowellpoint.client.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class JobRequest {
 	
@@ -21,7 +22,7 @@ public class JobRequest {
 	
 	private String endAt;
 	
-	private String timeZone;
+	private TimeZone timeZone;
 	
 	private String timeUnit;
 	
@@ -105,11 +106,11 @@ public class JobRequest {
 		this.endAt = endAt;
 	}
 
-	public String getTimeZone() {
+	public TimeZone getTimeZone() {
 		return timeZone;
 	}
 
-	public void setTimeZone(String timeZone) {
+	public void setTimeZone(TimeZone timeZone) {
 		this.timeZone = timeZone;
 	}
 
@@ -251,7 +252,7 @@ public class JobRequest {
 		return this;
 	}
 	
-	public JobRequest withTimeZone(String timeZone) {
+	public JobRequest withTimeZone(TimeZone timeZone) {
 		setTimeZone(timeZone);
 		return this;
 	}

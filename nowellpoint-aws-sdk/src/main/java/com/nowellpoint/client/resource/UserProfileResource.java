@@ -228,7 +228,7 @@ public class UserProfileResource extends AbstractResource {
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-	    			.acceptCharset("UTF-8")
+					.acceptCharset("UTF-8")
 					.path(RESOURCE_CONTEXT)
 					.path(userProfileId)
 					.path("address")

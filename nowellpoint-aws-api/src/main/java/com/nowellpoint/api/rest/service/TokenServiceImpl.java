@@ -56,17 +56,17 @@ public class TokenServiceImpl implements TokenService {
 				.setSigningKeyResolver(new SigningKeyResolverAdapter() {
 					@SuppressWarnings("rawtypes")
 					public java.security.Key resolveSigningKey(JwsHeader jwsHeader, Claims claims) {
-		        		Key key = getKey(jwsHeader.getKeyId());
-		                try {
-		                    BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getModulus()));
-		                    BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getExponent()));
-		                    return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
-		                } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-		                	LOGGER.error(e);
-		                    return null;
-		                }
-		            }})
-                .parseClaimsJws(tokenResponse.getAccessToken());
+						Key key = getKey(jwsHeader.getKeyId());
+						try {
+							BigInteger modulus = new BigInteger(1, Base64.getUrlDecoder().decode(key.getModulus()));
+							BigInteger exponent = new BigInteger(1, Base64.getUrlDecoder().decode(key.getExponent()));
+							return KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
+						} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+							LOGGER.error(e);
+							return null;
+						}
+					}})
+				.parseClaimsJws(tokenResponse.getAccessToken());
 		
 		UserProfile userProfile = lookupUserProfile(jwsClaims.getBody().getSubject());
 		
@@ -105,7 +105,7 @@ public class TokenServiceImpl implements TokenService {
 		//
 		// fire event for handling login functions
 		//
-		System.out.println(userProfile.getLocale());
+		
 		loggedInEvent.fire(userProfile);
         
         return token;

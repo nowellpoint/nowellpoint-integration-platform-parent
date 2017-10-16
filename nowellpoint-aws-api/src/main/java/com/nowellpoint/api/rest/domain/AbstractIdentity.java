@@ -1,5 +1,8 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,8 +18,8 @@ public abstract class AbstractIdentity {
 	public abstract String getLastName();
 	public abstract String getName();
 	public abstract Organization getOrganization();
-	public abstract String getTimeZone();
-	public abstract String getLocale();
+	public abstract TimeZone getTimeZone();
+	public abstract Locale getLocale();
 	public abstract Address getAddress();
 	public abstract Resources getResources();
 	public abstract Meta getMeta();

@@ -126,7 +126,7 @@ public class JobResource extends AbstractResource {
     			.parameter("slackWebhookUrl", request.getSlackWebhookUrl())
     			.parameter("scheduleOption", request.getScheduleOption())
     			.parameter("seconds", request.getSeconds())
-    			.parameter("timeZone", request.getTimeZone())
+    			.parameter("timeZone", request.getTimeZone().getID())
     			.parameter("year", request.getYear())
     			.parameter("timeUnit", request.getTimeUnit())
     			.parameter("timeInterval", String.valueOf(request.getTimeInterval()))

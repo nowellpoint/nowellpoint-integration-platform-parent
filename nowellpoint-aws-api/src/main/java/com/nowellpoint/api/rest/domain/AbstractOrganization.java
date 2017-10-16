@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,7 +28,6 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable String getName();
 	public abstract @Nullable Subscription getSubscription();
 	public abstract @Nullable Set<Transaction> getTransactions();
-	public abstract @Nullable @JsonIgnore ReferenceLink getReferenceLink();
 	
 	@Override
 	public Meta getMeta() {

@@ -56,6 +56,8 @@ public class UserProfile extends MongoDocument {
 
 	private Date lastLoginDate;
 	
+	private String referenceId;
+	
 	@EmbedOne
 	private Address address;
 	
@@ -211,6 +213,14 @@ public class UserProfile extends MongoDocument {
 
 	public void setLastLoginDate(Date lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
 	}
 
 	public Address getAddress() {

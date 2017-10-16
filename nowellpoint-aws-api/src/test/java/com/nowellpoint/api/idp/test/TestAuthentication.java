@@ -1,5 +1,7 @@
 package com.nowellpoint.api.idp.test;
 
+import java.util.Locale;
+
 import org.junit.Test;
 
 import com.nowellpoint.http.HttpResponse;
@@ -10,6 +12,8 @@ public class TestAuthentication {
 	
 	@Test
 	public void testAuthentication() {
+		
+		System.out.println(new Locale("en_us"));
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
 				.basicAuthorization(System.getenv("OKTA_CLIENT_ID"), System.getenv("OKTA_CLIENT_SECRET"))

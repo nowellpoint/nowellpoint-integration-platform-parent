@@ -41,9 +41,9 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract Locale getLocale();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
 	public abstract Address getAddress();
-	public abstract @JsonIgnore ReferenceLink getReferenceLink();
 	public abstract @Nullable OrganizationInfo getOrganization();
 	public abstract Photos getPhotos();
+	public abstract @JsonIgnore String getReferenceId();
 	
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 

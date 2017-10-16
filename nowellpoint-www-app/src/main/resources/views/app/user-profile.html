@@ -1,4 +1,5 @@
 <#import "template.html" as t>
+    
     <@t.page>
 
         <div class="flextable">
@@ -29,8 +30,8 @@
                     <dt>${labels["division"]}</dt>
                     <dd>${userProfile.division!}&emsp;</dd>
                     <hr>
-                    <dt>${labels["language.key"]}</dt>
-                    <dd>${languages[userProfile.languageSidKey]!}&emsp;</dd>
+                    <dt>&emsp;</dt>
+                    <dd>&emsp;</dd>
                     <hr>
                     <dt>${labels["created.by"]}</dt>
                     <dd><a href="${links['account.profile']}/${userProfile.createdBy.id}">${userProfile.createdBy.name}</a>, ${userProfile.createdOn?date?string.long!} ${userProfile.createdOn?time?string.medium!}</dd>
@@ -54,10 +55,10 @@
                     <dd>${userProfile.extension!}&emsp;</dd>
                     <hr>
                     <dt>${labels["locale.key"]}</dt>
-                    <dd>${locales[userProfile.localeSidKey]!}&emsp;</dd>
+                    <dd>${locales[userProfile.locale]!}&emsp;</dd>
                     <hr>
                     <dt>${labels["timezone.key"]}</dt>
-                    <dd>${userProfile.timeZoneSidKey!}&emsp;</dd>
+                    <dd>${userProfile.timeZone!}&emsp;</dd>
                     <hr>
                     <dt>${labels["last.modified.by"]}</dt>
                     <dd><a href="${links['account.profile']}/${userProfile.createdBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>

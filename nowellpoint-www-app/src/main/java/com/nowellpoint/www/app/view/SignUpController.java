@@ -49,7 +49,7 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String plans(Configuration configuration, Request request, Response response) {
 		
-		GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale("en_US");
+		GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale(new Locale("en_US"));
 		
 		PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT).plan().getPlans(getPlansRequest);
 		
@@ -80,7 +80,7 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String freeAccount(Configuration configuration, Request request, Response response) {
 		
-		GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale("en_US");
+		GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale(new Locale("en_US"));
 		
 		PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT).plan().getPlans(getPlansRequest);
 		
@@ -154,7 +154,7 @@ public class SignUpController extends AbstractStaticController {
 			
 		} else {
 			
-			GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale("en_US");
+			GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale(new Locale("en_US"));
 			
 			PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT)
 					.plan()
