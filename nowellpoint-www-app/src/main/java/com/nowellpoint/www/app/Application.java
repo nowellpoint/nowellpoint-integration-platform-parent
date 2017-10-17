@@ -145,6 +145,7 @@ public class Application implements SparkApplication {
         post(Path.Route.USER_PROFILE_PLAN, (request, response) -> UserProfileController.setPlan(configuration, request, response));
         post(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.updateAccountProfile(configuration, request, response));
         get(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.confirmDeactivateAccountProfile(configuration, request, response));
+        get(Path.Route.ORGANIZATION_VIEW, (request, response) -> UserProfileController.viewOrganization(configuration, request, response));
         post(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.deactivateAccountProfile(configuration, request, response));
         delete(Path.Route.USER_PROFILE_PICTURE, (request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
         post(Path.Route.USER_PROFILE_ADDRESS, (request, response) -> UserProfileController.updateAddress(configuration, request, response));
@@ -315,7 +316,6 @@ public class Application implements SparkApplication {
 	private static List<IsoCountry> loadCountries(Locale locale) {
 		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
 				.path("iso-countries")
-				.queryParameter("language", "US")
 				.execute();
 		
 		List<IsoCountry> countries = Collections.emptyList();
@@ -326,7 +326,6 @@ public class Application implements SparkApplication {
 			
 			countries = isoCountryList.getItems()
 					.stream()
-					.filter(country -> "US".equals(country.getLanguage()))
 					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
 					.collect(Collectors.toList());
 		}
@@ -343,6 +342,6 @@ public class Application implements SparkApplication {
 	
 	private static String healthCheck(Request request, Response response) {
 		response.status(200);
-    	return "";
+		return "";
 	}
 }

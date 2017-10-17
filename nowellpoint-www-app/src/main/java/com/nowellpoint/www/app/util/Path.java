@@ -65,6 +65,7 @@ public class Path {
 		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");
 		public static final String USER_PROFILE_PAYMENT_METHODS = String.format(APPLICATION_CONTEXT, "user-profile/:id/payment-methods");
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile/:id/deactivate");
+		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_UPDATE = String.format(APPLICATION_CONTEXT, "jobs/:id");

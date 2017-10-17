@@ -19,4 +19,5 @@ public class MessageConstants {
 	public static final String JOB_UNABLE_TO_SUBMIT = "job.unable.to.submit";
 	public static final String JOB_INVALID_ACTION = "job.invalid.action";
 	public static final String UNEXPECTED_EXCEPTION = "unexpected.exception";
+	public static final String INVALID_COUNTRY_PARAMETERS = "invalid.country.parameters";
 }

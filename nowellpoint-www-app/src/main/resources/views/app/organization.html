@@ -1,0 +1,64 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <br>
+        <br>
+        <br>
+
+        <div class="container">
+            <div class="flextable">
+                <div class="flextable-item flextable-primary">
+                    <h2>${labels["organization"]}</h2>
+                </div>
+            </div>
+            
+            <div class="row">
+
+                <div class="col-12">
+
+                    
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td class="text-right table-secondary w-25"><b>Domain</b></td>
+                                    <td>${organization.domain}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right table-secondary w-25"><b>Number</b></td>
+                                    <td>${organization.number}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right table-secondary w-25"><b>${labels["name"]}</b></td>
+                                    <td>${organization.name!}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+      
+
+                </div>
+
+            </div>
+            
+            <div class="flextable">
+                <div class="flextable-item flextable-primary">
+                    <h2>${labels["subscription"]}</h2>
+                </div>
+            </div>
+            
+            <dl class="row">
+  <dt class="col-3">Plan</dt>
+  <dd class="col-9">${organization.subscription.planName}</dd>
+                <hr>
+                <dt class="col-3">Price</dt>
+  <dd class="col-9">${organization.subscription.currencySymbol}${organization.subscription.unitPrice} </dd>
+                <hr>
+            </dl>    
+            
+            
+            
+        </div>
+        <br>
+        <br>
+
+    </@t.page>

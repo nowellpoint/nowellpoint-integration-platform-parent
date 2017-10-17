@@ -42,7 +42,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastLoginDate();
 	public abstract Address getAddress();
 	public abstract @Nullable OrganizationInfo getOrganization();
-	public abstract Photos getPhotos();
+	public abstract @Nullable Photos getPhotos();
 	public abstract @JsonIgnore String getReferenceId();
 	
 	public String getName() {

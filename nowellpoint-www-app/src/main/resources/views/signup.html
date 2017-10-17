@@ -55,39 +55,14 @@
                     <div class="form-group">
                         <select id="countryCode" name="countryCode" class="form-control" required>
                             <option value="XX" selected="selected">${labels['select.country']}</option>
-                            <option value="AF">Afghanistan</option>
-                            <option value="AL">Albania</option>
-                            <option value="DZ">Algeria</option>
-                            <option value="AS">American Samoa</option>
-                            <option value="AD">Andorra</option>
-                            <option value="AO">Angola</option>
-                            <option value="AI">Anguilla</option>
-                            <option value="AQ">Antarctica</option>
-                            <option value="AG">Antigua and Barbuda</option>
-                            <option value="AR">Argentina</option>
-                            <option value="AM">Armenia</option>
-                            <option value="AW">Aruba</option>
-                            <option value="AU">Australia</option>
-                            <option value="AT">Austria</option>
-                            <option value="AZ">Azerbaijan</option>
-                            <option value="BS">Bahamas</option>
-                            <option value="BH">Bahrain</option>
-                            <option value="BD">Bangladesh</option>
-                            <option value="BB">Barbados</option>
-                            <option value="BY">Belarus</option>
-                            <option value="BE">Belgium</option>
-                            <option value="BZ">Belize</option>
-                            <option value="BJ">Benin</option>
-                            <option value="BM">Bermuda</option>
-                            <option value="BT">Bhutan</option>
-                            <option value="BO">Bolivia</option>
-                            <option value="BA">Bosnia And Herzegowina</option>
-                            <option value="BW">Botswana</option>
-
-                            <option value="CA">Canada</option>
-                            <option value="GB">Great Britan</option>
-                            <option value="US">United States</option>
-
+                            <#list countryList as country>
+                                <#if country.iso2Code==countryCode>
+                                    <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                </#if>
+                                <#if country.iso2Code !=countryCode>
+                                    <option value="${country.iso2Code}">${country.name}</option>
+                                </#if>
+                            </#list>
                         </select>
                     </div>
 

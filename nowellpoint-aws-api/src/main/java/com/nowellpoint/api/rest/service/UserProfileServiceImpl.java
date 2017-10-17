@@ -48,6 +48,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	public UserProfile findById(String id) {
 		return super.findById(id);
 	}
+	
+	@Override
+	public UserProfile findByReferenceId(String referenceId) {
+		return findOne( eq ( "referenceId", referenceId ) );
+	}
 
 	@Override
 	public UserProfile findByUsername(String username) {

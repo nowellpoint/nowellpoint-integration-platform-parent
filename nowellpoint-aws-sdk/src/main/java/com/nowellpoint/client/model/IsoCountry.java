@@ -2,24 +2,12 @@ package com.nowellpoint.client.model;
 
 public class IsoCountry extends AbstractResource {
 	
-	private String language;
-	
 	private String iso2Code;
 	
 	private String name;
 	
-	private String description;
-
 	public IsoCountry() {
 		
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
 	}
 
 	public String getIso2Code() {
@@ -37,12 +25,4 @@ public class IsoCountry extends AbstractResource {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}	
 }

@@ -10,13 +10,13 @@ import org.jboss.logging.Logger;
 
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public abstract class AbstractCollectionResource<R extends AbstractResource, D extends MongoDocument> implements CollectionResource<R> {
+public abstract class DocumentCollectionResource<R extends AbstractResource, D extends MongoDocument> implements CollectionResource<R> {
 	
-	private static final Logger LOGGER = Logger.getLogger(AbstractCollectionResource.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentCollectionResource.class);
 	
 	private Set<R> items = new HashSet<R>();
 	
-	public AbstractCollectionResource(Set<D> documents) {
+	public DocumentCollectionResource(Set<D> documents) {
 		if (documents != null && ! documents.isEmpty()) {
 			documents.forEach(document -> {
 				try {

@@ -33,9 +33,6 @@
                     <dt>${labels["division"]}</dt>
                     <dd>${userProfile.division!}&emsp;</dd>
                     <hr>
-                    <dt>&emsp;</dt>
-                    <dd>&emsp;</dd>
-                    <hr>
                     <dt>${labels["created.by"]}</dt>
                     <dd><a href="${links['user.profile']}/${userProfile.createdBy.id}">${userProfile.createdBy.name}</a>, ${userProfile.createdOn?date?string.long!} ${userProfile.createdOn?time?string.medium!}</dd>
                 </dl>
@@ -56,11 +53,8 @@
                     <dt>${labels["extension"]}</dt>
                     <dd>${userProfile.extension!}&emsp;</dd>
                     <hr>
-                    <dt>${labels["locale.key"]}</dt>
-                    <dd>${locales[userProfile.locale]!}&emsp;</dd>
-                    <hr>
-                    <dt>${labels["timezone.key"]}</dt>
-                    <dd>${userProfile.timeZone.ID!}&emsp;</dd>
+                    <dt>&emsp;</dt>
+                    <dd>&emsp;</dd>
                     <hr>
                     <dt>${labels["last.modified.by"]}</dt>
                     <dd><a href="${links['user.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>
@@ -68,6 +62,37 @@
             </div>
 
         </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="preferences" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["preferences"]}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["locale.key"]}</dt>
+                    <dd>${locales[userProfile.locale]!}&emsp;</dd>
+                </dl>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["timezone.key"]}</dt>
+                    <dd>${userProfile.timeZone.ID!}&emsp;</dd>
+                </dl>
+            </div>
+
+        </div>
+
 
         <br>
         <div class="hr-divider"></div>
@@ -93,12 +118,6 @@
             </div>
         </div>
 
-        <br>
-        <div class="hr-divider"></div>
-        <br>
-
-        
-
         <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="user-profile-dialog-title" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -109,7 +128,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post" >
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post">
                             <div class="row">
                                 <div class="form-group col-md-12">
                                     <label class="control-label" for="street">${labels["street"]}</label>
@@ -173,7 +192,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form class="form-vertical" name="user-profile-form" id="user-profile-form" role="form" method="post" >
+                        <form class="form-vertical" name="user-profile-form" id="user-profile-form" role="form" method="post">
                             <input type="hidden" name="username" id="username" value="${userProfile.username!}" />
                             <div class="row">
                                 <div class="form-group col-md-6">
@@ -232,8 +251,8 @@
 
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label class="control-label" for="localeSidKey">${labels["locale.key"]}</label>
-                                    <select id="localeSidKey" name="localeSidKey" class="form-control" required>
+                                    <label class="control-label" for="locale">${labels["locale.key"]}</label>
+                                    <select id="locale" name="locale" class="form-control" required>
                                         <#list locales?keys as key>
                                             <#if userProfile.locale==key>
                                                 <option value="${key}" selected="selected">${locales[key]}</option>
@@ -245,13 +264,13 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label class="control-label" for="timeZoneSidKey">${labels["timezone.key"]}</label>
-                                    <select id="timeZoneSidKey" name="timeZoneSidKey" class="form-control" required>
+                                    <label class="control-label" for="timeZone">${labels["timezone.key"]}</label>
+                                    <select id="timeZone" name="timeZone" class="form-control" required>
                                         <#list timeZones as timeZone>
-                                            <#if userProfile.timeZone==timeZone>
+                                            <#if userProfile.timeZone.ID==timeZone>
                                                 <option value="${timeZone}" selected="selected">${timeZone}</option>
                                             </#if>
-                                            <#if userProfile.timeZone !=timeZone>
+                                            <#if userProfile.timeZone.ID !=timeZone>
                                                 <option value="${timeZone}">${timeZone}</option>
                                             </#if>
                                         </#list>
@@ -282,7 +301,7 @@
 
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label class="control-label" for="localeSidKey">${labels['name.on.card']}</label>
+                                    <label class="control-label" for="cardholderName">${labels['name.on.card']}</label>
                                     <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" tabindex="1" placeholder="${labels['name.on.card']}" />
                                 </div>
                                 <div class="form-group col-md-6">
