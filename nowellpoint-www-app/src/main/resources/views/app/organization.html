@@ -7,56 +7,43 @@
         <br>
 
         <div class="container">
-            <div class="flextable">
-                <div class="flextable-item flextable-primary">
-                    <h2>${labels["organization"]}</h2>
-                </div>
-            </div>
-            
+            <h4><b>${labels["organization"]}</b></h4>
+            <hr>
             <div class="row">
-
-                <div class="col-12">
-
-                    
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td class="text-right table-secondary w-25"><b>Domain</b></td>
-                                    <td>${organization.domain}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right table-secondary w-25"><b>Number</b></td>
-                                    <td>${organization.number}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-right table-secondary w-25"><b>${labels["name"]}</b></td>
-                                    <td>${organization.name!}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-      
-
+                <div class="col-3">
+                    <b>Domain</b>
                 </div>
-
-            </div>
-            
-            <div class="flextable">
-                <div class="flextable-item flextable-primary">
-                    <h2>${labels["subscription"]}</h2>
+                <div class="col-9">
+                    ${organization.domain}
                 </div>
             </div>
-            
-            <dl class="row">
-  <dt class="col-3">Plan</dt>
-  <dd class="col-9">${organization.subscription.planName}</dd>
-                <hr>
-                <dt class="col-3">Price</dt>
-  <dd class="col-9">${organization.subscription.currencySymbol}${organization.subscription.unitPrice} </dd>
-                <hr>
-            </dl>    
-            
-            
-            
+            <hr>
+            <div class="row">
+                
+                <div class="col-3">
+                    <b>Number</b>
+                </div>
+                <div class="col-9">
+                    ${organization.number}
+                </div>
+                
+            </div>
+            <hr>
+            <br>
+            <br>
+            <h4><b>${labels["subscription"]}</b></h4>
+            <hr>
+            <div class="row">
+                <div class="col-3">
+                    <b>Plan</b>
+                </div>
+                <div class="col-9">
+                    ${organization.subscription.planName} ${organization.subscription.currencySymbol}${organization.subscription.unitPrice}
+                </div>
+            </div>
+            <hr>
+
+
         </div>
         <br>
         <br>

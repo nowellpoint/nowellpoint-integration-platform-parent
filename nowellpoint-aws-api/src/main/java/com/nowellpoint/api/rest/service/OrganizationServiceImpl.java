@@ -91,7 +91,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
 		
-		updateSubscription(id, subscriptionRequest);
+		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(id, subscriptionRequest);
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -102,6 +102,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.billingFrequency(plan.getBillingFrequency())
+				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
+				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())
+				.status(subscriptionResult.getSubscription().getStatus().name())
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
@@ -368,6 +372,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.billingFrequency(plan.getBillingFrequency())
+				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
+				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())
+				.status(subscriptionResult.getSubscription().getStatus().name())
 				.creditCard(creditCard)
 				.billingAddress(billingAddress)
 				.billingContact(billingContact)
