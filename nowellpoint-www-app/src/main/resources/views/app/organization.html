@@ -181,7 +181,43 @@
                 </div>
                 <hr>
             </div>
-
+            <br>
+            <br>
+            <div id="transactions">
+                <h4><b>${labels["transactions"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <table class="table">
+                            <thead class="thead-default">
+                                <th>${labels["id"]}</th>
+                                <th>${labels["payment.method"]}</th>
+                                <th class="text-right">${labels["amount"]}</th>
+                                <th>${labels["transaction.date"]}</th>
+                                <th>${labels["status"]}</th>
+                                <th class="text-right">${labels["action"]}</th>
+                            </thead>
+                            <tbody>
+                                <#if organization.transactions?size == 0>
+                                    <tr>
+                                        <td colspan="6">${labels["no.transactions"]}</td>
+                                    </tr>
+                                </#if>
+                                <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                                    <tr>
+                                        <td>${transaction.id}</td>
+                                        <td><img src="${(organization.transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${organization.transaction.creditCard.token}/view">${(organization.transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                        <td class="text-right p-r-md">${organization.transaction.currencyIsoCode} ${organization.transaction.amount?string["0.00"]}</td>
+                                        <td>${(organization.transaction.updatedOn?date?string.long)!}</td>
+                                        <td>${organization.transaction.status}</td>
+                                        <td class="text-right"><a href="${links['organization']}/${organization.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                    </tr>
+                                </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <br>
         <br>

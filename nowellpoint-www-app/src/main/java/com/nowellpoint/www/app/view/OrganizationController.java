@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
@@ -33,7 +32,6 @@ import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UserProfile;
 import com.nowellpoint.www.app.util.MessageProvider;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -42,8 +40,6 @@ import spark.Response;
 public class OrganizationController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String USER_PROFILE_ME = String.format(APPLICATION_CONTEXT, "user-profile-me.html");
-		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
 		public static final String USER_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "user-profile-plans.html");
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
