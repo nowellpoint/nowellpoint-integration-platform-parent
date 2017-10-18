@@ -7,42 +7,180 @@
         <br>
 
         <div class="container">
-            <h4><b>${labels["organization"]}</b></h4>
-            <hr>
-            <div class="row">
-                <div class="col-3">
-                    <b>Domain</b>
+            <div id="organization">
+                <h4><b>${labels["organization"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>Domain</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.domain}
+                    </div>
                 </div>
-                <div class="col-9">
-                    ${organization.domain}
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                
-                <div class="col-3">
-                    <b>Number</b>
-                </div>
-                <div class="col-9">
-                    ${organization.number}
-                </div>
-                
-            </div>
-            <hr>
-            <br>
-            <br>
-            <h4><b>${labels["subscription"]}</b></h4>
-            <hr>
-            <div class="row">
-                <div class="col-3">
-                    <b>Plan</b>
-                </div>
-                <div class="col-9">
-                    ${organization.subscription.planName} ${organization.subscription.currencySymbol}${organization.subscription.unitPrice}
-                </div>
-            </div>
-            <hr>
+                <hr>
+                <div class="row">
 
+                    <div class="col-3">
+                        <b>Account Number</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.number}
+                    </div>
+
+                </div>
+                <hr>
+            </div>
+            <br>
+            <br>
+            <div id="subscription">
+                <h4><b>${labels["subscription"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>Plan Name</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.subscription.planName}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>Price (${organization.subscription.billingFrequency})</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["next.billing.date"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.subscription.nextBillingDate?date?string.long}
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <br>
+            <br>
+            <div id="payment-method">
+                <h4><b>${labels["payment.method"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["card.type"]}</b>
+                    </div>
+                    <div class="col-9">
+                        <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["name.on.card"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.subscription.creditCard.cardholderName}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["expires.on"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <br>
+            <br>
+            <div id="billing-contact">
+                <h4><b>${labels["billing.contact"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["name"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingContact.name)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["email"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingContact.email)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["phone"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingContact.phone)!}
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <br>
+            <br>
+            <div id="billing-address">
+                <h4><b>${labels["billing.address"]}</b></h4>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["street"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingAddress.street)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["city"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingAddress.city)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["state"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingAddress.state)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["postal.code"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingAddress.postalCode)!}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">
+                        <b>${labels["country"]}</b>
+                    </div>
+                    <div class="col-9">
+                        ${(organization.subscription.billingAddress.country)!}
+                    </div>
+                </div>
+                <hr>
+            </div>
 
         </div>
         <br>

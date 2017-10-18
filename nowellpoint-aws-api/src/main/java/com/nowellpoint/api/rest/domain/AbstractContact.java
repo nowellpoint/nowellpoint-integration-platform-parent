@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
@@ -17,4 +18,8 @@ public abstract class AbstractContact {
 	public abstract String getLastName();
 	public abstract String getEmail();
 	public abstract @Nullable String getPhone();
+	
+	public String getName() {
+		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
+	}
 }

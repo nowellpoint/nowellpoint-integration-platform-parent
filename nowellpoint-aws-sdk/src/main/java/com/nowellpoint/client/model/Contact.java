@@ -6,6 +6,8 @@ public class Contact {
 	
 	private String lastName;
 	
+	private String name;
+	
 	private String email;
 	
 	private String phone;
@@ -28,6 +30,14 @@ public class Contact {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public String getEmail() {
