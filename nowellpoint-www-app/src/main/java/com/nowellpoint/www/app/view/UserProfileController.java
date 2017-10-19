@@ -25,7 +25,6 @@ import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.SubscriptionRequest;
@@ -48,7 +47,6 @@ public class UserProfileController extends AbstractStaticController {
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
-		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization.html");
 	}
 	
 	/**
@@ -228,21 +226,6 @@ public class UserProfileController extends AbstractStaticController {
 		}
 		
 		return "";
-	}
-	
-	public static String viewOrganization(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		Organization organization = NowellpointClient.defaultClient(token)
-				.organization()
-				.get(id);
-		
-		Map<String, Object> model = getModel();
-		model.put("organization", organization);
-		
-		return render(UserProfileController.class, configuration, request, response, model, Template.ORGANIZATION);	
 	}
 	
 	/**

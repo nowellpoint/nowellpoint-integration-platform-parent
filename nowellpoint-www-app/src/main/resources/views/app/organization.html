@@ -2,13 +2,30 @@
 
     <@t.page>
 
-        <br>
-        <br>
-        <br>
-
         <div class="container">
+
+            <br>
+
+            <div class="flextable">
+                <div class="flextable-item flextable-primary">
+                    &nbsp;
+                </div>
+                <div class="flextable-item">
+                    <a href="#" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
+                </div>
+            </div>
+
+            <br>
+
             <div id="organization">
-                <h4><b>${labels["organization"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["organization"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        &nbsp;
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-3">
@@ -34,7 +51,14 @@
             <br>
             <br>
             <div id="subscription">
-                <h4><b>${labels["subscription"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["subscription"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        &nbsp;
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-3">
@@ -67,7 +91,14 @@
             <br>
             <br>
             <div id="payment-method">
-                <h4><b>${labels["payment.method"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["payment.method"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        <a href="#" role="button"><span class="icon icon-pencil"></span></a>
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-3">
@@ -100,7 +131,14 @@
             <br>
             <br>
             <div id="billing-contact">
-                <h4><b>${labels["billing.contact"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["billing.contact"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        <a href="#"><span class="icon icon-pencil"></span></a>
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-3">
@@ -133,7 +171,14 @@
             <br>
             <br>
             <div id="billing-address">
-                <h4><b>${labels["billing.address"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["billing.address"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        <a href="#"><span class="icon icon-pencil"></span></a>
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-3">
@@ -184,7 +229,14 @@
             <br>
             <br>
             <div id="transactions">
-                <h4><b>${labels["transactions"]}</b></h4>
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["transactions"]}</b></h4>
+                    </div>
+                    <div class="flextable-item">
+                        &nbsp;
+                    </div>
+                </div>
                 <hr>
                 <div class="row">
                     <div class="col-12">
@@ -198,7 +250,7 @@
                                 <th class="text-right">${labels["action"]}</th>
                             </thead>
                             <tbody>
-                                <#if organization.transactions?size == 0>
+                                <#if organization.transactions?size==0>
                                     <tr>
                                         <td colspan="6">${labels["no.transactions"]}</td>
                                     </tr>

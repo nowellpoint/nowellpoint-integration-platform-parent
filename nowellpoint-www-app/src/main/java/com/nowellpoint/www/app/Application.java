@@ -53,6 +53,7 @@ import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
+import com.nowellpoint.www.app.view.OrganizationController;
 import com.nowellpoint.www.app.view.SalesforceConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.SignUpController;
@@ -134,7 +135,7 @@ public class Application implements SparkApplication {
 		get(Path.Route.NOTIFICATIONS, (request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
 		
 		//
-		// account profile routes
+		// user profile routes
 		//
 		
 		get(Path.Route.USER_PROFILE_LIST_PLANS, (request, response) -> UserProfileController.listPlans(configuration, request, response));
@@ -145,7 +146,7 @@ public class Application implements SparkApplication {
         post(Path.Route.USER_PROFILE_PLAN, (request, response) -> UserProfileController.setPlan(configuration, request, response));
         post(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.updateAccountProfile(configuration, request, response));
         get(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.confirmDeactivateAccountProfile(configuration, request, response));
-        get(Path.Route.ORGANIZATION_VIEW, (request, response) -> UserProfileController.viewOrganization(configuration, request, response));
+       
         post(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.deactivateAccountProfile(configuration, request, response));
         delete(Path.Route.USER_PROFILE_PICTURE, (request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
         post(Path.Route.USER_PROFILE_ADDRESS, (request, response) -> UserProfileController.updateAddress(configuration, request, response));
@@ -155,6 +156,13 @@ public class Application implements SparkApplication {
         post(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.updateCreditCard(configuration, request, response));
         post(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> UserProfileController.setPrimaryCreditCard(configuration, request, response));
         delete(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.removeCreditCard(configuration, request, response));
+        
+        //
+        // organization routes
+        //
+        
+        get(Path.Route.ORGANIZATION_VIEW, (request, response) -> OrganizationController.viewOrganization(configuration, request, response));
+        
 		
 		//
 		// authentication routes
