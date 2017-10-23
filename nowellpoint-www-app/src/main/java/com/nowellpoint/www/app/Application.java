@@ -138,9 +138,8 @@ public class Application implements SparkApplication {
 		// user profile routes
 		//
 		
-		get(Path.Route.USER_PROFILE_LIST_PLANS, (request, response) -> UserProfileController.listPlans(configuration, request, response));
+		
 		get(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.viewUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_PLAN, (request, response) -> UserProfileController.reviewPlan(configuration, request, response));
 		get(Path.Route.USER_PROFILE_CURRENT_PLAN, (request, response) -> UserProfileController.currentPlan(configuration, request, response));
 		get(Path.Route.USER_PROFILE_INVOICE_DOWNLOAD, (request, response) -> UserProfileController.downloadInvoice(configuration, request, response));
         post(Path.Route.USER_PROFILE_PLAN, (request, response) -> UserProfileController.setPlan(configuration, request, response));
@@ -162,7 +161,7 @@ public class Application implements SparkApplication {
         //
         
         get(Path.Route.ORGANIZATION_VIEW, (request, response) -> OrganizationController.viewOrganization(configuration, request, response));
-        
+        get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) -> OrganizationController.listPlans(configuration, request, response));
 		
 		//
 		// authentication routes

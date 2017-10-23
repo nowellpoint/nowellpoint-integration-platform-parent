@@ -65,7 +65,11 @@ public abstract class NowellpointClient  {
 	}
 	
 	public PlanResource plan() {
-		return new PlanResource(environment());
+		if (token() != null) {
+			return new PlanResource(token());
+		} else {
+			return new PlanResource(environment());
+		}
 	}
 	
 	public JobResource job() {

@@ -1,0 +1,14 @@
+<ul class="navbar-nav navbar-right">
+    <li class="nav-item">&emsp;</li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            ${(identity.name)!}
+        </a>
+        <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/app/organization/${identity.organization.id}">${(identity.organization.domain)!}</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/app/user-profile/${identity.id}">${messages["user.profile"]}</a>
+            <a class="dropdown-item" href="/logout">${messages["log.out"]}</a>
+        </div>
+    </li>
+</ul>

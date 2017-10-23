@@ -58,7 +58,7 @@ public class Path {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id");
 		public static final String USER_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "user-profile/:id/picture");
-		public static final String USER_PROFILE_LIST_PLANS = String.format(APPLICATION_CONTEXT, "user-profile/:id/plans");
+		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String USER_PROFILE_PLAN = String.format(APPLICATION_CONTEXT, "user-profile/:id/plans/:planId");
 		public static final String USER_PROFILE_INVOICE_DOWNLOAD = String.format(APPLICATION_CONTEXT, "user-profile/:id/invoice/:invoiceNumber");
 		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "user-profile/:id/current-plan");

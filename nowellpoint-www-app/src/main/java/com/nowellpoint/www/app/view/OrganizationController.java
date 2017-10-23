@@ -40,12 +40,12 @@ import spark.Response;
 public class OrganizationController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String USER_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "user-profile-plans.html");
+		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
 	
-		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization.html");
+		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
 	}
 	
 	/**
@@ -63,12 +63,12 @@ public class OrganizationController extends AbstractStaticController {
 		
 		String id = request.params(":id");
 		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
+		Organization organization = NowellpointClient.defaultClient(token)
+				.organization()
 				.get(id);
 		
 		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguage(identity.getLocale().getLanguage())
+				.withLanguage("en_US")
 				.withLocale(identity.getLocale());
 		
 		List<Plan> plans = NowellpointClient.defaultClient(token)
@@ -81,14 +81,14 @@ public class OrganizationController extends AbstractStaticController {
 
 		Map<String, Object> model = getModel();
 		model.put("account", identity);
-		model.put("userProfile", userProfile);
+		model.put("organization", organization);
 		model.put("action", "listPlans");
 		model.put("plans", plans);
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 		model.put("languages", getSupportedLanguages());
 		model.put("timeZones", getTimeZones());
 
-		return render(OrganizationController.class, configuration, request, response, model, Template.USER_PROFILE_PLANS);	
+		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class OrganizationController extends AbstractStaticController {
 		model.put("action", "reviewPlan");
 		model.put("plan", plan);
 			
-		return render(OrganizationController.class, configuration, request, response, model, Template.USER_PROFILE_PLANS);	
+		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
 	}
 	
 	/**
@@ -188,7 +188,7 @@ public class OrganizationController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("organization", organization);
 		
-		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);	
+		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_VIEW);	
 	}
 	
 	/**

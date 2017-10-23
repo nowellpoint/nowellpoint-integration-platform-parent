@@ -123,8 +123,8 @@ public class TokenServiceImpl implements TokenService {
 		        }).parseClaimsJws(accessToken);
 	}
 	
-	private UserProfile lookupUserProfile(String username) {
-		UserProfile userProfile = userProfileService.findByUsername(username);
+	private UserProfile lookupUserProfile(String referenceId) {
+		UserProfile userProfile = userProfileService.findByReferenceId(referenceId);
 		return userProfile;
 	}
 	

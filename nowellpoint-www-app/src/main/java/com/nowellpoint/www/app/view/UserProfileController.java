@@ -23,9 +23,7 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
@@ -43,53 +41,9 @@ public class UserProfileController extends AbstractStaticController {
 	public static class Template {
 		public static final String USER_PROFILE_ME = String.format(APPLICATION_CONTEXT, "user-profile-me.html");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
-		public static final String USER_PROFILE_PLANS = String.format(APPLICATION_CONTEXT, "user-profile-plans.html");
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String listPlans(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id);
-		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguage(identity.getLocale().getLanguage())
-				.withLocale(identity.getLocale());
-		
-		List<Plan> plans = NowellpointClient.defaultClient(token)
-				.plan()
-				.getPlans(getPlansRequest)
-				.getItems()
-				.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
-
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		model.put("userProfile", userProfile);
-		model.put("action", "listPlans");
-		model.put("plans", plans);
-		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-		model.put("languages", getSupportedLanguages());
-		model.put("timeZones", getTimeZones());
-
-		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_PLANS);	
 	}
 	
 	/**
@@ -141,59 +95,6 @@ public class UserProfileController extends AbstractStaticController {
 		}
 
 		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String reviewPlan(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id);
-		
-		String planId = request.params(":planId");
-		
-		Plan plan = NowellpointClient.defaultClient(token)
-				.plan()
-				.get(planId);
-		
-		Address address = new Address();
-		address.setCity(identity.getAddress().getCity());
-		address.setPostalCode(identity.getAddress().getPostalCode());
-		address.setState(identity.getAddress().getState());
-		address.setStreet(identity.getAddress().getStreet());
-		address.setCountryCode(userProfile.getAddress().getCountryCode());
-		
-		Contact contact = new Contact();
-		contact.setFirstName(identity.getFirstName());
-		contact.setLastName(identity.getLastName());
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(contact);
-
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		model.put("userProfile", userProfile);
-		model.put("creditCard", creditCard);
-		model.put("action", "reviewPlan");
-		model.put("plan", plan);
-			
-		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_PLANS);	
 	}
 	
 	/**

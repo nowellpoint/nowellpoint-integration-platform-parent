@@ -11,7 +11,7 @@
                     &nbsp;
                 </div>
                 <div class="flextable-item">
-                    <a href="#" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
+                    <a href="${links['organization']}/${organization.id}/plans" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
                 </div>
             </div>
 
@@ -240,23 +240,30 @@
                 <hr>
                 <div class="row">
                     <div class="col-12">
-                        <table class="table">
+                        <table class="table table-responsive w-100 d-block d-md-table">
                             <thead class="thead-default">
-                                <th>${labels["id"]}</th>
-                                <th>${labels["payment.method"]}</th>
-                                <th class="text-right">${labels["amount"]}</th>
-                                <th>${labels["transaction.date"]}</th>
-                                <th>${labels["status"]}</th>
-                                <th class="text-right">${labels["action"]}</th>
+                                <tr class="row m-0">
+                                    <th class="col-2">${labels["id"]}</th>
+                                    <th class="col-2">${labels["payment.method"]}</th>
+                                    <th class="col-2 text-right">${labels["amount"]}</th>
+                                    <th class="col-3">${labels["transaction.date"]}</th>
+                                    <th class="col-2">${labels["status"]}</th>
+                                    <th class="col-1 text-right">${labels["action"]}</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <#if organization.transactions?size==0>
-                                    <tr>
-                                        <td colspan="6">${labels["no.transactions"]}</td>
+                                    <tr class="row m-0">
+                                        <td>${labels["no.transactions"]}</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
                                     </tr>
                                 </#if>
                                 <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
-                                    <tr>
+                                    <tr class="row m-0">
                                         <td>${transaction.id}</td>
                                         <td><img src="${(organization.transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${organization.transaction.creditCard.token}/view">${(organization.transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
                                         <td class="text-right p-r-md">${organization.transaction.currencyIsoCode} ${organization.transaction.amount?string["0.00"]}</td>

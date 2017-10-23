@@ -4,6 +4,7 @@ import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.PlanList;
+import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.http.HttpResponse;
@@ -16,8 +17,12 @@ public class PlanResource extends AbstractResource {
 		super(environment);
 	}
 	
+	public PlanResource(Token token) {
+		super(token);
+	}
+	
 	public Plan get(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token != null ? token.getEnvironmentUrl() : environment.getEnvironmentUrl())
 				.path("plans")
 				.path(id)
 				.execute();
@@ -36,7 +41,7 @@ public class PlanResource extends AbstractResource {
 	}
 	
 	public PlanList getPlans(GetPlansRequest request) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token != null ? token.getEnvironmentUrl() : environment.getEnvironmentUrl())
 				.path("plans")
 				.queryParameter("locale", request.getLocale().toString())
 				.queryParameter("language", request.getLanguage())

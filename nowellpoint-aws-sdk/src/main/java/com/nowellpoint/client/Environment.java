@@ -28,26 +28,26 @@ public class Environment {
     
     private String environmentName;
     
-    public Environment(String environmentUrl, String environmentName) {
-    	this.environmentUrl = environmentUrl;
-    	this.environmentName = environmentName;
-    }
-    
-    public static Environment parseEnvironment(String environment) {
-    	if (environment.equalsIgnoreCase("sandbox")) {
-    		return SANDBOX;
-    	} else if (environment.equalsIgnoreCase("production")) {
-    		return PRODUCTION;
-    	} else {
-            throw new IllegalArgumentException("Unknown environment: " + environment);
-        }
-    }
-    
-    public String getEnvironmentUrl() {
-    	return environmentUrl;
-    }
-    
-    public String getEnvironmentName() {
-    	return environmentName;
-    }
+	public Environment(String environmentUrl, String environmentName) {
+		this.environmentUrl = environmentUrl;
+		this.environmentName = environmentName;
+	}
+
+	public static Environment parseEnvironment(String environment) {
+		if (environment.equalsIgnoreCase("sandbox")) {
+			return SANDBOX;
+		} else if (environment.equalsIgnoreCase("production")) {
+			return PRODUCTION;
+		} else {
+			throw new IllegalArgumentException("Unknown environment: " + environment);
+		}
+	}
+
+	public String getEnvironmentUrl() {
+		return environmentUrl;
+	}
+
+	public String getEnvironmentName() {
+		return environmentName;
+	}
 }
