@@ -99,59 +99,6 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String reviewPlan(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		Identity identity = getIdentity(request);
-		
-		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id);
-		
-		String planId = request.params(":planId");
-		
-		Plan plan = NowellpointClient.defaultClient(token)
-				.plan()
-				.get(planId);
-		
-		Address address = new Address();
-		address.setCity(identity.getAddress().getCity());
-		address.setPostalCode(identity.getAddress().getPostalCode());
-		address.setState(identity.getAddress().getState());
-		address.setStreet(identity.getAddress().getStreet());
-		address.setCountryCode(userProfile.getAddress().getCountryCode());
-		
-		Contact contact = new Contact();
-		contact.setFirstName(identity.getFirstName());
-		contact.setLastName(identity.getLastName());
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(contact);
-
-		Map<String, Object> model = getModel();
-		model.put("account", identity);
-		model.put("userProfile", userProfile);
-		model.put("creditCard", creditCard);
-		model.put("action", "reviewPlan");
-		model.put("plan", plan);
-			
-		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
 	public static String downloadInvoice(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
@@ -199,7 +146,7 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String setPlan(Configuration configuration, Request request, Response response) {
+	public static String changePlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");

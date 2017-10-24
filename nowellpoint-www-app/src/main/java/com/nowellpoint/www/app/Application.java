@@ -138,23 +138,13 @@ public class Application implements SparkApplication {
 		// user profile routes
 		//
 		
-		
 		get(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.viewUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_CURRENT_PLAN, (request, response) -> UserProfileController.currentPlan(configuration, request, response));
 		get(Path.Route.USER_PROFILE_INVOICE_DOWNLOAD, (request, response) -> UserProfileController.downloadInvoice(configuration, request, response));
-        post(Path.Route.USER_PROFILE_PLAN, (request, response) -> UserProfileController.setPlan(configuration, request, response));
-        post(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.updateAccountProfile(configuration, request, response));
+        post(Path.Route.USER_PROFILE, (request, response) -> UserProfileController.updateUserProfile(configuration, request, response));
         get(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.confirmDeactivateAccountProfile(configuration, request, response));
-       
         post(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController.deactivateAccountProfile(configuration, request, response));
         delete(Path.Route.USER_PROFILE_PICTURE, (request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
         post(Path.Route.USER_PROFILE_ADDRESS, (request, response) -> UserProfileController.updateAddress(configuration, request, response));
-        post(Path.Route.USER_PROFILE_PAYMENT_METHODS, (request, response) -> UserProfileController.addCreditCard(configuration, request, response));  
-        get(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token/view"), (request, response) -> UserProfileController.getCreditCard(configuration, request, response));
-        get(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token/edit"), (request, response) -> UserProfileController.editCreditCard(configuration, request, response));
-        post(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.updateCreditCard(configuration, request, response));
-        post(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token/primary"), (request, response) -> UserProfileController.setPrimaryCreditCard(configuration, request, response));
-        delete(Path.Route.USER_PROFILE_PAYMENT_METHODS.concat("/:token"), (request, response) -> UserProfileController.removeCreditCard(configuration, request, response));
         
         //
         // organization routes
@@ -162,6 +152,7 @@ public class Application implements SparkApplication {
         
         get(Path.Route.ORGANIZATION_VIEW, (request, response) -> OrganizationController.viewOrganization(configuration, request, response));
         get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) -> OrganizationController.listPlans(configuration, request, response));
+        post(Path.Route.ORGANIZATION_CHANGE_PLAN, (request, response) -> OrganizationController.changePlan(configuration, request, response));
 		
 		//
 		// authentication routes

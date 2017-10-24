@@ -1,9 +1,7 @@
 package com.nowellpoint.www.app.view;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -15,21 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.Contact;
-import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Subscription;
-import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UserProfile;
-import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -72,20 +63,8 @@ public class UserProfileController extends AbstractStaticController {
 		address.setStreet(identity.getAddress().getStreet());
 		address.setCountryCode(userProfile.getAddress().getCountryCode());
 		
-		Contact contact = new Contact();
-		contact.setFirstName(identity.getFirstName());
-		contact.setLastName(identity.getLastName());
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(contact);
-		
 		Map<String, Object> model = getModel();
 		model.put("userProfile", userProfile);
-		model.put("creditCard", creditCard);
 		model.put("successMessage", request.cookie("update.profile.success"));
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 		model.put("timeZones", getTimeZones());
@@ -137,68 +116,7 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String currentPlan(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id);
-		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", userProfile);
-		
-		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_CURRENT_PLAN);	
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String setPlan(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id); 
-		
-		String planId = request.params(":planId");
-		String paymentMethodToken = request.queryParams("paymentMethodToken");
-		
-		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				.withUserProfileId(userProfile.getId())
-				.withPaymentMethodToken(paymentMethodToken)
-				.withPlanId(planId);
-		
-		UpdateResult<Subscription> updateResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.set(subscriptionRequest);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
-			
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String updateAccountProfile(Configuration configuration, Request request, Response response) {
+	public static String updateUserProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		UserProfileRequest userProfileRequest = new UserProfileRequest()
@@ -257,18 +175,17 @@ public class UserProfileController extends AbstractStaticController {
 	
 	public static String deactivateAccountProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.userProfile()
+
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token).userProfile()
 				.deactivate(request.params(":id"));
-		
-		if (! deleteResult.isSuccess()) {
+
+		if (!deleteResult.isSuccess()) {
 			throw new BadRequestException(deleteResult.getErrorMessage());
 		}
-		
-    	response.redirect(Path.Route.LOGOUT);
-		
-		return "";	
+
+		response.redirect(Path.Route.LOGOUT);
+
+		return "";
 	}
 	
 	/**
@@ -328,220 +245,6 @@ public class UserProfileController extends AbstractStaticController {
 	
 	/**
 	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String getCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.get(request.params(":id"), request.params(":token"));
-		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", new UserProfile(request.params(":id")));
-		model.put("creditCard", creditCard);
-		model.put("mode", "view");
-		
-		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_PAYMENT_METHOD);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String editCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.get(request.params(":id"), request.params(":token"));
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(request.params(":id"));
-		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", userProfile);
-		model.put("creditCard", creditCard);
-		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
-		model.put("mode", "edit");
-		
-		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_PAYMENT_METHOD);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String addCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String cardholderName = request.queryParams("cardholderName");
-		String number = request.queryParams("number");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String city = request.queryParams("city");
-		String countryCode = request.queryParams("countryCode");
-		String postalCode = request.queryParams("postalCode");
-		String state = request.queryParams("state");
-		String street = request.queryParams("street");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
-		String cvv = request.queryParams("cvv");
-		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withOrganizationId(id)
-				.withCardholderName(cardholderName)
-				.withExpirationMonth(expirationMonth)
-				.withExpirationYear(expirationYear)
-				.withNumber(number)
-				.withCvv(cvv)
-				.withPrimary(primary)
-				.withCity(city)
-				.withCountryCode(countryCode)
-				.withPostalCode(postalCode)
-				.withState(state)
-				.withStreet(street)
-				.withFirstName(firstName)
-				.withLastName(lastName);
-		
-		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.add(creditCardRequest);
-		
-		if (! createResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(createResult);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String updateCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String organizationId = request.params(":id");
-		String creditCardToken = request.params(":token");
-		
-		String cardholderName = request.queryParams("cardholderName");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String city = request.queryParams("city");
-		String countryCode = request.queryParams("countryCode");
-		String postalCode = request.queryParams("postalCode");
-		String state = request.queryParams("state");
-		String street = request.queryParams("street");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
-		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withOrganizationId(organizationId)
-				.withToken(creditCardToken)
-				.withCardholderName(cardholderName)
-				.withExpirationMonth(expirationMonth)
-				.withExpirationYear(expirationYear)
-				.withPrimary(primary)
-				.withCity(city)
-				.withCountryCode(countryCode)
-				.withPostalCode(postalCode)
-				.withState(state)
-				.withStreet(street)
-				.withFirstName(firstName)
-				.withLastName(lastName);
-		
-		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.update(creditCardRequest);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.setPrimary(request.params(":id"), request.params(":token"));
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String removeCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.delete(request.params(":id"), request.params(":token"));
-			
-		if (! deleteResult.isSuccess()) {
-			throw new BadRequestException(deleteResult.getErrorMessage());
-		}
-		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getLocale(request), "remove.credit.card.success"), 3, Boolean.FALSE);
-		
-		return "";
-	};
-	
-	/**
-	 * 
 	 * @param accountProfile
 	 * @return Locale map 
 	 */
@@ -555,17 +258,6 @@ public class UserProfileController extends AbstractStaticController {
 						.concat(! l.getCountry().isEmpty() ? " (".concat(l.getDisplayCountry().concat(")")) : "")));
 		
 		return localeMap;
-	}
-	
-	/**
-	 * 
-	 * @return application supported languages
-	 */
-	
-	private static Map<String,String> getSupportedLanguages() {
-		Map<String,String> languageMap = new HashMap<String,String>();
-		languageMap.put(Locale.US.toString(), Locale.US.getDisplayLanguage());
-		return languageMap;
 	}
 	
 	/**

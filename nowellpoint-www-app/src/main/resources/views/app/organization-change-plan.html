@@ -2,26 +2,25 @@
 
     <@t.page>
 
-        <#if action=="listPlans">
+        <div class="container">
 
-            <div class="container">
+            <br>
+            <br>
+            <br>
 
-                <br>
-                <br>
-                <br>
-
-                <div id="plans-list">
-                    <div class="flextable" style="height: 18px">
-                        <div class="flextable-item flextable-primary">
-                            <h4><b>${labels["select.plan"]}</b></h4>
-                        </div>
-                        <div class="flextable-item">
-                            &nbsp;
-                        </div>
+            <div id="plans-list">
+                <div class="flextable" style="height: 18px">
+                    <div class="flextable-item flextable-primary">
+                        <h4><b>${labels["select.plan"]}</b></h4>
                     </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
+                    <div class="flextable-item">
+                        &nbsp;
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <form name="set-plan-form">
                             <table class="table table-responsive w-100 d-block d-md-table">
                                 <thead class="thead-default">
                                     <tr>
@@ -100,23 +99,16 @@
                                     </#list>
                                 </tbody>
                             </table>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 text-right">
-                        <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                        </form>
                     </div>
                 </div>
             </div>
-
-        </#if>
-
-        <#if action=="reviewPlan">
-
-            <#include "spinner.html"/>
-        </#if>
+            <div class="row">
+                <div class="col-12 text-right">
+                    <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                </div>
+            </div>
+        </div>
 
         <script>
             $("#add-payment-method").click(function(e) {
