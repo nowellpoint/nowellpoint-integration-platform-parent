@@ -8,19 +8,20 @@
             <br>
             <br>
 
-            <div id="plans-list">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["select.plan"]}</b></h4>
+            <#if action=="listPlans">
+
+                <div id="plans-list">
+                    <div class="flextable" style="height: 18px">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["select.plan"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
                     </div>
-                    <div class="flextable-item">
-                        &nbsp;
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-12">
-                        <form name="set-plan-form">
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
                             <table class="table table-responsive w-100 d-block d-md-table">
                                 <thead class="thead-default">
                                     <tr>
@@ -69,11 +70,11 @@
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice gt organization.subscription.unitPrice> -->
                                                 <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice lt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-secondary" role="button">${labels["downgrade"]}</a>
                                                 <!-- <#elseif organization.subscription?? && plan.price.unitPrice gt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["upgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-primary" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#else> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-secondary" role="button">${labels["downgrade"]}</a>
                                                 <!-- </#if> -->
                                             </td>
                                         </#list>
@@ -99,15 +100,73 @@
                                     </#list>
                                 </tbody>
                             </table>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-right">
-                    <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                    </div>
                 </div>
-            </div>
+
+            </#if>
+
+            <#if action=="reviewPlan">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="flextable p-t">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["review.plan"]}</h3>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <th>${labels["plan.name"]}</th>
+                                    <th>${labels["feature"]}</th>
+                                    <th class="text-center">${labels["quantity"]}</th>
+                                    <th class="text-right">${labels["price"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list plan.features?sort_by( "sortOrder") as feature>
+                                        <tr>
+                                            <#if feature?index==0>
+                                                <td>${(plan.planName)!}</td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td class="text-right">${(plan.billingFrequency)!}&nbsp;${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.00"])!}</td>
+                                            </#if>
+                                            <#if feature?index gt 0>
+                                                <td></td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td></td>
+                                            </#if>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <form id="change-plan-form" name="change-plan-form" class="form-vertical" method="post" action="${links['organization']}/${organization.id}/plans/${plan.id}">
+                    <#if plan.price.unitPrice gt 0>
+                        <input type="hidden" name="paymentMethodToken" id="paymentMethodToken" value="${(organization.subscription.creditCard.token)!}" />
+                    </#if>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <a href="${links['organization']}/${organization.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                                <a href="${links['organization']}/${organization.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                                <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </#if>
+
         </div>
 
         <script>
@@ -139,10 +198,10 @@
                 });
             });
 
-            $("#set-plan").click(function(e) {
+            $("#change-plan").click(function(e) {
                 e.preventDefault();
 
-                $form = $("#set-plan-form");
+                $form = $("#change-plan-form");
 
                 $.ajax({
                     method: $form.attr('method'),

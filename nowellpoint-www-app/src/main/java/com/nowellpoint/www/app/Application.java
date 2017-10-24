@@ -152,6 +152,7 @@ public class Application implements SparkApplication {
         
         get(Path.Route.ORGANIZATION_VIEW, (request, response) -> OrganizationController.viewOrganization(configuration, request, response));
         get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) -> OrganizationController.listPlans(configuration, request, response));
+        get(Path.Route.ORGANIZATION_REVIEW_PLAN, (request, response) -> OrganizationController.reviewPlan(configuration, request, response));
         post(Path.Route.ORGANIZATION_CHANGE_PLAN, (request, response) -> OrganizationController.changePlan(configuration, request, response));
 		
 		//
