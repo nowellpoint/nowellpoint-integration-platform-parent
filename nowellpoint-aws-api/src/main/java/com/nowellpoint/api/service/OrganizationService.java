@@ -41,11 +41,11 @@ public interface OrganizationService {
 	
 	public Organization updateOrganization(String id, String domain);
 	
-	public Organization changePlan(String id, String planId);
+	public Organization changePlan(String id, Plan plan);
 	
 	public Organization changePlan(
 			String id, 
-			String planId,
+			Plan plan,
 			String cardholderName, 
 			String expirationMonth, 
 			String expirationYear,

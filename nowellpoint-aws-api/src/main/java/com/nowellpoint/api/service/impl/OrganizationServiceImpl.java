@@ -6,8 +6,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.inject.Inject;
-
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -32,7 +30,6 @@ import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
-import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Properties;
 
@@ -50,9 +47,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	static {
 		gateway.clientToken().generate();
 	}
-	
-	@Inject
-	private PlanService planService;
 	
 	@Override
 	public Organization findById(String id) {
@@ -80,15 +74,13 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 	
 	@Override
-	public Organization changePlan(String id, String planId) {
+	public Organization changePlan(String id, Plan plan) {
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
 		Date now = Date.from(Instant.now());
 		
 		Organization organization = findById(id);
-		
-		Plan plan = planService.findById(planId);
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(organization.getSubscription().getCreditCard().getToken())
@@ -128,7 +120,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	public Organization changePlan(
 			String id, 
-			String planId,
+			Plan plan,
 			String cardholderName, 
 			String expirationMonth, 
 			String expirationYear,
@@ -140,8 +132,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		Date now = Date.from(Instant.now());
 		
 		Organization organization = findById(id);
-		
-		Plan plan = planService.findById(planId);
 		
 		CreditCardRequest creditCardRequest = new CreditCardRequest()
 				.billingAddressId(organization.getSubscription().getBillingAddress().getId())

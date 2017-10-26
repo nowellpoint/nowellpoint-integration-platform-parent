@@ -26,7 +26,12 @@ public interface OrganizationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response changePlan(
 			@PathParam("id") String id, 
-			@FormParam("planId") String planId);
+			@FormParam("planId") String planId,
+			@FormParam("cardholderName") String cardholderName, 
+			@FormParam("expirationMonth") String expirationMonth, 
+			@FormParam("expirationYear") String expirationYear,
+			@FormParam("number") String number, 
+			@FormParam("cvv") String cvv);
 	
 	@POST
 	@Path("{id}/subscription/credit-card")

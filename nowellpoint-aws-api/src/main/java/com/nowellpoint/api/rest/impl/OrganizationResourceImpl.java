@@ -5,12 +5,17 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.service.OrganizationService;
+import com.nowellpoint.api.service.PlanService;
 
 public class OrganizationResourceImpl implements OrganizationResource {
 	
 	@Inject
 	private OrganizationService organizationService;
+	
+	@Inject
+	private PlanService planService;
 
 	@Override
 	public Response getOrganization(String id) {
@@ -20,8 +25,16 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	}
 	
 	@Override
-	public Response changePlan(String id, String planId) {
-		Organization organization = organizationService.changePlan(id, planId);
+	public Response changePlan(String id, String planId, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
+		Plan plan = planService.findById(planId);
+		
+		Organization organization = null;
+		if (plan.getPrice().getUnitPrice() > 0) {
+			organizationService.changePlan(id, plan);
+		} else {
+			organizationService.changePlan(planId, plan, cardholderName, expirationMonth, expirationYear, number, cvv);
+		}
+		
 		return Response.ok(organization)
 				.build();
 	}
