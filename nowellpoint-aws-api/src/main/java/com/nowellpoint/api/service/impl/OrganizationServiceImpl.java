@@ -1,4 +1,4 @@
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,6 +82,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public Organization changePlan(String id, String planId) {
 		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
 		Organization organization = findById(id);
 		
 		Plan plan = planService.findById(planId);
@@ -112,6 +116,85 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		Organization newInstance = Organization.builder()
 				.from(organization)
 				.subscription(subscription)
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
+				.build();
+		
+		super.update(newInstance);
+		
+		return newInstance;
+		
+	}
+	
+	public Organization changePlan(
+			String id, 
+			String planId,
+			String cardholderName, 
+			String expirationMonth, 
+			String expirationYear,
+			String number, 
+			String cvv) {
+		
+		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		Organization organization = findById(id);
+		
+		Plan plan = planService.findById(planId);
+		
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.billingAddressId(organization.getSubscription().getBillingAddress().getId())
+				.cardholderName(cardholderName)
+				.customerId(organization.getNumber())
+				.cvv(cvv)
+				.expirationMonth(expirationMonth)
+				.expirationYear(expirationYear)
+				.number(number);
+		
+		Result<com.braintreegateway.CreditCard> creditCardResult = addCreditCard(creditCardRequest);
+		
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				.paymentMethodToken(creditCardResult.getTarget().getToken())
+				.planId(plan.getPlanCode())
+				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+		
+		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(id, subscriptionRequest);
+		
+		CreditCard creditCard = CreditCard.builder()
+				.addedOn(now)
+				.updatedOn(now)
+				.cardholderName(cardholderName)
+				.cardType(creditCardResult.getTarget().getCardType())
+				.expirationMonth(expirationMonth)
+				.expirationYear(expirationYear)
+				.imageUrl(creditCardResult.getTarget().getImageUrl())
+				.lastFour(creditCardResult.getTarget().getLast4())
+				.token(creditCardResult.getTarget().getToken())
+				.build();
+		
+		Subscription subscription = Subscription.builder()
+				.from(organization.getSubscription())
+				.creditCard(creditCard)
+				.planId(plan.getId())
+				.planCode(plan.getPlanCode())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.billingFrequency(plan.getBillingFrequency())
+				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
+				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())
+				.status(subscriptionResult.getSubscription().getStatus().name())
+				.updatedOn(Date.from(Instant.now()))
+				.build();
+		
+		Organization newInstance = Organization.builder()
+				.from(organization)
+				.subscription(subscription)
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
 				.build();
 		
 		super.update(newInstance);

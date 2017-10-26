@@ -1,4 +1,4 @@
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.service.impl;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;

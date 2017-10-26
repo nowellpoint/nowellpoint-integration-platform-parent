@@ -1,4 +1,4 @@
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.service.impl;
 
 import java.net.URI;
 import java.security.SecureRandom;

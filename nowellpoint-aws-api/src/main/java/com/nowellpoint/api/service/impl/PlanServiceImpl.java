@@ -1,4 +1,4 @@
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.service.impl;
 
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.PlanList;

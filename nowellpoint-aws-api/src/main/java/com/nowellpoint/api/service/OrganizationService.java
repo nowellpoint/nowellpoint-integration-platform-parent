@@ -43,6 +43,15 @@ public interface OrganizationService {
 	
 	public Organization changePlan(String id, String planId);
 	
+	public Organization changePlan(
+			String id, 
+			String planId,
+			String cardholderName, 
+			String expirationMonth, 
+			String expirationYear,
+			String number, 
+			String cvv);
+	
 	public Organization updateCreditCard(
 			String id, 
 			String cardholderName, 

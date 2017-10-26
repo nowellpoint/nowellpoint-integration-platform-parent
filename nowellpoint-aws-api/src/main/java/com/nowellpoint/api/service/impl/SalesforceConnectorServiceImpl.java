@@ -16,7 +16,7 @@
  * 
  */
 
-package com.nowellpoint.api.rest.service;
+package com.nowellpoint.api.service.impl;
 
 import java.io.IOException;
 import java.net.URI;
