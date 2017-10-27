@@ -6,279 +6,353 @@
 
             <br>
 
-            <div class="flextable">
-                <div class="flextable-item flextable-primary">
-                    &nbsp;
-                </div>
-                <div class="flextable-item">
-                    <a href="${links['organization']}/${organization.id}/plans" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
-                </div>
-            </div>
+            <ul class="nav nav-bordered">
+                <li class="nav-item">
+                    <a class="nav-link active" role="tab" data-toggle="tab" data-target="#details" href="#">${labels["details"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#transactions" href="#">${labels["transactions"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#users" href="#">${labels["users"]}</a>
+                </li>
+            </ul>
 
             <br>
 
-            <div id="organization">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["organization"]}</b></h4>
-                    </div>
-                    <div class="flextable-item">
-                        &nbsp;
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["domain"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${organization.domain}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
+            <div class="tab-content">
 
-                    <div class="col-3">
-                        <b>${labels["account.number"]}</b>
+                <div id="details" role="tabpanel" class="tab-pane fade active show">
+                    <div class="flextable">
+                        <div class="flextable-item flextable-primary">
+                            &nbsp;
+                        </div>
+                        <div class="flextable-item">
+                            <a href="${links['organization']}/${organization.id}/plans" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
+                        </div>
                     </div>
-                    <div class="col-9">
-                        ${organization.number}
+                    <div class="row" id="organization">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    <h4><b>${labels["organization"]}</b></h4>
+                                </div>
+                                <div class="flextable-item">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["domain"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.domain}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["account.number"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.number}
+                                </div>
+
+                            </div>
+                            <hr>
+                        </div>
                     </div>
 
-                </div>
-                <hr>
-            </div>
-            <br>
-            <br>
-            <div id="subscription">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["subscription"]}</b></h4>
+                    <br>
+                    <br>
+                    <div class="row" id="subscription">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    <h4><b>${labels["subscription"]}</b></h4>
+                                </div>
+                                <div class="flextable-item">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["plan.name"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.planName}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>Price (${organization.subscription.billingFrequency})</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["next.billing.date"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.nextBillingDate?date?string.long}
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                    <div class="flextable-item">
-                        &nbsp;
+                    <br>
+                    <br>
+                    <div class="row" id="payment-method">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    <h4><b>${labels["payment.method"]}</b></h4>
+                                </div>
+                                <div class="flextable-item">
+                                    <a href="#" role="button"><span class="icon icon-pencil"></span></a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["card.type"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["name.on.card"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.creditCard.cardholderName}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["expires.on"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["plan.name"]}</b>
+                    <br>
+                    <br>
+                    <div class="row" id="billing-contact">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    <h4><b>${labels["billing.contact"]}</b></h4>
+                                </div>
+                                <div class="flextable-item">
+                                    <a href="#"><span class="icon icon-pencil"></span></a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["name"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingContact.name)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["email"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingContact.email)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["phone"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingContact.phone)!}
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                    <div class="col-9">
-                        ${organization.subscription.planName}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>Price (${organization.subscription.billingFrequency})</b>
-                    </div>
-                    <div class="col-9">
-                        ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["next.billing.date"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${organization.subscription.nextBillingDate?date?string.long}
-                    </div>
-                </div>
-                <hr>
-            </div>
-            <br>
-            <br>
-            <div id="payment-method">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["payment.method"]}</b></h4>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="#" role="button"><span class="icon icon-pencil"></span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["card.type"]}</b>
-                    </div>
-                    <div class="col-9">
-                        <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["name.on.card"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${organization.subscription.creditCard.cardholderName}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["expires.on"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
-                    </div>
-                </div>
-                <hr>
-            </div>
-            <br>
-            <br>
-            <div id="billing-contact">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["billing.contact"]}</b></h4>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="#"><span class="icon icon-pencil"></span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["name"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingContact.name)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["email"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingContact.email)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["phone"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingContact.phone)!}
-                    </div>
-                </div>
-                <hr>
-            </div>
-            <br>
-            <br>
-            <div id="billing-address">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["billing.address"]}</b></h4>
-                    </div>
-                    <div class="flextable-item">
-                        <a href="#"><span class="icon icon-pencil"></span></a>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["street"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingAddress.street)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["city"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingAddress.city)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["state"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingAddress.state)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["postal.code"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingAddress.postalCode)!}
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-3">
-                        <b>${labels["country"]}</b>
-                    </div>
-                    <div class="col-9">
-                        ${(organization.subscription.billingAddress.country)!}
-                    </div>
-                </div>
-                <hr>
-            </div>
-            <br>
-            <br>
-            <div id="transactions">
-                <div class="flextable" style="height: 18px">
-                    <div class="flextable-item flextable-primary">
-                        <h4><b>${labels["transactions"]}</b></h4>
-                    </div>
-                    <div class="flextable-item">
-                        &nbsp;
+                    <br>
+                    <br>
+                    <div class="row" id="billing-address">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    <h4><b>${labels["billing.address"]}</b></h4>
+                                </div>
+                                <div class="flextable-item">
+                                    <a href="#"><span class="icon icon-pencil"></span></a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["street"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingAddress.street)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["city"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingAddress.city)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["state"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingAddress.state)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["postal.code"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingAddress.postalCode)!}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["country"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${(organization.subscription.billingAddress.country)!}
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-12">
-                        <table class="table table-responsive w-100 d-block d-md-table">
-                            <thead class="thead-default">
-                                <tr class="row m-0">
-                                    <th class="col-2">${labels["id"]}</th>
-                                    <th class="col-2">${labels["payment.method"]}</th>
-                                    <th class="col-2 text-right">${labels["amount"]}</th>
-                                    <th class="col-3">${labels["transaction.date"]}</th>
-                                    <th class="col-2">${labels["status"]}</th>
-                                    <th class="col-1 text-right">${labels["action"]}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <#if organization.transactions?size==0>
+
+                <div role="tabpanel" class="tab-pane fade" id="transactions">
+                    <div class="flextable">
+                        <div class="flextable-item flextable-primary">
+                            &nbsp;
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive w-100 d-block d-md-table">
+                                <thead>
                                     <tr class="row m-0">
-                                        <td>${labels["no.transactions"]}</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
-                                        <td>&nbsp;</td>
+                                        <th class="col-2">${labels["id"]}</th>
+                                        <th class="col-2">${labels["payment.method"]}</th>
+                                        <th class="col-2 text-right">${labels["amount"]}</th>
+                                        <th class="col-3">${labels["transaction.date"]}</th>
+                                        <th class="col-2">${labels["status"]}</th>
+                                        <th class="col-1 text-right">${labels["action"]}</th>
                                     </tr>
-                                </#if>
-                                <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                                </thead>
+                                <tbody>
+                                    <#if organization.transactions?size==0>
+                                        <tr class="row m-0">
+                                            <td>${labels["no.transactions"]}</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </#if>
+                                    <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                                        <tr class="row m-0">
+                                            <td>${transaction.id}</td>
+                                            <td><img src="${(organization.transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${organization.transaction.creditCard.token}/view">${(organization.transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                            <td class="text-right p-r-md">${organization.transaction.currencyIsoCode} ${organization.transaction.amount?string["0.00"]}</td>
+                                            <td>${(organization.transaction.updatedOn?date?string.long)!}</td>
+                                            <td>${organization.transaction.status}</td>
+                                            <td class="text-right"><a href="${links['organization']}/${organization.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="users">
+                    <div class="flextable">
+                        <div class="flextable-item flextable-primary">
+                            &nbsp;
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive w-100 d-block d-md-table">
+                                <thead>
                                     <tr class="row m-0">
-                                        <td>${transaction.id}</td>
-                                        <td><img src="${(organization.transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${organization.transaction.creditCard.token}/view">${(organization.transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
-                                        <td class="text-right p-r-md">${organization.transaction.currencyIsoCode} ${organization.transaction.amount?string["0.00"]}</td>
-                                        <td>${(organization.transaction.updatedOn?date?string.long)!}</td>
-                                        <td>${organization.transaction.status}</td>
-                                        <td class="text-right"><a href="${links['organization']}/${organization.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                        <th class="col-2">${labels["id"]}</th>
+                                        <th class="col-2">${labels["payment.method"]}</th>
+                                        <th class="col-2 text-right">${labels["amount"]}</th>
+                                        <th class="col-3">${labels["transaction.date"]}</th>
+                                        <th class="col-2">${labels["status"]}</th>
+                                        <th class="col-1 text-right">${labels["action"]}</th>
                                     </tr>
-                                </#list>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <#if organization.transactions?size==0>
+                                        <tr class="row m-0">
+                                            <td>${labels["no.transactions"]}</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </#if>
+                                    <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                                        <tr class="row m-0">
+                                            <td>${transaction.id}</td>
+                                            <td><img src="${(organization.transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${organization.transaction.creditCard.token}/view">${(organization.transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                            <td class="text-right p-r-md">${organization.transaction.currencyIsoCode} ${organization.transaction.amount?string["0.00"]}</td>
+                                            <td>${(organization.transaction.updatedOn?date?string.long)!}</td>
+                                            <td>${organization.transaction.status}</td>
+                                            <td class="text-right"><a href="${links['organization']}/${organization.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <br>
         <br>
-        
+
     </@t.page>
