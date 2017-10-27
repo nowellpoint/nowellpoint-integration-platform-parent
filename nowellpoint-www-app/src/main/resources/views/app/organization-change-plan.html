@@ -11,7 +11,7 @@
             <#if action=="listPlans">
 
                 <div id="plans-list">
-                    <div class="flextable" style="height: 18px">
+                    <div class="flextable">
                         <div class="flextable-item flextable-primary">
                             <h4><b>${labels["select.plan"]}</b></h4>
                         </div>
@@ -19,11 +19,10 @@
                             &nbsp;
                         </div>
                     </div>
-                    <hr>
                     <div class="row">
                         <div class="col-12">
                             <table class="table table-responsive w-100 d-block d-md-table">
-                                <thead class="thead-default">
+                                <thead>
                                     <tr>
                                         <th></th>
                                         <#list plans as plan>
@@ -100,6 +99,7 @@
                                     </#list>
                                 </tbody>
                             </table>
+                            <hr>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
             </#if>
 
             <#if action=="reviewPlan">
-                <div class="flextable" style="height: 18px">
+                <div class="flextable">
                     <div class="flextable-item flextable-primary">
                         <h4><b>${labels["review.plan"]}</b></h4>
                     </div>
@@ -119,12 +119,11 @@
                         &nbsp;
                     </div>
                 </div>
-                <hr>
                 <div class="row">
                     <div class="col-12">
                         <div class="content table-responsive">
                             <table class="table">
-                                <thead class="thead-default">
+                                <thead>
                                     <tr>
                                         <th>${labels["plan.name"]}</th>
                                         <th>${labels["feature"]}</th>
@@ -196,12 +195,10 @@
                         <!-- </#if> -->
                     </#if>
                     <div class="row">
-                        <div class="col-12">
-                            <div class="pull-right">
-                                <a href="${links['organization']}/${organization.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
-                                <a href="${links['organization']}/${organization.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
-                                <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
-                            </div>
+                        <div class="col-12 text-right">
+                            <a href="${links['organization']}/${organization.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                            <a href="${links['organization']}/${organization.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                            <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
                         </div>
                     </div>
                 </form>
@@ -209,7 +206,7 @@
         </div>
 
         <script>
-            $("#change-plan").click(function(e) {
+            $("#change-plan").click(function (e) {
                 e.preventDefault();
 
                 $form = $("#change-plan-form");
@@ -219,11 +216,11 @@
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function(response) {
+                    complete: function (response) {
                         if (response.status == 200) {
                             jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
+                            setTimeout(function () {
+                                $("#notification").slideUp('slow').fadeOut(function () {
                                     $(location).attr("href", "${links['organization']}/${organization.id}/current-plan");
                                 });
                             }, 1000);
