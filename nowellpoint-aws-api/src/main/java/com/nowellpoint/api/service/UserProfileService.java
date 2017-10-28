@@ -1,6 +1,7 @@
 package com.nowellpoint.api.service;
 
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 import com.nowellpoint.api.rest.domain.Organization;
@@ -10,6 +11,7 @@ public interface UserProfileService {
 	public UserProfile findById(String id);
 	public UserProfile findByReferenceId(String referenceId);
 	public UserProfile findByUsername(String username);
+	public Set<UserProfile> queryByOrganizationId(String organizationId);
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization);
 	public UserProfile createUserProfile(String firstName, String lastName, String email, String phone, String countryCode, Organization organization, Locale locale, TimeZone timeZone);
 	public UserProfile updateAddress(String id, String street, String city, String state, String postalCode, String countryCode);

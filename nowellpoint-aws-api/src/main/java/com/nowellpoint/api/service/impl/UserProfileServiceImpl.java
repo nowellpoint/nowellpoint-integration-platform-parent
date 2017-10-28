@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.enterprise.event.Observes;
@@ -57,6 +58,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	@Override
 	public UserProfile findByUsername(String username) {
 		return findOne( eq ( "username", username ) );
+	}
+	
+	@Override
+	public Set<UserProfile> queryByOrganizationId(String organizationId) {
+		return query( eq ( "organization", organizationId ) );
 	}
 
 	@Override

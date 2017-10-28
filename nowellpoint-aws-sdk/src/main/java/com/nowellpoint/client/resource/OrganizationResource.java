@@ -50,24 +50,21 @@ public class OrganizationResource extends AbstractResource {
 	
 	public Organization get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.execute();
-		
+				.bearerAuthorization(token.getAccessToken()).accept(MediaType.APPLICATION_JSON).path(RESOURCE_CONTEXT)
+				.path(id).execute();
+
 		Organization resource = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		resource = httpResponse.getEntity(Organization.class);
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity(Organization.class);
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return resource;
-	} 
+		}
+
+		return resource;
+	}
 	
 	
 	/**

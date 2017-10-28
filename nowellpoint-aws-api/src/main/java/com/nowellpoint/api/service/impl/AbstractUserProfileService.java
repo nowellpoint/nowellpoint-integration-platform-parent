@@ -1,5 +1,8 @@
 package com.nowellpoint.api.service.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
@@ -56,5 +59,15 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 		com.nowellpoint.api.model.document.UserProfile document = documentManager.findOne(com.nowellpoint.api.model.document.UserProfile.class, query );			
 		UserProfile userProfile = UserProfile.of( document );
 		return userProfile;
+	}
+	
+	protected Set<UserProfile> query(Bson query) {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		Set<com.nowellpoint.api.model.document.UserProfile> documents = documentManager.find( com.nowellpoint.api.model.document.UserProfile.class, query );
+		Set<UserProfile> userProfiles = new HashSet<>();
+		documents.stream().forEach(document -> {
+			userProfiles.add( UserProfile.of( document ) );
+		});
+		return userProfiles;
 	}
 }

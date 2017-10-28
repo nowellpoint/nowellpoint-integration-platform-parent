@@ -1,11 +1,17 @@
 package com.nowellpoint.api.service.impl;
 
+import static com.mongodb.client.model.Filters.eq;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -47,7 +53,8 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			document = documentManager.fetch( com.nowellpoint.api.model.document.Organization.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		Organization organization = Organization.of( document );
+		Set<UserProfile> users = getUsers( id );
+		Organization organization = Organization.of( document, users );
 		return organization;
 	}
 	
@@ -56,5 +63,15 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
 		Organization organization = Organization.of( document );
 		return organization;
+	}
+	
+	private Set<UserProfile> getUsers(String id) {
+		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
+		Set<com.nowellpoint.api.model.document.UserProfile> documents = documentManager.find( com.nowellpoint.api.model.document.UserProfile.class, eq ( "organization", new ObjectId( id ) ) );
+		Set<UserProfile> userProfiles = new HashSet<>();
+		documents.stream().forEach(document -> {
+			userProfiles.add( UserProfile.of( document ) );
+		});
+		return userProfiles;
 	}
 }

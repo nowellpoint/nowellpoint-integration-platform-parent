@@ -15,9 +15,12 @@ public class Organization extends AbstractResource {
 	
 	private List<Transaction> transactions;
 	
+	private List<UserProfile> users;
+	
 	public Organization() {
 		subscription = new Subscription();
 		transactions = new ArrayList<Transaction>();
+		users = new ArrayList<UserProfile>();
 	}
 
 	public String getNumber() {
@@ -58,5 +61,13 @@ public class Organization extends AbstractResource {
 
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
+	}
+	
+	public List<UserProfile> getUsers() {
+		return users;
+	}
+	
+	public void setUsers(List<UserProfile> users) {
+		this.users = users;
 	}
 }

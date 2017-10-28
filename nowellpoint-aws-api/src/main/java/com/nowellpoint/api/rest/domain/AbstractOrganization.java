@@ -17,7 +17,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"transaction:transactions"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"transaction:transactions, user:users"})
 @JsonSerialize(as = Organization.class)
 @JsonDeserialize(as = Organization.class)
 public abstract class AbstractOrganization extends AbstractImmutableResource {
@@ -28,6 +28,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable String getName();
 	public abstract @Nullable Subscription getSubscription();
 	public abstract @Nullable Set<Transaction> getTransactions();
+	public abstract @Nullable Set<UserProfile> getUsers();
 	
 	@Override
 	public Meta getMeta() {
@@ -36,6 +37,12 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	
 	public static Organization of(com.nowellpoint.api.model.document.Organization source) {
 		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
+		return organization.toImmutable();
+	}
+	
+	public static Organization of(com.nowellpoint.api.model.document.Organization source, Set<UserProfile> users) {
+		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
+		organization.setUsers(users);
 		return organization.toImmutable();
 	}
 	
