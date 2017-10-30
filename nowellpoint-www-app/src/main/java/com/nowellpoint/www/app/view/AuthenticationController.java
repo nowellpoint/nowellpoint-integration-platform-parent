@@ -143,6 +143,7 @@ public class AuthenticationController extends AbstractStaticController {
 			return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
 
 		} catch (ServiceUnavailableException e) {
+			
 			LOGGER.error(e.getMessage());
 			throw new InternalServerErrorException(e.getMessage());
 		}

@@ -1,5 +1,7 @@
 package com.nowellpoint.api.idp;
 
+import java.util.Locale;
+
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.idp.model.AuthenticationException;
@@ -8,6 +10,7 @@ import com.nowellpoint.api.idp.model.Keys;
 import com.nowellpoint.api.idp.model.TokenResponse;
 import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.service.AuthenticationService;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -64,9 +67,9 @@ public class OktaAuthenticationService implements AuthenticationService {
 				.path(VERSION)
 				.path(TOKEN)
 				.parameter(GRANT_TYPE, PASSWORD)
+				.parameter(SCOPE, OFFLINE_ACCESS)
 				.parameter(USERNAME, username)
 				.parameter(PASSWORD, password)
-				.parameter(SCOPE, OFFLINE_ACCESS)
 				.execute();
 		
 		TokenResponse response = null;
@@ -74,10 +77,10 @@ public class OktaAuthenticationService implements AuthenticationService {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			response = httpResponse.getEntity(TokenResponse.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);	
+			Error error = httpResponse.getEntity(Error.class);
 			LOG.debug(error.getError());
 			LOG.debug(error.getErrorDescription());
-			throw new AuthenticationException(error);
+			throw new AuthenticationException(error.getError(), MessageProvider.getMessage(Locale.US, "login.error"));
 		}
 		
 		return response;
@@ -97,8 +100,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			keys = httpResponse.getEntity(Keys.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);	
-			throw new AuthenticationException(error);
+			//Error error = httpResponse.getEntity(Error.class);	
+			//throw new AuthenticationException(error);
 		}
 		
 		return keys;
@@ -128,8 +131,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			response = httpResponse.getEntity(TokenResponse.class);
 		} else {
-			Error error = httpResponse.getEntity(Error.class);	
-			throw new AuthenticationException(error);
+		//	Error error = httpResponse.getEntity(Error.class);	
+		//	throw new AuthenticationException(error);
 		}
 		
 		return response;

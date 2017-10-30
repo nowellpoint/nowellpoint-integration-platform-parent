@@ -30,23 +30,22 @@ public class RegistrationResource extends AbstractResource {
 	}
 	
 	public Registration get(String id) {
-		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl())
-				.accept(MediaType.APPLICATION_JSON)
+		HttpResponse httpResponse = RestResource.get(environment.getEnvironmentUrl()).accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.execute();
-		
+				.path(id)
+				.execute();
+
 		Registration resource = null;
-		
+
 		if (httpResponse.getStatusCode() == Status.OK) {
 			resource = httpResponse.getEntity(Registration.class);
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return resource;
+		}
+
+		return resource;
 	}
 	
 	public CreateResult<Registration> signUp(SignUpRequest request) {
@@ -55,25 +54,22 @@ public class RegistrationResource extends AbstractResource {
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.parameter("firstName", request.getFirstName())
-				.parameter("lastName", request.getLastName())
-				.parameter("email", request.getEmail())
-				.parameter("countryCode", request.getCountryCode())
-				.parameter("domain", request.getDomain())
-				.parameter("planId", request.getPlanId())
-				.parameter("phone", request.getPhone())
-    			.execute();
-		
+				.parameter("lastName", request.getLastName()).parameter("email", request.getEmail())
+				.parameter("countryCode", request.getCountryCode()).parameter("domain", request.getDomain())
+				.parameter("planId", request.getPlanId()).parameter("phone", request.getPhone())
+				.execute();
+
 		CreateResult<Registration> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.CREATED) {
-    		Registration resource = httpResponse.getEntity(Registration.class);
-    		result = new CreateResultImpl<Registration>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new CreateResultImpl<Registration>(error);
-    	}
-    	
-    	return result;
+
+		if (httpResponse.getStatusCode() == Status.CREATED) {
+			Registration resource = httpResponse.getEntity(Registration.class);
+			result = new CreateResultImpl<Registration>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new CreateResultImpl<Registration>(error);
+		}
+
+		return result;
 	}
 	
 	public UpdateResult<Registration> update(String id, UpdateRegistrationRequest request) {
@@ -84,19 +80,19 @@ public class RegistrationResource extends AbstractResource {
 				.path(id)
 				.parameter("domain", request.getDomain())
 				.parameter("planId", request.getPlanId())
-    			.execute();
-		
+				.execute();
+
 		UpdateResult<Registration> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		Registration resource = httpResponse.getEntity(Registration.class);
-    		result = new UpdateResultImpl<Registration>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Registration>(error);
-    	}
-    	
-    	return result;
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Registration resource = httpResponse.getEntity(Registration.class);
+			result = new UpdateResultImpl<Registration>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Registration>(error);
+		}
+
+		return result;
 	}
 	
 	public UpdateResult<Registration> verifyRegistration(String emailVerificationToken) {
@@ -104,20 +100,19 @@ public class RegistrationResource extends AbstractResource {
 				.accept(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path("verify-email")
-				.path(emailVerificationToken)
-    			.execute();
-		
+				.path(emailVerificationToken).execute();
+
 		UpdateResult<Registration> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		Registration resource = httpResponse.getEntity(Registration.class);
-    		result = new UpdateResultImpl<Registration>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Registration>(error);
-    	}
-    	
-    	return result;
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Registration resource = httpResponse.getEntity(Registration.class);
+			result = new UpdateResultImpl<Registration>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Registration>(error);
+		}
+
+		return result;
 	}
 	
 	public UpdateResult<Registration> provisionFreePlan(String id) {
@@ -127,19 +122,19 @@ public class RegistrationResource extends AbstractResource {
 				.path(RESOURCE_CONTEXT)
 				.path(id)
 				.path("provision")
-    			.execute();
-		
+				.execute();
+
 		UpdateResult<Registration> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		Registration resource = httpResponse.getEntity(Registration.class);
-    		result = new UpdateResultImpl<Registration>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Registration>(error);
-    	}
-    	
-    	return result;
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Registration resource = httpResponse.getEntity(Registration.class);
+			result = new UpdateResultImpl<Registration>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Registration>(error);
+		}
+
+		return result;
 	}
 	
 	public UpdateResult<Registration> provisionPaidPlan(String id, ProvisionRequesst request) {
@@ -154,26 +149,26 @@ public class RegistrationResource extends AbstractResource {
 				.parameter("expirationYear", request.getExpirationYear())
 				.parameter("cardNumber", request.getCardNumber())
 				.parameter("cvv", request.getCvv())
-    			.execute();
-		
+				.execute();
+
 		UpdateResult<Registration> result = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		Registration resource = httpResponse.getEntity(Registration.class);
-    		result = new UpdateResultImpl<Registration>(resource);
-    	} else {
-    		Error error = httpResponse.getEntity(Error.class);
-    		result = new UpdateResultImpl<Registration>(error);
-    	}
-    	
-    	return result;
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			Registration resource = httpResponse.getEntity(Registration.class);
+			result = new UpdateResultImpl<Registration>(resource);
+		} else {
+			Error error = httpResponse.getEntity(Error.class);
+			result = new UpdateResultImpl<Registration>(error);
+		}
+
+		return result;
 	}
 	
 	public DeleteResult delete(String id) {
 		HttpResponse httpResponse = RestResource.delete(environment.getEnvironmentUrl())
 				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.execute();
+				.path(id)
+				.execute();
 		
 		DeleteResult deleteResult = null;
 		

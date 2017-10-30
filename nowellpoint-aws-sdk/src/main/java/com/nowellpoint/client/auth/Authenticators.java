@@ -36,59 +36,59 @@ public class Authenticators {
 	
 	public static class PasswordGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(PasswordGrantRequest grantRequest) {
-			
+
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
-	    			.accept(MediaType.APPLICATION_JSON)
-	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-	    			.path("oauth")
-	    			.path("token")
-	    			.basicAuthorization(grantRequest.getUsername(), grantRequest.getPassword())
-	    			.parameter("grant_type", "password")
-	    			.execute();
-		
-	    	int statusCode = httpResponse.getStatusCode();
-	    	
-	    	if (statusCode == Status.OK) {
-	    		
-	    		Token token = httpResponse.getEntity(Token.class);
-		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
-		    	return response;
-		    	
-	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
-	    	} else {
-	    		throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.path("oauth")
+					.path("token")
+					.basicAuthorization(grantRequest.getUsername(), grantRequest.getPassword())
+					.parameter("grant_type", "password")
+					.execute();
+
+			int statusCode = httpResponse.getStatusCode();
+
+			if (statusCode == Status.OK) {
+
+				Token token = httpResponse.getEntity(Token.class);
+				OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
+				return response;
+
+			} else if (statusCode == Status.NOT_AUTHORIZED) {
+				Error error = httpResponse.getEntity(Error.class);
+				throw new OauthException(error.getCode(), error.getErrorMessage());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+			}
 		}
 	}
 	
 	public static class ClientCredentialsGrantResponseFactory {
 		public OauthAuthenticationResponse authenticate(ClientCredentialsGrantRequest grantRequest) {
-						
+
 			HttpResponse httpResponse = RestResource.post(grantRequest.getEnvironment().getEnvironmentUrl())
-	    			.accept(MediaType.APPLICATION_JSON)
-	    			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-	    			.path("oauth")
-	    			.path("token")
-	    			.basicAuthorization(grantRequest.getApiKeyId(), grantRequest.getApiKeySecret())
-	    			.parameter("grant_type", "client_credentials")
-	    			.execute();
-	    			
-	    	int statusCode = httpResponse.getStatusCode();
-	    			
-	    	if (statusCode == Status.OK) {
-	    		
-	    		Token token = httpResponse.getEntity(Token.class);
-		    	OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
-		    	return response;
-		    	
-	    	} else if (statusCode == Status.NOT_AUTHORIZED) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
-	    	} else {
-	    		throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
+					.accept(MediaType.APPLICATION_JSON)
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.path("oauth")
+					.path("token")
+					.basicAuthorization(grantRequest.getApiKeyId(), grantRequest.getApiKeySecret())
+					.parameter("grant_type", "client_credentials")
+					.execute();
+
+			int statusCode = httpResponse.getStatusCode();
+
+			if (statusCode == Status.OK) {
+
+				Token token = httpResponse.getEntity(Token.class);
+				OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
+				return response;
+
+			} else if (statusCode == Status.NOT_AUTHORIZED) {
+				Error error = httpResponse.getEntity(Error.class);
+				throw new OauthException(error.getCode(), error.getErrorMessage());
+			} else {
+				throw new ServiceUnavailableException(httpResponse.getAsString());
+			}
 		}
 	}
 	
@@ -96,16 +96,16 @@ public class Authenticators {
 		public void revoke(RevokeTokenRequest revokeTokenRequest) {
 			HttpResponse httpResponse = RestResource.delete(revokeTokenRequest.getToken().getEnvironmentUrl())
 					.bearerAuthorization(revokeTokenRequest.getToken().getAccessToken())
-	    			.path("oauth")
-	    			.path("token")
-	    			.execute();
-	    	
-	    	int statusCode = httpResponse.getStatusCode();
-	    	
-	    	if (statusCode != Status.NO_CONTENT) {
-	    		Error error = httpResponse.getEntity(Error.class);
-	    		throw new OauthException(error.getCode(), error.getErrorMessage());
-	    	}
+					.path("oauth")
+					.path("token")
+					.execute();
+
+			int statusCode = httpResponse.getStatusCode();
+
+			if (statusCode != Status.NO_CONTENT) {
+				Error error = httpResponse.getEntity(Error.class);
+				throw new OauthException(error.getCode(), error.getErrorMessage());
+			}
 		}
 	}
 }
