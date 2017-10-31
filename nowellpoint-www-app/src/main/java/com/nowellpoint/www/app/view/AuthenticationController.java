@@ -139,7 +139,7 @@ public class AuthenticationController extends AbstractStaticController {
 			LOGGER.info(locales[0]);
 
 			Map<String, Object> model = new HashMap<>();
-			model.put("errorMessage", e.getMessage());
+			model.put("errorMessage", e.getErrorDescription());
 			return render(AuthenticationController.class, configuration, request, response, model, Template.LOGIN);
 
 		} catch (ServiceUnavailableException e) {

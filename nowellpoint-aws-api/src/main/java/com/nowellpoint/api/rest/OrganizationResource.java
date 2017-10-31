@@ -27,10 +27,10 @@ public interface OrganizationResource {
 	public Response changePlan(
 			@PathParam("id") String id, 
 			@FormParam("planId") String planId,
+			@FormParam("number") String number, 
 			@FormParam("cardholderName") String cardholderName, 
 			@FormParam("expirationMonth") String expirationMonth, 
 			@FormParam("expirationYear") String expirationYear,
-			@FormParam("number") String number, 
 			@FormParam("cvv") String cvv);
 	
 	@POST

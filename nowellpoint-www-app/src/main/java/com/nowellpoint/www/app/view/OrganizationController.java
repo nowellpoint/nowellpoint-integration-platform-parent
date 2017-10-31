@@ -149,18 +149,21 @@ public class OrganizationController extends AbstractStaticController {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id); 
-		
 		String planId = request.params(":planId");
-		String paymentMethodToken = request.queryParams("paymentMethodToken");
+		String cardholderName = request.queryParamOrDefault("cardholderName", "");
+		String number = request.queryParamOrDefault("number", "");
+		String expirationMonth = request.queryParamOrDefault("expirationMonth", "");
+		String expirationYear = request.queryParamOrDefault("expirationYear", "");
+		String cvv = request.queryParamOrDefault("cvv", "");
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-				.withUserProfileId(userProfile.getId())
-				.withPaymentMethodToken(paymentMethodToken)
-				.withPlanId(planId);
+				.withOrganizationId(id)
+				.withPlanId(planId)
+				.withCardholderName(cardholderName)
+				.withNumber(number)
+				.withExpirationMonth(expirationMonth)
+				.withExpirationYear(expirationYear)
+				.withCvv(cvv);
 		
 		UpdateResult<Subscription> updateResult = NowellpointClient.defaultClient(token)
 				.organization()

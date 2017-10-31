@@ -28,7 +28,7 @@ public class Subscription implements Serializable {
 
 	private static final long serialVersionUID = -7569793449815113870L;
 	
-	private String subscriptionId;
+	private String number;
 	
 	private String planId;
 	
@@ -69,12 +69,12 @@ public class Subscription implements Serializable {
 		
 	}
 
-	public String getSubscriptionId() {
-		return subscriptionId;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setSubscriptionId(String subscriptionId) {
-		this.subscriptionId = subscriptionId;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 	public String getPlanId() {

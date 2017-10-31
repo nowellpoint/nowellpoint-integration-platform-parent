@@ -173,7 +173,7 @@
                                     <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="cardNumber" id="cardNumber" class="form-control" placeholder="${labels['number']}">
+                                    <input type="text" name="number" id="number" class="form-control" placeholder="${labels['number']}">
                                 </div>
                                 <div class="row no-gutters">
                                     <div class="form-group col-3">
@@ -185,20 +185,18 @@
                                     </div>
                                     <div class="form-group col-2"></div>
                                     <div class="form-group col-3">
-                                        <input type="text" name="securityCode" id="securityCode" class="form-control" required placeholder="${labels['cvv']}">
+                                        <input type="text" name="cvv" id="cvv" class="form-control" required placeholder="${labels['cvv']}">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- <#else> -->
-                        <input type="hidden" name="paymentMethodToken" id="paymentMethodToken" value="${(organization.subscription.creditCard.token)!}" />
                         <!-- </#if> -->
                     </#if>
                     <div class="row">
                         <div class="col-12 text-right">
                             <a href="${links['organization']}/${organization.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
                             <a href="${links['organization']}/${organization.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
-                            <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
+                            <button type="button" id="change-plan" class="btn btn-primary">${labels["set.plan"]}</button>
                         </div>
                     </div>
                 </form>
@@ -221,7 +219,7 @@
                             jQuery("#notification").modal('show');
                             setTimeout(function () {
                                 $("#notification").slideUp('slow').fadeOut(function () {
-                                    $(location).attr("href", "${links['organization']}/${organization.id}/current-plan");
+                                    $(location).attr("href", "${links['organization']}/${organization.id}");
                                 });
                             }, 1000);
                         } else {

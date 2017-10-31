@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = Subscription.class)
 @JsonDeserialize(as = Subscription.class)
 public abstract class AbstractSubscription {
-	public abstract @Nullable String getSubscriptionId();
+	public abstract @Nullable String getNumber();
 	public abstract String getPlanId();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();

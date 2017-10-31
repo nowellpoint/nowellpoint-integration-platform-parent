@@ -46,10 +46,10 @@ public interface OrganizationService {
 	public Organization changePlan(
 			String id, 
 			Plan plan,
-			String cardholderName, 
+			String cardholderName,
+			String number,
 			String expirationMonth, 
 			String expirationYear,
-			String number, 
 			String cvv);
 	
 	public Organization updateCreditCard(

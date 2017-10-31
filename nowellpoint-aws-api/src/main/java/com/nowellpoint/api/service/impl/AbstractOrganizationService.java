@@ -54,6 +54,9 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			set(id, document);
 		}
 		Set<UserProfile> users = getUsers( id );
+		if (users == null) {
+			System.out.println("users are null");
+		}
 		Organization organization = Organization.of( document, users );
 		return organization;
 	}

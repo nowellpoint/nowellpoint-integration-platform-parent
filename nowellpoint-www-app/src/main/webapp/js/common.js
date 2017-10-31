@@ -16,7 +16,8 @@ $(document)
         $('#overlay').show();
     })
     .ajaxStop(function () {
-        $('#spinner').hide();
+        $('#overlay').hide();
+        
     });
 
 $(document).ready(function () {

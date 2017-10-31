@@ -28,6 +28,7 @@ import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
+import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.util.UserContext;
@@ -87,7 +88,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
 		
-		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(id, subscriptionRequest);
+		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -98,10 +99,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.billingFrequency(plan.getBillingFrequency())
-				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
-				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
-				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())
-				.status(subscriptionResult.getSubscription().getStatus().name())
+				.nextBillingDate(subscriptionResult.getTarget().getNextBillingDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
+				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
+				.status(subscriptionResult.getTarget().getStatus().name())
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
@@ -121,10 +122,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	public Organization changePlan(
 			String id, 
 			Plan plan,
-			String cardholderName, 
+			String cardholderName,
+			String number, 
 			String expirationMonth, 
 			String expirationYear,
-			String number, 
 			String cvv) {
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
@@ -149,7 +150,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
 		
-		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(id, subscriptionRequest);
+		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
 		CreditCard creditCard = CreditCard.builder()
 				.addedOn(now)
@@ -163,6 +164,12 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.token(creditCardResult.getTarget().getToken())
 				.build();
 		
+
+		
+		
+		
+		
+		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.creditCard(creditCard)
@@ -173,10 +180,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.billingFrequency(plan.getBillingFrequency())
-				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
-				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
-				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())
-				.status(subscriptionResult.getSubscription().getStatus().name())
+				.nextBillingDate(subscriptionResult.getTarget().getNextBillingDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
+				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
+				.status(subscriptionResult.getTarget().getStatus().name())
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
@@ -189,7 +196,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		super.update(newInstance);
 		
-		return newInstance;
+		return organization;
 		
 	}
 	
@@ -436,7 +443,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.build();
 		
 		Subscription subscription = Subscription.builder()
-				.subscriptionId(subscriptionResult.getTarget().getId())
+				.number(subscriptionResult.getTarget().getId())
 				.addedOn(now)
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
@@ -473,7 +480,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public void deleteOrganization(String id) {
 		Organization organization = findById(id);
-		deleteSubscription(organization.getNumber(), organization.getSubscription().getSubscriptionId());
+		deleteSubscription(organization.getNumber(), organization.getSubscription().getNumber());
 		removeCustomer(organization.getNumber());
 		super.delete(organization);
 	}
@@ -507,8 +514,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return gateway.subscription().create(subscriptionRequest);
 	}
 	
-	private Result<com.braintreegateway.Subscription> updateSubscription(String id, SubscriptionRequest subscriptionRequest) {
-		return gateway.subscription().update(id, subscriptionRequest);
+	private Result<com.braintreegateway.Subscription> updateSubscription(String number, SubscriptionRequest subscriptionRequest) {
+		return gateway.subscription().update(number, subscriptionRequest);
 	}
 	
 	private Result<com.braintreegateway.Subscription> deleteSubscription(String customerId, String subscriptionId) {

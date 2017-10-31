@@ -315,10 +315,14 @@ public class OrganizationResource extends AbstractResource {
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.path(RESOURCE_CONTEXT)
-					.path(subscriptionRequest.getUserProfileId())
+					.path(subscriptionRequest.getOrganizationId())
 					.path("subscription")
 					.parameter("planId", subscriptionRequest.getPlanId())
-					.parameter("paymentMethodToken", subscriptionRequest.getPaymentMethodToken())
+					.parameter("cardholderName", subscriptionRequest.getCardholderName())
+					.parameter("number", subscriptionRequest.getNumber())
+					.parameter("expirationMonth", subscriptionRequest.getExpirationMonth())
+					.parameter("expirationYear", subscriptionRequest.getExpirationYear())
+					.parameter("cvv", subscriptionRequest.getCvv())
 					.execute();
 			
 			UpdateResult<Subscription> result = null;

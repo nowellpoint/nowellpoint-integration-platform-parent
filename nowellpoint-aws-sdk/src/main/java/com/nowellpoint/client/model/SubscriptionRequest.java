@@ -2,22 +2,30 @@ package com.nowellpoint.client.model;
 
 public class SubscriptionRequest {
 	
-	private String userProfileId;
+	private String organizationId;
 	
 	private String planId;
 	
-	private String paymentMethodToken;
+	private String cardholderName;
+	
+	private String number;
+	
+	private String expirationMonth;
+	
+	private String expirationYear;
+	
+	private String cvv;
 	
 	public SubscriptionRequest() {
 		
 	}
 
-	public String getUserProfileId() {
-		return userProfileId;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setUserProfileId(String userProfileId) {
-		this.userProfileId = userProfileId;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getPlanId() {
@@ -28,16 +36,48 @@ public class SubscriptionRequest {
 		this.planId = planId;
 	}
 
-	public String getPaymentMethodToken() {
-		return paymentMethodToken;
+	public String getCardholderName() {
+		return cardholderName;
 	}
 
-	public void setPaymentMethodToken(String paymentMethodToken) {
-		this.paymentMethodToken = paymentMethodToken;
+	public void setCardholderName(String cardholderName) {
+		this.cardholderName = cardholderName;
 	}
 
-	public SubscriptionRequest withUserProfileId(String userProfileId) {
-		setUserProfileId(userProfileId);
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getExpirationMonth() {
+		return expirationMonth;
+	}
+
+	public void setExpirationMonth(String expirationMonth) {
+		this.expirationMonth = expirationMonth;
+	}
+
+	public String getExpirationYear() {
+		return expirationYear;
+	}
+
+	public void setExpirationYear(String expirationYear) {
+		this.expirationYear = expirationYear;
+	}
+
+	public String getCvv() {
+		return cvv;
+	}
+
+	public void setCvv(String cvv) {
+		this.cvv = cvv;
+	}
+
+	public SubscriptionRequest withOrganizationId(String organizationId) {
+		setOrganizationId(organizationId);
 		return this;
 	}
 	
@@ -46,8 +86,28 @@ public class SubscriptionRequest {
 		return this;
 	}
 	
-	public SubscriptionRequest withPaymentMethodToken(String paymentMethodToken) {
-		setPaymentMethodToken(paymentMethodToken);
+	public SubscriptionRequest withCardholderName(String cardholderName) {
+		setCardholderName(cardholderName);
+		return this;
+	}
+	
+	public SubscriptionRequest withNumber(String number) {
+		setNumber(number);
+		return this;
+	}
+	
+	public SubscriptionRequest withExpirationMonth(String expirationMonth) {
+		setExpirationMonth(expirationMonth);
+		return this;
+	}
+	
+	public SubscriptionRequest withExpirationYear(String expirationYear) {
+		setExpirationYear(expirationYear);
+		return this;
+	}
+	
+	public SubscriptionRequest withCvv(String cvv) {
+		setCvv(cvv);
 		return this;
 	}
 }

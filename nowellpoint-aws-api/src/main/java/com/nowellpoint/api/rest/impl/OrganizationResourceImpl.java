@@ -8,6 +8,7 @@ import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PlanService;
+import com.nowellpoint.util.Assert;
 
 public class OrganizationResourceImpl implements OrganizationResource {
 	
@@ -25,14 +26,14 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	}
 	
 	@Override
-	public Response changePlan(String id, String planId, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
+	public Response changePlan(String id, String planId, String cardholderName, String number, String expirationMonth, String expirationYear, String cvv) {
 		Plan plan = planService.findById(planId);
 		
 		Organization organization = null;
-		if (plan.getPrice().getUnitPrice() > 0) {
-			organizationService.changePlan(id, plan);
+		if (plan.getPrice().getUnitPrice() == 0 || Assert.isNullOrEmpty(number)) {
+			organization = organizationService.changePlan(id, plan);
 		} else {
-			organizationService.changePlan(planId, plan, cardholderName, expirationMonth, expirationYear, number, cvv);
+			organization = organizationService.changePlan(planId, plan, cardholderName, expirationMonth, expirationYear, number, cvv);
 		}
 		
 		return Response.ok(organization)
