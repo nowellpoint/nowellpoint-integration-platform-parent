@@ -1,10 +1,16 @@
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class Address {
+	
+	private String id;
 	
 	private String street;
 
 	private String city;
+	
+	private String stateCode;
 
 	private String state;
 
@@ -18,8 +24,20 @@ public class Address {
 
 	private String longitude;
 	
+	private Date addedOn;
+	
+	private Date updatedOn;
+	
 	public Address() {
 		
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getStreet() {
@@ -36,6 +54,14 @@ public class Address {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
 
 	public String getState() {
@@ -84,6 +110,22 @@ public class Address {
 
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 
 	public Address withStreet(String street) {

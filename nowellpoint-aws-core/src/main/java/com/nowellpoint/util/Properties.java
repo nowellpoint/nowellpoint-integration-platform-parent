@@ -28,12 +28,12 @@ public class Properties {
 	public static final String SALESFORCE_SECURITY_TOKEN = "salesforce.security.token";
 	public static final String SALESFORCE_REDIRECT_URI = "salesforce.redirect.uri";
 	public static final String SALESFORCE_API_VERSION = "salesforce.api.version";
-	public static final String STORMPATH_API_KEY_ID = "stormpath.api.key.id";
-	public static final String STORMPATH_API_KEY_SECRET = "stormpath.api.key.secret";
-	public static final String STORMPATH_API_ENDPOINT = "stormpath.api.endpoint";
-	public static final String STORMPATH_APPLICATION_ID = "stormpath.application.id";
-	public static final String STORMPATH_DIRECTORY_ID = "stormpath.directory.id";
-	public static final String STORMPATH_GROUP_ID = "stormpath.group.id";
+	public static final String OKTA_API_KEY = "okta.api.key";
+	public static final String OKTA_ORG_URL = "okta.org.url";
+	public static final String OKTA_GROUP_ID = "okta.group.id";
+	public static final String OKTA_CLIENT_ID = "okta.client.id";
+	public static final String OKTA_CLIENT_SECRET = "okta.client.secret";
+	public static final String OKTA_AUTHORIZATION_SERVER = "okta.authorization.server";
 	public static final String SENDGRID_API_KEY = "sendgrid.api.key";
 	public static final String REDIS_PASSWORD = "redis.password";
 	public static final String REDIS_HOST = "redis.host";
@@ -47,6 +47,7 @@ public class Properties {
 	public static final String VERIFY_EMAIL_REDIRECT = "verify.email.redirect";
 	public static final String CLOUDFRONT_HOSTNAME = "cloudfront.hostname";
 	public static final String APPLICATION_HOSTNAME = "application.hostname";
+	public static final String API_HOSTNAME = "api.hostname";
 	
 	public static void loadProperties(String propertyStore) {
 		Map<String,String> properties = getProperties(propertyStore);

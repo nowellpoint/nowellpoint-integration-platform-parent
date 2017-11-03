@@ -6,9 +6,9 @@ public class JobType extends AbstractResource {
 	
 	private Meta meta;
 	
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;
+	private AbstractUserInfo lastUpdatedBy;
 	
 	private String name;
 	
@@ -50,19 +50,19 @@ public class JobType extends AbstractResource {
 		this.meta = meta;
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 

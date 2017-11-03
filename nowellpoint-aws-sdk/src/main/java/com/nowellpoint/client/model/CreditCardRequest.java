@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 public class CreditCardRequest {
 	
-	private String accountProfileId;
+	private String organizationId;
 	
 	private String token;
 	
@@ -36,12 +36,12 @@ public class CreditCardRequest {
 		
 	}
 
-	public String getAccountProfileId() {
-		return accountProfileId;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setAccountProfileId(String accountProfileId) {
-		this.accountProfileId = accountProfileId;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 	
 	public String getToken() {
@@ -156,8 +156,8 @@ public class CreditCardRequest {
 		this.countryCode = countryCode;
 	}
 
-	public CreditCardRequest withAccountProfileId(String accountProfileId) {
-		setAccountProfileId(accountProfileId);
+	public CreditCardRequest withOrganizationId(String organizationId) {
+		setOrganizationId(organizationId);
 		return this;
 	}
 	

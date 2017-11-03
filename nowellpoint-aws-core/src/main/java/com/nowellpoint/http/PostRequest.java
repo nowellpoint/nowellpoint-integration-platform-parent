@@ -2,7 +2,9 @@ package com.nowellpoint.http;
 
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
 
 public class PostRequest extends HttpRequest {
 
@@ -34,7 +36,7 @@ public class PostRequest extends HttpRequest {
 		return this;
 	}
 	
-	public PostRequest parameters(Map<String, String> parameters) {
+	public PostRequest parameters(ArrayList<NameValuePair> parameters) {
 		super.parameters(parameters);
 		return this;
 	}

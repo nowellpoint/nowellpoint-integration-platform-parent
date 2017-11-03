@@ -1,8 +1,10 @@
 package com.nowellpoint.client.model;
 
+import java.util.Locale;
+
 public class GetPlansRequest {
 	
-	private String locale;
+	private Locale locale;
 	
 	private String language;
 	
@@ -10,11 +12,11 @@ public class GetPlansRequest {
 		
 	}
 	
-	public String getLocale() {
+	public Locale getLocale() {
 		return locale;
 	}
 
-	public void setLocale(String locale) {
+	public void setLocale(Locale locale) {
 		this.locale = locale;
 	}
 
@@ -26,7 +28,7 @@ public class GetPlansRequest {
 		this.language = language;
 	}
 
-	public GetPlansRequest withLocale(String locale) {
+	public GetPlansRequest withLocale(Locale locale) {
 		setLocale(locale);
 		return this;
 	}

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -52,7 +52,7 @@ public abstract class HttpRequest {
 	private String target;
 	private String path;
 	private List<Header> headers;
-	private Map<String,String> parameters;
+	private List<NameValuePair> parameters;
 	private List<NameValuePair> queryParameters;
 	private Object body;
 	
@@ -62,7 +62,7 @@ public abstract class HttpRequest {
 		this.target = target;
 		this.path = new String();
 		this.headers = new ArrayList<Header>();
-		this.parameters = new HashMap<String,String>();
+		this.parameters = new ArrayList<NameValuePair>();
 		this.queryParameters = new ArrayList<NameValuePair>();
 	}
 	
@@ -87,17 +87,12 @@ public abstract class HttpRequest {
 		return this;
 	}
 	
-	protected HttpRequest parameter(String key, String value) {
-		parameters.put(key, value);
+	protected HttpRequest parameter(String key, Object value) {
+		parameters.add(new BasicNameValuePair(key, String.valueOf(value)));
 		return this;
 	}
 	
-	protected HttpRequest parameter(String key, Boolean value) {
-		parameters.put(key, String.valueOf(value));
-		return this;
-	}
-	
-	protected HttpRequest parameters(Map<String, String> parameters) {
+	protected HttpRequest parameters(ArrayList<NameValuePair> parameters) {
 		this.parameters = parameters;
 		return this;
 	}
@@ -162,10 +157,8 @@ public abstract class HttpRequest {
 			sb.append(path);
 		}
 		
-		URIBuilder builder = new URIBuilder()
-				.setPath(sb.toString())
-				.addParameters(queryParameters);
-		
+		URIBuilder builder = new URIBuilder(sb.toString()).addParameters(queryParameters);
+
 		return builder.build();
 	}
 	
@@ -189,7 +182,7 @@ public abstract class HttpRequest {
 		
 		public HttpResponseImpl() throws IOException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 			
-			URI uri = buildTarget();
+			URI target = buildTarget();
 			
 			SSLContextBuilder builder = new SSLContextBuilder();
 		    builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
@@ -199,10 +192,10 @@ public abstract class HttpRequest {
 			
 			CloseableHttpResponse httpResponse = null;
 			
-			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, uri.getPath()));
+			LOG.info(String.format("[Nowellpoint] [%1$tY-%1$tm-%1$td %tT %2s] %3s %4s", new Date(), TimeZone.getDefault().getID(), httpMethod, target.getPath()));
 			
 			if (HttpMethod.POST.equals(httpMethod)) {
-				HttpPost post = new HttpPost(uri);
+				HttpPost post = new HttpPost(target);
 				post.setHeaders(addHeaders());
 				if (Optional.ofNullable(post.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
 					HttpEntity entity = addBody(post.getFirstHeader(HttpHeaders.CONTENT_TYPE).getValue());
@@ -210,7 +203,7 @@ public abstract class HttpRequest {
 				}
 		        httpResponse = httpClient.execute(post);
 			} else if (HttpMethod.PUT.equals(httpMethod)) {
-				HttpPut put = new HttpPut(uri);
+				HttpPut put = new HttpPut(target);
 				put.setHeaders(addHeaders());
 				if (! Optional.ofNullable(put.getFirstHeader(HttpHeaders.CONTENT_TYPE)).isPresent()) {
 					throw new IOException("Missing content type header");
@@ -219,11 +212,11 @@ public abstract class HttpRequest {
 		        put.setEntity(entity);
 		        httpResponse = httpClient.execute(put);
 			} else if (HttpMethod.GET.equals(httpMethod)) {
-				HttpGet get = new HttpGet(uri);
+				HttpGet get = new HttpGet(target);
 				get.setHeaders(addHeaders());
 		        httpResponse = httpClient.execute(get);
 			} else if (HttpMethod.DELETE.equals(httpMethod)) {
-				HttpDelete delete = new HttpDelete(uri);
+				HttpDelete delete = new HttpDelete(target);
 				delete.setHeaders(addHeaders());
 		        httpResponse = httpClient.execute(delete);
 			} else {
@@ -232,7 +225,7 @@ public abstract class HttpRequest {
 			}
 			
 			statusCode = httpResponse.getStatusLine().getStatusCode();
-			url = uri.toURL();
+			url = target.toURL();
 			
 			if (httpResponse.getEntity() != null) {
 				entity = httpResponse.getEntity().getContent();
@@ -293,22 +286,12 @@ public abstract class HttpRequest {
 		}
 		
 		private HttpEntity addBody(String contentType) throws IOException {
-			if (! parameters.isEmpty()) {
-				
-				StringBuilder sb = new StringBuilder();
-				parameters.keySet().forEach(param -> {
-					sb.append(param);
-					sb.append("=");
-					if (parameters.get(param) != null) {
-						sb.append(parameters.get(param));
-					}
-					sb.append("&");
-				});
-				
-				body = sb.toString();
-			}
 			
 			HttpEntity httpEntity = null;
+			
+			if (contentType.equals(MediaType.APPLICATION_FORM_URLENCODED) && ! parameters.isEmpty()) {
+				httpEntity = new UrlEncodedFormEntity(parameters, "UTF-8");
+			}
 			
 			if (Optional.ofNullable(body).isPresent()) {
 				

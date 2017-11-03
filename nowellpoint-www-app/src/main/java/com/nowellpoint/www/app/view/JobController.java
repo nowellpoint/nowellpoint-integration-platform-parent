@@ -224,7 +224,7 @@ public class JobController extends AbstractStaticController {
 				.withRunAt(runAt)
 				.withJobTypeId(jobTypeId)
 				.withDescription(description)
-				.withTimeZone(identity.getTimeZoneSidKey())
+				.withTimeZone(identity.getTimeZone())
 				.withNotificationEmail(notificationEmail)
 				.withSlackWebhookUrl(slackWebhookUrl)
 				.withScheduleOption(scheduleOption)
@@ -264,7 +264,7 @@ public class JobController extends AbstractStaticController {
 		JobRequest jobRequest = new JobRequest()
 				//.withRunAt(runAt)
 				.withDescription(description)
-				.withTimeZone(identity.getTimeZoneSidKey())
+				.withTimeZone(identity.getTimeZone())
 				.withNotificationEmail(notificationEmail)
 				.withSlackWebhookUrl(slackWebhookUrl);
 				//.withScheduleOption(scheduleOption)

@@ -1,5 +1,6 @@
 package com.nowellpoint.client.resource;
 
+import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.PlanList;
@@ -12,12 +13,16 @@ import com.nowellpoint.http.Status;
 
 public class PlanResource extends AbstractResource {
 	
+	public PlanResource(Environment environment) {
+		super(environment);
+	}
+	
 	public PlanResource(Token token) {
 		super(token);
 	}
 	
 	public Plan get(String id) {
-		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token != null ? token.getEnvironmentUrl() : environment.getEnvironmentUrl())
 				.path("plans")
 				.path(id)
 				.execute();
@@ -36,9 +41,9 @@ public class PlanResource extends AbstractResource {
 	}
 	
 	public PlanList getPlans(GetPlansRequest request) {
-		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+		HttpResponse httpResponse = RestResource.get(token != null ? token.getEnvironmentUrl() : environment.getEnvironmentUrl())
 				.path("plans")
-				.queryParameter("locale", request.getLocale())
+				.queryParameter("locale", request.getLocale().toString())
 				.queryParameter("language", request.getLanguage())
 				.execute();
 		

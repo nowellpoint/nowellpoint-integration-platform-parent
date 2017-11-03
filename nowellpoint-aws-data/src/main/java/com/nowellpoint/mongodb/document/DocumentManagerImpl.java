@@ -7,6 +7,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.nowellpoint.mongodb.DocumentManager;
@@ -87,7 +88,11 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 	public <T> void insertOne(T document) {
 		MongoCollection<Document> collection = getCollection( document.getClass() );
 		Document bson = toBsonDocument(document);
-		insertOne(collection, bson);
+		try {
+			insertOne(collection, bson);
+		} catch (MongoWriteException e) {
+			throw new DocumentManagerException(e);
+		}
 		setIdValue(document, bson.get(ID));
 		refresh(document);
 	}
@@ -106,7 +111,11 @@ public class DocumentManagerImpl extends AbstractDocumentManager implements Docu
 		Object id = resolveId(document);
 		MongoCollection<Document> collection = getCollection( document.getClass() );
 		Document bson = toBsonDocument(document);
-		replaceOne( collection, bson, Filters.eq ( ID, id ) );
+		try {
+			replaceOne( collection, bson, Filters.eq ( ID, id ) );
+		} catch (MongoWriteException e) {
+			throw new DocumentManagerException(e);
+		}
 		refresh(document);
 	}
 	

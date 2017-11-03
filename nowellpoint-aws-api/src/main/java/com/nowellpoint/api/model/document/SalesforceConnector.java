@@ -36,19 +36,16 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 public class SalesforceConnector extends MongoDocument {
 
 	private static final long serialVersionUID = -3438714915624952119L;
-	
-	@EmbedOne
-	private Meta meta;
-	
+
 	private String name;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef owner;
 	
 	@EmbedOne
@@ -80,14 +77,6 @@ public class SalesforceConnector extends MongoDocument {
 	
 	public SalesforceConnector() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public String getName() {

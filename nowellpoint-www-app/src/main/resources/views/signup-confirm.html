@@ -1,49 +1,14 @@
-<!DOCTYPE HTML>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>${messages["application.title"]}</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
-    <link rel="stylesheet" href="css/media.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
-
-</head>
-
-<body>
-
-    <div class="DesignHolder">
-        <div class="LayoutFrame">
-            <div id="container">
-                <div class="About_sec" id="about">
-                    <div class="Center">
-                        <div class="leftside">
-                            <h1 class="success">${labels["almost"]}</h1>
-                            <h4 class="success">${labels["check.email"]}: ${email}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="clear"></div>
+<#import "template.html" as t>
+    <@t.page>
+        <br>
+        <br>
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-12">
+                <p class="text-success text-center"><span class="icon icon-check fa fa-4x"></span></p>
+            </div>
+            <div class="col col-lg-12">
+                <h3 class="text-success text-center">${labels["check.email"]}:</h3>
+                <h3 class="text-center"><small>${email}</small></h3>
             </div>
         </div>
-    </div>
-
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
-
-</body>
-
-</html>
+    </@t.page>

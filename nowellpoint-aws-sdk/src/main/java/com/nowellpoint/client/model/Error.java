@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 public class Error {
 	
-	private Integer code;
+	private String code;
 	
 	private String[] messages;
 	
@@ -10,11 +10,11 @@ public class Error {
 		
 	}
 
-	public Integer getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(Integer code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

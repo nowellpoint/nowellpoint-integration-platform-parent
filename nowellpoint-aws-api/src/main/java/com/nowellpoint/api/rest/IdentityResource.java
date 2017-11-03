@@ -14,7 +14,7 @@ import io.swagger.annotations.Api;
 public interface IdentityResource {
 	
 	@GET
-	@Path("{id}")
+	@Path("{organizationId}/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getId(@PathParam("id") String id);
+	public Response getIdentity(@PathParam("organizationId") String organizationId, @PathParam("userId") String userId);
 }

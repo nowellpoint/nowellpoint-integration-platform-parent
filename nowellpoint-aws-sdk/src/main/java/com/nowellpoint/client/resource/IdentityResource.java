@@ -14,13 +14,18 @@ public class IdentityResource extends AbstractResource {
 	
 	/**
 	 * 
-	 * @param environment
 	 * @param token
 	 */
 	
 	public IdentityResource(Token token) {
 		super(token);
 	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	
 	public Identity get(String id) {
 		HttpResponse httpResponse = RestResource.get(id)
@@ -39,7 +44,7 @@ public class IdentityResource extends AbstractResource {
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
 	    }
-	    	
-    	return resource;
+		
+		return resource;
 	} 
 }

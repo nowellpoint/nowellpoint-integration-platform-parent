@@ -16,9 +16,9 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 public class Dashboard extends AbstractResource {
 
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;
+	private AbstractUserInfo lastUpdatedBy;
 
 	private Integer connectors;
 	
@@ -100,19 +100,19 @@ public class Dashboard extends AbstractResource {
 		return new Dashboard(salesforceConnectorList, jobList);
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 	
@@ -166,7 +166,7 @@ public class Dashboard extends AbstractResource {
 
 	@Override
 	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.AccountProfile.class);
+		return modelMapper.map(this, com.nowellpoint.api.model.document.Dashboard.class);
 	}
 	
 	@Override

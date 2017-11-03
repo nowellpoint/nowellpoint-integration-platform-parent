@@ -1,5 +1,8 @@
 package com.nowellpoint.client.model;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 public class Identity {
 
 	private String id;
@@ -10,13 +13,11 @@ public class Identity {
 	
 	private String name;
 	
-	private Subscription subscription;
-	
-	private String timeZoneSidKey;
-	
-	private String languageSidKey;
+	private TimeZone timeZone;
 
-	private String localeSidKey;
+	private Locale locale;
+	
+	private Organization organization;
 	
 	private Address address;
 	
@@ -60,36 +61,28 @@ public class Identity {
 		this.name = name;
 	}
 
-	public Subscription getSubscription() {
-		return subscription;
+	public TimeZone getTimeZone() {
+		return timeZone;
 	}
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
+	public void setTimeZone(TimeZone timeZone) {
+		this.timeZone = timeZone;
 	}
 
-	public String getTimeZoneSidKey() {
-		return timeZoneSidKey;
+	public Locale getLocale() {
+		return locale;
 	}
 
-	public void setTimeZoneSidKey(String timeZoneSidKey) {
-		this.timeZoneSidKey = timeZoneSidKey;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
-	public String getLanguageSidKey() {
-		return languageSidKey;
+	public Organization getOrganization() {
+		return organization;
 	}
 
-	public void setLanguageSidKey(String languageSidKey) {
-		this.languageSidKey = languageSidKey;
-	}
-
-	public String getLocaleSidKey() {
-		return localeSidKey;
-	}
-
-	public void setLocaleSidKey(String localeSidKey) {
-		this.localeSidKey = localeSidKey;
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 
 	public Address getAddress() {

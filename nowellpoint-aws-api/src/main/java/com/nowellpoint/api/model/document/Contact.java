@@ -19,6 +19,7 @@
 package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Contact implements Serializable {
 	
@@ -27,6 +28,14 @@ public class Contact implements Serializable {
 	private String firstName;
 	
 	private String lastName;
+	
+	private String email;
+	
+	private String phone;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	public Contact() {
 		
@@ -46,5 +55,37 @@ public class Contact implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 }

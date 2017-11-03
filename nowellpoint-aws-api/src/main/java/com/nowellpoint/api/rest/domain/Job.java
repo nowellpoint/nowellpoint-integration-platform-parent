@@ -38,11 +38,11 @@ public class Job extends AbstractResource {
 	
 	private Source source;
 	
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;
+	private AbstractUserInfo lastUpdatedBy;
 	
-	private UserInfo owner;
+	private AbstractUserInfo owner;
 	
 	private String description;
 	
@@ -92,11 +92,11 @@ public class Job extends AbstractResource {
 			String notificationEmail,
 			String slackWebhookUrl,
 			String scheduleOption,
-			UserInfo owner,
+			AbstractUserInfo owner,
 			Date createdOn,
-			UserInfo createdBy,
+			AbstractUserInfo createdBy,
 			Date lastUpdatedOn,
-			UserInfo lastUpdatedBy,
+			AbstractUserInfo lastUpdatedBy,
 			Date nextFireTime) {
 		
 		if (Assert.isNotNull(description) && Assert.isEmpty(description)) {
@@ -131,7 +131,7 @@ public class Job extends AbstractResource {
 		this.status = JobStatus.NEW;
 	}
 	
-	public static Job of(CreateJobRequest jobRequest, UserInfo userInfo) {
+	public static Job of(CreateJobRequest jobRequest, AbstractUserInfo abstractUserInfo) {
 		
 		Schedule schedule = null;
 		
@@ -174,11 +174,11 @@ public class Job extends AbstractResource {
 				jobRequest.getNotificationEmail().orElse(null),
 				jobRequest.getSlackWebhookUrl().orElse(null),
 				jobRequest.getSchedule().isPresent() ? jobRequest.getSchedule().get().getScheduleOption() : jobRequest.getScheduleOption().get(),
-				userInfo,
+				abstractUserInfo,
 				Date.from(Instant.now()),
-				userInfo,
+				abstractUserInfo,
 				Date.from(Instant.now()),
-				userInfo,
+				abstractUserInfo,
 				schedule.getRunAt());
 	}
 	
@@ -201,27 +201,27 @@ public class Job extends AbstractResource {
 		this.source = source;
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserInfo createdBy) {
+	public void setCreatedBy(AbstractUserInfo createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserInfo lastUpdatedBy) {
+	public void setLastUpdatedBy(AbstractUserInfo lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
-	public UserInfo getOwner() {
+	public AbstractUserInfo getOwner() {
 		return owner;
 	}
 
-	public void setOwner(UserInfo owner) {
+	public void setOwner(AbstractUserInfo owner) {
 		this.owner = owner;
 	}
 

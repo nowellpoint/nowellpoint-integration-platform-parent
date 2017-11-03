@@ -14,5 +14,14 @@ swarm:
           port: 5993    
 propertyStore: 
     name: sandbox
+okta:
+    group:
+        id: 00gax53y4htYrgYWB0h7    
+registration:
+    send:
+      notification: false
 api:
-    hostname: https://localhost:5000/rest   
+    hostname: http://localhost:5000/rest
+verify:
+    email:
+      redirect: https://localhost:8443/verify-email

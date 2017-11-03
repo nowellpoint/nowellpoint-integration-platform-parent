@@ -1,61 +1,25 @@
 package com.nowellpoint.api.service;
 
-import com.stormpath.sdk.account.Account;
-import com.stormpath.sdk.api.ApiKey;
-import com.stormpath.sdk.oauth.OAuthGrantRequestAuthenticationResult;
+import com.okta.sdk.resource.user.User;
 
 public interface IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param apiKey
-	 * @return
-	 */
-	
-	public OAuthGrantRequestAuthenticationResult authenticate(ApiKey apiKey);
-	
-	/**
-	 * 
-	 * @param username
-	 * @param password
-	 * @return OAuthGrantRequestAuthenticationResult
-	 */
-	
-	public OAuthGrantRequestAuthenticationResult authenticate(String username, String password);
-	
-	/**
-	 * 
-	 * @param refreshToken
-	 * @return
-	 */
-	
-	public OAuthGrantRequestAuthenticationResult refreshToken(String refreshToken);
-	
-	/**
-	 * 
-	 * @param bearerToken
-	 * @return
-	 */
-	
-	public String verify(String bearerToken);
-	
-	/**
-	 * 
 	 * @param href
 	 * @return
 	 */
 	
-	public Account getAccountByHref(String href);
+	public User getUser(String id);
 	
 	/**
 	 * 
 	 * @param email
 	 * @param firstName
 	 * @param lastName
-	 * @param password
 	 */
 	
-	public Account createAccount(String email, String firstName, String lastName, String password);
+	public User createUser(String email, String firstName, String lastName, String password);
 	
 	/**
 	 * 
@@ -65,59 +29,36 @@ public interface IdentityProviderService {
 	 * @param lastName
 	 */
 	
-	public Account updateAccount(String href, String email, String firstName, String lastName);
-	
-	/**
-	 * 
-	 * @param href
-	 * @param username
-	 */
-	
-	public void updateUsername(String href, String username);
-	
-	/**
-	 * 
-	 * @param href
-	 * @param email
-	 */
-	
-	public void updateEmail(String href, String email);
+	public User updateUser(String id, String email, String firstName, String lastName);
 	
 	/**
 	 * 
 	 * @param href
 	 */
 	
-	public void deactivateAccount(String href);
+	public void deactivateUser(String id);
 	
 	/**
 	 * 
-	 * @param href
+	 * @param id
 	 * @param password
 	 */
 	
-	public void changePassword(String href, String password);
+	public void setPassword(String id, String password);
 	
 	/**
 	 * 
-	 * @param username
-	 * @return
+	 * @param id
+	 * @param oldPassword
+	 * @param newPassword
 	 */
 	
-	public Account findByUsername(String username);
+	public void changePassword(String id, String oldPassword, String newPassword);
 	
 	/**
 	 * 
-	 * @param bearerToken
+	 * @param id
 	 */
 	
-	public void revokeToken(String bearerToken);
-	
-	/**
-	 * 
-	 * @param emailVerificationToken
-	 * @return
-	 */
-	
-	public Account verifyEmail(String emailVerificationToken);
+	public void deleteUser(String id);
 }

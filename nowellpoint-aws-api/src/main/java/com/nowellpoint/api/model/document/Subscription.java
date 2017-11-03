@@ -22,11 +22,13 @@ package com.nowellpoint.api.model.document;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.nowellpoint.mongodb.annotation.EmbedOne;
+
 public class Subscription implements Serializable {
 
 	private static final long serialVersionUID = -7569793449815113870L;
 	
-	private String subscriptionId;
+	private String number;
 	
 	private String planId;
 	
@@ -54,16 +56,25 @@ public class Subscription implements Serializable {
 	
 	private Date updatedOn;
 	
+	@EmbedOne
+	private Contact billingContact;
+	
+	@EmbedOne
+	private Address billingAddress;
+	
+	@EmbedOne
+	private CreditCard creditCard;
+	
 	public Subscription() {
 		
 	}
 
-	public String getSubscriptionId() {
-		return subscriptionId;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setSubscriptionId(String subscriptionId) {
-		this.subscriptionId = subscriptionId;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 	public String getPlanId() {
@@ -168,5 +179,29 @@ public class Subscription implements Serializable {
 
 	public void setBillingPeriodEndDate(Date billingPeriodEndDate) {
 		this.billingPeriodEndDate = billingPeriodEndDate;
+	}
+	
+	public Contact getBillingContact() {
+		return billingContact;
+	}
+
+	public void setBillingContact(Contact billingContact) {
+		this.billingContact = billingContact;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

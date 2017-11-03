@@ -28,13 +28,10 @@ public class JobType extends MongoDocument {
 
 	private static final long serialVersionUID = -5368597023270502005L;
 	
-	@EmbedOne
-	private Meta meta;
-	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef createdBy;
 	
-	@Reference(referenceClass = AccountProfile.class)
+	@Reference(referenceClass = UserProfile.class)
 	private UserRef lastUpdatedBy;
 	
 	private String name;
@@ -61,14 +58,6 @@ public class JobType extends MongoDocument {
 	
 	public JobType() {
 		
-	}
-
-	public Meta getMeta() {
-		return meta;
-	}
-
-	public void setMeta(Meta meta) {
-		this.meta = meta;
 	}
 
 	public UserRef getCreatedBy() {

@@ -19,29 +19,50 @@
 package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 8625374697414134673L;
 	
+	private String id;
+	
 	private String street;
 
 	private String city;
-
-	private String state;
+	
+	private String stateCode;
 
 	private String postalCode;
 
 	private String countryCode;
 	
-	private String country;
-	
 	private String latitude;
 
 	private String longitude;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 
 	public Address() {
 		
+	}
+	
+	private Address(String countryCode) {
+		this.countryCode = countryCode;
+	}
+	
+	public static Address of(String countryCode) {
+		return new Address(countryCode);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getStreet() {
@@ -60,12 +81,12 @@ public class Address implements Serializable {
 		this.city = city;
 	}
 
-	public String getState() {
-		return state;
+	public String getStateCode() {
+		return stateCode;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
 	}
 
 	public String getPostalCode() {
@@ -84,14 +105,6 @@ public class Address implements Serializable {
 		this.countryCode = countryCode;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	public String getLatitude() {
 		return latitude;
 	}
@@ -106,5 +119,21 @@ public class Address implements Serializable {
 
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 }

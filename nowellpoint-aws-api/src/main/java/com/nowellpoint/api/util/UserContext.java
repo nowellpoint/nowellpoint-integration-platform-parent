@@ -2,8 +2,7 @@ package com.nowellpoint.api.util;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
+import java.util.List;
 
 import javax.ws.rs.core.SecurityContext;
 
@@ -11,7 +10,6 @@ import com.nowellpoint.util.Properties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 
 public class UserContext {
 	
@@ -22,13 +20,11 @@ public class UserContext {
 	    }
 	};
 	
-	public static void setUserContext(String accessToken) {
-		Jws<Claims> claims = parseClaims(accessToken); 
-		
+	public static void setUserContext(Jws<Claims> claims) {		
 		String subject = claims.getBody().getSubject();
 		
 		@SuppressWarnings("unchecked")
-		ArrayList<String> scope = (ArrayList<String>) claims.getBody().getOrDefault("scope", Collections.emptyList());
+		ArrayList<String> scope = (ArrayList<String>) claims.getBody().getOrDefault("scope", new ArrayList<String>());
 		
 		SecurityContext securityContext = new UserPrincipalSecurityContext(subject, scope);
 		threadLocal.set(securityContext);
@@ -44,14 +40,6 @@ public class UserContext {
 	
 	public static void clear() {
 		threadLocal.remove();
-	}
-	
-	private static Jws<Claims> parseClaims(String accessToken) {
-		Jws<Claims> claims = Jwts.parser()
-				.setSigningKey(Base64.getUrlEncoder().encodeToString(System.getProperty(Properties.STORMPATH_API_KEY_SECRET).getBytes()))
-				.parseClaimsJws(accessToken); 
-		
-		return claims;
 	}
 	
 	static class UserPrincipal implements Principal {
@@ -71,18 +59,16 @@ public class UserContext {
 	static class UserPrincipalSecurityContext implements SecurityContext {
 		
 		private Principal principal;
-		private String authenticationScheme;
-		private ArrayList<String> scope;
+		private List<String> scope;
 		
-		public UserPrincipalSecurityContext(String subject, ArrayList<String> scope) {
-			this.authenticationScheme = subject.split("-")[0];
+		public UserPrincipalSecurityContext(String subject, List<String> scope) {
 			this.principal = new UserPrincipal(subject);
 			this.scope = scope;
 		}
 
 		@Override
 		public String getAuthenticationScheme() {
-			return authenticationScheme;
+			return "Bearer";
 		}
 
 		@Override

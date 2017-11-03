@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
@@ -45,24 +45,32 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-api</artifactId>
-			<version>${version.stormpath.sdk}</version>
+			<groupId>com.okta</groupId>
+			<artifactId>okta-sdk</artifactId>
+			<version>0.0.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-impl</artifactId>
-			<version>${version.stormpath.sdk}</version>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-cognitoidp</artifactId>
+			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-httpclient</artifactId>
-			<version>${version.stormpath.sdk}</version>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<version>2.5.3</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.stormpath.sdk</groupId>
-			<artifactId>stormpath-sdk-oauth</artifactId>
-			<version>${version.stormpath.sdk}</version>
+			<groupId>org.immutables</groupId>
+			<artifactId>builder</artifactId>
+			<version>2.5.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value-fixture</artifactId>
+			<version>2.5.3</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.itextpdf</groupId>

@@ -18,26 +18,27 @@
 
 package com.nowellpoint.client;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.client.resource.AccountProfileResource;
+import com.nowellpoint.client.resource.UserProfileResource;
 import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
 import com.nowellpoint.client.resource.JobTypeResource;
+import com.nowellpoint.client.resource.OrganizationResource;
 import com.nowellpoint.client.resource.PlanResource;
+import com.nowellpoint.client.resource.RegistrationResource;
 import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
 
 @Value.Immutable
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
 public abstract class NowellpointClient  {
-	abstract Token token();
-	
-	public static Builder builder() {
-		return ImmutableNowellpointClient.builder();
-	}
+	abstract @Nullable Token token();
+	abstract @Nullable Environment environment();
 	
 	public static NowellpointClient defaultClient(Token token) {
 		return ImmutableNowellpointClient.builder()
@@ -45,9 +46,14 @@ public abstract class NowellpointClient  {
 				.build();
 	}
 	
-	public interface Builder {
-		Builder token(Token token);
-		NowellpointClient build();
+	public static NowellpointClient defaultClient(Environment environment) {
+		return ImmutableNowellpointClient.builder()
+				.environment(environment)
+				.build();
+	}
+	
+	public RegistrationResource registration() {
+		return new RegistrationResource(environment());
 	}
 	
 	public DashboardResource dashboard() {
@@ -59,7 +65,11 @@ public abstract class NowellpointClient  {
 	}
 	
 	public PlanResource plan() {
-		return new PlanResource(token());
+		if (token() != null) {
+			return new PlanResource(token());
+		} else {
+			return new PlanResource(environment());
+		}
 	}
 	
 	public JobResource job() {
@@ -74,11 +84,15 @@ public abstract class NowellpointClient  {
 		return new JobTypeResource(token());
 	}
 	
-	public AccountProfileResource accountProfile() {
-		return new AccountProfileResource(token());
+	public UserProfileResource userProfile() {
+		return new UserProfileResource(token());
 	}
 	
 	public SalesforceResource salesforce() {
 		return new SalesforceResource(token());
+	}
+	
+	public OrganizationResource organization() {
+		return new OrganizationResource(token());
 	}
 }

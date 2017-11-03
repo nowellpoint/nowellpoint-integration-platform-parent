@@ -23,15 +23,17 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.AuthenticationException;
+import com.nowellpoint.api.idp.model.AuthenticationException;
+import com.nowellpoint.api.rest.domain.Error;
 
 @Provider
 public class AuthenticationExceptionMapper implements ExceptionMapper<AuthenticationException> {
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
+		Error error = new Error(exception.getError(), exception.getErrorDescription());
 		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(exception);
+		builder.entity(error);
 		return builder.build();
 	}
 }

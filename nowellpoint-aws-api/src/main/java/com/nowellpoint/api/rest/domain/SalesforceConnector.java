@@ -44,11 +44,11 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private String name;
 	
-	private UserInfo createdBy;
+	private AbstractUserInfo createdBy;
 	
-	private UserInfo lastUpdatedBy;
+	private AbstractUserInfo lastUpdatedBy;
 	
-	private UserInfo owner;
+	private AbstractUserInfo owner;
 
 	private Identity identity;
 	
@@ -80,9 +80,9 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private SalesforceConnector(
 			String name, 
-			UserInfo createdBy, 
-			UserInfo lastUpdatedBy, 
-			UserInfo owner, 
+			AbstractUserInfo createdBy, 
+			AbstractUserInfo lastUpdatedBy, 
+			AbstractUserInfo owner, 
 			Date createdOn, 
 			Date lastUpdatedOn, 
 			Identity identity, 
@@ -143,7 +143,7 @@ public class SalesforceConnector extends AbstractResource {
 	}
 	
 	public static SalesforceConnector of(
-			UserInfo createdBy,
+			AbstractUserInfo createdBy,
 			Identity identity, 
 			Organization organization, 
 			ConnectionString connectionString, 
@@ -190,15 +190,15 @@ public class SalesforceConnector extends AbstractResource {
 		return name;
 	}
 
-	public UserInfo getCreatedBy() {
+	public AbstractUserInfo getCreatedBy() {
 		return createdBy;
 	}
 
-	public UserInfo getLastUpdatedBy() {
+	public AbstractUserInfo getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public UserInfo getOwner() {
+	public AbstractUserInfo getOwner() {
 		return owner;
 	}
 
