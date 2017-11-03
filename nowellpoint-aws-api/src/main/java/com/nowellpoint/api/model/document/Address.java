@@ -19,6 +19,7 @@
 package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Address implements Serializable {
 
@@ -32,8 +33,6 @@ public class Address implements Serializable {
 	
 	private String stateCode;
 
-	private String state;
-
 	private String postalCode;
 
 	private String countryCode;
@@ -41,6 +40,10 @@ public class Address implements Serializable {
 	private String latitude;
 
 	private String longitude;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 
 	public Address() {
 		
@@ -86,14 +89,6 @@ public class Address implements Serializable {
 		this.stateCode = stateCode;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -124,5 +119,21 @@ public class Address implements Serializable {
 
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
+	}
+
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
 	}
 }

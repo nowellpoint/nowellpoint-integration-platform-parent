@@ -83,6 +83,8 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		Address address = Address.builder()
 				.countryCode(countryCode)
+				.addedOn(now)
+				.updatedOn(now)
 				.build();
 		
 		Photos photos = Photos.builder()
@@ -126,6 +128,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.countryCode(countryCode)
 				.stateCode(state)
 				.street(street)
+				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
 		UserProfile userProfile = UserProfile.builder()

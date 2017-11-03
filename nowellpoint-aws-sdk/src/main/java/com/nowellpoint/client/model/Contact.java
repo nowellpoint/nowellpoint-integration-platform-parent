@@ -1,5 +1,7 @@
 package com.nowellpoint.client.model;
 
+import java.util.Date;
+
 public class Contact {
 	
 	private String firstName;
@@ -11,6 +13,10 @@ public class Contact {
 	private String email;
 	
 	private String phone;
+	
+	private Date addedOn;
+	
+	private Date updatedOn;
 	
 	public Contact() {
 		
@@ -56,6 +62,22 @@ public class Contact {
 		this.phone = phone;
 	}
 	
+	public Date getAddedOn() {
+		return addedOn;
+	}
+
+	public void setAddedOn(Date addedOn) {
+		this.addedOn = addedOn;
+	}
+
+	public Date getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(Date updatedOn) {
+		this.updatedOn = updatedOn;
+	}
+
 	public Contact withFirstName(String firstName) {
 		setFirstName(firstName);
 		return this;

@@ -54,9 +54,6 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			set(id, document);
 		}
 		Set<UserProfile> users = getUsers( id );
-		if (users == null) {
-			System.out.println("users are null");
-		}
 		Organization organization = Organization.of( document, users );
 		return organization;
 	}
@@ -64,7 +61,8 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 	protected Organization query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
-		Organization organization = Organization.of( document );
+		Set<UserProfile> users = getUsers( document.getId().toString() );
+		Organization organization = Organization.of( document, users );
 		return organization;
 	}
 	

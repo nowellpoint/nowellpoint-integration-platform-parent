@@ -24,6 +24,22 @@ public abstract class AbstractCreditCard {
 	public abstract @Nullable String getLastFour();
 	public abstract @Nullable String getToken();
 	public abstract @Nullable String getImageUrl();
-	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
-	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
+	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	
+	public static CreditCard of(com.braintreegateway.CreditCard source) {
+		CreditCard instance = CreditCard.builder()
+				.addedOn(source.getCreatedAt().getTime())
+				.updatedOn(source.getUpdatedAt().getTime())
+				.cardholderName(source.getCardholderName())
+				.cardType(source.getCardType())
+				.expirationMonth(source.getExpirationMonth())
+				.expirationYear(source.getExpirationYear())
+				.imageUrl(source.getImageUrl())
+				.lastFour(source.getLast4())
+				.token(source.getToken())
+				.build();
+		
+		return instance;
+	}
 }

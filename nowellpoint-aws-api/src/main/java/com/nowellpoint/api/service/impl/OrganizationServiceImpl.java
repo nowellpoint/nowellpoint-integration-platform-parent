@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 
@@ -143,7 +145,9 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.expirationYear(expirationYear)
 				.number(number);
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = addCreditCard(creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = createCreditCard(creditCardRequest);
+		
+		CreditCard creditCard = CreditCard.of(creditCardResult.getTarget());
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(creditCardResult.getTarget().getToken())
@@ -152,23 +156,12 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
-		CreditCard creditCard = CreditCard.builder()
-				.addedOn(now)
-				.updatedOn(now)
-				.cardholderName(cardholderName)
-				.cardType(creditCardResult.getTarget().getCardType())
-				.expirationMonth(expirationMonth)
-				.expirationYear(expirationYear)
-				.imageUrl(creditCardResult.getTarget().getImageUrl())
-				.lastFour(creditCardResult.getTarget().getLast4())
-				.token(creditCardResult.getTarget().getToken())
-				.build();
+		Set<Transaction> transactions = organization.getTransactions();
 		
-
-		
-		
-		
-		
+		subscriptionResult.getTarget().getTransactions().forEach( source -> {
+			transactions.removeIf((Transaction t) -> t.getId().equals(source.getId()));
+			transactions.add(Transaction.of(source));
+		});
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -190,6 +183,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		Organization newInstance = Organization.builder()
 				.from(organization)
 				.subscription(subscription)
+				.transactions(transactions)
 				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.build();
@@ -214,18 +208,9 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.customerId(organization.getNumber())
 				.billingAddressId(organization.getSubscription().getBillingAddress().getId());
 		
-		Result<com.braintreegateway.CreditCard> result = updateCreditCard(organization.getSubscription().getCreditCard().getToken(), creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = updateCreditCard(organization.getSubscription().getCreditCard().getToken(), creditCardRequest);
 		
-		CreditCard creditCard = CreditCard.builder()
-				.from(organization.getSubscription().getCreditCard())
-				.cardholderName(cardholderName)
-				.cardType(result.getTarget().getCardType())
-				.expirationMonth(expirationMonth)
-				.expirationYear(expirationYear)
-				.imageUrl(result.getTarget().getImageUrl())
-				.lastFour(result.getTarget().getLast4())
-				.updatedOn(Date.from(Instant.now()))
-				.build();
+		CreditCard creditCard = CreditCard.of(creditCardResult.getTarget());
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -255,16 +240,9 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.locality(city)
 				.countryCodeAlpha2(countryCode);
 		
-		updateAddress(organization.getNumber(), organization.getSubscription().getBillingAddress().getId(), addressRequest);
+		Result<com.braintreegateway.Address> addressResult = updateAddress(organization.getNumber(), organization.getSubscription().getBillingAddress().getId(), addressRequest);
 		
-		Address billingAddress = Address.builder().from(organization.getSubscription()
-				.getBillingAddress())
-				.city(city)
-				.countryCode(countryCode)
-				.postalCode(postalCode)
-				.stateCode(stateCode)
-				.street(street)
-				.build();
+		Address billingAddress = Address.of(addressResult.getTarget());
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -286,13 +264,16 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Organization organization = findById(id);
 		
-		Contact billingContact = Contact.builder()
-				.from(organization.getSubscription().getBillingContact())
+		CustomerRequest customerRequest = new CustomerRequest()
+				.company(organization.getDomain())
+				.email(email)
 				.firstName(firstName)
 				.lastName(lastName)
-				.email(email)
-				.phone(phone)
-				.build();
+				.phone(phone);
+		
+		Result<com.braintreegateway.Customer> customerResult = updateCustomer(organization.getNumber(), customerRequest);
+		
+		Contact billingContact = Contact.of(customerResult.getTarget());
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
@@ -331,7 +312,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.lastName(lastName)
 				.phone(phone);
 		
-		Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
+		Result<com.braintreegateway.Customer> customerResult = createCustomer(customerRequest);
 		
 		Address billingAddress = Address.builder()
 				.countryCode(countryCode)
@@ -409,7 +390,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 						.done()
 					.done();
 			
-		Result<com.braintreegateway.Customer> customerResult = addCustomer(customerRequest);
+		Result<com.braintreegateway.Customer> customerResult = createCustomer(customerRequest);
 			
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(customerResult.getTarget().getCreditCards().get(0).getToken())
@@ -418,33 +399,22 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			
 		Result<com.braintreegateway.Subscription> subscriptionResult = createSubscription(subscriptionRequest);
 		
-		CreditCard creditCard = CreditCard.builder()
-				.addedOn(now)
-				.updatedOn(now)
-				.cardholderName(cardholderName)
-				.cardType(customerResult.getTarget().getCreditCards().get(0).getCardType())
-				.expirationMonth(expirationMonth)
-				.expirationYear(expirationYear)
-				.imageUrl(customerResult.getTarget().getCreditCards().get(0).getImageUrl())
-				.lastFour(customerResult.getTarget().getCreditCards().get(0).getLast4())
-				.token(customerResult.getTarget().getCreditCards().get(0).getToken())
-				.build();
+		CreditCard creditCard = CreditCard.of(customerResult.getTarget().getCreditCards().get(0));
+				
+		Address billingAddress = Address.of(customerResult.getTarget().getCreditCards().get(0).getBillingAddress());
 		
-		Address billingAddress = Address.builder()
-				.id(customerResult.getTarget().getCreditCards().get(0).getBillingAddress().getId())
-				.countryCode(countryCode)
-				.build();
+		Contact billingContact = Contact.of(customerResult.getTarget());
 		
-		Contact billingContact = Contact.builder()
-				.email(email)
-				.firstName(firstName)
-				.lastName(lastName)
-				.phone(phone)
-				.build();
+		Set<Transaction> transactions = new HashSet<>();
+		
+		subscriptionResult.getTarget().getTransactions().forEach( source -> {
+			transactions.add(Transaction.of(source));
+		});
 		
 		Subscription subscription = Subscription.builder()
 				.number(subscriptionResult.getTarget().getId())
-				.addedOn(now)
+				.addedOn(subscriptionResult.getTarget().getCreatedAt().getTime())
+				.updatedOn(subscriptionResult.getTarget().getUpdatedAt().getTime())
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
@@ -459,13 +429,13 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.creditCard(creditCard)
 				.billingAddress(billingAddress)
 				.billingContact(billingContact)
-				.updatedOn(now)
 				.build();
 		
 		Organization organization = Organization.builder()
 				.number(customerResult.getTarget().getId())
 				.domain(domain)
 				.subscription(subscription)
+				.transactions(transactions)
 				.createdBy(userInfo)
 				.createdOn(now)
 				.lastUpdatedBy(userInfo)
@@ -510,6 +480,15 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return null;
 	}
 	
+//	private com.braintreegateway.Plan getPlan(String planId) {
+//		List<com.braintreegateway.Plan> plans = gateway.plan().all();
+//		Optional<com.braintreegateway.Plan> optional = plans.stream().filter(p -> p.getId().equals(planId)).findFirst();
+//		if (optional.isPresent()) {
+//			return optional.get();
+//		}
+//		return null;
+//	}
+	
 	private Result<com.braintreegateway.Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {
 		return gateway.subscription().create(subscriptionRequest);
 	}
@@ -527,7 +506,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return addressResult;
 	}
 	
-	private Result<com.braintreegateway.CreditCard> addCreditCard(CreditCardRequest creditCardRequest) {
+	private Result<com.braintreegateway.CreditCard> createCreditCard(CreditCardRequest creditCardRequest) {
 		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().create(creditCardRequest);
 		return result;
 	}
@@ -537,8 +516,13 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return result;
 	}
 	
-	private Result<com.braintreegateway.Customer> addCustomer(CustomerRequest customerRequest) {
+	private Result<com.braintreegateway.Customer> createCustomer(CustomerRequest customerRequest) {
 		Result<com.braintreegateway.Customer> result = gateway.customer().create(customerRequest);
+		return result;
+	}
+	
+	private Result<com.braintreegateway.Customer> updateCustomer(String customerId, CustomerRequest request) {
+		Result<com.braintreegateway.Customer> result = gateway.customer().update(customerId, request);
 		return result;
 	}
 	

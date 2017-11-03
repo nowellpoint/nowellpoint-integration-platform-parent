@@ -1,5 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -71,7 +72,11 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 			
 			if (! subscriptionEvent.get("transaction").get("creditCard").isNull()) {
 				
+				Date now = Date.from(Instant.now());
+				
 				ModifiableCreditCard creditCard = ModifiableCreditCard.create()
+						.setAddedOn(now)
+						.setUpdatedOn(now)
 						.setLastFour(subscriptionEvent.get("transaction").get("creditCard").get("last4").asText())
 						.setCardType(subscriptionEvent.get("transaction").get("creditCard").get("cardType").asText())
 						.setCardholderName(subscriptionEvent.get("transaction").get("creditCard").get("cardholderName").asText())
