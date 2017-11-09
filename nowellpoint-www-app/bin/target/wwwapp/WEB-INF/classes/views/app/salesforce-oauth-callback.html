@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>${messages["application.title"]}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
+
+    <!-- Include the CSS -->
+    <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/custom.css" type="text/css" />
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+
+    <script src="/js/jquery.js"></script>
+    <script src="/dist/toolkit.min.js"></script>
+    <script src="/js/common.js"></script>
+
+</head>
+
+<body>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="col-md-12 text-center">
+        <div align="center-block"><i class="fa fa-4x fa-refresh fa-spin"></i></div>
+        <h2>${labels["setting.up.connector"]}</h2>
+    </div>
+
+
+    <script>
+        $(document).ready(function(e) {
+            var params = location.search.substr(1);
+            window.location.replace("${links['salesforce.oauth']}/token?" + params);
+        });
+    </script>
+
+</body>
+
+</html>

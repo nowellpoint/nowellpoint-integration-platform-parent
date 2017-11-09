@@ -116,14 +116,18 @@ public class Application implements SparkApplication {
 		// verify secure requests
 		//
 
-		before("/app/*", (request, response) -> AuthenticationController.verify(configuration, request, response));
+		before("/app/*", (request, response) 
+				-> AuthenticationController.verify(configuration, request, response));
 
 		//
 		// index routes
 		//
 
-		get(Path.Route.INDEX, (request, response) -> IndexController.serveIndexPage(configuration, request, response));
-		post(Path.Route.CONTACT, (request, response) -> IndexController.contact(configuration, request, response));
+		get(Path.Route.INDEX, (request, response) 
+				-> IndexController.serveIndexPage(configuration, request, response));
+		
+		post(Path.Route.CONTACT, (request, response) 
+				-> IndexController.contact(configuration, request, response));
 
 		//
 		// dashboard controller
@@ -255,29 +259,45 @@ public class Application implements SparkApplication {
 		// jobs routes
 		//
 
-		get(Path.Route.JOBS_LIST, (request, response) -> JobController.listJobs(configuration, request, response));
-		get(Path.Route.JOBS_VIEW, (request, response) -> JobController.viewJob(configuration, request, response));
-		post(Path.Route.JOBS_UPDATE, (request, response) -> JobController.updateJob(configuration, request, response));
-		get(Path.Route.JOBS_OUTPUTS,
-				(request, response) -> JobController.viewOutputs(configuration, request, response));
-		get(Path.Route.JOBS_OUTPUTS_DOWNLOAD,
-				(request, response) -> JobController.downloadOutputFile(configuration, request, response));
-		post(Path.Route.JOBS_SUBMIT, (request, response) -> JobController.submitJob(configuration, request, response));
-		post(Path.Route.JOBS_RUN, (request, response) -> JobController.runJob(configuration, request, response));
-		post(Path.Route.JOBS_STOP, (request, response) -> JobController.stopJob(configuration, request, response));
-		post(Path.Route.JOBS_TERMINATE,
-				(request, response) -> JobController.terminateJob(configuration, request, response));
-		post(Path.Route.JOBS_WEBHOOK_URL_TEST,
-				(request, response) -> JobController.testWebhookUrl(configuration, request, response));
+		get(Path.Route.JOBS_LIST, (request, response) 
+				-> JobController.listJobs(configuration, request, response));
+		
+		get(Path.Route.JOBS_VIEW, (request, response) 
+				-> JobController.viewJob(configuration, request, response));
+		
+		post(Path.Route.JOBS_UPDATE, (request, response) 
+				-> JobController.updateJob(configuration, request, response));
+		
+		get(Path.Route.JOBS_OUTPUTS, (request, response) 
+				-> JobController.viewOutputs(configuration, request, response));
+		
+		get(Path.Route.JOBS_OUTPUTS_DOWNLOAD, (request, response) 
+				-> JobController.downloadOutputFile(configuration, request, response));
+		
+		post(Path.Route.JOBS_SUBMIT, (request, response) 
+				-> JobController.submitJob(configuration, request, response));
+		
+		post(Path.Route.JOBS_RUN, (request, response) 
+				-> JobController.runJob(configuration, request, response));
+		
+		post(Path.Route.JOBS_STOP, (request, response) 
+				-> JobController.stopJob(configuration, request, response));
+		
+		post(Path.Route.JOBS_TERMINATE, (request, response) 
+				-> JobController.terminateJob(configuration, request, response));
+		
+		post(Path.Route.JOBS_WEBHOOK_URL_TEST, (request, response) 
+				-> JobController.testWebhookUrl(configuration, request, response));
 
-		post("/app/jobs/:connectorId/metadata-backup",
-				(request, response) -> JobController.createJob(configuration, request, response));
+		post(Path.Route.JOBS_CREATE, (request, response) 
+				-> JobController.createJob(configuration, request, response));
 
 		//
 		// health check route
 		//
 
-		get(Path.Route.HEALTH_CHECK, (request, response) -> healthCheck(request, response));
+		get(Path.Route.HEALTH_CHECK, (request, response) 
+				-> healthCheck(request, response));
 
 		//
 		// exception handlers
@@ -373,7 +393,8 @@ public class Application implements SparkApplication {
 	private static List<IsoCountry> loadCountries(Locale locale) {
 		HttpResponse httpResponse = RestResource
 				.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-				.path("iso-countries").execute();
+				.path("iso-countries")
+				.execute();
 
 		List<IsoCountry> countries = Collections.emptyList();
 
@@ -381,7 +402,9 @@ public class Application implements SparkApplication {
 
 			IsoCountryList isoCountryList = httpResponse.getEntity(IsoCountryList.class);
 
-			countries = isoCountryList.getItems().stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
+			countries = isoCountryList.getItems()
+					.stream()
+					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
 					.collect(Collectors.toList());
 		}
 

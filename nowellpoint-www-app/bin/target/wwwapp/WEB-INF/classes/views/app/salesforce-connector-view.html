@@ -1,0 +1,307 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div>
+            <a href="${links['salesforce.connector']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back.to.salesforce.connectors"]}
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="error"></div>
+        <div class="flextable p-t">
+            <div class="flextable-item flextable-primary">
+                <h3 class="dashhead-title">${labels["salesforce.connector"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div class="btn-toolbar" role="toolbar">
+            <a id="edit-salesforce-connector" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" class="btn btn-primary" href="${links['salesforce.connector']}/${salesforceConnector.id!}/edit" role="button">${labels["edit"]}</a>&nbsp;
+            <button type="button" id="test" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/test">${labels["test"]}</button>&nbsp;
+            <button type="button" id="build" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/build">${labels["build"]}</button>&nbsp;
+            <button type="button" id="metadata-backup" class="btn btn-secondary" data-href="${links['salesforce.connector']}/${salesforceConnector.id!}/metadata-backup">${labels["backup.metadata"]}</button>&nbsp;
+        </div>
+        <#if ! salesforceConnector.isValid>
+            <br>
+            <p class="text-danger">${(salesforceConnector.status)!}</p>
+        </#if>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="detail" class="row">
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+
+                    <dt>${labels["connector.name"]}</dt>
+                    <dd>${(salesforceConnector.name)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["instance.name"]}</dt>
+                    <dd>${(salesforceConnector.organization.instanceName)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["organization.type"]}</dt>
+                    <dd>${(salesforceConnector.organization.organizationType)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["default.locale.sid.key"]}</dt>
+                    <dd>${(salesforceConnector.organization.defaultLocaleSidKey)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["primary.contact"]}</dt>
+                    <dd>${(salesforceConnector.organization.primaryContact)!}&emsp;</dd>
+                    <hr>
+
+                </dl>
+
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+
+                    <dt>${labels["organization.name"]}</dt>
+                    <dd>${(salesforceConnector.organization.name)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["sobject.count"]}</dt>
+                    <dd><#if sobjectCount=0>${sobjectCount}</#if>
+                        <#if sobjectCount gt 0><a href="${links['salesforce.connector']}/${salesforceConnector.id!}/sobjects">${sobjectCount}</a></#if></dd>
+                    <hr>
+
+                    <dt>${labels["organization.id"]}</dt>
+                    <dd>${(salesforceConnector.organization.id)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["language.key"]}</dt>
+                    <dd>${(salesforceConnector.organization.languageLocaleKey)!}&emsp;</dd>
+                    <hr>
+
+                    <dt>${labels["tested.on"]}</dt>
+                    <dd>${salesforceConnector.lastTestedOn?date?string.long!} ${salesforceConnector.lastTestedOn?time?string.medium!}&emsp;
+                        <div class="pull-right">
+                            <h6><span class="badge badge-pill ${salesforceConnector.isValid?then('badge-success', 'badge-danger')}">${salesforceConnector.isValid?then(labels["success"], labels["failure"])}</span></h6></div>
+                    </dd>
+                    <hr>
+
+                </dl>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${salesforceConnector.createdBy.id}">${salesforceConnector.createdBy.name}</a>, ${salesforceConnector.createdOn?date?string.long!} ${salesforceConnector.createdOn?time?string.medium!}</dd>
+
+
+                </dl>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+
+                    <dt>${labels["last.updated.by"]}</dt>
+                    <dd><a href="${links['account.profile']}/${salesforceConnector.lastUpdatedBy.id}">${salesforceConnector.lastUpdatedBy.name}</a>, ${salesforceConnector.lastUpdatedOn?date?string.long!} ${salesforceConnector.lastUpdatedOn?time?string.medium!}</dd>
+
+
+                </dl>
+            </div>
+
+
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="endpoints" class="row">
+
+            <div class="col-12">
+
+                <div class="flextable-item flextable-primary">
+                    <h3 class="dashhead-title">${labels["endpoints"]}</h3>
+                </div>
+                <br>
+                <div class="content table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>${labels["type"]}</th>
+                            <th>${labels["url"]}</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${labels["identity"]}</td>
+                                <td>${(salesforceConnector.identity.id)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["metadata"]}</td>
+                                <td>${(salesforceConnector.identity.urls.metadata)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["partner"]}</td>
+                                <td>${(salesforceConnector.identity.urls.partner)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["rest"]}</td>
+                                <td>${(salesforceConnector.identity.urls.rest)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["sobjects"]}</td>
+                                <td>${(salesforceConnector.identity.urls.sobjects)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["profile"]}</td>
+                                <td>${(salesforceConnector.identity.urls.profile)!}</td>
+                            </tr>
+                            <tr>
+                                <td>${labels["query"]}</td>
+                                <td>${(salesforceConnector.identity.urls.query)!}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="jobs" class="row">
+
+            <div class="col-12">
+
+                <div class="flextable-item flextable-primary">
+                    <h3 class="dashhead-title">${labels["jobs"]}</h3>
+                </div>
+
+                <br>
+
+                <div class="content table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>${labels["job.name"]}</th>
+                            <th>${labels["last.run.date"]}</th>
+                            <th>${labels["status"]}</th>
+                            <th class="text-right">${labels["number.executions"]}</th>
+                            <th class="text-right">${labels["job.outputs"]}</th>
+                        </thead>
+                        <tbody>
+                            <#list salesforceConnector.jobs?sort_by( "createdOn") as job>
+                                <tr>
+                                    <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
+                                    <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
+                                    <td>${job.status}</td>
+                                    <td class="text-right">${job.numberOfExecutions}</td>
+                                    <td class="text-right"><a href="${links['jobs']}/${job.id}/outputs"><span class="icon icon-folder"></span></a></td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <!-- Modal Dialog -->
+        <div class="modal fade" id="test-connection-dialog" role="dialog" aria-labelledby="confirmLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">${messages["cancel"]}</button>
+                        <button type="button" class="btn btn-danger" id="confirm-button">${messages["confirm"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $("#test").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: "post",
+                    url: $(this).data("href"),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $("#overlay").hide();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id!}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#metadata-backup").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: "post",
+                    url: $(this).data("href"),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $("#overlay").hide();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id!}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#build").click(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    method: "post",
+                    url: $(this).data("href"),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $("#overlay").hide();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['salesforce.connector']}/${salesforceConnector.id!}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <script src="/js/salesforce-connector.js"></script>
+
+    </@t.page>

@@ -38,6 +38,7 @@ public class IsoCountryResource {
     }
 	
 	@GET
+	@Path("q")
     @Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
     public Response findByLanguage(@QueryParam("language") String language) {
@@ -52,6 +53,7 @@ public class IsoCountryResource {
     }
 	
 	@GET
+	@Path("q")
 	@Produces(MediaType.APPLICATION_JSON)
 	@PermitAll
 	public Response findByIsoCode(@QueryParam("language") String language, @QueryParam("iso2Code") String iso2Code) {

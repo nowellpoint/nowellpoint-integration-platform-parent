@@ -510,7 +510,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 			try {
 				method = resolveSetter(clazz, field);
 			} catch (NoSuchMethodException e) {
-				LOGGER.info("Unable to find set method for mapped property field: " + field.getName());
+				LOGGER.info("Unable to find set method for mapped property field. No Such Method for " + field.getName());
 				return;
 			}
 
@@ -526,16 +526,13 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 				} else if (field.getType().isAssignableFrom(URL.class)) {
 					value = new URL(value.toString());
 				} else if (field.getType().isAssignableFrom(ObjectId.class)) {
-					System.out.println(value.toString());
 					value = new ObjectId(value.toString());
 				} else if (field.getType().isAssignableFrom(TimeUnit.class)) {
 					value = TimeUnit.valueOf(value.toString());
 				}
 				method.invoke(object, new Object[] { value });
 			} catch (IllegalArgumentException e) {
-				System.out.println(clazz.getName());
-				System.out.println(value);
-				LOGGER.info("Illegal Argument for " + field.getName() + " invalid type " + value.getClass().getName());
+				LOGGER.info(clazz.getName() + "::setFieldValue() has an Illegal Argument for " + field.getName() + " with type " + value.getClass().getName() + " with value: " + value);
 				return;
 			} catch (SecurityException | IllegalAccessException | InvocationTargetException | MalformedURLException e) {
 				throw new DocumentManagerException(e);

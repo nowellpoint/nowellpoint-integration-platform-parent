@@ -1,0 +1,406 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div class="flextable mt-1">
+            <div class="flextable-item flextable-primary">
+                <h3 class="input-with-icon dashhead-title">${labels["user.profile"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div class="btn-toolbar" role="toolbar">
+            <button type="button" id="edit-user-profile" class="btn btn-primary" data-toggle="modal" data-target="#user-profile-dialog">${labels["edit.user.profile"]}</button>&emsp;
+            <a href="${links['user.profile']}/${userProfile.id}/deactivate" class="btn btn-secondary" aria-hidden="true" role="button">${labels["deactivate.profile"]}</a>
+        </div>
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div class="row">
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["name"]}</dt>
+                    <dd>${userProfile.name!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["email"]}</dt>
+                    <dd>${userProfile.email!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["title"]}</dt>
+                    <dd>${userProfile.title!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["company"]}</dt>
+                    <dd>${userProfile.company!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["division"]}</dt>
+                    <dd>${userProfile.division!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["created.by"]}</dt>
+                    <dd><a href="${links['user.profile']}/${userProfile.createdBy.id}">${userProfile.createdBy.name}</a>, ${userProfile.createdOn?date?string.long!} ${userProfile.createdOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["department"]}</dt>
+                    <dd>${userProfile.department!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["mobile.phone"]}</dt>
+                    <dd>${userProfile.mobilePhone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["phone"]}</dt>
+                    <dd>${userProfile.phone!}&emsp;</dd>
+                    <hr>
+                    <dt>${labels["extension"]}</dt>
+                    <dd>${userProfile.extension!}&emsp;</dd>
+                    <hr>
+                    <dt>&emsp;</dt>
+                    <dd>&emsp;</dd>
+                    <hr>
+                    <dt>${labels["last.modified.by"]}</dt>
+                    <dd><a href="${links['user.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>
+                </dl>
+            </div>
+
+        </div>
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+        <div id="preferences" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["preferences"]}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["locale.key"]}</dt>
+                    <dd>${locales[userProfile.locale]!}&emsp;</dd>
+                </dl>
+            </div>
+
+            <div class="col-4">
+
+                <dl class="dl-vertical">
+                    <dt>${labels["timezone.key"]}</dt>
+                    <dd>${userProfile.timeZone.ID!}&emsp;</dd>
+                </dl>
+            </div>
+
+        </div>
+
+
+        <br>
+        <div class="hr-divider"></div>
+        <br>
+
+        <div id="address" class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h3 class="dashhead-title">${labels["address"]}</h3>
+                    </div>
+                </div>
+                <br>
+                <div class="btn-toolbar" role="toolbar">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#address-dialog">${labels["edit.address"]}</button>
+                </div>
+                <br>
+                <address>
+                            ${(userProfile.address.street)!}<br>
+                            ${(userProfile.address.city)!}<#if userProfile.address.city??>,</#if> ${(userProfile.address.state)!} ${(userProfile.address.postalCode)!}<br>
+                            ${(userProfile.address.country)!}<br>
+                </address>
+            </div>
+        </div>
+
+        <div class="modal fade" id="address-dialog" tabindex="-1" role="dialog" aria-labelledby="user-profile-dialog-title" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="user-profile-dialog-title">${labels["edit.user.address"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="street">${labels["street"]}</label>
+                                    <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="city">${labels["city"]}</label>
+                                    <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="state">${labels["state"]}</label>
+                                    <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="postalCode">${labels["postal.code"]}</label>
+                                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label" for="countryCode">${labels["country"]}*</label>
+                                    <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <#list countryList as country>
+                                            <#if country.iso2Code==userProfile.address.countryCode>
+                                                <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                            </#if>
+                                            <#if country.iso2Code !=userProfile.address.countryCode>
+                                                <option value="${country.iso2Code}">${country.name}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="button" id="update-address" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="user-profile-dialog" tabindex="-1" role="dialog" aria-labelledby="edit-user-profile-title" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="edit-user-profile-title">${labels["edit.user.profile"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-vertical" name="user-profile-form" id="user-profile-form" role="form" method="post">
+                            <input type="hidden" name="username" id="username" value="${userProfile.username!}" />
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="firstName">${labels["first.name"]}</label>
+                                    <input type="text" class="form-control" name="firstName" id="firstName" placeholder="${labels['first.name']}" value="${userProfile.firstName!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="lastName">${labels["last.name"]}</label>
+                                    <input type="text" class="form-control" name="lastName" id="lastName" placeholder="${labels['last.name']}" value="${userProfile.lastName!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="company">${labels["company"]}</label>
+                                    <input type="text" class="form-control" name="company" id="company" placeholder="${labels['company']}" value="${userProfile.company!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="division">${labels["division"]}</label>
+                                    <input type="text" class="form-control" name="division" id="division" placeholder="${labels['division']}" value="${userProfile.division!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="department">${labels["department"]}</label>
+                                    <input type="text" class="form-control" name="department" id="department" placeholder="${labels['department']}" value="${userProfile.department!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="title">${labels["title"]}</label>
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="${labels['title']}" value="${userProfile.title!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="email">${labels["email"]}</label>
+                                    <input type="text" class="form-control" name="email" id="email" placeholder="${labels['email']}" value="${userProfile.email!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="mobilPhone">${labels["mobile.phone"]}</label>
+                                    <input type="text" class="form-control" name="mobilePhone" id="mobilePhone" placeholder="${labels['mobile.phone']}" value="${userProfile.mobilePhone!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="phone">${labels["phone"]}</label>
+                                    <input type="text" class="form-control" name="phone" id="phone" placeholder="${labels['phone']}" value="${userProfile.phone!}" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="extension">${labels["extension"]}</label>
+                                    <input type="text" class="form-control" name="extension" id="extension" placeholder="${labels['extension']}" value="${userProfile.extension!}" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="locale">${labels["locale.key"]}</label>
+                                    <select id="locale" name="locale" class="form-control" required>
+                                        <#list locales?keys as key>
+                                            <#if userProfile.locale==key>
+                                                <option value="${key}" selected="selected">${locales[key]}</option>
+                                            </#if>
+                                            <#if userProfile.locale !=key>
+                                                <option value="${key}">${locales[key]}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label" for="timeZone">${labels["timezone.key"]}</label>
+                                    <select id="timeZone" name="timeZone" class="form-control" required>
+                                        <#list timeZones as timeZone>
+                                            <#if userProfile.timeZone.ID==timeZone>
+                                                <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                            </#if>
+                                            <#if userProfile.timeZone.ID !=timeZone>
+                                                <option value="${timeZone}">${timeZone}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button type="button" id="update-user-profile" class="btn btn-primary">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $("#update-user-profile").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#user-profile-form");
+                $dialog = $("#user-profile-dialog");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['user.profile']}/${userProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+
+            $("#update-address").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#address-form");
+                $dialog = $("#address-dialog");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['user.profile']}/${userProfile.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+
+                });
+            });
+
+            $("#edit-user-profile").click(function(e) {
+                var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
+                $("#firstName").val(userProfile.firstName);
+                $("#lastName").val(userProfile.lastName);
+                $("#division").val(userProfile.division);
+                $("#company").val(userProfile.company);
+                $("#department").val(userProfile.department);
+                $("#title").val(userProfile.title);
+                $("#email").val(userProfile.email);
+                $("#mobilePhone").val(userProfile.mobilePhone);
+                $("#phone").val(userProfile.phone);
+                $("#extension").val(userProfile.extension);
+                $("#fax").val(userProfile.fax);
+                $("#languageSidKey").val(userProfile.languageSidKey);
+                $("#localeSidKey").val(userProfile.localeSidKey);
+                $("#timeZoneSidKey").val(userProfile.timeZoneSidKey);
+            });
+
+            $('#user-profile-dialog').on('shown.bs.modal', function() {
+                $('#firstName').focus();
+            });
+
+            $('#address-dialog').on('shown.bs.modal', function() {
+                $('#street').focus();
+            });
+
+            $('#payment-method-dialog').on('shown.bs.modal', function() {
+                $('#cardholderName').focus();
+            });
+
+            var userProfile = {
+                basePath: "${links['user.profile']}",
+                id: "${userProfile.id!}",
+                firstName: "${userProfile.firstName!}",
+                lastName: "${userProfile.lastName!}",
+                street: "${(userProfile.address.street)!}",
+                city: "${(userProfile.address.city)!}",
+                state: "${(userProfile.address.state)!}",
+                postalCode: "${(userProfile.address.postalCode)!}",
+                countryCode: "${(userProfile.address.countryCode)!}",
+                company: "${(userProfile.company)!}",
+                department: "${(userProfile.department)!}",
+                title: "${(userProfile.title)!}",
+                email: "${(userProfile.email)!}",
+                mobilePhone: "${(userProfile.mobilePhone)!}",
+                phone: "${(userProfile.phone)!}",
+                extension: "${(userProfile.extension)!}",
+                fax: "${(userProfile.fax)!}",
+                languageSidKey: "${(userProfile.languageSidKey)!}",
+                localeSidKey: "${(userProfile.localeSidKey)!}",
+                timeZoneSidKey: "${(userProfile.timeZoneSidKey)!}"
+            }
+
+            sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
+        </script>
+
+        <script src="/js/user-profile.js"></script>
+
+    </@t.page>

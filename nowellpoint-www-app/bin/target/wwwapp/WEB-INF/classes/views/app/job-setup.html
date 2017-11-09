@@ -1,0 +1,262 @@
+<#import "template-form.html" as t>
+
+    <@t.page>
+        <div class="dashhead m-t-md">
+            <div class="dashhead-titles">
+                <h3 class="dashhead-title">${labels["setup.metadata.backup"]}</h3>
+            </div>
+        </div>
+        <br>
+        <div id="error"></div>
+        <form class="form-vertical" name="schedule-form" id="schedule-form" role="form" method="post" action="${service.href}">
+
+            <input type="hidden" class="form-control" name="jobTypeId" id="jobTypeId" value="${service.serviceId}" />
+
+            <fieldset>
+                <div class="form-group">
+                    <label class="control-label" for="description">${labels["description"]}</label>
+                    <input type="text" class="form-control col-md-9" name="description" id="description" autofocus="" />
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
+
+            <fieldset>
+                <legend>${labels["alerts"]}</legend>
+
+                <div class="form-group">
+                    <label class="control-label" for="notificationEmail">${labels["notification.email"]}</label>
+                    <input type="text" class="form-control col-md-6" name="notificationEmail" id="notificationEmail" value="" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="slackWebhookUrl">${labels["webhook.url"]}</label>
+                    <input type="text" class="form-control col-md-9" name="slackWebhookUrl" id="slackWebhookUrl" value="" aria-describedby="slackWebhookUrlHelp" />
+                    <p id="slackWebhookUrlHelp" class="form-text text-muted">
+                        ${labels["configure.webook.instructions"]}
+                    </p>
+                </div>
+            </fieldset>
+
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
+
+            <fieldset>
+                <legend>${labels["schedule"]}</legend>
+
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="scheduleOption" id="runWhenSubmitted" value="RUN_WHEN_SUBMITTED" checked> ${labels["run.when.submitted"]}</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="scheduleOption" id="once" value="RUN_ONCE"> ${labels["once"]}</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="scheduleOption" id="schedule" value="RUN_ON_SCHEDULE"> ${labels["schedule"]}</label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="scheduleOption" id="specificDays" value="RUN_ON_SPECIFIC_DAYS"> ${labels["specific.days"]}</label>
+                </div>
+
+                <br>
+
+                <div id="once-form" class="collapse">
+                    <div class="form-group">
+                        <label class="control-label" for="runAt">${labels["run.at"]}*</label>
+                        <input type="text" id="runAt" name="runAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control col-md-4" aria-describedby="dateTimeFormat" required>
+                        <p id="dateTimeFormat" class="form-text text-muted">
+                            ${labels["date.time.format"]}
+                        </p>
+                    </div>
+                </div>
+
+                <div id="run-on-schedule-form" class="collapse">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="startAt">${labels["start.at"]}*</label>
+                            <input type="text" id="startAt" name="startAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" class="form-control col-md-8" aria-describedby="dateTimeFormat" required>
+                            <p id="dateTimeFormat" class="form-text text-muted">
+                                ${labels["date.time.format"]}
+                            </p>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="endAt">${labels["end.at"]}*</label>
+                            <input type="text" id="endAt" name="endAt" value="${.now?date?string['yyyy-MM-dd HH:mm:ss']}" aria-describedby="dateTimeFormat" class="form-control col-md-8">
+                            <p id="dateTimeFormat" class="form-text text-muted">
+                                ${labels["date.time.format"]}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="timeInterval">${labels["rerun.every"]}*</label>
+                            <input type="text" id="timeInterval" name="timeInterval" value="60" class="form-control col-md-8">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="timeInterval">&nbsp;</label>
+                            <select id="timeUnit" name="timeUnit" class="form-control col-md-8" required>
+                                <option value="minutes" selected="selected">Minutes(s)</option>
+                                <option value="hours">Hour(s)</option>
+                                <option value="days">Day(s)</option>
+                                <option value="weeks">Week(s)</option>
+                                <option value="months">Month(s)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!--
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="seconds">${labels["seconds"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="seconds" name="seconds" value="" class="form-control" />
+                            <span class="input-group-addon">[0,59]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="minutes">${labels["minutes"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="minutes" name="minutes" value="" class="form-control" />
+                            <span class="input-group-addon">[0,59]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="hours">${labels["hours"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="hours" name="hours" value="" class="form-control" />
+                            <span class="input-group-addon">[0,23]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="dayOfMonth">${labels["day.of.month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfMonth" name="dayOfMonth" value="" class="form-control" />
+                            <span class="input-group-addon">[1,31] ${labels["or"]} ${labels["last"]}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="month">${labels["month"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="month" name="month" value="" class="form-control" />
+                            <span class="input-group-addon">[1,12]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="dayOfWeek">${labels["day.of.week"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="dayOfWeek" name="dayOfWeek" value="" class="form-control" />
+                            <span class="input-group-addon">[0,7]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label class="control-label" for="year">${labels["year"]}</label>
+                        <div class="input-group">
+                            <input type="text" id="year" name="year" value="" class="form-control" />
+                            <span class="input-group-addon">${labels["year.format"]}</span>
+                        </div>
+                    </div>
+                </div>
+-->
+
+            <div class="form-group">
+                <div class="hr-divider"></div>
+            </div>
+
+            <div class="form-group">
+                <div class="pull-right">
+                    <a href="${links['salesforce.connector']}/${salesforceConnector.id}#services" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                    <button name="save" id="save" class="btn btn-primary">${labels["save"]}</button>
+                </div>
+            </div>
+
+        </form>
+
+        <script>
+            $(document).ready(function() {
+                $('#runWhenSubmitted').click(function() {
+                    if (this.checked) {
+                        $("#once-form").hide();
+                        $("#run-on-schedule-form").hide();
+                    }
+                });
+
+                $('#once').click(function() {
+                    if (this.checked) {
+                        $("#once-form").show();
+                        $("#run-on-schedule-form").hide();
+                    }
+                });
+
+                $('#schedule').click(function() {
+                    if (this.checked) {
+                        $("#once-form").hide();
+                        $("#run-on-schedule-form").show();
+                    }
+                });
+
+                $('#specificDays').click(function() {
+                    if (this.checked) {
+                        alert("Transfer Thai Gayo");
+                    }
+                });
+            });
+
+
+
+            $("#save").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#schedule-form");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['jobs']}";
+                                });
+                            }, 1000);
+                        } else {
+                            $("#error").prepend(response.responseText);
+                        }
+                    }
+                });
+            });
+        </script>
+
+    </@t.page>

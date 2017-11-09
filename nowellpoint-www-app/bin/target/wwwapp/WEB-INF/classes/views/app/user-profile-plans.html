@@ -1,0 +1,359 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <#if action=="listPlans">
+
+            <div>
+                <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back fa fa-1x"></span></a>&emsp;${labels["back"]}
+            </div>
+            <br>
+
+            <div class="container">
+                <div class="row">
+                    <div class="flextable p-t">
+                        <div class="flextable-item flextable-primary">
+                            <h3 class="dashhead-title">${labels["select.plan"]}</h3>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <div class="membership-pricing-table">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <th></th>
+                                        <#list plans as plan>
+                                            <#if plan.recommendedPlan==true>
+                                                <th class="plan-header plan-header-standard">
+                                                    <div class="header-plan-inner">
+                                                        <span class="recommended-plan-ribbon">${labels["recommended"]}</span>
+                                                        <div class="pricing-plan-name">${plan.planName}</div>
+                                                        <div class="pricing-plan-price">
+                                                            <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                        </div>
+                                                        <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                                    </div>
+                                                </th>
+                                            </#if>
+                                            <#if plan.recommendedPlan==false && plan.price.unitPrice==0>
+                                                <th class="plan-header plan-header-free">
+                                                    <div class="pricing-plan-name">${plan.planName}</div>
+                                                    <div class="pricing-plan-price">
+                                                        <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                    </div>
+                                                    <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                                </th>
+                                            </#if>
+                                            <#if plan.recommendedPlan==false && plan.price.unitPrice gt 0>
+                                                <th class="plan-header plan-header-blue">
+                                                    <div class="pricing-plan-name">${plan.planName}</div>
+                                                    <div class="pricing-plan-price">
+                                                        <sup>${plan.price.currencySymbol}</sup>${plan.price.unitPrice}<span>.00</span>
+                                                    </div>
+                                                    <div class="pricing-plan-period">${plan.billingFrequency}</div>
+                                                </th>
+                                            </#if>
+                                        </#list>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <#list plans as plan>
+                                            <!-- <#if accountProfile.subscription?? && plan.id==accountProfile.subscription.planId> -->
+                                            <td class="action-header">
+                                                <div class="current-plan">
+                                                    <div class="with-date">${labels["current.plan"]}</div>
+                                                    <!-- <div><em class="smaller block">renews Feb 19, 2015</em></div> -->
+                                                </div>
+                                            </td>
+                                            <!--  <#elseif plan.recommendedPlan==true> -->
+                                            <td class="action-header">
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
+                                            </td>
+                                            <!--  <#elseif accountProfile.subscription?? && plan.price.unitPrice gt accountProfile.subscription.unitPrice> -->
+                                            <td class="action-header">
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["upgrade"]}</a>
+                                            </td>
+                                            <!--        <#else> -->
+                                            <td class="action-header">
+                                                <a href="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}" class="btn btn-default" role="button">${labels["downgrade"]}</a>
+                                            </td>
+                                            <!--  </#if> -->
+                                        </#list>
+                                    </tr>
+                                    <#list plans[0].features?sort_by( "sortOrder") as feature>
+                                        <tr id="${feature?index}">
+                                            <td>${feature.name}</td>
+                                            <#list plans as plan>
+                                                <#assign x=plan.features?sort_by( "sortOrder")[feature?index] />
+                                                <td>
+                                                    <#if x.enabled?? && x.enabled==true>
+                                                        <span class="icon-yes glyphicon glyphicon-ok-circle"></span>
+                                                    </#if>
+                                                    <#if x.enabled?? && x.enabled==false>
+                                                        <span class="icon-no glyphicon glyphicon-remove-circle"></span>
+                                                    </#if>
+                                                    <#if x.quantity??>
+                                                        ${x.quantity}
+                                                    </#if>
+                                                </td>
+                                            </#list>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </#if>
+
+        <#if action=="reviewPlan">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="flextable p-t">
+                            <div class="flextable-item flextable-primary">
+                                <h3 class="dashhead-title">${labels["review.plan"]}</h3>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <th>${labels["plan.name"]}</th>
+                                    <th>${labels["feature"]}</th>
+                                    <th class="text-center">${labels["quantity"]}</th>
+                                    <th class="text-right">${labels["price"]}</th>
+                                </thead>
+                                <tbody>
+                                    <#list plan.features?sort_by( "sortOrder") as feature>
+                                        <tr>
+                                            <#if feature?index==0>
+                                                <td>${(plan.planName)!}</td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td class="text-right">${(plan.billingFrequency)!}&nbsp;${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.00"])!}</td>
+                                            </#if>
+                                            <#if feature?index gt 0>
+                                                <td></td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td></td>
+                                            </#if>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <#if plan.price.unitPrice gt 0>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <#if accountProfile.primaryCreditCard??>
+                                    <b>${labels["payment.method"]}:</b>&emsp;<img src="${(accountProfile.primaryCreditCard.imageUrl)!}" height="18" width="30" />&nbsp;${(accountProfile.primaryCreditCard.cardType)!}&nbsp;${labels["ending.in"]}&nbsp;${(accountProfile.primaryCreditCard.lastFour)!}
+                                </#if>
+                                <#if ! accountProfile.primaryCreditCard??>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#payment-method-dialog">${labels["add.payment.method"]}</button>
+                                </#if>
+                            </div>
+                        </div>
+                    </div>
+                </#if>
+                <br>
+                <form id="set-plan-form" name="payment-method-form" class="form-vertical" method="post" action="${links['account.profile']}/${accountProfile.id}/plans/${plan.id}">
+                    <#if plan.price.unitPrice gt 0>
+                        <input type="hidden" name="paymentMethodToken" id="paymentMethodToken" value="${(accountProfile.primaryCreditCard.token)!}" />
+                    </#if>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <a href="${links['account.profile']}/${accountProfile.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                                <a href="${links['account.profile']}/${accountProfile.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                                <button type="button" id="set-plan" class="btn btn-primary">${labels["set.plan"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal fade" id="payment-method-dialog" tabindex="-1" role="dialog" aria-labelledby="payment-method-dialog-title" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="payment-method-dialog-title">${labels["add.payment.method"]}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form name="payment-method-form" id="payment-method-form" class="form-horizontal" role="form" method="post" action="${links['account.profile']}/${accountProfile.id}/payment-methods">
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['name.on.card']}</label>
+                                        <input type="text" class="form-control" name="cardholderName" id="cardholderName" value="${(creditCard.cardholderName)!}" tabindex="1" placeholder="${labels['name.on.card']}" />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['country']}</label>
+                                        <select class="form-control" id="countryCode" name="countryCode" tabindex="8" required>
+                                            <option value="">${labels["select.one"]}</option>
+                                            <#list countryList as country>
+                                                <#if creditCard.billingAddress.countryCode??>
+                                                    <#if country.code==creditCard.billingAddress.countryCode>
+                                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                                    </#if>
+                                                    <#if country.code !=creditCard.billingAddress.countryCode>
+                                                        <option value="${country.code}">${country.name}</option>
+                                                    </#if>
+                                                </#if>
+                                                <#if ! creditCard.billingAddress.countryCode??>
+                                                    <option value="${country.code}">${country.name}</option>
+                                                </#if>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['number']}</label>
+                                        <input type="text" class="form-control" name="number" id="number" tabindex="2" value="${(creditCard.number)!}" placeholder="${labels['number']}">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['street']}</label>
+                                        <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(creditCard.billingAddress.street)!}" tabindex="9" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label" for="localeSidKey">${labels['month']}</label>
+                                        <select class="form-control" name="expirationMonth" id="expirationMonth" tabindex="3">
+                                            <#assign x=12 />
+                                            <#list 1..x as month>
+                                                <#if creditCard.expirationMonth?eval==month>
+                                                    <option value="${month?c}" selected="selected">${month?c}</option>
+                                                </#if>
+                                                <#if creditCard.expirationMonth?eval !=month>
+                                                    <option value="${month?c}">${month?c}</option>
+                                                </#if>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label" for="localeSidKey">${labels['year']}</label>
+                                        <select class="form-control" name="expirationYear" id="expirationYear" tabindex="4">
+                                            <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                            <#list .now?string[ "yyyy"]?number..x as year>
+                                                <#if creditCard.expirationYear?eval==year>
+                                                    <option value="${year?c}" selected="selected">${year?c}</option>
+                                                </#if>
+                                                <#if creditCard.expirationYear?eval !=year>
+                                                    <option value="${year?c}">${year?c}</option>
+                                                </#if>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <label class="control-label" for="localeSidKey">${labels['cvv']}</label>
+                                        <input type="text" class="form-control" name="cvv" id="cvv" placeholder="${labels['cvv']}" value="${(creditCard.cvv)!}" tabindex="5" />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['city']}</label>
+                                        <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(creditCard.billingAddress.city)!}" tabindex="10" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['first.name']}</label>
+                                        <input type="text" class="form-control" name="firstName" id="firstName" value="${(creditCard.billingContact.firstName)!}" placeholder="${labels['first.name']}" tabindex="6" />
+
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['state']}</label>
+                                        <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(creditCard.billingAddress.state)!}" tabindex="11" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['last.name']}</label>
+                                        <input type="text" class="form-control" name="lastName" id="lastName" value="${(creditCard.billingContact.lastName)!}" placeholder="${labels['last.name']}" tabindex="7" />
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="control-label" for="localeSidKey">${labels['zip.postal.code']}</label>
+                                        <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['zip.postal.code']}" value="${(creditCard.billingAddress.postalCode)!}" tabindex="12" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" tabindex="12">${labels["cancel"]}</button>
+                            <button type="button" class="btn btn-primary" id="add-payment-method" tabindex="13">${labels["save"]}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <#include "spinner.html"/>
+        </#if>
+
+        <script>
+            $("#add-payment-method").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#payment-method-form");
+                $dialog = $("#payment-method-dialog");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    $(location).attr("href", location.href);
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+
+                });
+            });
+            
+            $("#set-plan").click(function(e) {
+                e.preventDefault();
+
+                $form = $("#set-plan-form");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        if (response.status == 200) {
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                            $("#notification").slideUp('slow').fadeOut(function() {
+                                $(location).attr("href", "${links['account.profile']}/${accountProfile.id}/current-plan");
+                            });
+                        }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+
+                });
+            });            
+            
+        </script>
+    </@t.page>

@@ -1,0 +1,17 @@
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/DashboardController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/NotificationController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/SignUpController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/AuthenticationController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/IndexController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/SalesforceConnectorController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/SalesforceOauthController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/JobController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/StartController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/UserProfileController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/AdministrationController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/OrganizationController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/Application.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/view/AbstractStaticController.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/util/TemplateBuilder.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/util/MessageProvider.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-www-app/src/main/java/com/nowellpoint/www/app/util/Path.java

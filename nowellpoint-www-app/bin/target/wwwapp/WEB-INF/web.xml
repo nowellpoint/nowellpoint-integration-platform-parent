@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	metadata-complete="false" version="3.1">
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+	<filter>
+		<filter-name>SparkFilter</filter-name>
+		<filter-class>spark.servlet.SparkFilter</filter-class>
+		<init-param>
+			<param-name>applicationClass</param-name>
+			<param-value>com.nowellpoint.www.app.Application</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SparkFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Viewpoint Secure URLs</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>OUT</http-method>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+</web-app>
