@@ -1,9 +1,17 @@
 logger:
     level: DEBUG
 swarm:
+    http:
+        port: 5000
     https:
         certificate:
             generate: true
+        port: 5100
+    management:
+        http:
+          port: 5990
+        https:
+          port: 5993    
 propertyStore: 
     name: sandbox
 okta:

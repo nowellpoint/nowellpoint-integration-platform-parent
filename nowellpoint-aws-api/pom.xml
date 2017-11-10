@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-aws-api</artifactId>
 	<name>Nowellpoint Rest Api</name>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
@@ -213,6 +213,7 @@
 				<version>${version.wildfly.swarm}</version>
 				<configuration>
 					<mainClass>com.nowellpoint.api.Main</mainClass>
+					<warName>ROOT</warName>
 				</configuration>
 				<executions>
 					<execution>
