@@ -13,7 +13,7 @@ registration:
     send:
       notification: false
 api:
-    hostname: http://localhost:5000/rest
+    hostname: https://nowellpoint-api-docker-test-1.192.168.99.100.nip.io/rest
 verify:
     email:
-      redirect: https://localhost:8443/verify-email
+      redirect: https://nowellpoint-console-docker-test-1.192.168.99.100.nip.io/verify-email
