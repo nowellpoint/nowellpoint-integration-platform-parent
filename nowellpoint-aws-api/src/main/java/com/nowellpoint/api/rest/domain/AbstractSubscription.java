@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -33,4 +34,5 @@ public abstract class AbstractSubscription {
 	public abstract @Nullable CreditCard getCreditCard();
 	public abstract @Nullable Address getBillingAddress();
 	public abstract @Nullable Contact getBillingContact();
+	public abstract @Nullable Set<FeatureInfo> getFeatures();
 }

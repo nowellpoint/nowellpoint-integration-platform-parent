@@ -1,7 +1,9 @@
 package com.nowellpoint.client.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -44,10 +46,13 @@ public class Subscription implements Serializable {
 	
 	private CreditCard creditCard;
 	
+	private List<Feature> features;
+	
 	public Subscription() {
 		billingContact = new Contact();
 		billingAddress = new Address();
 		creditCard = new CreditCard();
+		features = new ArrayList<>();
 	}
 
 	public String getPlanId() {
@@ -168,5 +173,13 @@ public class Subscription implements Serializable {
 
 	public void setCreditCard(CreditCard creditCard) {
 		this.creditCard = creditCard;
+	}
+
+	public List<Feature> getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(List<Feature> features) {
+		this.features = features;
 	}
 }

@@ -148,6 +148,20 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				return organizationInfo.toImmutable();
 			}
 		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Feature, FeatureInfo>() {
+
+			@Override
+			protected FeatureInfo convert(com.nowellpoint.api.model.document.Feature source) {
+				System.out.println("converting feature");
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableFeatureInfo featureInfo = modelMapper.map(source, ModifiableFeatureInfo.class);
+				System.out.println("converted: " + featureInfo.getName());
+				return featureInfo.toImmutable();
+			}
+		});
 	}
 	
 	public abstract @Nullable String getId();

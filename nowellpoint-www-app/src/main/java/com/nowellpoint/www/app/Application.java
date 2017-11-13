@@ -166,24 +166,33 @@ public class Application implements SparkApplication {
 		// organization routes
 		//
 
-		get(Path.Route.ORGANIZATION_VIEW,
-				(request, response) -> OrganizationController.viewOrganization(configuration, request, response));
-		get(Path.Route.ORGANIZATION_LIST_PLANS,
-				(request, response) -> OrganizationController.listPlans(configuration, request, response));
-		get(Path.Route.ORGANIZATION_REVIEW_PLAN,
-				(request, response) -> OrganizationController.reviewPlan(configuration, request, response));
-		post(Path.Route.ORGANIZATION_CHANGE_PLAN,
-				(request, response) -> OrganizationController.changePlan(configuration, request, response));
+		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
+				-> OrganizationController.viewOrganization(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_VIEW_PLAN, (request, response) 
+				-> OrganizationController.viewPlan(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
+				-> OrganizationController.listPlans(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_REVIEW_PLAN, (request, response) 
+				-> OrganizationController.reviewPlan(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_CHANGE_PLAN, (request, response) 
+				-> OrganizationController.changePlan(configuration, request, response));
 
 		//
 		// authentication routes
 		//
 
-		get(Path.Route.LOGIN,
-				(request, response) -> AuthenticationController.serveLoginPage(configuration, request, response));
-		post(Path.Route.LOGIN, (request, response) -> AuthenticationController.login(configuration, request, response));
-		get(Path.Route.LOGOUT,
-				(request, response) -> AuthenticationController.logout(configuration, request, response));
+		get(Path.Route.LOGIN, (request, response) 
+				-> AuthenticationController.serveLoginPage(configuration, request, response));
+		
+		post(Path.Route.LOGIN, (request, response) 
+				-> AuthenticationController.login(configuration, request, response));
+		
+		get(Path.Route.LOGOUT, (request, response) 
+				-> AuthenticationController.logout(configuration, request, response));
 
 		//
 		// start routes
@@ -217,14 +226,23 @@ public class Application implements SparkApplication {
 		// signup routes
 		//
 
-		get(Path.Route.PLANS, (request, response) -> SignUpController.plans(configuration, request, response));
-		get(Path.Route.FREE_ACCOUNT,
-				(request, response) -> SignUpController.freeAccount(configuration, request, response));
-		get(Path.Route.SIGN_UP, (request, response) -> SignUpController.paidAccount(configuration, request, response));
-		post(Path.Route.SIGN_UP, (request, response) -> SignUpController.signUp(configuration, request, response));
-		get(Path.Route.VERIFY_EMAIL,
-				(request, response) -> SignUpController.verifyEmail(configuration, request, response));
-		post(Path.Route.PROVISION, (request, response) -> SignUpController.provision(configuration, request, response));
+		get(Path.Route.PLANS, (request, response) 
+				-> SignUpController.plans(configuration, request, response));
+		
+		get(Path.Route.FREE_ACCOUNT, (request, response) 
+				-> SignUpController.freeAccount(configuration, request, response));
+		
+		get(Path.Route.SIGN_UP, (request, response) 
+				-> SignUpController.paidAccount(configuration, request, response));
+		
+		post(Path.Route.SIGN_UP, (request, response) 
+				-> SignUpController.signUp(configuration, request, response));
+		
+		get(Path.Route.VERIFY_EMAIL, (request, response) 
+				-> SignUpController.verifyEmail(configuration, request, response));
+		
+		post(Path.Route.PROVISION, (request, response) 
+				-> SignUpController.provision(configuration, request, response));
 
 		//
 		// salesforce connector routes

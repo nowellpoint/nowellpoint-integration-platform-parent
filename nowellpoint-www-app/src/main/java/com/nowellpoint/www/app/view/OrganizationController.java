@@ -43,8 +43,7 @@ public class OrganizationController extends AbstractStaticController {
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
-		public static final String USER_PROFILE_CURRENT_PLAN = String.format(APPLICATION_CONTEXT, "account-profile-current-plan.html");
-	
+		public static final String ORGANIZATION_VIEW_PLAN = String.format(APPLICATION_CONTEXT, "organization-view-plan.html");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
 	}
 	
@@ -88,6 +87,34 @@ public class OrganizationController extends AbstractStaticController {
 		model.put("timeZones", getTimeZones());
 
 		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String viewPlan(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String planId = request.params(":planId");
+		
+		Plan plan = NowellpointClient.defaultClient(token)
+				.plan()
+				.get(planId);
+		
+		Organization organization = new Organization();
+		organization.setId(id);
+		
+		Map<String, Object> model = getModel();
+		model.put("organization", organization);
+		model.put("plan", plan);
+		
+		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_VIEW_PLAN);	
 	}
 	
 	/**

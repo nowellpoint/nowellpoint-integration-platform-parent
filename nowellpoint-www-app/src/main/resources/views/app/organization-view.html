@@ -23,14 +23,6 @@
             <div class="tab-content">
 
                 <div id="details" role="tabpanel" class="tab-pane fade active show">
-                    <div class="flextable">
-                        <div class="flextable-item flextable-primary">
-                            &nbsp;
-                        </div>
-                        <div class="flextable-item">
-                            <a href="${links['organization']}/${organization.id}/plans" class="btn btn-primary" role="button">${labels["change.plan"]}</a>
-                        </div>
-                    </div>
                     <div class="row" id="organization">
                         <div class="col-12">
                             <div class="flextable" style="height: 18px">
@@ -82,7 +74,7 @@
                                     <b>${labels["plan.name"]}</b>
                                 </div>
                                 <div class="col-9">
-                                    ${organization.subscription.planName}
+                                    <a href="${links['organization']}/${organization.id}/plan/${organization.subscription.planId}">${organization.subscription.planName}</a>
                                 </div>
                             </div>
                             <hr>
