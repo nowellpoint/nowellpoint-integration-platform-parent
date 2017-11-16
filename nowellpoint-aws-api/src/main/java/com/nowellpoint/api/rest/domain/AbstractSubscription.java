@@ -34,5 +34,5 @@ public abstract class AbstractSubscription {
 	public abstract @Nullable CreditCard getCreditCard();
 	public abstract @Nullable Address getBillingAddress();
 	public abstract @Nullable Contact getBillingContact();
-	public abstract @Nullable Set<FeatureInfo> getFeatures();
+	public abstract Set<FeatureInfo> getFeatures();
 }

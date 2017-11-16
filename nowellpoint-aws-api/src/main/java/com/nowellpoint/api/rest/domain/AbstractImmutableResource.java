@@ -49,20 +49,6 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			}
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Feature, FeatureInfo>() {
-
-			@Override
-			protected FeatureInfo convert(com.nowellpoint.api.model.document.Feature source) {
-				System.out.println("converting feature");
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiableFeatureInfo featureInfo = modelMapper.map(source, ModifiableFeatureInfo.class);
-				System.out.println("converted: " + featureInfo.getName());
-				return featureInfo.toImmutable();
-			}
-		});
-		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, Subscription>() {
 
 			@Override
@@ -86,33 +72,13 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 					features.add(featureInfo);
 				}
 				
-				CreditCard creditCard = ModifiableCreditCard.create()
-						.setAddedOn(source.getCreditCard().getAddedOn())
-						.setCardholderName(source.getCreditCard().getCardholderName())
-						.setCardType(source.getCreditCard().getCardType())
-						.setExpirationMonth(source.getCreditCard().getExpirationMonth())
-						.setExpirationYear(source.getCreditCard().getExpirationMonth())
-						.setImageUrl(source.getCreditCard().getImageUrl())
-						.setLastFour(source.getCreditCard().getLastFour())
-						.setToken(source.getCreditCard().getToken())
-						.setUpdatedOn(source.getCreditCard().getUpdatedOn())
-						.toImmutable();
-				
-				Contact contact = ModifiableContact.create()
-						.setAddedOn(source.getBillingContact().getAddedOn())
-						.setEmail(source.getBillingContact().getEmail())
-						.setFirstName(source.getBillingContact().getFirstName())
-						.setLastName(source.getBillingContact().getLastName())
-						.setPhone(source.getBillingContact().getPhone())
-						.setUpdatedOn(source.getBillingContact().getUpdatedOn())
-						.toImmutable();
-				
 				ModifiableSubscription subscription = ModifiableSubscription.create()
 						.setAddedOn(source.getAddedOn())
+						.setBillingAddress(Address.of(source.getBillingAddress()))
 						.setBillingFrequency(source.getBillingFrequency())
 						.setBillingPeriodEndDate(source.getBillingPeriodEndDate())
 						.setBillingPeriodStartDate(source.getBillingPeriodStartDate())
-						.setCreditCard(creditCard)
+						.setCreditCard(CreditCard.of(source.getCreditCard()))
 						.setCurrencyIsoCode(source.getCurrencyIsoCode())
 						.setCurrencySymbol(source.getCurrencySymbol())
 						.setFeatures(features)
@@ -124,8 +90,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 						.setStatus(source.getStatus())
 						.setUnitPrice(source.getUnitPrice())
 						.setUpdatedOn(source.getUpdatedOn())
-						.setBillingAddress(Address.of(source.getBillingAddress()))
-						.setBillingContact(contact);
+						.setBillingContact(Contact.of(source.getBillingContact()));
 				
 				return subscription.toImmutable();
 			}

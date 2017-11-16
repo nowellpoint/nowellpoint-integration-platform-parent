@@ -11,6 +11,9 @@
                     <a class="nav-link active" role="tab" data-toggle="tab" data-target="#details" href="#">${labels["details"]}</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#subscription" href="#">${labels["subscription"]}</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" role="tab" data-toggle="tab" data-target="#transactions" href="#">${labels["transactions"]}</a>
                 </li>
                 <li class="nav-item">
@@ -51,49 +54,6 @@
                                     ${organization.number}
                                 </div>
 
-                            </div>
-                            <hr>
-                        </div>
-                    </div>
-
-                    <br>
-                    <br>
-                    <div class="row" id="subscription">
-                        <div class="col-12">
-                            <div class="flextable" style="height: 18px">
-                                <div class="flextable-item flextable-primary">
-                                    <h4><b>${labels["subscription"]}</b></h4>
-                                </div>
-                                <div class="flextable-item">
-                                    &nbsp;
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["plan.name"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    <a href="${links['organization']}/${organization.id}/plan/${organization.subscription.planId}">${organization.subscription.planName}</a>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>Price (${organization.subscription.billingFrequency})</b>
-                                </div>
-                                <div class="col-9">
-                                    ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["next.billing.date"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${organization.subscription.nextBillingDate?date?string.long}
-                                </div>
                             </div>
                             <hr>
                         </div>
@@ -242,6 +202,60 @@
                             <hr>
                         </div>
                     </div>
+                </div>
+                
+                <div role="tabpanel" class="tab-pane fade" id="subscription">
+                    <div class="row" id="subscription">
+                        <div class="col-12">
+                            <div class="flextable" style="height: 18px">
+                                <div class="flextable-item flextable-primary">
+                                    &nbsp;
+                                </div>
+                                <div class="flextable-item">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["plan.name"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.planName}&emsp;<a href="${links['organization']}/${organization.id}/plans">${labels["change.plan"]}</a>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>Price (${organization.subscription.billingFrequency})</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-3">
+                                    <b>${labels["next.billing.date"]}</b>
+                                </div>
+                                <div class="col-9">
+                                    ${organization.subscription.nextBillingDate?date?string.long}
+                                </div>
+                            </div>
+                            <#list organization.subscription.features?sort_by( "sortOrder") as feature>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                <b>${feature.name}</b>
+                            </div>
+                            <div class="col-9">
+                                ${feature.quantity}
+                            </div>
+                        </div>
+                    </#list>
+                            <hr>
+                        </div>
+                    </div>
+                
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="transactions">

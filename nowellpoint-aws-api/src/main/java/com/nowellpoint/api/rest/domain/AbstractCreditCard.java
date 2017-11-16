@@ -27,6 +27,22 @@ public abstract class AbstractCreditCard {
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 	
+	public static CreditCard of(com.nowellpoint.api.model.document.CreditCard source) {
+		CreditCard creditCard = ModifiableCreditCard.create()
+				.setAddedOn(source.getAddedOn())
+				.setCardholderName(source.getCardholderName())
+				.setCardType(source.getCardType())
+				.setExpirationMonth(source.getExpirationMonth())
+				.setExpirationYear(source.getExpirationMonth())
+				.setImageUrl(source.getImageUrl())
+				.setLastFour(source.getLastFour())
+				.setToken(source.getToken())
+				.setUpdatedOn(source.getUpdatedOn())
+				.toImmutable();
+		
+		return creditCard;
+	}
+	
 	public static CreditCard of(com.braintreegateway.CreditCard source) {
 		CreditCard instance = CreditCard.builder()
 				.addedOn(source.getCreatedAt().getTime())
