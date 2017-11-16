@@ -2,6 +2,8 @@ package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -47,6 +49,20 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			}
 		});
 		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Feature, FeatureInfo>() {
+
+			@Override
+			protected FeatureInfo convert(com.nowellpoint.api.model.document.Feature source) {
+				System.out.println("converting feature");
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableFeatureInfo featureInfo = modelMapper.map(source, ModifiableFeatureInfo.class);
+				System.out.println("converted: " + featureInfo.getName());
+				return featureInfo.toImmutable();
+			}
+		});
+		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Subscription, Subscription>() {
 
 			@Override
@@ -54,7 +70,63 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
+				//ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
+				
+				Set<FeatureInfo> features = new HashSet<>();
+				for (com.nowellpoint.api.model.document.Feature feature : source.getFeatures()) {
+					FeatureInfo featureInfo = ModifiableFeatureInfo.create()
+							.setCode(feature.getCode())
+							.setDescription(feature.getDescription())
+							.setEnabled(feature.getEnabled())
+							.setName(feature.getName())
+							.setQuantity(feature.getQuantity())
+							.setSortOrder(feature.getSortOrder())
+							.toImmutable();
+					
+					features.add(featureInfo);
+				}
+				
+				CreditCard creditCard = ModifiableCreditCard.create()
+						.setAddedOn(source.getCreditCard().getAddedOn())
+						.setCardholderName(source.getCreditCard().getCardholderName())
+						.setCardType(source.getCreditCard().getCardType())
+						.setExpirationMonth(source.getCreditCard().getExpirationMonth())
+						.setExpirationYear(source.getCreditCard().getExpirationMonth())
+						.setImageUrl(source.getCreditCard().getImageUrl())
+						.setLastFour(source.getCreditCard().getLastFour())
+						.setToken(source.getCreditCard().getToken())
+						.setUpdatedOn(source.getCreditCard().getUpdatedOn())
+						.toImmutable();
+				
+				Contact contact = ModifiableContact.create()
+						.setAddedOn(source.getBillingContact().getAddedOn())
+						.setEmail(source.getBillingContact().getEmail())
+						.setFirstName(source.getBillingContact().getFirstName())
+						.setLastName(source.getBillingContact().getLastName())
+						.setPhone(source.getBillingContact().getPhone())
+						.setUpdatedOn(source.getBillingContact().getUpdatedOn())
+						.toImmutable();
+				
+				ModifiableSubscription subscription = ModifiableSubscription.create()
+						.setAddedOn(source.getAddedOn())
+						.setBillingFrequency(source.getBillingFrequency())
+						.setBillingPeriodEndDate(source.getBillingPeriodEndDate())
+						.setBillingPeriodStartDate(source.getBillingPeriodStartDate())
+						.setCreditCard(creditCard)
+						.setCurrencyIsoCode(source.getCurrencyIsoCode())
+						.setCurrencySymbol(source.getCurrencySymbol())
+						.setFeatures(features)
+						.setNextBillingDate(source.getNextBillingDate())
+						.setNumber(source.getNumber())
+						.setPlanCode(source.getPlanCode())
+						.setPlanId(source.getPlanId())
+						.setPlanName(source.getPlanName())
+						.setStatus(source.getStatus())
+						.setUnitPrice(source.getUnitPrice())
+						.setUpdatedOn(source.getUpdatedOn())
+						.setBillingAddress(Address.of(source.getBillingAddress()))
+						.setBillingContact(contact);
+				
 				return subscription.toImmutable();
 			}
 			
@@ -99,6 +171,18 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, Transaction>() {
+
+			@Override
+			protected Transaction convert(com.nowellpoint.api.model.document.Transaction source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
+				return transaction.toImmutable();
+			}
+		});
+		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, UserInfo>() {
 
 			@Override
@@ -125,18 +209,6 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Transaction, Transaction>() {
-
-			@Override
-			protected Transaction convert(com.nowellpoint.api.model.document.Transaction source) {
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
-				return transaction.toImmutable();
-			}
-		});
-		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Organization, OrganizationInfo>() {
 
 			@Override
@@ -146,20 +218,6 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				}
 				ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
 				return organizationInfo.toImmutable();
-			}
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Feature, FeatureInfo>() {
-
-			@Override
-			protected FeatureInfo convert(com.nowellpoint.api.model.document.Feature source) {
-				System.out.println("converting feature");
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiableFeatureInfo featureInfo = modelMapper.map(source, ModifiableFeatureInfo.class);
-				System.out.println("converted: " + featureInfo.getName());
-				return featureInfo.toImmutable();
 			}
 		});
 	}

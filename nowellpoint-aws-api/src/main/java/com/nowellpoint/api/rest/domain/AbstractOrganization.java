@@ -41,12 +41,6 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		return organization.toImmutable();
 	}
 	
-	public static Organization of(com.nowellpoint.api.model.document.Organization source, Set<UserProfile> users) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
-		organization.setUsers(users);
-		return organization.toImmutable();
-	}
-	
 	public static Organization updateSubscription(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
 		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
 		

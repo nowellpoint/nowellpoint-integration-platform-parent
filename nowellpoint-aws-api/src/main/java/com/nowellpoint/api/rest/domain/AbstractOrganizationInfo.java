@@ -24,7 +24,7 @@ public abstract class AbstractOrganizationInfo {
 	public abstract @Nullable UserInfo getLastUpdatedBy();	
 	public abstract @Nullable String getNumber();
 	public abstract @Nullable String getDomain();
-	public abstract @Nullable Subscription getSubscription();
+	//public abstract @Nullable Subscription getSubscription();
 	
 	public Meta getMeta() {
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))

@@ -53,8 +53,14 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			document = documentManager.fetch( com.nowellpoint.api.model.document.Organization.class, new ObjectId( id ) );
 			set(id, document);
 		}
+		
 		Set<UserProfile> users = getUsers( id );
-		Organization organization = Organization.of( document, users );
+		
+		Organization organization = Organization.builder()
+				.from(Organization.of( document ))
+				.users(users)
+				.build();
+		
 		return organization;
 	}
 	
@@ -62,7 +68,12 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
 		Set<UserProfile> users = getUsers( document.getId().toString() );
-		Organization organization = Organization.of( document, users );
+		
+		Organization organization = Organization.builder()
+				.from(Organization.of( document ))
+				.users(users)
+				.build();
+		
 		return organization;
 	}
 	

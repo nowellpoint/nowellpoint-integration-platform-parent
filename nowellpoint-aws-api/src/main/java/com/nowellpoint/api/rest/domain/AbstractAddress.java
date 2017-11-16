@@ -42,6 +42,23 @@ public abstract class AbstractAddress {
 		}
 	}
 	
+	public static Address of(com.nowellpoint.api.model.document.Address source) {
+		Address instance = ModifiableAddress.create()
+				.setAddedOn(source.getAddedOn())
+				.setCity(source.getCity())
+				.setCountryCode(source.getCountryCode())
+				.setId(source.getId())
+				.setLatitude(source.getLatitude())
+				.setLongitude(source.getLongitude())
+				.setPostalCode(source.getPostalCode())
+				.setStateCode(source.getStateCode())
+				.setStreet(source.getStreet())
+				.setUpdatedOn(source.getUpdatedOn())
+				.toImmutable();
+		
+		return instance;
+	}
+	
 	public static Address of(com.braintreegateway.Address source) {
 		Address instance = Address.builder()
 				.street(source.getStreetAddress())
