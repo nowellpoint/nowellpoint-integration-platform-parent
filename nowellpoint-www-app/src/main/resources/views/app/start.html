@@ -28,10 +28,10 @@
 
             <div class="card-deck">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body bg-light">
                         <div class="row">
-                            <div class="col-3 bg-light">
-                                <span class="icon icon-database fa fa-4x align-middle"></span>
+                            <div class="col-3">
+                                <p class="text-primary"><span class="icon icon-database fa fa-4x"></span></p>
                             </div>
                             <div class="col-9">
                                 <a href="${links['salesforce.connector']}" style="text-decoration:none;">
@@ -44,20 +44,34 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-body">
-                        <a href="${links['jobs']}" style="text-decoration:none;">
-                            <h4 class="card-title">${messages["scheduled.jobs"]}</h4>
-                            <p class="card-text">${labels["scheduled.jobs.headline"]}</p>
-                        </a>
+                    <div class="card-body bg-light">
+                        <div class="row">
+                            <div class="col-3">
+                                <p class="text-primary"><span class="icon icon-clock fa fa-4x"></span></p>
+                            </div>
+                            <div class="col-9">
+                                <a href="${links['jobs']}" style="text-decoration:none;">
+                                    <h4 class="card-title">${messages["scheduled.jobs"]}</h4>
+                                    <p class="card-text">${labels["scheduled.jobs.headline"]}</p>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="card-body">
-                        <a href="/app/dashboard" style="text-decoration:none;">
-                            <h4 class="card-title">${messages["dashboard"]}</h4>
-                            <p class="card-text">${labels["dashboard.headline"]}</p>
-                        </a>
+                    <div class="card-body bg-light">
+                        <div class="row">
+                            <div class="col-3">
+                                <p class="text-primary"><span class="icon icon-gauge fa fa-4x"></span></p>
+                            </div>
+                            <div class="col-9">
+                                <a href="/app/dashboard" style="text-decoration:none;">
+                                    <h4 class="card-title">${messages["dashboard"]}</h4>
+                                    <p class="card-text">${labels["dashboard.headline"]}</p>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -57,8 +57,7 @@
                     <dd>&emsp;</dd>
                     <hr>
                     <dt>${labels["last.modified.by"]}</dt>
-                    <dd>${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}&nbsp;${labels["by"]}&nbsp;
-                        <a href="${links['user.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a></dd>
+                    <dd><a href="${links['user.profile']}/${userProfile.lastUpdatedBy.id}">${userProfile.lastUpdatedBy.name}</a>, ${userProfile.lastUpdatedOn?date?string.long!} ${userProfile.lastUpdatedOn?time?string.medium!}</dd>
                 </dl>
             </div>
 

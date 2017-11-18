@@ -20,6 +20,10 @@ $(document)
         
     });
 
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover(); 
+});
+
 $(document).ready(function () {
     var path = window.location.pathname;
     path = path.replace(/\/$/, "");

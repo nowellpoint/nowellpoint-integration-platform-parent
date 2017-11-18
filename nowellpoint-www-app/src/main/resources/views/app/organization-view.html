@@ -73,7 +73,10 @@
                                     <b>${labels["updated.by"]}</b>
                                 </div>
                                 <div class="col-9">
-                                    <a href="${links['user.profile']}/${organization.lastUpdatedBy.id}">${organization.lastUpdatedBy.name}</a>
+                                    <a href="#" data-toggle="popover" data-html=true title="" data-trigger="focus" data-content="<img class='rounded mx-auto d-block' src='${organization.lastUpdatedBy.photos.profilePicture}' height='50' width='50'>
+                                                                                                                                 <hr><div class='text-center'>${organization.lastUpdatedBy.name}</div>
+                                                                                                                                             <div class='text-center'>${organization.lastUpdatedBy.email}</div>
+                                                                                                                                             <div class='text-center'>${organization.lastUpdatedBy.title!}</div>" data-placement="top">${organization.lastUpdatedBy.name}</a>
                                 </div>
                             </div>
                             <hr>
