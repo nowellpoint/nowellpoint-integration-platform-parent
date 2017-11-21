@@ -10,7 +10,6 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
-import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
@@ -34,51 +33,20 @@ public class TestAccountProfile {
 				.identity()
 				.get(token.getId());
 		
-		CreditCardRequest createCreditCardRequest = new CreditCardRequest()
-				.withOrganizationId(identity.getOrganization().getId())
-				.withCardholderName("John Herson")
-				.withExpirationMonth("12")
-				.withExpirationYear("2018")
-				.withNumber("4111111111111111")
-				.withCvv("010")
-				.withPrimary(Boolean.FALSE)
-				.withCity("Raleigh")
-				.withCountryCode("US")
-				.withPostalCode("27601")
-				.withState("NC")
-				.withStreet("300 W. Hargett Street, Unit 415")
-				.withFirstName("John")
-				.withLastName("Herson");
-		
-		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.add(createCreditCardRequest);
-		
-		Assert.assertTrue(createResult.isSuccess());
-		
-		CreditCardRequest udpateCreditCardRequest = new CreditCardRequest()
-				.withOrganizationId(identity.getOrganization().getId())
-				.withToken(createResult.getTarget().getToken())
-				.withCardholderName("John Herson")
-				.withExpirationMonth("12")
-				.withExpirationYear("2019")
-				.withCvv("010")
-				.withPrimary(Boolean.FALSE)
-				.withCity("Raleigh")
-				.withCountryCode("US")
-				.withPostalCode("27601")
-				.withState("NC")
-				.withStreet("300 W. Hargett Street, Unit 415")
-				.withFirstName("John")
-				.withLastName("Herson");
-		
+		CreditCardRequest creditCardRequest = CreditCardRequest.builder()
+				.cardholderName("John Herson")
+				.cvv("010")
+				.expirationMonth("12")
+				.expirationYear("2019")
+				.number("1111111111111111")
+				.organizationId(identity.getOrganization().getId())
+				.build();
+				
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
 				.organization()
 				.subscription()
 				.creditCard()
-				.update(udpateCreditCardRequest);
+				.update(creditCardRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
 		

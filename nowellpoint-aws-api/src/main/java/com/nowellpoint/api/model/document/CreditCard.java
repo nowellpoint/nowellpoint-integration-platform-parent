@@ -21,8 +21,6 @@ package com.nowellpoint.api.model.document;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.nowellpoint.mongodb.annotation.EmbedOne;
-
 public class CreditCard implements Serializable {
 	
 	private static final long serialVersionUID = -4734047848125348896L;
@@ -42,12 +40,6 @@ public class CreditCard implements Serializable {
 	private String token;
 	
 	private String imageUrl;
-	
-	@EmbedOne
-	private Address billingAddress;
-	
-	@EmbedOne
-	private Contact billingContact;
 	
 	private Date addedOn;
 	
@@ -119,22 +111,6 @@ public class CreditCard implements Serializable {
 
 	public void setLastFour(String lastFour) {
 		this.lastFour = lastFour;
-	}
-
-	public Address getBillingAddress() {
-		return billingAddress;
-	}
-
-	public void setBillingAddress(Address billingAddress) {
-		this.billingAddress = billingAddress;
-	}
-
-	public Contact getBillingContact() {
-		return billingContact;
-	}
-
-	public void setBillingContact(Contact billingContact) {
-		this.billingContact = billingContact;
 	}
 
 	public Date getAddedOn() {

@@ -18,7 +18,6 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
-import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
@@ -321,123 +320,31 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String addCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String cardholderName = request.queryParams("cardholderName");
-		String number = request.queryParams("number");
-		String expirationMonth = request.queryParams("expirationMonth");
-		String expirationYear = request.queryParams("expirationYear");
-		String city = request.queryParams("city");
-		String countryCode = request.queryParams("countryCode");
-		String postalCode = request.queryParams("postalCode");
-		String state = request.queryParams("state");
-		String street = request.queryParams("street");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
-		String cvv = request.queryParams("cvv");
-		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
-		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withOrganizationId(id)
-				.withCardholderName(cardholderName)
-				.withExpirationMonth(expirationMonth)
-				.withExpirationYear(expirationYear)
-				.withNumber(number)
-				.withCvv(cvv)
-				.withPrimary(primary)
-				.withCity(city)
-				.withCountryCode(countryCode)
-				.withPostalCode(postalCode)
-				.withState(state)
-				.withStreet(street)
-				.withFirstName(firstName)
-				.withLastName(lastName);
-		
-		CreateResult<CreditCard> createResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.add(creditCardRequest);
-		
-		if (! createResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(createResult);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
 	public static String updateCreditCard(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String organizationId = request.params(":id");
-		String creditCardToken = request.params(":token");
 		
 		String cardholderName = request.queryParams("cardholderName");
 		String expirationMonth = request.queryParams("expirationMonth");
 		String expirationYear = request.queryParams("expirationYear");
-		String city = request.queryParams("city");
-		String countryCode = request.queryParams("countryCode");
-		String postalCode = request.queryParams("postalCode");
-		String state = request.queryParams("state");
-		String street = request.queryParams("street");
-		String firstName = request.queryParams("firstName");
-		String lastName = request.queryParams("lastName");
-		Boolean primary = request.queryParams("primary") != null ? Boolean.TRUE : Boolean.FALSE;
+		String number = request.queryParams("number");
+		String cvv = request.queryParams("cvv");
 		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
-				.withOrganizationId(organizationId)
-				.withToken(creditCardToken)
-				.withCardholderName(cardholderName)
-				.withExpirationMonth(expirationMonth)
-				.withExpirationYear(expirationYear)
-				.withPrimary(primary)
-				.withCity(city)
-				.withCountryCode(countryCode)
-				.withPostalCode(postalCode)
-				.withState(state)
-				.withStreet(street)
-				.withFirstName(firstName)
-				.withLastName(lastName);
+		CreditCardRequest creditCardRequest = CreditCardRequest.builder()
+				.cardholderName(cardholderName)
+				.cvv(cvv)
+				.expirationMonth(expirationMonth)
+				.expirationYear(expirationYear)
+				.number(number)
+				.organizationId(organizationId)
+				.build();
 		
 		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
 				.organization()
 				.subscription()
 				.creditCard()
 				.update(creditCardRequest);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String setPrimaryCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.setPrimary(request.params(":id"), request.params(":token"));
 		
 		if (! updateResult.isSuccess()) {
 			response.status(400);

@@ -10,8 +10,8 @@ import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.CreditCard;
+import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
@@ -362,100 +362,19 @@ public class OrganizationResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public CreateResult<CreditCard> add(CreditCardRequest creditCardRequest) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.accept(MediaType.APPLICATION_JSON)
-					.path("account-profile")
-					.path(creditCardRequest.getOrganizationId())
-					.path("credit-card")
-					.parameter("cardholderName", creditCardRequest.getCardholderName())
-					.parameter("cvv", creditCardRequest.getCvv())
-					.parameter("number", creditCardRequest.getNumber())
-					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
-					.parameter("expirationYear", creditCardRequest.getExpirationYear())
-					.parameter("primary", creditCardRequest.getPrimary())
-					.parameter("street", creditCardRequest.getStreet())
-					.parameter("city", creditCardRequest.getCity())
-					.parameter("state", creditCardRequest.getState())
-					.parameter("postalCode", creditCardRequest.getPostalCode())
-					.parameter("countryCode", creditCardRequest.getCountryCode())
-					.parameter("firstName", creditCardRequest.getFirstName())
-					.parameter("lastName", creditCardRequest.getLastName())
-					.execute();
-			
-			CreateResult<CreditCard> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
-				result = new CreateResultImpl<CreditCard>(creditCard);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new CreateResultImpl<CreditCard>(error);
-			}
-			
-			return result;
-		}
-		
-		/**
-		 * 
-		 * @param creditCardRequest
-		 * @return
-		 */
-		
 		public UpdateResult<CreditCard> update(CreditCardRequest creditCardRequest) {
 			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.path("account-profile")
+					.path("organization")
 					.path(creditCardRequest.getOrganizationId())
 					.path("credit-card")
-					.path(creditCardRequest.getToken())
 					.parameter("cardholderName", creditCardRequest.getCardholderName())
 					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
 					.parameter("expirationYear", creditCardRequest.getExpirationYear())
-					.parameter("primary", creditCardRequest.getPrimary())
-					.parameter("street", creditCardRequest.getStreet())
-					.parameter("city", creditCardRequest.getCity())
-					.parameter("state", creditCardRequest.getState())
-					.parameter("postalCode", creditCardRequest.getPostalCode())
-					.parameter("countryCode", creditCardRequest.getCountryCode())
-					.parameter("firstName", creditCardRequest.getFirstName())
-					.parameter("lastName", creditCardRequest.getLastName())
-					.execute();
-			
-			UpdateResult<CreditCard> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
-				result = new UpdateResultImpl<CreditCard>(creditCard);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<CreditCard>(error);
-			}
-			
-			return result;
-		}
-		
-		/**
-		 * 
-		 * @param accountProfileId
-		 * @param paymentMethodToken
-		 * @return
-		 */
-		
-		public UpdateResult<CreditCard> setPrimary(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-					.path("account-profile")
-					.path(accountProfileId)
-					.path("credit-card")
-					.path(paymentMethodToken)
-					.path("primary")
+					.parameter("number", creditCardRequest.getNumber())
+					.parameter("cvv", creditCardRequest.getCvv())
 					.execute();
 			
 			UpdateResult<CreditCard> result = null;

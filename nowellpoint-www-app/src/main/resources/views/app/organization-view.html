@@ -8,16 +8,16 @@
 
             <ul class="nav nav-bordered">
                 <li class="nav-item">
-                    <a class="nav-link active" role="tab" data-toggle="tab" data-target="#details" href="#">${labels["details"]}</a>
+                    <a class="nav-link active" role="tab" data-toggle="tab" data-target="#detailsTab" href="#">${labels["details"]}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#subscription" href="#">${labels["subscription"]}</a>
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#subscriptionTab" href="#">${labels["subscription"]}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#transactions" href="#">${labels["transactions"]}</a>
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#transactionsTab" href="#">${labels["transactions"]}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#users" href="#">${labels["users"]}</a>
+                    <a class="nav-link" role="tab" data-toggle="tab" data-target="#usersTab" href="#">${labels["users"]}</a>
                 </li>
             </ul>
 
@@ -25,8 +25,8 @@
             <br>
 
             <div class="tab-content">
-                
-                <div id="details" role="tabpanel" class="tab-pane fade active show">
+
+                <div id="detailsTab" role="tabpanel" class="tab-pane fade active show">
                     <div class="row" id="organization">
                         <div class="col-12">
                             <div class="flextable" style="height: 18px">
@@ -62,10 +62,8 @@
                                     <b>${labels["created.on"]}</b>
                                 </div>
                                 <div class="col-9">
-                                    ${organization.createdOn?date?string.long!}&nbsp;
-                                    ${organization.createdOn?time?string.medium!}
+                                    ${organization.createdOn?date?string.long!}&nbsp; ${organization.createdOn?time?string.medium!}
                                 </div>
-
                             </div>
                             <hr>
                             <div class="row">
@@ -73,7 +71,7 @@
                                     <b>${labels["updated.by"]}</b>
                                 </div>
                                 <div class="col-9">
-                                    <a href="#" data-toggle="popover" data-html=true title="" data-trigger="focus" data-content="<img class='rounded mx-auto d-block' src='${organization.lastUpdatedBy.photos.profilePicture}' height='50' width='50'>
+                                    <a href="#" data-toggle="popover" data-html=true title="" data-trigger="focus" data-content="<img class='rounded mx-auto d-block' src='${organization.lastUpdatedBy.photos.profilePicture}' height='75' width='50'>
                                                                                                                                  <hr><div class='text-center'>${organization.lastUpdatedBy.name}</div>
                                                                                                                                              <div class='text-center'>${organization.lastUpdatedBy.email}</div>
                                                                                                                                              <div class='text-center'>${organization.lastUpdatedBy.title!}</div>" data-placement="top">${organization.lastUpdatedBy.name}</a>
@@ -85,17 +83,16 @@
                                     <b>${labels["updated.on"]}</b>
                                 </div>
                                 <div class="col-9">
-                                    ${organization.lastUpdatedOn?date?string.long!}&nbsp;
-                                    ${organization.lastUpdatedOn?time?string.medium!}
+                                    ${organization.lastUpdatedOn?date?string.long!}&nbsp; ${organization.lastUpdatedOn?time?string.medium!}
                                 </div>
                             </div>
                             <hr>
-                            
+
                         </div>
                     </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="subscription">
+                <div role="tabpanel" class="tab-pane fade" id="subscriptionTab">
                     <div class="row" id="subscription">
                         <div class="col-12">
                             <div class="flextable" style="height: 18px">
@@ -156,40 +153,99 @@
                                     <h4><b>${labels["payment.method"]}</b></h4>
                                 </div>
                                 <div class="flextable-item">
-                                    <a href="#" role="button"><span class="icon icon-pencil"></span></a>
+                                    <a href="#" role="button" id="editPaymentMethod"><span class="icon icon-pencil"></span></a>
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["card.type"]}</b>
+                            <div id="paymentMethodView">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["card.type"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
+                                        <input type="text" style="display: none" class="form-control" name="number" id="number" />
+                                    </div>
                                 </div>
-                                <div class="col-9">
-                                    <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["name.on.card"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${organization.subscription.creditCard.cardholderName}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["expires.on"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
+                                    </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["name.on.card"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${organization.subscription.creditCard.cardholderName}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["expires.on"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
-                                </div>
+                            <div id="paymentMethodEdit" style="display: none;">
+                                <form class="form-vertical" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
+                                    <div class="row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="cardholderName">${labels["name.on.card"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" value="${organization.subscription.creditCard.cardholderName}" autofocus required>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="number">${labels["number"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="number" id="number" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="expirationMonth">${labels["month"]} / ${labels["year"]} / ${labels["cvv"]}</label></b>
+                                        </div>
+                                        <div class="col-1">
+                                            <select class="form-control" name="expirationMonth" id="expirationMonth">
+                                                <#assign x=12 />
+                                                <#list 1..x as month>
+                                                    <#if organization.subscription.creditCard.expirationMonth?eval==month>
+                                                        <option value="${month?c}" selected="selected">${month?c}</option>
+                                                    </#if>
+                                                    <#if organization.subscription.creditCard.expirationMonth?eval !=month>
+                                                        <option value="${month?c}">${month?c}</option>
+                                                    </#if>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="col-1">
+                                            <select class="form-control" name="expirationYear" id="expirationYear">
+                                                <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                <#list .now?string[ "yyyy"]?number..x as year>
+                                                    <#if organization.subscription.creditCard.expirationYear?eval==year>
+                                                        <option value="${year?c}" selected="selected">${year?c}</option>
+                                                    </#if>
+                                                    <#if organization.subscription.creditCard.expirationYear?eval !=year>
+                                                        <option value="${year?c}">${year?c}</option>
+                                                    </#if>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="col-1">
+                                            <input type="text" name="securityCode" id="securityCode" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success" id="savePaymentMethod"><span class="glyphicon glyphicon-save"></span> ${labels["save"]}</button>&emsp;
+                                    <a href="#" role="button" id="cancelPaymentMethod">${labels["cancel"]}</a>
+                                </form>
                             </div>
                             <hr>
                         </div>
                     </div>
-                                        <br>
+                    <br>
                     <br>
                     <div class="row" id="billing-contact">
                         <div class="col-12">
@@ -294,7 +350,7 @@
 
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="transactions">
+                <div role="tabpanel" class="tab-pane fade" id="transactionsTab">
                     <div class="flextable">
                         <div class="flextable-item flextable-primary">
                             &nbsp;
@@ -338,7 +394,7 @@
                     </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="users">
+                <div role="tabpanel" class="tab-pane fade" id="usersTab">
                     <div class="flextable">
                         <div class="flextable-item flextable-primary">
                             &nbsp;
@@ -380,5 +436,56 @@
 
         <br>
         <br>
+
+        <script>
+            $('#editPaymentMethod').click(function() {
+                $('#edit').hide();
+                $('#paymentMethodView').hide();
+                $('#save').show();
+                $('#paymentMethodEdit').show();
+            });
+
+            $('#savePaymentMethod').click(function() {
+
+                e.preventDefault();
+
+                $form = $("#paymentMethodForm");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $("#overlay").hide();
+                        if (response.status == 200) {
+                            $dialog.slideUp('slow').fadeOut();
+                            jQuery("#notification").modal('show');
+                            setTimeout(function() {
+                                $("#notification").slideUp('slow').fadeOut(function() {
+                                    location.href = "${links['organization']}/${organization.id}";
+                                });
+                            }, 1000);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+
+                });
+
+
+                $('#save').hide();
+                $('#paymentMethodEdit').hide();
+                $('#edit').show();
+                $('#paymentMethodView').show();
+            });
+
+            $('#cancelPaymentMethod').click(function() {
+                $('#save').hide();
+                $('#paymentMethodEdit').hide();
+                $('#edit').show();
+                $('#paymentMethodView').show();
+            });
+        </script>
 
     </@t.page>

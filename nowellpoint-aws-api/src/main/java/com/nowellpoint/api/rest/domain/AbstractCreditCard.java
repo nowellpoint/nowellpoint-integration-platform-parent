@@ -33,7 +33,7 @@ public abstract class AbstractCreditCard {
 				.setCardholderName(source.getCardholderName())
 				.setCardType(source.getCardType())
 				.setExpirationMonth(source.getExpirationMonth())
-				.setExpirationYear(source.getExpirationMonth())
+				.setExpirationYear(source.getExpirationYear())
 				.setImageUrl(source.getImageUrl())
 				.setLastFour(source.getLastFour())
 				.setToken(source.getToken())
