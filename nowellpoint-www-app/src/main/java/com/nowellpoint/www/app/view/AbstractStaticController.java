@@ -5,6 +5,8 @@ import static j2html.TagCreator.div;
 import static j2html.TagCreator.strong;
 import static spark.Spark.halt;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import j2html.tags.UnescapedText;
 import spark.ModelAndView;
 import spark.Request;
@@ -99,6 +102,18 @@ public class AbstractStaticController {
 		}
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
+	
+	protected static String responseBody(Class<?> controllerClass, Configuration configuration, Request request, Response response, Map<String,Object> model, String html) {
+		model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		try {
+			Template template = new Template("templateName", new StringReader(html), configuration);
+			Writer out = new StringWriter();
+			template.process(model, out);
+			return out.toString();
+		} catch (IOException | TemplateException e) {
+			return showError(e.getMessage());
+		}
+	}
 	
 	protected static String responseBody(Result result) {
 		if (result.isSuccess()) {

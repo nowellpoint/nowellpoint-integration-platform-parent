@@ -11,7 +11,6 @@ import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.CreditCard;
-import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
@@ -362,13 +361,14 @@ public class OrganizationResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public UpdateResult<CreditCard> update(CreditCardRequest creditCardRequest) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
+		public UpdateResult<Organization> update(CreditCardRequest creditCardRequest) {
+			HttpResponse httpResponse = RestResource.post(creditCardRequest.getToken().getEnvironmentUrl())
+					.bearerAuthorization(creditCardRequest.getToken().getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
-					.path("organization")
+					.path(RESOURCE_CONTEXT)
 					.path(creditCardRequest.getOrganizationId())
+					.path("subscription")
 					.path("credit-card")
 					.parameter("cardholderName", creditCardRequest.getCardholderName())
 					.parameter("expirationMonth", creditCardRequest.getExpirationMonth())
@@ -377,15 +377,7 @@ public class OrganizationResource extends AbstractResource {
 					.parameter("cvv", creditCardRequest.getCvv())
 					.execute();
 			
-			UpdateResult<CreditCard> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				CreditCard creditCard = httpResponse.getEntity(CreditCard.class);
-				result = new UpdateResultImpl<CreditCard>(creditCard);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<CreditCard>(error);
-			}
+			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
 			
 			return result;
 		}

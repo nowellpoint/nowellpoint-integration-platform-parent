@@ -11,16 +11,16 @@ $(document).ready(function() {
     $('#overlay').hide();
 });
 
-$(document)
-    .ajaxStart(function () {
-        $('#overlay').show();
-    })
-    .ajaxStop(function () {
-        $('#overlay').hide();
-        
-    });
+$(document).ajaxStart(function () {
+    $('#overlay').show();
+});
 
-$(document).ready(function(){
+$(document).ajaxStop(function () {
+    console.log('ajax stop');
+    $('#overlay').hide();
+});
+
+$( document ).ready(function(){
     $('[data-toggle="popover"]').popover(); 
 });
 

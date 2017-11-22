@@ -43,6 +43,7 @@ public class OrganizationController extends AbstractStaticController {
 		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
 		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
+		public static final String PAYMENT_METHOD_PART = String.format(APPLICATION_CONTEXT, "payment-method-part.html");
 	}
 	
 	/**
@@ -338,9 +339,10 @@ public class OrganizationController extends AbstractStaticController {
 				.expirationYear(expirationYear)
 				.number(number)
 				.organizationId(organizationId)
+				.token(token)
 				.build();
 		
-		UpdateResult<CreditCard> updateResult = NowellpointClient.defaultClient(token)
+		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
 				.organization()
 				.subscription()
 				.creditCard()
@@ -348,9 +350,13 @@ public class OrganizationController extends AbstractStaticController {
 		
 		if (! updateResult.isSuccess()) {
 			response.status(400);
+			return showError(updateResult.getError());
 		}
 		
-		return responseBody(updateResult);
+		Map<String, Object> model = getModel();
+		model.put("organization", updateResult.getTarget());
+		
+		return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
 	};
 	
 	/**

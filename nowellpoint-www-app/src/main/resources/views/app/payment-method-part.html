@@ -1,0 +1,100 @@
+<div class="col-12">
+    <div id="paymentMethodSuccess" class="text-center">
+        <p class="text-success"><span class="icon icon-check fa fa-4"><h4>${messages["success"]}</h4></span></p>
+    </div>    
+    <div class="flextable" style="height: 18px">
+        <div class="flextable-item flextable-primary">
+            <h4><b>${labels["payment.method"]}</b></h4>
+        </div>
+        <div class="flextable-item">
+            <a href="#" role="button" id="editPaymentMethod"><span class="icon icon-pencil"></span></a>
+        </div>
+    </div>
+    <hr>
+    <div id="paymentMethodView">
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["card.type"]}</b>
+            </div>
+            <div class="col-9">
+                <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
+                <input type="text" style="display: none" class="form-control" name="number" id="number" />
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["name.on.card"]}</b>
+            </div>
+            <div class="col-9">
+                ${organization.subscription.creditCard.cardholderName}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["expires.on"]}</b>
+            </div>
+            <div class="col-9">
+                ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
+            </div>
+        </div>
+    </div>
+    <div id="paymentMethodEdit" style="display: none;">
+        <form class="form-vertical" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="cardholderName">${labels["name.on.card"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="cardholderName" id="cardholderName" class="form-control" value="${organization.subscription.creditCard.cardholderName}" autofocus required>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="number">${labels["number"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}" required>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="expirationMonth">${labels["month"]} / ${labels["year"]} / ${labels["cvv"]}</label></b>
+                </div>
+                <div class="col-1">
+                    <select class="form-control" name="expirationMonth" id="expirationMonth">
+                        <#assign x=12 />
+                        <#list 1..x as month>
+                            <#if organization.subscription.creditCard.expirationMonth?eval==month>
+                                <option value="${month?c}" selected="selected">${month?c}</option>
+                            </#if>
+                            <#if organization.subscription.creditCard.expirationMonth?eval !=month>
+                                <option value="${month?c}">${month?c}</option>
+                            </#if>
+                        </#list>
+                    </select>
+                </div>
+                <div class="col-1">
+                    <select class="form-control" name="expirationYear" id="expirationYear">
+                        <#assign x=.now?string[ "yyyy"]?number + 19/>
+                        <#list .now?string[ "yyyy"]?number..x as year>
+                            <#if organization.subscription.creditCard.expirationYear?eval==year>
+                                <option value="${year?c}" selected="selected">${year?c}</option>
+                            </#if>
+                            <#if organization.subscription.creditCard.expirationYear?eval !=year>
+                                <option value="${year?c}">${year?c}</option>
+                            </#if>
+                        </#list>
+                    </select>
+                </div>
+                <div class="col-1">
+                    <input type="text" name="cvv" id="cvv" class="form-control" required>
+                </div>
+            </div>
+        </form>
+        <button class="btn btn-success" id="savePaymentMethod"><span class="glyphicon glyphicon-save"></span> ${labels["save"]}</button>&emsp;
+        <a href="#" role="button" id="cancelPaymentMethod">${labels["cancel"]}</a>&emsp;
+    </div>
+    <hr>
+</div>

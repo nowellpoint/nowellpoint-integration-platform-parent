@@ -148,6 +148,15 @@
                     <br>
                     <div class="row" id="payment-method">
                         <div class="col-12">
+                            <div id="paymentMethodSuccess" class="card card-outline-success text-center">
+                                <div class="card-block">
+                                    <blockquote class="card-blockquote">
+                                        <p class="text-success"><span class="icon icon-check fa fa-4x"></span></p>
+                                        <p class="text-success">${messages["success"]}</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+
                             <div class="flextable" style="height: 18px">
                                 <div class="flextable-item flextable-primary">
                                     <h4><b>${labels["payment.method"]}</b></h4>
@@ -201,7 +210,7 @@
                                             <b><label class="control-label" for="number">${labels["number"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="number" id="number" class="form-control" required>
+                                            <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}" required>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -235,12 +244,12 @@
                                             </select>
                                         </div>
                                         <div class="col-1">
-                                            <input type="text" name="securityCode" id="securityCode" class="form-control" required>
+                                            <input type="text" name="cvv" id="cvv" class="form-control" required>
                                         </div>
                                     </div>
-                                    <button class="btn btn-success" id="savePaymentMethod"><span class="glyphicon glyphicon-save"></span> ${labels["save"]}</button>&emsp;
-                                    <a href="#" role="button" id="cancelPaymentMethod">${labels["cancel"]}</a>
                                 </form>
+                                <button class="btn btn-success" id="savePaymentMethod"><span class="glyphicon glyphicon-save"></span> ${labels["save"]}</button>&emsp;
+                                <a href="#" role="button" id="cancelPaymentMethod">${labels["cancel"]}</a>
                             </div>
                             <hr>
                         </div>
@@ -439,15 +448,12 @@
 
         <script>
             $('#editPaymentMethod').click(function() {
-                $('#edit').hide();
+                $('#editPaymentMethod').hide();
                 $('#paymentMethodView').hide();
-                $('#save').show();
                 $('#paymentMethodEdit').show();
             });
 
             $('#savePaymentMethod').click(function() {
-
-                e.preventDefault();
 
                 $form = $("#paymentMethodForm");
 
@@ -457,33 +463,21 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
-                        $("#overlay").hide();
                         if (response.status == 200) {
-                            $dialog.slideUp('slow').fadeOut();
-                            jQuery("#notification").modal('show');
-                            setTimeout(function() {
-                                $("#notification").slideUp('slow').fadeOut(function() {
-                                    location.href = "${links['organization']}/${organization.id}";
-                                });
-                            }, 1000);
+                            $('#payment-method').html(response.responseText);
+                            $('#paymentMethodSuccess').delay(5000).fadeOut('slow');
                         } else {
                             $form.prepend(response.responseText);
                         }
                     }
-
                 });
 
-
-                $('#save').hide();
-                $('#paymentMethodEdit').hide();
-                $('#edit').show();
-                $('#paymentMethodView').show();
+                return false;
             });
 
             $('#cancelPaymentMethod').click(function() {
-                $('#save').hide();
                 $('#paymentMethodEdit').hide();
-                $('#edit').show();
+                $('#editPaymentMethod').show();
                 $('#paymentMethodView').show();
             });
         </script>

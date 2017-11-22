@@ -5,7 +5,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-public abstract class AbstractCreditCardRequest {
+public abstract class AbstractCreditCardRequest extends AbstractAuthenticatedRequest {
 	public abstract String getOrganizationId();
 	public abstract String getCardholderName();
 	public abstract String getNumber();
