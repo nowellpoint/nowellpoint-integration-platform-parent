@@ -349,8 +349,7 @@ public class OrganizationController extends AbstractStaticController {
 				.update(creditCardRequest);
 		
 		if (! updateResult.isSuccess()) {
-			response.status(400);
-			return showError(updateResult.getError());
+			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 		
 		Map<String, Object> model = getModel();

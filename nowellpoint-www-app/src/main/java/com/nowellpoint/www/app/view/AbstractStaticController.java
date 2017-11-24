@@ -99,6 +99,7 @@ public class AbstractStaticController {
 			model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
+			return showError(e.getMessage());
 		}
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
@@ -122,12 +123,19 @@ public class AbstractStaticController {
 		return showError(result.getErrorMessage());
 	}
 	
+	protected static String showErrorMessage(Class<?> controllerClass, Configuration configuration, Request request, Response response, String errorMessage) {
+		Map<String, Object> model = getModel();
+		model.put("errorMessage", errorMessage);
+		model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", getLocale(request)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		response.status(400);
+		return buildTemplate(configuration, getLocale(request), getTimeZone(request), new ModelAndView(model, String.format(APPLICATION_CONTEXT,"error.html")));
+	}
+	
 	protected static String showError(String errorMessage) {
 		return div().withId("error").withClass("alert alert-danger")
 				.with(a().withClass("close").withData("dismiss", "alert")
 						.with(new UnescapedText("&times;")))
-				.with(div().withClass("text-center")
-						.with(strong().withText(errorMessage)))
+				.with(div().with(strong().withText(errorMessage)))
 				.render();
 	}
 }

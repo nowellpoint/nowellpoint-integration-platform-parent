@@ -27,13 +27,16 @@ import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Contact;
 import com.nowellpoint.api.rest.domain.CreditCard;
+import com.nowellpoint.api.rest.domain.FeatureInfo;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
+import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 
 public class OrganizationServiceImpl extends AbstractOrganizationService implements OrganizationService {
@@ -92,12 +95,27 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
+		Set<FeatureInfo> features = new HashSet<>();
+		
+		plan.getFeatures().stream().forEach(f -> {
+			FeatureInfo feature = FeatureInfo.builder()
+					.code(f.getCode())
+					.description(f.getDescription())
+					.enabled(f.getEnabled())
+					.name(f.getName())
+					.quantity(f.getQuantity())
+					.sortOrder(f.getSortOrder())
+					.build();
+					
+			features.add(feature);		
+		});
+		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				//.features(plan.getFeatures())
+				.features(features)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -164,13 +182,28 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
+		Set<FeatureInfo> features = new HashSet<>();
+		
+		plan.getFeatures().stream().forEach(f -> {
+			FeatureInfo feature = FeatureInfo.builder()
+					.code(f.getCode())
+					.description(f.getDescription())
+					.enabled(f.getEnabled())
+					.name(f.getName())
+					.quantity(f.getQuantity())
+					.sortOrder(f.getSortOrder())
+					.build();
+					
+			features.add(feature);		
+		});
+		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.creditCard(creditCard)
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				//.features(plan.getFeatures())
+				.features(features)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -205,7 +238,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.cardholderName(cardholderName)
 				.expirationMonth(expirationMonth)
 				.expirationYear(expirationYear)
-				.number(number)
+				.number(Assert.isEmpty(number) ? null : number)
 				.cvv(cvv)
 				.customerId(organization.getNumber())
 				.billingAddressId(organization.getSubscription().getBillingAddress().getId());
@@ -327,12 +360,27 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.phone(phone)
 				.build();
 		
+		Set<FeatureInfo> features = new HashSet<>();
+		
+		plan.getFeatures().stream().forEach(f -> {
+			FeatureInfo feature = FeatureInfo.builder()
+					.code(f.getCode())
+					.description(f.getDescription())
+					.enabled(f.getEnabled())
+					.name(f.getName())
+					.quantity(f.getQuantity())
+					.sortOrder(f.getSortOrder())
+					.build();
+					
+			features.add(feature);		
+		});
+		
 		Subscription subscription = Subscription.builder()
 				.addedOn(now)
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				//.features(plan.getFeatures())
+				.features(features)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -414,6 +462,21 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
+		Set<FeatureInfo> features = new HashSet<>();
+		
+		plan.getFeatures().stream().forEach(f -> {
+			FeatureInfo feature = FeatureInfo.builder()
+					.code(f.getCode())
+					.description(f.getDescription())
+					.enabled(f.getEnabled())
+					.name(f.getName())
+					.quantity(f.getQuantity())
+					.sortOrder(f.getSortOrder())
+					.build();
+					
+			features.add(feature);		
+		});
+		
 		Subscription subscription = Subscription.builder()
 				.number(subscriptionResult.getTarget().getId())
 				.addedOn(subscriptionResult.getTarget().getCreatedAt().getTime())
@@ -421,7 +484,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				//.features(plan.getFeatures())
+				.features(features)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -484,15 +547,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		return null;
 	}
 	
-//	private com.braintreegateway.Plan getPlan(String planId) {
-//		List<com.braintreegateway.Plan> plans = gateway.plan().all();
-//		Optional<com.braintreegateway.Plan> optional = plans.stream().filter(p -> p.getId().equals(planId)).findFirst();
-//		if (optional.isPresent()) {
-//			return optional.get();
-//		}
-//		return null;
-//	}
-	
 	private Result<com.braintreegateway.Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {
 		return gateway.subscription().create(subscriptionRequest);
 	}
@@ -512,11 +566,17 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	private Result<com.braintreegateway.CreditCard> createCreditCard(CreditCardRequest creditCardRequest) {
 		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().create(creditCardRequest);
+		if (Assert.isNotNull(result.getMessage())) {
+			throw new ValidationException(result.getMessage());
+		}
 		return result;
 	}
 	
 	private Result<com.braintreegateway.CreditCard> updateCreditCard(String token, CreditCardRequest creditCardRequest) {
 		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().update(token, creditCardRequest);
+		if (Assert.isNotNull(result.getMessage())) {
+			throw new ValidationException(result.getMessage());
+		}
 		return result;
 	}
 	

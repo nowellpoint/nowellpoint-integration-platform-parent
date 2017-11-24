@@ -1,10 +1,4 @@
 <div class="col-12">
-    <div id="paymentMethodSuccess">
-        <div class="alert alert-success">
-            <strong>Success!</strong> Credit card has been updated.
-        </div>
-        <br>
-    </div>    
     <div class="flextable" style="height: 18px">
         <div class="flextable-item flextable-primary">
             <h4><b>${labels["payment.method"]}</b></h4>
@@ -15,6 +9,11 @@
     </div>
     <hr>
     <div id="paymentMethodView">
+        <div id="paymentMethodSuccess">
+            <div class="alert alert-success">
+                <strong>Success!</strong> Credit card has been updated.
+            </div>
+        </div>
         <div class="row">
             <div class="col-3">
                 <b>${labels["card.type"]}</b>
@@ -58,7 +57,7 @@
                     <b><label class="control-label" for="number">${labels["number"]}</label></b>
                 </div>
                 <div class="col-4">
-                    <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}" required>
+                    <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}">
                 </div>
             </div>
             <div class="row form-group">

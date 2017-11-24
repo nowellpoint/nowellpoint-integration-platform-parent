@@ -29,8 +29,6 @@ public class CreditCard implements Serializable {
 	
 	private String cardholderName;
 	
-	private String number;
-	
 	private String expirationMonth;
 	
 	private String expirationYear;
@@ -63,14 +61,6 @@ public class CreditCard implements Serializable {
 
 	public void setCardholderName(String cardholderName) {
 		this.cardholderName = cardholderName;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
 	}
 
 	public String getExpirationMonth() {

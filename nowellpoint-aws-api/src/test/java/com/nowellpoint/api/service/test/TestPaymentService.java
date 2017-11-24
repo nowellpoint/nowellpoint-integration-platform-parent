@@ -1,29 +1,12 @@
 package com.nowellpoint.api.service.test;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.braintreegateway.Address;
-import com.braintreegateway.AddressRequest;
 import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.CreditCard;
-import com.braintreegateway.CreditCardAddressRequest;
 import com.braintreegateway.CreditCardRequest;
-import com.braintreegateway.Customer;
-import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.Environment;
-import com.braintreegateway.MerchantAccount;
-import com.braintreegateway.PaginatedCollection;
-import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
-import com.braintreegateway.Subscription;
-import com.braintreegateway.SubscriptionRequest;
-import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.util.Properties;
 
 public class TestPaymentService {
@@ -45,15 +28,18 @@ public class TestPaymentService {
 	}
 	
 	@Test
-	public void getPlans() {
-		List<Plan> list = gateway.plan().all();
-		list.forEach( a -> {
-			System.out.println("*****");
-			System.out.println(a.getCurrencyIsoCode());
-			System.out.println(a.getDescription());
-			System.out.println(a.getId());
-			System.out.println(a.getName());
-			System.out.println(a.getPrice());
-		});
+	public void updateCreditCard() {
+		CreditCardRequest creditCardRequest = new CreditCardRequest()
+				.cardholderName("Cardholder Name")
+				.expirationMonth("12")
+				.expirationYear("2020")
+				.number(null)
+				.cvv("1112")
+				.customerId("641228216")
+				.billingAddressId("27");
+		
+		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().update("dss8tj", creditCardRequest);
+		
+		System.out.println(result.getMessage());
 	}
 }

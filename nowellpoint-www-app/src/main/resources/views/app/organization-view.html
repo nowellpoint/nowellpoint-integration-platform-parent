@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="col-9">
                                         <img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}
-                                        <input type="text" style="display: none" class="form-control" name="number" id="number" />
+                                        <input type="text" style="display: none" class="form-control" />
                                     </div>
                                 </div>
                                 <hr>
@@ -201,7 +201,7 @@
                                             <b><label class="control-label" for="number">${labels["number"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}" required>
+                                            <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -448,6 +448,8 @@
             $(document).on('click', 'button#savePaymentMethod', function() {
                 
                 $form = $("#paymentMethodForm");
+                
+                $('#error').remove();
 
                 $.ajax({
                     method: $form.attr('method'),
@@ -457,7 +459,7 @@
                     complete: function(response) {
                         if (response.status == 200) {
                             $('#payment-method').html(response.responseText);
-                            $('#paymentMethodSuccess').delay(1000).fadeOut('slow');
+                            $('#paymentMethodSuccess').delay(1500).fadeOut('slow');
                         } else {
                             $form.prepend(response.responseText);
                         }
@@ -469,8 +471,11 @@
 
             $(document).on('click', 'a#cancelPaymentMethod', function() {
                 $('#paymentMethodEdit').hide();
-                $('#editPaymentMethod').show();
+                $('#number').val('');
+                $('#cvv').val('');
+                $('#error').remove();
                 $('#paymentMethodView').show();
+                $('#editPaymentMethod').show();
             });
             
         </script>

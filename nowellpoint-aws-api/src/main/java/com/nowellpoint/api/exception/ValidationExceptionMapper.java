@@ -14,7 +14,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 
 	@Override
 	public Response toResponse(ValidationException exception) {
-		Error error = new Error("VALIDATION", exception.getMessages().toArray(new String[exception.getMessages().size()]));
+		Error error = new Error(exception.getCode(), exception.getMessages().toArray(new String[exception.getMessages().size()]));
 		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
 		builder.entity(error);
 		return builder.build();
