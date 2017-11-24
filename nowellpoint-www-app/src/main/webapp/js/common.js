@@ -16,7 +16,6 @@ $(document).ajaxStart(function () {
 });
 
 $(document).ajaxStop(function () {
-    console.log('ajax stop');
     $('#overlay').hide();
 });
 

@@ -148,15 +148,6 @@
                     <br>
                     <div class="row" id="payment-method">
                         <div class="col-12">
-                            <div id="paymentMethodSuccess" class="card card-outline-success text-center">
-                                <div class="card-block">
-                                    <blockquote class="card-blockquote">
-                                        <p class="text-success"><span class="icon icon-check fa fa-4x"></span></p>
-                                        <p class="text-success">${messages["success"]}</p>
-                                    </blockquote>
-                                </div>
-                            </div>
-
                             <div class="flextable" style="height: 18px">
                                 <div class="flextable-item flextable-primary">
                                     <h4><b>${labels["payment.method"]}</b></h4>
@@ -447,14 +438,15 @@
         <br>
 
         <script>
-            $('#editPaymentMethod').click(function() {
+            
+            $(document).on('click', 'a#editPaymentMethod', function() {
                 $('#editPaymentMethod').hide();
                 $('#paymentMethodView').hide();
                 $('#paymentMethodEdit').show();
             });
-
-            $('#savePaymentMethod').click(function() {
-
+            
+            $(document).on('click', 'button#savePaymentMethod', function() {
+                
                 $form = $("#paymentMethodForm");
 
                 $.ajax({
@@ -465,21 +457,22 @@
                     complete: function(response) {
                         if (response.status == 200) {
                             $('#payment-method').html(response.responseText);
-                            $('#paymentMethodSuccess').delay(5000).fadeOut('slow');
+                            $('#paymentMethodSuccess').delay(1000).fadeOut('slow');
                         } else {
                             $form.prepend(response.responseText);
                         }
                     }
                 });
-
+                
                 return false;
             });
 
-            $('#cancelPaymentMethod').click(function() {
+            $(document).on('click', 'a#cancelPaymentMethod', function() {
                 $('#paymentMethodEdit').hide();
                 $('#editPaymentMethod').show();
                 $('#paymentMethodView').show();
             });
+            
         </script>
 
     </@t.page>
