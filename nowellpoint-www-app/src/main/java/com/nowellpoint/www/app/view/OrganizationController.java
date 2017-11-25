@@ -362,7 +362,43 @@ public class OrganizationController extends AbstractStaticController {
 	
 	/**
 	 * 
-	 * @param accountProfile
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String removeCreditCard(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String organizationId = request.params(":id");
+		
+		CreditCardRequest creditCardRequest = CreditCardRequest.builder()
+				.organizationId(organizationId)
+				.token(token)
+				.build();
+		
+		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
+				.organization()
+				.subscription()
+				.creditCard()
+				.remove(creditCardRequest);
+		
+		if (updateResult.isSuccess()) {
+			
+			Map<String, Object> model = getModel();
+			model.put("organization", updateResult.getTarget());
+			
+			return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
+			
+		} else {
+			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
+		}
+	};
+	
+	/**
+	 * 
+	 * @param locale
 	 * @return Locale map 
 	 */
 	

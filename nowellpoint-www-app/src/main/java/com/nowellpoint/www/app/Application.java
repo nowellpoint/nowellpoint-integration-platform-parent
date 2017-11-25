@@ -172,19 +172,22 @@ public class Application implements SparkApplication {
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 				-> OrganizationController.listPlans(configuration, request, response));
 		
-		get(Path.Route.ORGANIZATION_REVIEW_PLAN, (request, response) 
+		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
 				-> OrganizationController.reviewPlan(configuration, request, response));
 		
-		post(Path.Route.ORGANIZATION_CHANGE_PLAN, (request, response) 
+		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
 				-> OrganizationController.changePlan(configuration, request, response));
 		
-		post(Path.Route.ORGANIZATION_UPDATE_CREDIT_CARD, (request, response) 
+		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 				-> OrganizationController.updateCreditCard(configuration, request, response));
 		
-		post(Path.Route.ORGANIZATION_UPDATE_BILLING_ADDRESS, (request, response) 
+		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+				-> OrganizationController.removeCreditCard(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response) 
 				-> OrganizationController.updateBillingAddress(configuration, request, response));
 		
-		post(Path.Route.ORGANIZATION_UPDATE_BILLING_CONTACT, (request, response) 
+		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
 				-> OrganizationController.updateBillingContact(configuration, request, response));
 
 		//

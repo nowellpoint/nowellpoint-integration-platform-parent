@@ -11,7 +11,6 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
-import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.Token;
@@ -50,13 +49,13 @@ public class TestAccountProfile {
 		
 		Assert.assertTrue(updateResult.isSuccess());
 		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+		updateResult = NowellpointClient.defaultClient(token)
 				.organization()
 				.subscription()
 				.creditCard()
-				.delete(identity.getId(), updateResult.getTarget().getSubscription().getCreditCard().getToken());
+				.remove(creditCardRequest);
 		
-		Assert.assertTrue(deleteResult.isSuccess());
+		Assert.assertTrue(updateResult.isSuccess());
 		
 	}
 	

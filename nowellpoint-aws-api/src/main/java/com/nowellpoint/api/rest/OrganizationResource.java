@@ -20,6 +20,10 @@ public interface OrganizationResource {
 	public Response getOrganization(
 			@PathParam("id") String id);
 	
+	@DELETE
+	@Path("{id}")
+	public Response deleteOrganization(@PathParam("id") String id);
+	
 	@POST
 	@Path("{id}/subscription")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -45,6 +49,11 @@ public interface OrganizationResource {
 			@FormParam("number") String number,
 			@FormParam("cvv") String cvv);
 	
+	@DELETE
+	@Path("{id}/subscription/credit-card")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeCreditCard(@PathParam("id") String id);
+	
 	@POST
 	@Path("{id}/subscription/billing-address")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -67,9 +76,5 @@ public interface OrganizationResource {
 			@FormParam("lastName") String lastName,
 			@FormParam("email") String email,
 			@FormParam("phone") String phone);
-	
-	@DELETE
-	@Path("{id}")
-	public Response deleteOrganization(@PathParam("id") String id);
 	
 }

@@ -35,6 +35,7 @@ import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.OrganizationService;
+import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
@@ -62,6 +63,33 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public Organization findByDomain(String domain) {
 		return super.query( Filters.eq( "domain", domain ));
+	}
+	
+	@Override
+	public Organization removeCreditCard(String id) {
+		
+		Organization organization = findById(id);
+		
+		if ("FREE".equalsIgnoreCase(organization.getSubscription().getPlanCode())) {
+			
+			deleteCreditCard(organization.getSubscription().getCreditCard().getToken());
+			
+			Subscription subscription = Subscription.builder()
+					.from(organization.getSubscription())
+					.creditCard(null)
+					.build();
+			
+			Organization newInstance = Organization.builder()
+					.from(organization)
+					.subscription(subscription)
+					.build();
+			
+			super.update(newInstance);
+			
+			return newInstance;
+		} else {
+			throw new ValidationException(String.format(MessageConstants.UNABLE_TO_REMOVE_CREDIT_CARD, organization.getSubscription().getPlanName()));
+		}
 	}
 
 	@Override
@@ -578,6 +606,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			throw new ValidationException(result.getMessage());
 		}
 		return result;
+	}
+	
+	private void deleteCreditCard(String token) {
+		gateway.creditCard().delete(token);
 	}
 	
 	private Result<com.braintreegateway.Customer> createCustomer(CustomerRequest customerRequest) {

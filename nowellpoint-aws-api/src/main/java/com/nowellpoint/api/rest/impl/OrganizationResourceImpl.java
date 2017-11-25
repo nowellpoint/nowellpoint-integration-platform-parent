@@ -26,6 +26,12 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	}
 	
 	@Override
+	public Response deleteOrganization(String id) {
+		organizationService.deleteOrganization(id);
+		return Response.ok().build();
+	}
+	
+	@Override
 	public Response changePlan(String id, String planId, String cardholderName, String number, String expirationMonth, String expirationYear, String cvv) {
 		Plan plan = planService.findById(planId);
 		
@@ -46,6 +52,13 @@ public class OrganizationResourceImpl implements OrganizationResource {
 		return Response.ok(organization)
 				.build();
 	}
+	
+	@Override
+	public Response removeCreditCard(String id) {
+		Organization organization = organizationService.removeCreditCard(id);
+		return Response.ok(organization)
+				.build();
+	}
 
 	@Override
 	public Response updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode) {
@@ -59,11 +72,5 @@ public class OrganizationResourceImpl implements OrganizationResource {
 		Organization organization = organizationService.updateBillingContact(id, firstName, lastName, email, phone);
 		return Response.ok(organization)
 				.build();
-	}
-
-	@Override
-	public Response deleteOrganization(String id) {
-		organizationService.deleteOrganization(id);
-		return Response.ok().build();
 	}
 }

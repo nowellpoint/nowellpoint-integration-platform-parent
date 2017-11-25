@@ -20,4 +20,5 @@ public class MessageConstants {
 	public static final String JOB_INVALID_ACTION = "job.invalid.action";
 	public static final String UNEXPECTED_EXCEPTION = "unexpected.exception";
 	public static final String INVALID_COUNTRY_PARAMETERS = "invalid.country.parameters";
+	public static final String UNABLE_TO_REMOVE_CREDIT_CARD = "unable.to.remove.credit.card";
 }

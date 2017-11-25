@@ -48,8 +48,11 @@ public class OrganizationResource extends AbstractResource {
 	
 	public Organization get(String id) {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken()).accept(MediaType.APPLICATION_JSON).path(RESOURCE_CONTEXT)
-				.path(id).execute();
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.path(id)
+				.execute();
 
 		Organization resource = null;
 
@@ -82,19 +85,19 @@ public class OrganizationResource extends AbstractResource {
 				.path("invoice")
 				.path(invoiceNumber)
 				.execute();
-		
+
 		InputStream resource = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		resource = httpResponse.getEntity();
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resource = httpResponse.getEntity();
+		} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
 			throw new NotFoundException(httpResponse.getAsString());
 		} else {
 			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return IOUtils.toByteArray(resource);
-	} 
+		}
+
+		return IOUtils.toByteArray(resource);
+	}
 	
 	/**
 	 * 
@@ -143,35 +146,6 @@ public class OrganizationResource extends AbstractResource {
 		
 		return deleteResult;
 	}
-	
-	/**
-	 * 
-	 * @param accountProfileId
-	 * @return
-	 */
-	
-	public UpdateResult<Organization> removeProfilePicture(String userProfileId) {
-		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-    			.bearerAuthorization(token.getAccessToken())
-        		.path(RESOURCE_CONTEXT)
-        		.path(userProfileId)
-        		.path("photo")
-        		.execute();
-		
-		UpdateResult<Organization> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			Organization resource = httpResponse.getEntity(Organization.class);
-			result = new UpdateResultImpl<Organization>(resource);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<Organization>(error);
-		}
-		
-		return result;
-	}
-	
-	
 	
 	/**
 	 * 
@@ -248,21 +222,11 @@ public class OrganizationResource extends AbstractResource {
 					.parameter("cvv", subscriptionRequest.getCvv())
 					.execute();
 			
-			UpdateResult<Subscription> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Subscription subscription = httpResponse.getEntity(Subscription.class);
-				result = new UpdateResultImpl<Subscription>(subscription);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Subscription>(error);
-			}
+			UpdateResult<Subscription> result = new UpdateResultImpl<Subscription>(Subscription.class, httpResponse);
 			
 			return result;
 		}
 	}
-	
-	
 	
 	public class ContactResource extends AbstractResource {
 
@@ -289,7 +253,6 @@ public class OrganizationResource extends AbstractResource {
 			
 			return result;
 		}
-		
 	}
 	
 	public class AddressResource extends AbstractResource {
@@ -318,7 +281,6 @@ public class OrganizationResource extends AbstractResource {
 			
 			return result;
 		}
-		
 	}
 	
 	/**
@@ -367,31 +329,23 @@ public class OrganizationResource extends AbstractResource {
 		
 		/**
 		 * 
-		 * @param accountProfileId
-		 * @param paymentMethodToken
+		 * @param creditCardRequest
 		 * @return
 		 */
 		
-		public DeleteResult delete(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path("account-profile")
-					.path(accountProfileId)
+		public UpdateResult<Organization> remove(CreditCardRequest creditCardRequest) {
+			HttpResponse httpResponse = RestResource.delete(creditCardRequest.getToken().getEnvironmentUrl())
+					.bearerAuthorization(creditCardRequest.getToken().getAccessToken())
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+					.path(creditCardRequest.getOrganizationId())
+					.path("subscription")
 					.path("credit-card")
-					.path(paymentMethodToken)
 					.execute();
 			
-			DeleteResult result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				result = new DeleteResultImpl();
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new DeleteResultImpl(error);
-			}
+			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
 			
 			return result;
-			
 		}
 	}
 }
