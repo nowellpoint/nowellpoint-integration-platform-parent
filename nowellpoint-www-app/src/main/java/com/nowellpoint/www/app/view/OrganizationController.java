@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Address;
@@ -20,7 +19,6 @@ import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
-import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Organization;
@@ -29,8 +27,6 @@ import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UserProfile;
-import com.nowellpoint.www.app.util.MessageProvider;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -40,8 +36,6 @@ public class OrganizationController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
-		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile-deactivate.html");
-		public static final String USER_PROFILE_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "payment-method.html");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
 		public static final String PAYMENT_METHOD_PART = String.format(APPLICATION_CONTEXT, "payment-method-part.html");
 	}
@@ -236,7 +230,7 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String updateAddress(Configuration configuration, Request request, Response response) {
+	public static String updateBillingAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		AddressRequest addressRequest = new AddressRequest()
@@ -266,52 +260,27 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String getCreditCard(Configuration configuration, Request request, Response response) {
+	public static String updateBillingContact(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.get(request.params(":id"), request.params(":token"));
+		AddressRequest addressRequest = new AddressRequest()
+				.withCity(request.queryParams("city"))
+				.withCountryCode(request.queryParams("countryCode"))
+				.withPostalCode(request.queryParams("postalCode"))
+				.withState(request.queryParams("state"))
+				.withStreet(request.queryParams("street"));
 		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", new UserProfile(request.params(":id")));
-		model.put("creditCard", creditCard);
-		model.put("mode", "view");
-		
-		return render(OrganizationController.class, configuration, request, response, model, Template.USER_PROFILE_PAYMENT_METHOD);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String editCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		CreditCard creditCard = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.get(request.params(":id"), request.params(":token"));
-		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
+		UpdateResult<Address> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
-				.get(request.params(":id"));
+				.address()
+				.update(request.params(":id"), addressRequest);
 		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", userProfile);
-		model.put("creditCard", creditCard);
-		model.put("action", String.format("/app/account-profile/%s/payment-methods/%s", request.params(":id"), request.params(":token")));
-		model.put("mode", "edit");
+		if (! updateResult.isSuccess()) {
+			response.status(400);
+		}
 		
-		return render(OrganizationController.class, configuration, request, response, model, Template.USER_PROFILE_PAYMENT_METHOD);
-	};
+		return responseBody(updateResult);
+	}
 	
 	/**
 	 * 
@@ -356,32 +325,6 @@ public class OrganizationController extends AbstractStaticController {
 		model.put("organization", updateResult.getTarget());
 		
 		return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String removeCreditCard(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.organization()
-				.subscription()
-				.creditCard()
-				.delete(request.params(":id"), request.params(":token"));
-			
-		if (! deleteResult.isSuccess()) {
-			throw new BadRequestException(deleteResult.getErrorMessage());
-		}
-		
-		response.cookie(String.format("/app/account-profile/%s",  request.params(":id")), "successMessage", MessageProvider.getMessage(getLocale(request), "remove.credit.card.success"), 3, Boolean.FALSE);
-		
-		return "";
 	};
 	
 	/**

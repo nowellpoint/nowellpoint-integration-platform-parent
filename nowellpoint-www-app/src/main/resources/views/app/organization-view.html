@@ -153,7 +153,7 @@
                                     <h4><b>${labels["payment.method"]}</b></h4>
                                 </div>
                                 <div class="flextable-item">
-                                    <a href="#" role="button" id="editPaymentMethod"><span class="icon icon-pencil"></span></a>
+                                    <button class="btn btn-link" id="editPaymentMethod"><span class="icon icon-pencil"></span></button>
                                 </div>
                             </div>
                             <hr>
@@ -185,6 +185,7 @@
                                         ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
                                     </div>
                                 </div>
+                                <hr>
                             </div>
                             <div id="paymentMethodEdit" style="display: none;">
                                 <form class="form-vertical" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
@@ -239,10 +240,15 @@
                                         </div>
                                     </div>
                                 </form>
-                                <button class="btn btn-success" id="savePaymentMethod"><span class="glyphicon glyphicon-save"></span> ${labels["save"]}</button>&emsp;
-                                <a href="#" role="button" id="cancelPaymentMethod">${labels["cancel"]}</a>
+                                <div class="row">
+                                    <div class="col-3"></div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success" id="savePaymentMethod">${labels["save"]}</button>
+                                        <button class="btn btn-link" id="cancelPaymentMethod">${labels["cancel"]}</button>
+                                    </div>
+                                    <hr>
+                                </div>
                             </div>
-                            <hr>
                         </div>
                     </div>
                     <br>
@@ -254,37 +260,75 @@
                                     <h4><b>${labels["billing.contact"]}</b></h4>
                                 </div>
                                 <div class="flextable-item">
-                                    <a href="#"><span class="icon icon-pencil"></span></a>
+                                    <button class="btn btn-link" id="editBillingContact"><span class="icon icon-pencil"></span></button>
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["name"]}</b>
+                            <div id="billingContactView">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["name"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingContact.name)!}
+                                    </div>
                                 </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingContact.name)!}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["email"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingContact.email)!}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["phone"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingContact.phone)!}
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            <div id="billingContactEdit" style="display: none;">
+                                <form class="form-vertical" name="billingContactForm" id="billingContactForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-contact">
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="billingContactName">${labels["name"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="billingContactName" id="billingContactName" class="form-control" value="${(organization.subscription.billingContact.name)!}" autofocus required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="billingContactEmail">${labels["email"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="billingContactEmail" id="billingContactEmail" class="form-control" value="${(organization.subscription.billingContact.email)!}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="billingContactPhone">${labels["phone"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="billingContactPhone" id="billingContactPhone" class="form-control" value="${(organization.subscription.billingContact.phone)!}" required>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                    <div class="col-3"></div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success" id="saveBillingContact">${labels["save"]}</button>
+                                        <button class="btn btn-link" id="cancelBillingContact">${labels["cancel"]}</button>
+                                    </div>
+                                    <hr>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["email"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingContact.email)!}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["phone"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingContact.phone)!}
-                                </div>
-                            </div>
-                            <hr>
                         </div>
                     </div>
                     <br>
@@ -296,55 +340,109 @@
                                     <h4><b>${labels["billing.address"]}</b></h4>
                                 </div>
                                 <div class="flextable-item">
-                                    <a href="#"><span class="icon icon-pencil"></span></a>
+                                    <button class="btn btn-link" id="editBillingAddress"><span class="icon icon-pencil"></span></button>
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["street"]}</b>
+                            <div id="billingAddressView">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["street"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingAddress.street)!}
+                                    </div>
                                 </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingAddress.street)!}
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["city"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingAddress.city)!}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["state"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingAddress.state)!}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["postal.code"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingAddress.postalCode)!}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <b>${labels["country"]}</b>
+                                    </div>
+                                    <div class="col-9">
+                                        ${(organization.subscription.billingAddress.country)!}
+                                    </div>
+                                    <hr>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["city"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingAddress.city)!}
+                            <div id="billingAddressEdit" style="display: none;">
+                                <form class="form-vertical" name="billingAddressForm" id="billingAddressForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-address">
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="street">${labels["street"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="street" id="street" class="form-control" value="${(organization.subscription.billingAddress.street)!}" autofocus required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="city">${labels["city"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="city" id="city" class="form-control" value="${(organization.subscription.billingAddress.city)!}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="state">${labels["state"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="state" id="state" class="form-control" value="${(organization.subscription.billingAddress.state)!}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="postalCode" id="postalCode" class="form-control" value="${(organization.subscription.billingAddress.postalCode)!}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="state">${labels["country"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="country" id="country" class="form-control" value="${(organization.subscription.billingAddress.country)!}" required>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                    <div class="col-3"></div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success" id="saveBillingAddress">${labels["save"]}</button>
+                                        <button class="btn btn-link" id="cancelBillingAddress">${labels["cancel"]}</button>
+                                    </div>
+                                    <hr>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["state"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingAddress.state)!}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["postal.code"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingAddress.postalCode)!}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-3">
-                                    <b>${labels["country"]}</b>
-                                </div>
-                                <div class="col-9">
-                                    ${(organization.subscription.billingAddress.country)!}
-                                </div>
-                            </div>
-                            <hr>
                         </div>
                     </div>
 
@@ -438,17 +536,26 @@
         <br>
 
         <script>
-            
-            $(document).on('click', 'a#editPaymentMethod', function() {
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editPaymentMethod', function() {
                 $('#editPaymentMethod').hide();
                 $('#paymentMethodView').hide();
                 $('#paymentMethodEdit').show();
             });
-            
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
             $(document).on('click', 'button#savePaymentMethod', function() {
-                
+
                 $form = $("#paymentMethodForm");
-                
+
                 $('#error').remove();
 
                 $.ajax({
@@ -465,17 +572,71 @@
                         }
                     }
                 });
-                
+
                 return false;
             });
 
-            $(document).on('click', 'a#cancelPaymentMethod', function() {
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#cancelPaymentMethod', function() {
                 $('#paymentMethodEdit').hide();
                 $('#number').val('');
                 $('#cvv').val('');
                 $('#error').remove();
                 $('#paymentMethodView').show();
                 $('#editPaymentMethod').show();
+            });
+
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editBillingContact', function() {
+                $('#editBillingContact').hide();
+                $('#billingContactView').hide();
+                $('#billingContactEdit').show();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#cancelBillingContact', function() {
+                $('#billingContactEdit').hide();
+                $('#error').remove();
+                $('#billingContactView').show();
+                $('#editBillingContact').show();
+            });
+
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editBillingAddress', function() {
+                $('#editBillingAddress').hide();
+                $('#billingAddressView').hide();
+                $('#billingAddressEdit').show();
+            });
+            
+            
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#cancelBillingAddress', function() {
+                $('#billingAddressEdit').hide();
+                $('#error').remove();
+                $('#billingAddressView').show();
+                $('#editBillingAddress').show();
             });
             
         </script>

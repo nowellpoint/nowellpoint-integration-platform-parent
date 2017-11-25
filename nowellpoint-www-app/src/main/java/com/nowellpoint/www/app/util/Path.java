@@ -66,6 +66,8 @@ public class Path {
 		public static final String ORGANIZATION_REVIEW_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
 		public static final String ORGANIZATION_UPDATE_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card");
+		public static final String ORGANIZATION_UPDATE_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact");
+		public static final String ORGANIZATION_UPDATE_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address");
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_UPDATE = String.format(APPLICATION_CONTEXT, "jobs/:id");
