@@ -17,6 +17,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Contact;
+import com.nowellpoint.client.model.ContactRequest;
 import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.GetPlansRequest;
@@ -233,23 +234,39 @@ public class OrganizationController extends AbstractStaticController {
 	public static String updateBillingAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.withCity(request.queryParams("city"))
-				.withCountryCode(request.queryParams("countryCode"))
-				.withPostalCode(request.queryParams("postalCode"))
-				.withState(request.queryParams("state"))
-				.withStreet(request.queryParams("street"));
+		String organizationId = request.params(":id");
 		
-		UpdateResult<Address> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.address()
-				.update(request.params(":id"), addressRequest);
+		String city = request.queryParams("city");
+		String countryCode = request.queryParams("countryCode");
+		String postalCode = request.queryParams("postalCode");
+		String stateCode = request.queryParams("stateCode");
+		String street = request.queryParams("street");
 		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
+		AddressRequest addressRequest = AddressRequest.builder()
+				.city(city)
+				.countryCode(countryCode)
+				.organizationId(organizationId)
+				.postalCode(postalCode)
+				.stateCode(stateCode)
+				.street(street)
+				.token(token)
+				.build();
+		
+		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
+				.organization()
+				.subscription()
+				.billingAddress()
+				.update(addressRequest);
+		
+		if (updateResult.isSuccess()) {
+			
+			Map<String, Object> model = getModel();
+			model.put("organization", updateResult.getTarget());
+			
+			return responseBody(updateResult);
+		} else {
+			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
-		
-		return responseBody(updateResult);
 	}
 	
 	/**
@@ -263,23 +280,37 @@ public class OrganizationController extends AbstractStaticController {
 	public static String updateBillingContact(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.withCity(request.queryParams("city"))
-				.withCountryCode(request.queryParams("countryCode"))
-				.withPostalCode(request.queryParams("postalCode"))
-				.withState(request.queryParams("state"))
-				.withStreet(request.queryParams("street"));
+		String organizationId = request.params(":id");
 		
-		UpdateResult<Address> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.address()
-				.update(request.params(":id"), addressRequest);
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		String email = request.queryParams("email");
+		String phone = request.queryParams("phone");
 		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
+		ContactRequest contactRequest = ContactRequest.builder()
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone)
+				.organizationId(organizationId)
+				.token(token)
+				.build();
+		
+		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
+				.organization()
+				.subscription()
+				.billingContact()
+				.update(contactRequest);
+		
+		if (updateResult.isSuccess()) {
+			
+			Map<String, Object> model = getModel();
+			model.put("organization", updateResult.getTarget());
+			
+			return responseBody(updateResult);
+		} else {
+			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
-		
-		return responseBody(updateResult);
 	}
 	
 	/**
@@ -317,14 +348,16 @@ public class OrganizationController extends AbstractStaticController {
 				.creditCard()
 				.update(creditCardRequest);
 		
-		if (! updateResult.isSuccess()) {
+		if (updateResult.isSuccess()) {
+			
+			Map<String, Object> model = getModel();
+			model.put("organization", updateResult.getTarget());
+			
+			return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
+			
+		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
-		
-		Map<String, Object> model = getModel();
-		model.put("organization", updateResult.getTarget());
-		
-		return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
 	};
 	
 	/**

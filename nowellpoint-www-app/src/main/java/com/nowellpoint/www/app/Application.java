@@ -180,6 +180,12 @@ public class Application implements SparkApplication {
 		
 		post(Path.Route.ORGANIZATION_UPDATE_CREDIT_CARD, (request, response) 
 				-> OrganizationController.updateCreditCard(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_UPDATE_BILLING_ADDRESS, (request, response) 
+				-> OrganizationController.updateBillingAddress(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_UPDATE_BILLING_CONTACT, (request, response) 
+				-> OrganizationController.updateBillingContact(configuration, request, response));
 
 		//
 		// authentication routes

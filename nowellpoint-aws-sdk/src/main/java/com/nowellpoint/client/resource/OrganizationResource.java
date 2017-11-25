@@ -8,9 +8,8 @@ import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.CreditCard;
+import com.nowellpoint.client.model.ContactRequest;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
@@ -183,90 +182,6 @@ public class OrganizationResource extends AbstractResource {
 		return new SubscriptionResource(token);
 	}
 	
-	
-	
-	/**
-	 * 
-	 * @author jherson
-	 *
-	 */
-	
-	public class AddressResource extends AbstractResource {
-		
-		/**
-		 * 
-		 * @param environmentUrl
-		 * @param accessToken
-		 */
-		
-		public AddressResource(Token token) {
-			super(token);
-		}
-		
-		/**
-		 * 
-		 * @param accountProfileId
-		 * @return
-		 */
-		
-		public Address get(String userProfileId) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path(RESOURCE_CONTEXT)
-					.path(userProfileId)
-					.path("address")
-					.execute();
-			
-			Address resource = null;
-	    	
-	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		resource = httpResponse.getEntity(Address.class);
-	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
-	    	
-	    	return resource;
-		}
-		
-		/**
-		 * 
-		 * @param accountProfileId
-		 * @param addressRequest
-		 * @return
-		 */
-		
-		public UpdateResult<Address> update(String userProfileId, AddressRequest addressRequest) {
-			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-	    			.acceptCharset("UTF-8")
-					.path(RESOURCE_CONTEXT)
-					.path(userProfileId)
-					.path("address")
-					.parameter("city", addressRequest.getCity())
-					.parameter("countryCode", addressRequest.getCountryCode())
-					.parameter("state", addressRequest.getState())
-					.parameter("postalCode", addressRequest.getPostalCode())
-					.parameter("street", addressRequest.getStreet())
-					.execute();
-			
-			UpdateResult<Address> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Address resource = httpResponse.getEntity(Address.class);
-				result = new UpdateResultImpl<Address>(resource);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Address>(error);
-			}
-			
-			return result;
-		}
-	}
-	
 	/**
 	 * 
 	 * @author jherson
@@ -291,6 +206,15 @@ public class OrganizationResource extends AbstractResource {
 		
 		public CreditCardResource creditCard() {
 			return new CreditCardResource(token);
+		}
+		
+		/**
+		 * 
+		 * @return
+		 */
+		
+		public ContactResource billingContact() {
+			return new ContactResource(token);
 		}
 		
 		/**
@@ -338,6 +262,65 @@ public class OrganizationResource extends AbstractResource {
 		}
 	}
 	
+	
+	
+	public class ContactResource extends AbstractResource {
+
+		public ContactResource(Token token) {
+			super(token);
+		}
+		
+		public UpdateResult<Organization> update(ContactRequest contactRequest) {
+			HttpResponse httpResponse = RestResource.post(contactRequest.getToken().getEnvironmentUrl())
+					.bearerAuthorization(contactRequest.getToken().getAccessToken())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+					.path(contactRequest.getOrganizationId())
+					.path("subscription")
+					.path("billing-contact")
+					.parameter("firstName", contactRequest.getFirstName())
+					.parameter("lastName", contactRequest.getLastName())
+					.parameter("email", contactRequest.getEmail())
+					.parameter("phone", contactRequest.getPhone())
+					.execute();
+			
+			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
+			
+			return result;
+		}
+		
+	}
+	
+	public class AddressResource extends AbstractResource {
+
+		public AddressResource(Token token) {
+			super(token);
+		}
+		
+		public UpdateResult<Organization> update(AddressRequest addressRequest) {
+			HttpResponse httpResponse = RestResource.post(addressRequest.getToken().getEnvironmentUrl())
+					.bearerAuthorization(addressRequest.getToken().getAccessToken())
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.accept(MediaType.APPLICATION_JSON)
+					.path(RESOURCE_CONTEXT)
+					.path(addressRequest.getOrganizationId())
+					.path("subscription")
+					.path("billing-address")
+					.parameter("street", addressRequest.getStreet())
+					.parameter("city", addressRequest.getCity())
+					.parameter("stateCode", addressRequest.getStateCode())
+					.parameter("postalCode", addressRequest.getPostalCode())
+					.parameter("countryCode", addressRequest.getCountryCode())
+					.execute();
+			
+			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
+			
+			return result;
+		}
+		
+	}
+	
 	/**
 	 * 
 	 * @author jherson
@@ -380,34 +363,6 @@ public class OrganizationResource extends AbstractResource {
 			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
 			
 			return result;
-		}
-		
-		/**
-		 * @param accountProfileId
-		 * @param paymentMethodToken
-		 * @return
-		 */
-		
-		public CreditCard get(String accountProfileId, String paymentMethodToken) {
-			HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-					.bearerAuthorization(token.getAccessToken())
-					.path("account-profile")
-					.path(accountProfileId)
-					.path("credit-card")
-					.path(paymentMethodToken)
-					.execute();
-			
-			CreditCard resource = null;
-	    	
-	    	if (httpResponse.getStatusCode() == Status.OK) {
-	    		resource = httpResponse.getEntity(CreditCard.class);
-	    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-				throw new NotFoundException(httpResponse.getAsString());
-			} else {
-				throw new ServiceUnavailableException(httpResponse.getAsString());
-	    	}
-	    	
-	    	return resource;
 		}
 		
 		/**

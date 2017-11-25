@@ -224,12 +224,23 @@ public class UserProfileController extends AbstractStaticController {
 	public static String updateAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		AddressRequest addressRequest = new AddressRequest()
-				.withCity(request.queryParams("city"))
-				.withCountryCode(request.queryParams("countryCode"))
-				.withPostalCode(request.queryParams("postalCode"))
-				.withState(request.queryParams("state"))
-				.withStreet(request.queryParams("street"));
+		String userProfileId = request.params(":id");
+		
+		String city = request.queryParams("city");
+		String countryCode = request.queryParams("countryCode");
+		String postalCode = request.queryParams("postalCode");
+		String stateCode = request.queryParams("stateCode");
+		String street = request.queryParams("street");
+		
+		AddressRequest addressRequest = AddressRequest.builder()
+				.city(city)
+				.countryCode(countryCode)
+				.userProfileId(userProfileId)
+				.postalCode(postalCode)
+				.stateCode(stateCode)
+				.street(street)
+				.token(token)
+				.build();
 		
 		UpdateResult<Address> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()

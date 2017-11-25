@@ -297,26 +297,34 @@
                                 <form class="form-vertical" name="billingContactForm" id="billingContactForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-contact">
                                     <div class="form-row form-group">
                                         <div class="col-3">
-                                            <b><label class="control-label" for="billingContactName">${labels["name"]}</label></b>
+                                            <b><label class="control-label" for="firstName">${labels["first.name"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="billingContactName" id="billingContactName" class="form-control" value="${(organization.subscription.billingContact.name)!}" autofocus required>
+                                            <input type="text" name="firstName" id="firstName" class="form-control" value="${(organization.subscription.billingContact.firstName)!}" autofocus>
                                         </div>
                                     </div>
                                     <div class="form-row form-group">
                                         <div class="col-3">
-                                            <b><label class="control-label" for="billingContactEmail">${labels["email"]}</label></b>
+                                            <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="billingContactEmail" id="billingContactEmail" class="form-control" value="${(organization.subscription.billingContact.email)!}" required>
+                                            <input type="text" name="lastName" id="lastName" class="form-control" value="${(organization.subscription.billingContact.lastName)!}" required>
                                         </div>
                                     </div>
                                     <div class="form-row form-group">
                                         <div class="col-3">
-                                            <b><label class="control-label" for="billingContactPhone">${labels["phone"]}</label></b>
+                                            <b><label class="control-label" for="email">${labels["email"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="billingContactPhone" id="billingContactPhone" class="form-control" value="${(organization.subscription.billingContact.phone)!}" required>
+                                            <input type="text" name="email" id="email" class="form-control" value="${(organization.subscription.billingContact.email)!}" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row form-group">
+                                        <div class="col-3">
+                                            <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="text" name="phone" id="phone" class="form-control" value="${(organization.subscription.billingContact.phone)!}">
                                         </div>
                                     </div>
                                 </form>
