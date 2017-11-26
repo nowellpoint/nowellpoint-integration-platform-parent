@@ -19,11 +19,10 @@
 package com.nowellpoint.api.exception;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.ErrorOrig;
+import com.nowellpoint.api.rest.domain.Error;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 
 @Provider
@@ -31,9 +30,15 @@ public class DocumentNotFoundExceptionMapper implements ExceptionMapper<Document
 
 	@Override
 	public Response toResponse(DocumentNotFoundException exception) {
-		ErrorOrig errorOrig = new ErrorOrig(3000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Response.Status.NOT_FOUND);
-		builder.entity(errorOrig);
-		return builder.build();
+		Error error = Error.builder()
+				.code("NOT_FOUND")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.NOT_FOUND)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

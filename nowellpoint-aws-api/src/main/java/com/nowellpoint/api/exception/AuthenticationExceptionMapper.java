@@ -19,21 +19,26 @@
 package com.nowellpoint.api.exception;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.nowellpoint.api.idp.model.AuthenticationException;
-import com.nowellpoint.api.rest.domain.ErrorOrig;
+import com.nowellpoint.api.rest.domain.Error;
 
 @Provider
 public class AuthenticationExceptionMapper implements ExceptionMapper<AuthenticationException> {
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
-		ErrorOrig errorOrig = new ErrorOrig(exception.getError(), exception.getErrorDescription());
-		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(errorOrig);
-		return builder.build();
+		Error error = Error.builder()
+				.code(exception.getError())
+				.addMessage(exception.getErrorDescription())
+				.build();
+		
+		Response response = Response.status(Response.Status.UNAUTHORIZED)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }
