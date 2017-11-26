@@ -24,7 +24,6 @@ import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.SubscriptionRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -158,7 +157,7 @@ public class OrganizationController extends AbstractStaticController {
 				.withExpirationYear(expirationYear)
 				.withCvv(cvv);
 		
-		UpdateResult<Subscription> updateResult = NowellpointClient.defaultClient(token)
+		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
 				.organization()
 				.subscription()
 				.set(subscriptionRequest);

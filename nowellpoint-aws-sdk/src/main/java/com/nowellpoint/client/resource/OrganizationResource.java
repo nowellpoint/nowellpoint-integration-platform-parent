@@ -5,13 +5,11 @@ import java.io.InputStream;
 
 import com.amazonaws.util.IOUtils;
 import com.nowellpoint.client.model.Organization;
-import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.ContactRequest;
 import com.nowellpoint.client.model.Error;
-import com.nowellpoint.client.model.Subscription;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
@@ -106,7 +104,7 @@ public class OrganizationResource extends AbstractResource {
 	 * @return
 	 */
 	
-	public UpdateResult<Organization> update(String organizationId, UserProfileRequest userProfileRequest) {
+	public UpdateResult<Organization> update(String organizationId) {
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
@@ -132,8 +130,8 @@ public class OrganizationResource extends AbstractResource {
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.execute();
+				.path(id)
+				.execute();
 		
 		DeleteResult deleteResult = null;
 		
@@ -206,7 +204,7 @@ public class OrganizationResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public UpdateResult<Subscription> set(SubscriptionRequest subscriptionRequest) {
+		public UpdateResult<Organization> set(SubscriptionRequest subscriptionRequest) {
 			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -222,7 +220,7 @@ public class OrganizationResource extends AbstractResource {
 					.parameter("cvv", subscriptionRequest.getCvv())
 					.execute();
 			
-			UpdateResult<Subscription> result = new UpdateResultImpl<Subscription>(Subscription.class, httpResponse);
+			UpdateResult<Organization> result = new UpdateResultImpl<Organization>(Organization.class, httpResponse);
 			
 			return result;
 		}
