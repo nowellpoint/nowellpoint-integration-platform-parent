@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -34,5 +35,34 @@ public abstract class AbstractSubscription {
 	public abstract @Nullable CreditCard getCreditCard();
 	public abstract @Nullable Address getBillingAddress();
 	public abstract @Nullable Contact getBillingContact();
-	public abstract Set<FeatureInfo> getFeatures();
+	public abstract Set<Feature> getFeatures();
+	
+	public static Subscription of(com.nowellpoint.api.model.document.Subscription source) {
+		Set<Feature> features = new HashSet<>();
+		for (com.nowellpoint.api.model.document.Feature feature : source.getFeatures()) {
+			features.add(Feature.of(feature));
+		}
+		
+		ModifiableSubscription subscription = ModifiableSubscription.create()
+				.setAddedOn(source.getAddedOn())
+				.setBillingAddress(Address.of(source.getBillingAddress()))
+				.setBillingFrequency(source.getBillingFrequency())
+				.setBillingPeriodEndDate(source.getBillingPeriodEndDate())
+				.setBillingPeriodStartDate(source.getBillingPeriodStartDate())
+				.setCreditCard(CreditCard.of(source.getCreditCard()))
+				.setCurrencyIsoCode(source.getCurrencyIsoCode())
+				.setCurrencySymbol(source.getCurrencySymbol())
+				.setFeatures(features)
+				.setNextBillingDate(source.getNextBillingDate())
+				.setNumber(source.getNumber())
+				.setPlanCode(source.getPlanCode())
+				.setPlanId(source.getPlanId())
+				.setPlanName(source.getPlanName())
+				.setStatus(source.getStatus())
+				.setUnitPrice(source.getUnitPrice())
+				.setUpdatedOn(source.getUpdatedOn())
+				.setBillingContact(Contact.of(source.getBillingContact()));
+		
+		return subscription.toImmutable();
+	}
 }

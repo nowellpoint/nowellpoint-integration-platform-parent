@@ -2,8 +2,6 @@ package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -56,45 +54,24 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				//ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
 				
-				Set<FeatureInfo> features = new HashSet<>();
-				for (com.nowellpoint.api.model.document.Feature feature : source.getFeatures()) {
-					FeatureInfo featureInfo = ModifiableFeatureInfo.create()
-							.setCode(feature.getCode())
-							.setDescription(feature.getDescription())
-							.setEnabled(feature.getEnabled())
-							.setName(feature.getName())
-							.setQuantity(feature.getQuantity())
-							.setSortOrder(feature.getSortOrder())
-							.toImmutable();
-					
-					features.add(featureInfo);
-				}
-				
-				ModifiableSubscription subscription = ModifiableSubscription.create()
-						.setAddedOn(source.getAddedOn())
-						.setBillingAddress(Address.of(source.getBillingAddress()))
-						.setBillingFrequency(source.getBillingFrequency())
-						.setBillingPeriodEndDate(source.getBillingPeriodEndDate())
-						.setBillingPeriodStartDate(source.getBillingPeriodStartDate())
-						.setCreditCard(CreditCard.of(source.getCreditCard()))
-						.setCurrencyIsoCode(source.getCurrencyIsoCode())
-						.setCurrencySymbol(source.getCurrencySymbol())
-						.setFeatures(features)
-						.setNextBillingDate(source.getNextBillingDate())
-						.setNumber(source.getNumber())
-						.setPlanCode(source.getPlanCode())
-						.setPlanId(source.getPlanId())
-						.setPlanName(source.getPlanName())
-						.setStatus(source.getStatus())
-						.setUnitPrice(source.getUnitPrice())
-						.setUpdatedOn(source.getUpdatedOn())
-						.setBillingContact(Contact.of(source.getBillingContact()));
-				
-				return subscription.toImmutable();
+				Subscription target = Subscription.of(source);
+				return target;
 			}
 			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Plan, Plan>() {
+
+			@Override
+			protected Plan convert(com.nowellpoint.api.model.document.Plan source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				
+				Plan target = Plan.of(source);
+				return target;
+			}
 		});
 		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, Address>() {
@@ -104,8 +81,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableAddress address = modelMapper.map(source, ModifiableAddress.class);
-				return address.toImmutable();
+				ModifiableAddress target = modelMapper.map(source, ModifiableAddress.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -117,8 +94,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableCreditCard creditCard = modelMapper.map(source, ModifiableCreditCard.class);
-				return creditCard.toImmutable();
+				ModifiableCreditCard target = modelMapper.map(source, ModifiableCreditCard.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -130,8 +107,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableContact contact = modelMapper.map(source, ModifiableContact.class);
-				return contact.toImmutable();
+				ModifiableContact target = modelMapper.map(source, ModifiableContact.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -143,8 +120,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
-				return transaction.toImmutable();
+				ModifiableTransaction target = modelMapper.map(source, ModifiableTransaction.class);
+				return target.toImmutable();
 			}
 		});
 		
@@ -155,8 +132,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableUserInfo userInfo = modelMapper.map(source, ModifiableUserInfo.class);
-				return userInfo.toImmutable();
+				ModifiableUserInfo target = modelMapper.map(source, ModifiableUserInfo.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -168,8 +145,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiablePhotos photos = modelMapper.map(source, ModifiablePhotos.class);
-				return photos.toImmutable();
+				ModifiablePhotos target = modelMapper.map(source, ModifiablePhotos.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -181,8 +158,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
-				return organizationInfo.toImmutable();
+				ModifiableOrganizationInfo target = modelMapper.map(source, ModifiableOrganizationInfo.class);
+				return target.toImmutable();
 			}
 		});
 	}

@@ -27,7 +27,7 @@ import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Contact;
 import com.nowellpoint.api.rest.domain.CreditCard;
-import com.nowellpoint.api.rest.domain.FeatureInfo;
+import com.nowellpoint.api.rest.domain.Feature;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.PlanOrig;
 import com.nowellpoint.api.rest.domain.Subscription;
@@ -123,10 +123,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
-		Set<FeatureInfo> features = new HashSet<>();
+		Set<Feature> features = new HashSet<>();
 		
 		planOrig.getFeatures().stream().forEach(f -> {
-			FeatureInfo feature = FeatureInfo.builder()
+			Feature feature = Feature.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
 					.enabled(f.getEnabled())
@@ -210,10 +210,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
-		Set<FeatureInfo> features = new HashSet<>();
+		Set<Feature> features = new HashSet<>();
 		
 		planOrig.getFeatures().stream().forEach(f -> {
-			FeatureInfo feature = FeatureInfo.builder()
+			Feature feature = Feature.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
 					.enabled(f.getEnabled())
@@ -388,10 +388,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.phone(phone)
 				.build();
 		
-		Set<FeatureInfo> features = new HashSet<>();
+		Set<Feature> features = new HashSet<>();
 		
 		planOrig.getFeatures().stream().forEach(f -> {
-			FeatureInfo feature = FeatureInfo.builder()
+			Feature feature = Feature.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
 					.enabled(f.getEnabled())
@@ -490,10 +490,10 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
-		Set<FeatureInfo> features = new HashSet<>();
+		Set<Feature> features = new HashSet<>();
 		
 		planOrig.getFeatures().stream().forEach(f -> {
-			FeatureInfo feature = FeatureInfo.builder()
+			Feature feature = Feature.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
 					.enabled(f.getEnabled())
