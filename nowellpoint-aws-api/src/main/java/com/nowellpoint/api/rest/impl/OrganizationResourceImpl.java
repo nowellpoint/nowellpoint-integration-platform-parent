@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.PlanOrig;
+import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.util.Assert;
@@ -33,13 +33,13 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	
 	@Override
 	public Response changePlan(String id, String planId, String cardholderName, String number, String expirationMonth, String expirationYear, String cvv) {
-		PlanOrig planOrig = planService.findById(planId);
+		Plan plan = planService.findById(planId);
 		
 		Organization organization = null;
-		if (planOrig.getPrice().getUnitPrice() == 0 || Assert.isNullOrEmpty(number)) {
-			organization = organizationService.changePlan(id, planOrig);
+		if (plan.getPrice().getUnitPrice() == 0 || Assert.isNullOrEmpty(number)) {
+			organization = organizationService.changePlan(id, plan);
 		} else {
-			organization = organizationService.changePlan(planId, planOrig, cardholderName, expirationMonth, expirationYear, number, cvv);
+			organization = organizationService.changePlan(planId, plan, cardholderName, expirationMonth, expirationYear, number, cvv);
 		}
 		
 		return Response.ok(organization)

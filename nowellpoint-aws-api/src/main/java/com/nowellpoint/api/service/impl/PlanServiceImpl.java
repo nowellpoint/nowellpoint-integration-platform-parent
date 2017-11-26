@@ -1,6 +1,6 @@
 package com.nowellpoint.api.service.impl;
 
-import com.nowellpoint.api.rest.domain.PlanOrig;
+import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.PlanList;
 import com.nowellpoint.api.service.PlanService;
 
@@ -16,12 +16,12 @@ public class PlanServiceImpl extends AbstractPlanService implements PlanService 
 	}
 	
 	@Override
-	public PlanOrig findById(String id) {
+	public Plan findById(String id) {
 		return super.findById(id);
 	}
 	
 	@Override
-	public PlanOrig findByPlanCode(String planCode) {
+	public Plan findByPlanCode(String planCode) {
 		return super.findByPlanCode(planCode);
 	}
 }

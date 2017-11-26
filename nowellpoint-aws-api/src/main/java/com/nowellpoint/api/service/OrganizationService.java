@@ -1,7 +1,7 @@
 package com.nowellpoint.api.service;
 
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.PlanOrig;
+import com.nowellpoint.api.rest.domain.Plan;
 
 /**
  * 
@@ -17,7 +17,7 @@ public interface OrganizationService {
 	public Organization findByDomain(String domain);
 	
 	public Organization createOrganization(
-			PlanOrig planOrig,
+			Plan plan,
 			String domain,  
 			String firstName,
 			String lastName,
@@ -26,7 +26,7 @@ public interface OrganizationService {
 			String countryCode);
 	
 	public Organization createOrganization(
-			PlanOrig planOrig,
+			Plan plan,
 			String domain,  
 			String firstName,
 			String lastName,
@@ -41,11 +41,11 @@ public interface OrganizationService {
 	
 	public Organization updateOrganization(String id, String domain);
 	
-	public Organization changePlan(String id, PlanOrig planOrig);
+	public Organization changePlan(String id, Plan plan);
 	
 	public Organization changePlan(
 			String id, 
-			PlanOrig planOrig,
+			Plan plan,
 			String cardholderName,
 			String number,
 			String expirationMonth, 

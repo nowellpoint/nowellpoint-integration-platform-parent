@@ -36,6 +36,21 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		return getMetaAs(OrganizationResource.class);
 	}
 	
+	@Override
+	public void fromDocument(MongoDocument document) {
+		modelMapper.map(document, this);
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(Organization.class);
+	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.Organization.class);
+	}
+	
 	public static Organization of(com.nowellpoint.api.model.document.Organization source) {
 		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
 		return organization.toImmutable();
@@ -88,20 +103,5 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		organization.setSubscription(subscription.toImmutable());
 		
 		return organization.toImmutable();
-	}
-	
-	@Override
-	public void fromDocument(MongoDocument document) {
-		modelMapper.map(document, this);
-	}
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(AbstractOrganization.class);
-	}
-	
-	@Override
-	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.Organization.class);
 	}
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.rest.domain.PlanOrig;
+import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.PlanList;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
@@ -51,21 +51,21 @@ public class AbstractPlanService extends AbstractCacheService {
 		return planList;
 	}
 	
-	public PlanOrig findById(String id) {
+	public Plan findById(String id) {
 		com.nowellpoint.api.model.document.Plan document = get(com.nowellpoint.api.model.document.Plan.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 			document = documentManager.fetch(com.nowellpoint.api.model.document.Plan.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		PlanOrig resource = PlanOrig.of( document );
+		Plan resource = Plan.of( document );
 		return resource;
 	}
 	
-	public PlanOrig findByPlanCode(String planCode) {
+	public Plan findByPlanCode(String planCode) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Plan document = documentManager.findOne(com.nowellpoint.api.model.document.Plan.class, eq ( "planCode", planCode ));
-		PlanOrig resource = PlanOrig.of( document );
+		Plan resource = Plan.of( document );
 		return resource;
 	}
 }
