@@ -1,6 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
-public class Price {
+public class PriceOrig {
 	
 	private String currencyIsoCode;
 	
@@ -8,7 +8,7 @@ public class Price {
 	
 	private Double unitPrice;
 	
-	public Price() {
+	public PriceOrig() {
 		
 	}
 

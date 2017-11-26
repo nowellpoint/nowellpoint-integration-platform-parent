@@ -29,7 +29,7 @@ import com.nowellpoint.api.rest.domain.Contact;
 import com.nowellpoint.api.rest.domain.CreditCard;
 import com.nowellpoint.api.rest.domain.FeatureInfo;
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.PlanOrig;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
@@ -108,7 +108,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 	
 	@Override
-	public Organization changePlan(String id, Plan plan) {
+	public Organization changePlan(String id, PlanOrig planOrig) {
 		
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
 		
@@ -118,14 +118,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(organization.getSubscription().getCreditCard().getToken())
-				.planId(plan.getPlanCode())
-				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+				.planId(planOrig.getPlanCode())
+				.price(new BigDecimal(planOrig.getPrice().getUnitPrice()));
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
 		Set<FeatureInfo> features = new HashSet<>();
 		
-		plan.getFeatures().stream().forEach(f -> {
+		planOrig.getFeatures().stream().forEach(f -> {
 			FeatureInfo feature = FeatureInfo.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
@@ -140,14 +140,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
+				.planId(planOrig.getId())
+				.planCode(planOrig.getPlanCode())
+				.planName(planOrig.getPlanName())
 				.features(features)
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
+				.unitPrice(planOrig.getPrice().getUnitPrice())
+				.currencySymbol(planOrig.getPrice().getCurrencySymbol())
+				.currencyIsoCode(planOrig.getPrice().getCurrencyIsoCode())
+				.billingFrequency(planOrig.getBillingFrequency())
 				.nextBillingDate(subscriptionResult.getTarget().getNextBillingDate().getTime())
 				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
 				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
@@ -170,7 +170,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	public Organization changePlan(
 			String id, 
-			Plan plan,
+			PlanOrig planOrig,
 			String cardholderName,
 			String number, 
 			String expirationMonth, 
@@ -198,8 +198,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(creditCardResult.getTarget().getToken())
-				.planId(plan.getPlanCode())
-				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+				.planId(planOrig.getPlanCode())
+				.price(new BigDecimal(planOrig.getPrice().getUnitPrice()));
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
@@ -212,7 +212,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Set<FeatureInfo> features = new HashSet<>();
 		
-		plan.getFeatures().stream().forEach(f -> {
+		planOrig.getFeatures().stream().forEach(f -> {
 			FeatureInfo feature = FeatureInfo.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
@@ -228,14 +228,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.creditCard(creditCard)
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
+				.planId(planOrig.getId())
+				.planCode(planOrig.getPlanCode())
+				.planName(planOrig.getPlanName())
 				.features(features)
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
+				.unitPrice(planOrig.getPrice().getUnitPrice())
+				.currencySymbol(planOrig.getPrice().getCurrencySymbol())
+				.currencyIsoCode(planOrig.getPrice().getCurrencyIsoCode())
+				.billingFrequency(planOrig.getBillingFrequency())
 				.nextBillingDate(subscriptionResult.getTarget().getNextBillingDate().getTime())
 				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
 				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
@@ -356,7 +356,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	@Override
 	public Organization createOrganization(
-			Plan plan,
+			PlanOrig planOrig,
 			String domain,  
 			String firstName,
 			String lastName,
@@ -390,7 +390,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Set<FeatureInfo> features = new HashSet<>();
 		
-		plan.getFeatures().stream().forEach(f -> {
+		planOrig.getFeatures().stream().forEach(f -> {
 			FeatureInfo feature = FeatureInfo.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
@@ -405,14 +405,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Subscription subscription = Subscription.builder()
 				.addedOn(now)
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
+				.planId(planOrig.getId())
+				.planCode(planOrig.getPlanCode())
+				.planName(planOrig.getPlanName())
 				.features(features)
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
+				.unitPrice(planOrig.getPrice().getUnitPrice())
+				.currencySymbol(planOrig.getPrice().getCurrencySymbol())
+				.currencyIsoCode(planOrig.getPrice().getCurrencyIsoCode())
+				.billingFrequency(planOrig.getBillingFrequency())
 				.billingAddress(billingAddress)
 				.billingContact(billingContact)
 				.updatedOn(now)
@@ -435,7 +435,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	@Override
 	public Organization createOrganization(
-			Plan plan,
+			PlanOrig planOrig,
 			String domain, 
 			String firstName,
 			String lastName,
@@ -473,8 +473,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(customerResult.getTarget().getCreditCards().get(0).getToken())
-				.planId(plan.getPlanCode())
-				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+				.planId(planOrig.getPlanCode())
+				.price(new BigDecimal(planOrig.getPrice().getUnitPrice()));
 			
 		Result<com.braintreegateway.Subscription> subscriptionResult = createSubscription(subscriptionRequest);
 		
@@ -492,7 +492,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Set<FeatureInfo> features = new HashSet<>();
 		
-		plan.getFeatures().stream().forEach(f -> {
+		planOrig.getFeatures().stream().forEach(f -> {
 			FeatureInfo feature = FeatureInfo.builder()
 					.code(f.getCode())
 					.description(f.getDescription())
@@ -509,14 +509,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.number(subscriptionResult.getTarget().getId())
 				.addedOn(subscriptionResult.getTarget().getCreatedAt().getTime())
 				.updatedOn(subscriptionResult.getTarget().getUpdatedAt().getTime())
-				.planId(plan.getId())
-				.planCode(plan.getPlanCode())
-				.planName(plan.getPlanName())
+				.planId(planOrig.getId())
+				.planCode(planOrig.getPlanCode())
+				.planName(planOrig.getPlanName())
 				.features(features)
-				.unitPrice(plan.getPrice().getUnitPrice())
-				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
-				.billingFrequency(plan.getBillingFrequency())
+				.unitPrice(planOrig.getPrice().getUnitPrice())
+				.currencySymbol(planOrig.getPrice().getCurrencySymbol())
+				.currencyIsoCode(planOrig.getPrice().getCurrencyIsoCode())
+				.billingFrequency(planOrig.getBillingFrequency())
 				.nextBillingDate(subscriptionResult.getSubscription().getNextBillingDate().getTime())
 				.billingPeriodStartDate(subscriptionResult.getSubscription().getBillingPeriodStartDate().getTime())
 				.billingPeriodEndDate(subscriptionResult.getSubscription().getBillingPeriodEndDate().getTime())

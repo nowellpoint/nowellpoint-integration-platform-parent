@@ -22,7 +22,7 @@ import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.SignUpService;
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.PlanOrig;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
@@ -85,7 +85,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
     		throw new ValidationException(errors);
     	}
     	
-    	Plan plan = findPlanById(planId);
+    	PlanOrig planOrig = findPlanById(planId);
     	
     	isRegistred(email, domain);
 		
@@ -108,7 +108,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.firstName(firstName)
 				.lastName(lastName)
 				.verified(Boolean.FALSE)
-				.planId(plan.getId())
+				.planId(planOrig.getId())
 				.createdBy(userInfo)
 				.createdOn(now)
 				.lastUpdatedBy(userInfo)
@@ -152,7 +152,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Date now = Date.from(Instant.now());
 		
-		Plan plan = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : registration.getPlanId());
+		PlanOrig planOrig = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : registration.getPlanId());
 		
 		Registration instance = Registration.builder()
 				.from(registration)
@@ -160,7 +160,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.emailVerificationHref(emailVerificationTokenUri)
 				.lastUpdatedOn(now)
 				.lastUpdatedBy(userInfo)
-				.planId(plan.getId())
+				.planId(planOrig.getId())
 				.build();
 		
 		update(instance);
@@ -209,13 +209,13 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		Registration registration = findById(id);
 		
-		Plan plan = findPlanById(registration.getPlanId());
+		PlanOrig planOrig = findPlanById(registration.getPlanId());
 		
 		Organization organization = null;
 		
-		if (plan.getPrice().getUnitPrice() > 0) {
+		if (planOrig.getPrice().getUnitPrice() > 0) {
 			organization = createOrganization(
-					plan,
+					planOrig,
 					registration.getDomain(), 
 					registration.getFirstName(),
 					registration.getLastName(),
@@ -229,7 +229,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 					cvv);
 		} else {
 			organization = createOrganization(
-					plan,
+					planOrig,
 					registration.getDomain(), 
 					registration.getFirstName(),
 					registration.getLastName(),
@@ -304,9 +304,9 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		return userProfileService.createUserProfile(firstName, lastName, email, phone, countryCode, organization);
 	}
 	
-	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode) {
+	private Organization createOrganization(PlanOrig planOrig, String domain, String firstName, String lastName, String email, String phone, String countryCode) {
 		return organizationService.createOrganization(
-				plan, 
+				planOrig, 
 				domain, 
 				firstName, 
 				lastName, 
@@ -315,9 +315,9 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				countryCode);
 	}
 	
-	private Organization createOrganization(Plan plan, String domain, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
+	private Organization createOrganization(PlanOrig planOrig, String domain, String firstName, String lastName, String email, String phone, String countryCode, String cardholderName, String expirationMonth, String expirationYear, String number, String cvv) {
 		return organizationService.createOrganization(
-				plan, 
+				planOrig, 
 				domain, 
 				firstName, 
 				lastName, 
@@ -331,7 +331,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				cvv);
 	}
 	
-	private Plan findPlanById(String planId) {
+	private PlanOrig findPlanById(String planId) {
 		try {
     		return planService.findById(planId);
     	} catch (DocumentNotFoundException ignore) {

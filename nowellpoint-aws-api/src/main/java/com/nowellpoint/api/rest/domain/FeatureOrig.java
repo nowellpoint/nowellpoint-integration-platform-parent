@@ -1,6 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
-public class Feature {
+public class FeatureOrig {
 	
 	private Integer sortOrder;
 	
@@ -14,7 +14,7 @@ public class Feature {
 	
 	private String quantity;
 	
-	public Feature() {
+	public FeatureOrig() {
 		
 	}
 

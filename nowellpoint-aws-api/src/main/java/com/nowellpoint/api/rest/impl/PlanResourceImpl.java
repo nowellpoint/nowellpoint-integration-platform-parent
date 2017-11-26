@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.PlanResource;
-import com.nowellpoint.api.rest.domain.Plan;
+import com.nowellpoint.api.rest.domain.PlanOrig;
 import com.nowellpoint.api.rest.domain.PlanList;
 import com.nowellpoint.api.service.PlanService;
 
@@ -23,9 +23,9 @@ public class PlanResourceImpl implements PlanResource {
 	
 	public Response findById(String id) {
 		
-		Plan plan = planService.findById(id);
+		PlanOrig planOrig = planService.findById(id);
 		
-		return Response.ok(plan)
+		return Response.ok(planOrig)
 				.build();
 		
 	}

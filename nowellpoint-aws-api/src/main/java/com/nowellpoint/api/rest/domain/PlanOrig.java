@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public class Plan extends AbstractResource {
+public class PlanOrig extends AbstractResource {
 	
 	private Boolean recommendedPlan;
 
@@ -18,20 +18,20 @@ public class Plan extends AbstractResource {
 	
 	private String billingFrequency;
 	
-	private Price price;
+	private PriceOrig priceOrig;
 	
-	private Set<Feature> features;
+	private Set<FeatureOrig> featureOrigs;
 	
-	public Plan() {
+	public PlanOrig() {
 		
 	}
 	
-	private <T> Plan(T document) {
+	private <T> PlanOrig(T document) {
 		modelMapper.map(document, this);
 	}
 	
-	public static Plan of(MongoDocument document) {
-		return new Plan(document);
+	public static PlanOrig of(MongoDocument document) {
+		return new PlanOrig(document);
 	}
 
 	public Boolean getRecommendedPlan() {
@@ -82,20 +82,20 @@ public class Plan extends AbstractResource {
 		this.billingFrequency = billingFrequency;
 	}
 
-	public Set<Feature> getFeatures() {
-		return features;
+	public Set<FeatureOrig> getFeatures() {
+		return featureOrigs;
 	}
 
-	public void setFeatures(Set<Feature> features) {
-		this.features = features;
+	public void setFeatures(Set<FeatureOrig> featureOrigs) {
+		this.featureOrigs = featureOrigs;
 	}
 
-	public Price getPrice() {
-		return price;
+	public PriceOrig getPrice() {
+		return priceOrig;
 	}
 
-	public void setPrice(Price price) {
-		this.price = price;
+	public void setPrice(PriceOrig priceOrig) {
+		this.priceOrig = priceOrig;
 	}
 
 	@Override
