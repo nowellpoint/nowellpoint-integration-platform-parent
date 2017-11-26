@@ -4,32 +4,32 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_EMPTY)
-public class Error {
+public class ErrorOrig {
 	
 	private String code;
 	
 	private String[] messages;
 	
-	public Error() {
+	public ErrorOrig() {
 		
 	}
 	
-	public Error(String code, String message) {
+	public ErrorOrig(String code, String message) {
 		this.code = code;
 		this.messages = new String[] {message};
 	}
 	
-	public Error(Integer code, String message) {
+	public ErrorOrig(Integer code, String message) {
 		setCode(code);
 		setMessages(new String[] {message});
 	}
 	
-	public Error(Integer code, String[] messages) {
+	public ErrorOrig(Integer code, String[] messages) {
 		setCode(code);
 		this.messages = messages;
 	}
 	
-	public Error(String code, String[] messages) {
+	public ErrorOrig(String code, String[] messages) {
 		this.code = code;
 		this.messages = messages;
 	}

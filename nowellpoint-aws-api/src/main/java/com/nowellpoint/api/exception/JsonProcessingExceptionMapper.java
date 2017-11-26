@@ -19,7 +19,7 @@
 package com.nowellpoint.api.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -31,9 +31,9 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
 
 	@Override
 	public Response toResponse(JsonProcessingException exception) {
-		Error error = new Error(6000, "Invalid resource format: " + exception.getMessage());
+		ErrorOrig errorOrig = new ErrorOrig(6000, "Invalid resource format: " + exception.getMessage());
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

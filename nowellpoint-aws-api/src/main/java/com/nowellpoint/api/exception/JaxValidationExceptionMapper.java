@@ -25,16 +25,16 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 @Provider
 public class JaxValidationExceptionMapper implements ExceptionMapper<ValidationException> {
 
 	@Override
 	public Response toResponse(ValidationException exception) {
-		Error error = new Error("VALIDATION", exception.getMessage());
+		ErrorOrig errorOrig = new ErrorOrig("VALIDATION", exception.getMessage());
 		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

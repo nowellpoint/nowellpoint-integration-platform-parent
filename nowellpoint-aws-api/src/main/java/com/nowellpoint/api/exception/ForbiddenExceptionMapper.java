@@ -24,16 +24,16 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 @Provider
 public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenException> {
 
 	@Override
 	public Response toResponse(ForbiddenException exception) {
-		Error error = new Error(3000, exception.getMessage());
+		ErrorOrig errorOrig = new ErrorOrig(3000, exception.getMessage());
 		ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 import com.nowellpoint.mongodb.document.DocumentManagerException;
 
 @Provider
@@ -31,9 +31,9 @@ public class DocumentManagerExceptionMapper implements ExceptionMapper<DocumentM
 
 	@Override
 	public Response toResponse(DocumentManagerException exception) {
-		Error error = new Error(3000, exception.getMessage());
+		ErrorOrig errorOrig = new ErrorOrig(3000, exception.getMessage());
 		ResponseBuilder builder = Response.status(Response.Status.CONFLICT);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

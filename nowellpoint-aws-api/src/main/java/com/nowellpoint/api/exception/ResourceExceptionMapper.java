@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 import com.okta.sdk.resource.ResourceException;
 
@@ -32,14 +32,14 @@ public class ResourceExceptionMapper implements ExceptionMapper<ResourceExceptio
 
 	@Override
 	public Response toResponse(ResourceException exception) {		
-		Error error = new Error(
+		ErrorOrig errorOrig = new ErrorOrig(
 				exception.getCode(),
 				exception.getCauses() != null ?
 				exception.getCauses().get(0).getSummary() :
 					exception.getMessage());
 		
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

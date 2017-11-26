@@ -24,16 +24,16 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 @Provider
 public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
 
 	@Override
 	public Response toResponse(BadRequestException exception) {
-		Error error = new Error(3000, exception.getMessage());
+		ErrorOrig errorOrig = new ErrorOrig(3000, exception.getMessage());
 		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
+		builder.entity(errorOrig);
 		return builder.build();
 	}
 }

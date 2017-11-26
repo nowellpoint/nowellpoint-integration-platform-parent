@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.nowellpoint.api.rest.domain.Error;
+import com.nowellpoint.api.rest.domain.ErrorOrig;
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,9 +34,9 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 
 	@Override
 	public Response toResponse(ConstraintViolationException exception) {		
-		Error error = new Error(3000, exception.getConstraintViolations().stream().findFirst().get().getMessage());
+		ErrorOrig errorOrig = new ErrorOrig(3000, exception.getConstraintViolations().stream().findFirst().get().getMessage());
 		return Response.status(Status.BAD_REQUEST)
-				.entity(error)
+				.entity(errorOrig)
 				.build();
 	}
 }
