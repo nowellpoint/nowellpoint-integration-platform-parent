@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
@@ -28,7 +27,6 @@ import com.mongodb.client.model.Filters;
 import com.nowellpoint.api.rest.domain.Address;
 import com.nowellpoint.api.rest.domain.Contact;
 import com.nowellpoint.api.rest.domain.CreditCard;
-import com.nowellpoint.api.rest.domain.Feature;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
@@ -124,27 +122,12 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		
 		Result<com.braintreegateway.Subscription> subscriptionResult = updateSubscription(organization.getSubscription().getNumber(), subscriptionRequest);
 		
-		Set<Feature> features = new HashSet<>();
-		
-		plan.getFeatures().stream().forEach(f -> {
-			Feature feature = Feature.builder()
-					.code(f.getCode())
-					.description(f.getDescription())
-					.enabled(f.getEnabled())
-					.name(f.getName())
-					.quantity(f.getQuantity())
-					.sortOrder(f.getSortOrder())
-					.build();
-					
-			features.add(feature);		
-		});
-		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				.features(features)
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -211,28 +194,13 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
-		Set<Feature> features = new HashSet<>();
-		
-		plan.getFeatures().stream().forEach(f -> {
-			Feature feature = Feature.builder()
-					.code(f.getCode())
-					.description(f.getDescription())
-					.enabled(f.getEnabled())
-					.name(f.getName())
-					.quantity(f.getQuantity())
-					.sortOrder(f.getSortOrder())
-					.build();
-					
-			features.add(feature);		
-		});
-		
 		Subscription subscription = Subscription.builder()
 				.from(organization.getSubscription())
 				.creditCard(creditCard)
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				.features(features)
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -389,27 +357,12 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.phone(phone)
 				.build();
 		
-		Set<Feature> features = new HashSet<>();
-		
-		plan.getFeatures().stream().forEach(f -> {
-			Feature feature = Feature.builder()
-					.code(f.getCode())
-					.description(f.getDescription())
-					.enabled(f.getEnabled())
-					.name(f.getName())
-					.quantity(f.getQuantity())
-					.sortOrder(f.getSortOrder())
-					.build();
-					
-			features.add(feature);		
-		});
-		
 		Subscription subscription = Subscription.builder()
 				.addedOn(now)
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				.features(features)
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -491,27 +444,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			transactions.add(Transaction.of(source));
 		});
 		
-		/**
-		 * Set<Feature> featureList = source.getFeatures().stream()
-			    .map(feature -> Feature.of(feature))
-			    .collect(Collectors.toSet());
-		 */
-		
-		Set<Feature> features = new HashSet<>();
-		
-		plan.getFeatures().stream().forEach(f -> {
-			Feature feature = Feature.builder()
-					.code(f.getCode())
-					.description(f.getDescription())
-					.enabled(f.getEnabled())
-					.name(f.getName())
-					.quantity(f.getQuantity())
-					.sortOrder(f.getSortOrder())
-					.build();
-					
-			features.add(feature);		
-		});
-		
 		Subscription subscription = Subscription.builder()
 				.number(subscriptionResult.getTarget().getId())
 				.addedOn(subscriptionResult.getTarget().getCreatedAt().getTime())
@@ -519,7 +451,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
-				.features(features)
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
