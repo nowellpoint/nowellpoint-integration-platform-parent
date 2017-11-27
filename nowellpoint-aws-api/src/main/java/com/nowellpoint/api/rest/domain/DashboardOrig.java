@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
-public class Dashboard extends AbstractResource {
+public class DashboardOrig extends AbstractResource {
 
 	private AbstractUserInfo createdBy;
 	
@@ -33,11 +33,11 @@ public class Dashboard extends AbstractResource {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date lastRefreshedOn;
 	
-	private Dashboard() {
+	private DashboardOrig() {
 		
 	}
 	
-	private Dashboard(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
+	private DashboardOrig(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
 		this.connectors = salesforceConnectorList.getSize();
 		this.jobs = jobList.getSize();
 		this.data = "0 Bytes";
@@ -80,24 +80,24 @@ public class Dashboard extends AbstractResource {
 		this.lastRefreshedOn = Date.from(Instant.now());
 	}
 	
-	private Dashboard(String id) {
+	private DashboardOrig(String id) {
 		setId(id);
 	}
 	
-	private <T> Dashboard(T document) {
+	private <T> DashboardOrig(T document) {
 		modelMapper.map(document, this);
 	}
 	
-	public static Dashboard of(String id) {
-		return new Dashboard(id);
+	public static DashboardOrig of(String id) {
+		return new DashboardOrig(id);
 	}
 	
-	public static Dashboard of(MongoDocument document) {
-		return new Dashboard(document);
+	public static DashboardOrig of(MongoDocument document) {
+		return new DashboardOrig(document);
 	}
 	
-	public static Dashboard of(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
-		return new Dashboard(salesforceConnectorList, jobList);
+	public static DashboardOrig of(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
+		return new DashboardOrig(salesforceConnectorList, jobList);
 	}
 
 	public AbstractUserInfo getCreatedBy() {
