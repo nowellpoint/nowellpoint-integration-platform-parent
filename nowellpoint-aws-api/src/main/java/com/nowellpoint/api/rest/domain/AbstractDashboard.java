@@ -80,6 +80,8 @@ public abstract class AbstractDashboard extends AbstractImmutableResource {
 				.setData(data)
 				.setJobStatusSummary(jobStatusSummary)
 				.setRecentJobExecutions(recentJobExecutions)
+				.setCreatedOn(Date.from(Instant.now()))
+				.setLastUpdatedOn(Date.from(Instant.now()))
 				.toImmutable();
 		
 		return dashboard;

@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import com.nowellpoint.api.rest.DashboardResource;
-import com.nowellpoint.api.rest.domain.DashboardOrig;
+import com.nowellpoint.api.rest.domain.Dashboard;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.service.JobService;
@@ -30,8 +30,8 @@ public class DashboardResourceImpl implements DashboardResource {
 		SalesforceConnectorList salesforceConnectorList = salesforceConnectorService.findAllByOwner(owner);
 		JobList jobList = jobService.findAllByOwner(owner);
 		
-		DashboardOrig dashboardOrig = DashboardOrig.of(salesforceConnectorList, jobList);
+		Dashboard dashboard = Dashboard.of(salesforceConnectorList, jobList);
 		
-		return Response.ok(dashboardOrig).build();
+		return Response.ok(dashboard).build();
 	}
 }

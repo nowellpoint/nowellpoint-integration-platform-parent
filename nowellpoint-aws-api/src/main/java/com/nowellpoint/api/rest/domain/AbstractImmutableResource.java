@@ -162,6 +162,18 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				return target.toImmutable();
 			}
 		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Dashboard, Dashboard>() {
+
+			@Override
+			protected Dashboard convert(com.nowellpoint.api.model.document.Dashboard source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableDashboard target = modelMapper.map(source, ModifiableDashboard.class);
+				return target.toImmutable();
+			}
+		});
 	}
 	
 	public abstract @Nullable String getId();
