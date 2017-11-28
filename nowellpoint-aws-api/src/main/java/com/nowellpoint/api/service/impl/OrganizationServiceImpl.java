@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.ValidationException;
+
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -32,7 +34,6 @@ import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
-import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.UserContext;
@@ -86,6 +87,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			super.update(newInstance);
 			
 			return newInstance;
+			
 		} else {
 			throw new ValidationException(String.format(MessageConstants.UNABLE_TO_REMOVE_CREDIT_CARD, organization.getSubscription().getPlanName()));
 		}
