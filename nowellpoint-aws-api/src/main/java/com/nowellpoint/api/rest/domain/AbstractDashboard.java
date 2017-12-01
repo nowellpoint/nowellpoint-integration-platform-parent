@@ -42,7 +42,7 @@ public abstract class AbstractDashboard extends AbstractImmutableResource {
 			jobStatusSummary = jobList.getItems()
 					.stream()
 					.collect(Collectors.groupingBy(
-							Job::getStatus,
+							JobOrig::getStatus,
 							Collectors.counting()))
 					.entrySet()
 					.stream()

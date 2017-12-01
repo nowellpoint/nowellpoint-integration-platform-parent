@@ -18,7 +18,7 @@ public class Source {
 		this.connectionString = connectionString;
 	}
 	
-	public static Source of(SalesforceConnector connector) {
+	public static Source of(SalesforceConnectorOrig connector) {
 		return new Source(
 				Types.SALESFORCE, 
 				connector.getId(), 

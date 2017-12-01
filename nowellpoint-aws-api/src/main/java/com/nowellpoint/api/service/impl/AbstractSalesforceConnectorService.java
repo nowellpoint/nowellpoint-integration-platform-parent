@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorOrig;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
@@ -39,37 +39,37 @@ abstract class AbstractSalesforceConnectorService extends AbstractCacheService {
 		return resources;
 	}
 	
-	protected void create(SalesforceConnector salesforceConnector) {
-		MongoDocument document = salesforceConnector.toDocument();
+	protected void create(SalesforceConnectorOrig salesforceConnectorOrig) {
+		MongoDocument document = salesforceConnectorOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		salesforceConnector.fromDocument(document);
-		set(salesforceConnector.getId(), document);
+		salesforceConnectorOrig.fromDocument(document);
+		set(salesforceConnectorOrig.getId(), document);
 	}
 	
-	protected void update(SalesforceConnector salesforceConnector) {
-		MongoDocument document = salesforceConnector.toDocument();
+	protected void update(SalesforceConnectorOrig salesforceConnectorOrig) {
+		MongoDocument document = salesforceConnectorOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		salesforceConnector.fromDocument(document);
-		set(salesforceConnector.getId(), document);
+		salesforceConnectorOrig.fromDocument(document);
+		set(salesforceConnectorOrig.getId(), document);
 	}
 	
-	protected void delete(SalesforceConnector salesforceConnector) {
-		MongoDocument document = salesforceConnector.toDocument();
+	protected void delete(SalesforceConnectorOrig salesforceConnectorOrig) {
+		MongoDocument document = salesforceConnectorOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.deleteOne(document);
-		del(salesforceConnector.getId());
+		del(salesforceConnectorOrig.getId());
 	}
 	
-	protected SalesforceConnector findById(String id) {		
+	protected SalesforceConnectorOrig findById(String id) {		
 		com.nowellpoint.api.model.document.SalesforceConnector document = get(com.nowellpoint.api.model.document.SalesforceConnector.class, id );
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 			document = documentManager.fetch(com.nowellpoint.api.model.document.SalesforceConnector.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		SalesforceConnector resource = SalesforceConnector.of( document );
+		SalesforceConnectorOrig resource = SalesforceConnectorOrig.of( document );
 		return resource;
 	}
 	

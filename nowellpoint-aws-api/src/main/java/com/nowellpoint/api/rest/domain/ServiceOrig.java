@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class Service {
+public class ServiceOrig {
 	
 	private String serviceId;
 	
@@ -29,11 +29,11 @@ public class Service {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date updatedOn;
 	
-	public static Service of(JobType jobType) {
-		return new Service(jobType);
+	public static ServiceOrig of(JobType jobType) {
+		return new ServiceOrig(jobType);
 	}
 	
-	private Service(JobType jobType) {
+	private ServiceOrig(JobType jobType) {
 		this.serviceId = jobType.getId();
 		this.name = jobType.getName();
 		this.type = jobType.getCode();
@@ -43,7 +43,7 @@ public class Service {
 		this.updatedOn = Date.from(Instant.now());
 	}
 	
-	private Service() {
+	private ServiceOrig() {
 
 	}
 
@@ -138,9 +138,9 @@ public class Service {
 		if (obj.getClass() != getClass()) {
 			return false;
 		}
-		Service service = (Service) obj;
+		ServiceOrig serviceOrig = (ServiceOrig) obj;
 		return new EqualsBuilder()
-				.append(this.serviceId, service.serviceId)
+				.append(this.serviceId, serviceOrig.serviceId)
 				.isEquals();
 	}
 }

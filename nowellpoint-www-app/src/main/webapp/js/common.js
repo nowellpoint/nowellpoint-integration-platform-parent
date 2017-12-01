@@ -7,6 +7,13 @@ $(document).ready(function () {
     $('.dropdown-toggle').dropdown();
 });
 
+$(document).ready(function () {
+    var token = Cookies.getJSON("com.nowellpoint.auth.token");
+    if (token == null) {
+        $(location).attr('href','/login');
+    }
+});
+
 $(document).ready(function() {
     $('#overlay').hide();
 });

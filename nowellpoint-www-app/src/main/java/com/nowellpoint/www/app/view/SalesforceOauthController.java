@@ -68,27 +68,27 @@ public class SalesforceOauthController extends AbstractStaticController {
      * @return
      */
 	
-    public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
-    	Token token = getToken(request);
-    	
-    	OauthToken oauthToken = NowellpointClient.defaultClient(token)
-    			.salesforce()
-    			.getOauthToken(request.queryParams("code"));
-    	
-    	CreateSalesforceConnectorRequest createSalesforceConnectorRequest = new CreateSalesforceConnectorRequest()
-    			.withId(oauthToken.getId())
-    			.withAccessToken(oauthToken.getAccessToken())
-    			.withInstanceUrl(oauthToken.getInstanceUrl())
-    			.withRefreshToken(oauthToken.getRefreshToken());
-    	
-    	CreateResult<SalesforceConnector> createResult = NowellpointClient.defaultClient(token)
-    			.salesforceConnector()
-    			.create(createSalesforceConnectorRequest);
-    	
-    	SalesforceConnector salesforceConnector = createResult.getTarget();
-    	
-    	response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
-    	
-    	return "";
+	public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+
+		OauthToken oauthToken = NowellpointClient.defaultClient(token)
+				.salesforce()
+				.getOauthToken(request.queryParams("code"));
+
+		CreateSalesforceConnectorRequest createSalesforceConnectorRequest = new CreateSalesforceConnectorRequest()
+				.withId(oauthToken.getId())
+				.withAccessToken(oauthToken.getAccessToken())
+				.withInstanceUrl(oauthToken.getInstanceUrl())
+				.withRefreshToken(oauthToken.getRefreshToken());
+
+		CreateResult<SalesforceConnector> createResult = NowellpointClient.defaultClient(token)
+				.salesforceConnector()
+				.create(createSalesforceConnectorRequest);
+
+//		SalesforceConnector salesforceConnector = createResult.getTarget();
+//
+//		response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
+
+		return "";
 	};
 }

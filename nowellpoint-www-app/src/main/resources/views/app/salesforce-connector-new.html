@@ -35,7 +35,16 @@
 
         <p class="pull-right">
             <a href="${links['salesforce.connector']}" class="btn btn-default" role="button">${labels["cancel"]}</a>
-            <a href="${links['salesforce.oauth']}" class="btn btn-primary" role="button">${labels["create.connector"]}</a>
+            <!--<a href="${links['salesforce.oauth']}" class="btn btn-primary" role="button">${labels["create.connector"]}</a>-->
+            <button class="btn btn btn-primary" id="createConnector">${labels["create.connector"]}</button>
         </p>
+
+        <script>
+            $(document).on('click', 'button#createConnector', function() {
+                var left = (screen.width - 400) / 2;
+                var top = (screen.height - 600) / 4;
+                window.open("${links['salesforce.oauth']}", "_blank", "status=no,toolbar=no,scrollbars=no,resizable=yes,top=" + top + ",left=" + left + ",width=400,height=600");
+            });
+        </script>
 
     </@t.page>

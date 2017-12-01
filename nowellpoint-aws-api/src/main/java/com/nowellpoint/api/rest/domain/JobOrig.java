@@ -34,7 +34,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.DateUtil;
 
-public class Job extends AbstractResource {
+public class JobOrig extends AbstractResource {
 	
 	private Source source;
 	
@@ -77,11 +77,11 @@ public class Job extends AbstractResource {
 	
 	private Set<JobOutput> jobOutputs = new HashSet<>();
 
-	private Job() {
+	private JobOrig() {
 		
 	}
 	
-	private Job(
+	private JobOrig(
 			String id,
 			Source source,
 			String jobName,
@@ -131,7 +131,7 @@ public class Job extends AbstractResource {
 		this.status = JobStatus.NEW;
 	}
 	
-	public static Job of(CreateJobRequest jobRequest, AbstractUserInfo abstractUserInfo) {
+	public static JobOrig of(CreateJobRequest jobRequest, AbstractUserInfo abstractUserInfo) {
 		
 		Schedule schedule = null;
 		
@@ -163,7 +163,7 @@ public class Job extends AbstractResource {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 		
-		return new Job(
+		return new JobOrig(
 				null,
 				jobRequest.getSource(),
 				jobRequest.getJobType().getName(),
@@ -182,15 +182,15 @@ public class Job extends AbstractResource {
 				schedule.getRunAt());
 	}
 	
-	private <T> Job(T document) {
+	private <T> JobOrig(T document) {
 		modelMapper.map(document, this);
 		this.jobOutputs.stream().forEach(o -> {
 			o.setFileSizeInUnits(formatFileSize(o.getFilesize()));
 		});
 	}
 	
-	public static Job of(MongoDocument document) {
-		return new Job(document);
+	public static JobOrig of(MongoDocument document) {
+		return new JobOrig(document);
 	}
 
 	public Source getSource() {

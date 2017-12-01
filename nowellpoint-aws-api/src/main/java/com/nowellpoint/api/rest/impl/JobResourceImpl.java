@@ -35,12 +35,12 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.api.rest.JobResource;
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorOrig;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.service.JobService;
@@ -120,9 +120,9 @@ public class JobResourceImpl implements JobResource {
 		
 		JobType jobType = jobTypeService.findById(jobTypeId);
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findById(connectorId);
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById(connectorId);
 		
-		Source source = Source.of(salesforceConnector);
+		Source source = Source.of(salesforceConnectorOrig);
 		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.dayOfMonth(dayOfMonth)
@@ -146,15 +146,15 @@ public class JobResourceImpl implements JobResource {
 				.source(source)
 				.build();
 		
-		Job job = jobService.createJob(jobRequest);
+		JobOrig jobOrig = jobService.createJob(jobRequest);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(JobResource.class)
 				.path("/{id}")
-				.build(job.getId());
+				.build(jobOrig.getId());
 		
 		return Response.created(uri)
-				.entity(job)
+				.entity(jobOrig)
 				.build();
 	}
 	
@@ -199,59 +199,59 @@ public class JobResourceImpl implements JobResource {
 				//.year(year)
 				.build();
 		
-		Job job = jobService.updateJob(jobRequest);
+		JobOrig jobOrig = jobService.updateJob(jobRequest);
 		
-		return Response.ok(job).build();
+		return Response.ok(jobOrig).build();
 	}
 
 	@Override
 	public Response getJob(String id) {
 		
-		Job job = jobService.findById(id);
+		JobOrig jobOrig = jobService.findById(id);
 		
-		if (job == null){
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Job.class.getSimpleName(), id ) );
+		if (jobOrig == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobOrig.class.getSimpleName(), id ) );
 		}
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
-				.build(job.getId());
+				.build(jobOrig.getId());
 		
 		Meta meta = Meta.builder()
 				.href(uri.toString())
 				.build();
 		
-		job.setMeta(meta);
+		jobOrig.setMeta(meta);
 		
-		return Response.ok(job).build();
+		return Response.ok(jobOrig).build();
 	}
 
 	@Override
 	public Response invokeAction(String id, String action) {
 		
-		Job job = jobService.findById(id);
+		JobOrig jobOrig = jobService.findById(id);
 		
-		if (job == null){
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", Job.class.getSimpleName(), id ) );
+		if (jobOrig == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobOrig.class.getSimpleName(), id ) );
 		}
 		
 		if ("submit".equals(action)) {
-			jobService.submitJob(job);
+			jobService.submitJob(jobOrig);
 		} else if ("test-webhook-url".equals(action)) {
-			jobService.sendSlackTestMessage(job);
+			jobService.sendSlackTestMessage(jobOrig);
 		} else if ("stop".equals(action)) {
-			jobService.stopJob(job);
+			jobService.stopJob(jobOrig);
 		} else if ("terminate".equals(action)) {
-			jobService.terminateJob(job);
+			jobService.terminateJob(jobOrig);
 		} else if ("run".equals(action)) {
-			jobService.runJob(job);
+			jobService.runJob(jobOrig);
 		} else {
 			throw new BadRequestException( String.format( MessageProvider.getMessage(Locale.US, MessageConstants.JOB_INVALID_ACTION), action ) );
 		}
 		
 		return Response.ok()
-				.entity(job)
+				.entity(jobOrig)
 				.build();
 	}
 

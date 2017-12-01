@@ -97,7 +97,7 @@
                 <dl class="dl-vertical">
 
                     <dt>${labels["created.by"]}</dt>
-                    <dd><a href="${links['account.profile']}/${salesforceConnector.createdBy.id}">${salesforceConnector.createdBy.name}</a>, ${salesforceConnector.createdOn?date?string.long!} ${salesforceConnector.createdOn?time?string.medium!}</dd>
+                    <dd><a href="${links['user.profile']}/${salesforceConnector.createdBy.id}">${salesforceConnector.createdBy.name}</a>, ${salesforceConnector.createdOn?date?string.long!} ${salesforceConnector.createdOn?time?string.medium!}</dd>
 
 
                 </dl>
@@ -108,7 +108,7 @@
                 <dl class="dl-vertical">
 
                     <dt>${labels["last.updated.by"]}</dt>
-                    <dd><a href="${links['account.profile']}/${salesforceConnector.lastUpdatedBy.id}">${salesforceConnector.lastUpdatedBy.name}</a>, ${salesforceConnector.lastUpdatedOn?date?string.long!} ${salesforceConnector.lastUpdatedOn?time?string.medium!}</dd>
+                    <dd><a href="${links['user.profile']}/${salesforceConnector.lastUpdatedBy.id}">${salesforceConnector.lastUpdatedBy.name}</a>, ${salesforceConnector.lastUpdatedOn?date?string.long!} ${salesforceConnector.lastUpdatedOn?time?string.medium!}</dd>
 
 
                 </dl>

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.PlanResource;
@@ -17,6 +18,8 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 @JsonSerialize(as = Plan.class)
 @JsonDeserialize(as = Plan.class)
 public abstract class AbstractPlan extends AbstractImmutableResource {
+	public abstract @JsonIgnore UserInfo getCreatedBy();
+	public abstract @JsonIgnore UserInfo getLastUpdatedBy();
 	public abstract Boolean getRecommendedPlan();
 	public abstract String getLocale();
 	public abstract String getLanguage();
@@ -55,6 +58,8 @@ public abstract class AbstractPlan extends AbstractImmutableResource {
 			    .collect(Collectors.toSet());
 		
 		ModifiablePlan target = ModifiablePlan.create()
+				.setCreatedBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
+				.setLastUpdatedBy(modelMapper.map(source.getLastUpdatedBy(), UserInfo.class))
 				.setBillingFrequency(source.getBillingFrequency())
 				.setFeatures(featureList)
 				.setLanguage(source.getLanguage())

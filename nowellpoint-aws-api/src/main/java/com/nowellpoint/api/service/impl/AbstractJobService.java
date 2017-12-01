@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
@@ -22,15 +22,15 @@ public class AbstractJobService extends AbstractCacheService {
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
 	
-	protected Job findById(String id) {
+	protected JobOrig findById(String id) {
 		com.nowellpoint.api.model.document.Job document = get(com.nowellpoint.api.model.document.Job.class, id);
 		if (Assert.isNull(document)) {
 			DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 			document = documentManager.fetch( com.nowellpoint.api.model.document.Job.class, new ObjectId( id ) );
 			set(id, document);
 		}
-		Job job = Job.of( document );
-		return job;
+		JobOrig jobOrig = JobOrig.of( document );
+		return jobOrig;
 	}
 	
 	protected JobList findAllByOwner(String ownerId) {
@@ -58,26 +58,26 @@ public class AbstractJobService extends AbstractCacheService {
 		return resources;
 	}
 	
-	protected void create(Job job) {
-		com.nowellpoint.api.model.document.Job document = job.toDocument();
+	protected void create(JobOrig jobOrig) {
+		com.nowellpoint.api.model.document.Job document = jobOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		job.fromDocument(document);
-		set(job.getId(), document);
+		jobOrig.fromDocument(document);
+		set(jobOrig.getId(), document);
 	}
 	
-	protected void update(Job job) {
-		MongoDocument document = job.toDocument();
+	protected void update(JobOrig jobOrig) {
+		MongoDocument document = jobOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		job.fromDocument(document);
-		set(job.getId(), document);
+		jobOrig.fromDocument(document);
+		set(jobOrig.getId(), document);
 	}
 	
-	protected void delete(Job job) {
-		MongoDocument document = job.toDocument();
+	protected void delete(JobOrig jobOrig) {
+		MongoDocument document = jobOrig.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.deleteOne(document);
-		del(job.getId());
+		del(jobOrig.getId());
 	}
 }

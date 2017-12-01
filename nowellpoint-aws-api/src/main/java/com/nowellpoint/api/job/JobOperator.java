@@ -49,7 +49,7 @@ import org.quartz.impl.matchers.KeyMatcher;
 import com.nowellpoint.api.annotation.Stop;
 import com.nowellpoint.api.annotation.Submit;
 import com.nowellpoint.api.annotation.Terminate;
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.util.Assert;
 
@@ -78,78 +78,78 @@ public class JobOperator  {
 		shutdown();
 	}
 	
-	public void unscheduleJob(@Observes @Stop Job job) {
+	public void unscheduleJob(@Observes @Stop JobOrig jobOrig) {
 		
 		try {
-			scheduler.unscheduleJob(triggerKey(job.getId().toString(), job.getScheduleOption()));
+			scheduler.unscheduleJob(triggerKey(jobOrig.getId().toString(), jobOrig.getScheduleOption()));
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
 	}
 	
-	public void deleteJob(@Observes @Terminate Job job) {
+	public void deleteJob(@Observes @Terminate JobOrig jobOrig) {
 
 		try {
-			scheduler.deleteJob(jobKey(job.getId().toString(), job.getJobName()));
+			scheduler.deleteJob(jobKey(jobOrig.getId().toString(), jobOrig.getJobName()));
 		} catch (SchedulerException e) {
 			LOGGER.error(e);
 		}
 	}
 	
-	public void submitJob(@Observes @Submit Job job) {
+	public void submitJob(@Observes @Submit JobOrig jobOrig) {
 		
 		try {
-			Class <? extends org.quartz.Job> jobClass = Class.forName (job.getClassName()).asSubclass (org.quartz.Job.class);
+			Class <? extends org.quartz.Job> jobClass = Class.forName (jobOrig.getClassName()).asSubclass (org.quartz.Job.class);
 			
-			JobKey jobKey = new JobKey(job.getId().toString(), job.getJobName());
+			JobKey jobKey = new JobKey(jobOrig.getId().toString(), jobOrig.getJobName());
 			
 			JobDataMap jobDataMap = new JobDataMap();
-			jobDataMap.put(job.getId(), job.toDocument());
+			jobDataMap.put(jobOrig.getId(), jobOrig.toDocument());
 
 		    JobDetail jobDetail = JobBuilder.newJob(jobClass)
 		    		.withIdentity(jobKey)
 		    		.usingJobData(jobDataMap)
 		    		.build();
 		    
-		    TriggerKey triggerKey = new TriggerKey(job.getId().toString(), job.getScheduleOption());
+		    TriggerKey triggerKey = new TriggerKey(jobOrig.getId().toString(), jobOrig.getScheduleOption());
 		    
 		    Trigger trigger = null;
 			
-			if (JobScheduleOptions.RUN_WHEN_SUBMITTED.equals(job.getScheduleOption()) || JobScheduleOptions.RUN_ONCE.equals(job.getScheduleOption())) {
+			if (JobScheduleOptions.RUN_WHEN_SUBMITTED.equals(jobOrig.getScheduleOption()) || JobScheduleOptions.RUN_ONCE.equals(jobOrig.getScheduleOption())) {
 				
 				trigger = TriggerBuilder.newTrigger()
 						.withIdentity(triggerKey)
-						.startAt(job.getSchedule().getRunAt())
+						.startAt(jobOrig.getSchedule().getRunAt())
 						.build();
 				
-			} else if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(job.getScheduleOption())) {
+			} else if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(jobOrig.getScheduleOption())) {
 				
 				IntervalUnit intervalUnit = null;
 				
-				if (job.getSchedule().getTimeUnit() == TimeUnit.DAYS) {
+				if (jobOrig.getSchedule().getTimeUnit() == TimeUnit.DAYS) {
 					intervalUnit = IntervalUnit.DAY;
-				} else if (job.getSchedule().getTimeUnit() == TimeUnit.HOURS) {
+				} else if (jobOrig.getSchedule().getTimeUnit() == TimeUnit.HOURS) {
 					intervalUnit = IntervalUnit.HOUR;
-				} else if (job.getSchedule().getTimeUnit() == TimeUnit.MINUTES) {
+				} else if (jobOrig.getSchedule().getTimeUnit() == TimeUnit.MINUTES) {
 					intervalUnit = IntervalUnit.MINUTE;
-				} else if (job.getSchedule().getTimeUnit() == TimeUnit.SECONDS) {
+				} else if (jobOrig.getSchedule().getTimeUnit() == TimeUnit.SECONDS) {
 					intervalUnit = IntervalUnit.SECOND;
 				}
 				
 				trigger = TriggerBuilder.newTrigger()
 						.withIdentity(triggerKey)
-						.startAt(job.getSchedule().getRunAt())
-						.endAt(job.getSchedule().getEndAt())
+						.startAt(jobOrig.getSchedule().getRunAt())
+						.endAt(jobOrig.getSchedule().getEndAt())
 						.withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule()
-								.withInterval(job.getSchedule().getTimeInterval(), intervalUnit)
-								.inTimeZone(job.getSchedule().getTimeZone())
+								.withInterval(jobOrig.getSchedule().getTimeInterval(), intervalUnit)
+								.inTimeZone(jobOrig.getSchedule().getTimeZone())
 								.preserveHourOfDayAcrossDaylightSavings(Boolean.TRUE))
 						.build();
 				
-			} else if (JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(job.getScheduleOption())) {
+			} else if (JobScheduleOptions.RUN_ON_SPECIFIC_DAYS.equals(jobOrig.getScheduleOption())) {
 				
 			} else {
-				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE and RUN_ON_SPECIFIC_DAYS", job.getScheduleOption()));
+				throw new IllegalArgumentException(String.format("Invalid Schedule Option: %s. Valid values are: RUN_WHEN_SUBMITTED, RUN_ONCE, RUN_ON_SCHEDULE and RUN_ON_SPECIFIC_DAYS", jobOrig.getScheduleOption()));
 			}
 			
 			if (Assert.isNotNull(trigger)) {

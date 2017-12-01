@@ -16,7 +16,7 @@ import javax.ws.rs.core.UriInfo;
 import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorOrig;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
 import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
 import com.nowellpoint.api.rest.domain.AbstractUserInfo;
@@ -53,53 +53,53 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 		token.setAccessToken(accessToken);
 		token.setRefreshToken(refreshToken);
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.createSalesforceConnector(token);
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.createSalesforceConnector(token);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
-				.build(salesforceConnector.getId());
+				.build(salesforceConnectorOrig.getId());
 		
 		Meta meta = Meta.builder()
 				.href(uri.toString())
 				.build();
 		
-		salesforceConnector.setMeta(meta);
+		salesforceConnectorOrig.setMeta(meta);
 		
 		return Response.created(uri)
-				.entity(salesforceConnector)
+				.entity(salesforceConnectorOrig)
 				.build(); 
 	}
 	
 	public Response getSalesforceConnector(String id, String expand) {		
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById( id );
 		
-		if (salesforceConnector == null){
-			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnector.class.getSimpleName(), id ) );
+		if (salesforceConnectorOrig == null){
+			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", SalesforceConnectorOrig.class.getSimpleName(), id ) );
 		}
 		
 		if (Assert.isNotNullOrEmpty(expand)) {
 			String[] elements = expand.split(",");
 			
 			if (Arrays.asList(elements).contains("jobs")) {
-				JobList jobList = jobService.queryBySource(salesforceConnector.getId());
-				salesforceConnector.addJobs(jobList.getItems());
+				JobList jobList = jobService.queryBySource(salesforceConnectorOrig.getId());
+				salesforceConnectorOrig.addJobs(jobList.getItems());
 			}
 		}
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
-				.build(salesforceConnector.getId());
+				.build(salesforceConnectorOrig.getId());
 		
 		Meta meta = Meta.builder()
 				.href(uri.toString())
 				.build();
 		
-		salesforceConnector.setMeta(meta);
+		salesforceConnectorOrig.setMeta(meta);
 		
-		return Response.ok(salesforceConnector).build();
+		return Response.ok(salesforceConnectorOrig).build();
 	}
 	
 	public Response updateSalesforceConnector(String id, String name, String tag, String ownerId) {	
@@ -114,29 +114,29 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 				.lastUpdatedBy(lastUpdatedBy)
 				.build();
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.updateSalesforceConnector(id, request);
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.updateSalesforceConnector(id, request);
 		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
-				.build(salesforceConnector.getId());
+				.build(salesforceConnectorOrig.getId());
 		
 		Meta meta = Meta.builder()
 				.href(uri.toString())
 				.build();
 		
-		salesforceConnector.setMeta(meta);
+		salesforceConnectorOrig.setMeta(meta);
 		
 		return Response.ok()
-				.entity(salesforceConnector)
+				.entity(salesforceConnectorOrig)
 				.build(); 
 	}
 	
 	public Response describeSObject(String id, String sobject) {
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById( id );
 		
-		DescribeSobjectResult result = salesforceConnectorService.describeSobject(salesforceConnector, sobject);
+		DescribeSobjectResult result = salesforceConnectorService.describeSobject(salesforceConnectorOrig, sobject);
 		
 		return Response.ok(result)
 				.build(); 
@@ -144,9 +144,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	public Response deleteSalesforceConnector(String id) {	
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findById( id );
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById( id );
 
-		salesforceConnectorService.deleteSalesforceConnector(salesforceConnector);
+		salesforceConnectorService.deleteSalesforceConnector(salesforceConnectorOrig);
 
 		return Response.ok()
 				.build(); 
@@ -154,20 +154,20 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 	
 	public Response invokeAction(String id, String action) {
 		
-		SalesforceConnector salesforceConnector = salesforceConnectorService.findById(id);
+		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById(id);
 		
 		if ("build".equalsIgnoreCase(action)) {
-			salesforceConnectorService.build(salesforceConnector);
+			salesforceConnectorService.build(salesforceConnectorOrig);
 		} else if ("test".equalsIgnoreCase(action)) {
-			salesforceConnectorService.test(salesforceConnector);
+			salesforceConnectorService.test(salesforceConnectorOrig);
 		} else if ("metadata-backup".equalsIgnoreCase(action)) {
-			salesforceConnectorService.metadataBackup(salesforceConnector);
+			salesforceConnectorService.metadataBackup(salesforceConnectorOrig);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}
 		
 		return Response.ok()
-				.entity(salesforceConnector)
+				.entity(salesforceConnectorOrig)
 				.build(); 
 	}
 }

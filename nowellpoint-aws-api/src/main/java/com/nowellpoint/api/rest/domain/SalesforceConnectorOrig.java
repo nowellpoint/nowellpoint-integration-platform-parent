@@ -38,7 +38,7 @@ import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
 import com.nowellpoint.client.sforce.model.Token;
 
-public class SalesforceConnector extends AbstractResource {
+public class SalesforceConnectorOrig extends AbstractResource {
 	
 	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
@@ -68,17 +68,17 @@ public class SalesforceConnector extends AbstractResource {
 	
 	private Theme theme;
 	
-	private Set<Job> jobs = new HashSet<>();
+	private Set<JobOrig> jobOrigs = new HashSet<>();
 	
-	private Set<Service> services = new HashSet<>();
+	private Set<ServiceOrig> serviceOrigs = new HashSet<>();
 	
 	private Set<Sobject> sobjects = new HashSet<>();
 	
-	public SalesforceConnector() {
+	public SalesforceConnectorOrig() {
 		
 	}
 	
-	private SalesforceConnector(
+	private SalesforceConnectorOrig(
 			String name, 
 			AbstractUserInfo createdBy, 
 			AbstractUserInfo lastUpdatedBy, 
@@ -106,7 +106,7 @@ public class SalesforceConnector extends AbstractResource {
 		this.lastTestedOn = lastTestedOn;
 	}
 	
-	private SalesforceConnector(SalesforceConnector instance, UpdateSalesforceConnectorRequest request) {
+	private SalesforceConnectorOrig(SalesforceConnectorOrig instance, UpdateSalesforceConnectorRequest request) {
 		this.id = instance.getId();
 		this.name = instance.getName();
 		this.createdBy = instance.getCreatedBy();
@@ -121,7 +121,7 @@ public class SalesforceConnector extends AbstractResource {
 		this.serviceEndpoint = instance.getServiceEndpoint();
 		this.status = instance.getStatus();
 		this.tag = instance.getTag();
-		this.services = instance.getServices();
+		this.serviceOrigs = instance.getServices();
 		this.sobjects = instance.getSobjects();
 		this.theme = instance.getTheme();
 		this.lastUpdatedBy = request.getLastUpdatedBy();
@@ -142,7 +142,7 @@ public class SalesforceConnector extends AbstractResource {
 		}
 	}
 	
-	public static SalesforceConnector of(
+	public static SalesforceConnectorOrig of(
 			AbstractUserInfo createdBy,
 			Identity identity, 
 			Organization organization, 
@@ -155,7 +155,7 @@ public class SalesforceConnector extends AbstractResource {
 		VaultEntry vaultEntry = VaultEntry.of(connectionString.get());
 		dynamoDBMapper.save(vaultEntry);
 		
-		return new SalesforceConnector(
+		return new SalesforceConnectorOrig(
 				name, 
 				createdBy, 
 				createdBy, 
@@ -170,20 +170,20 @@ public class SalesforceConnector extends AbstractResource {
 				now);
 	}
 	
-	public static SalesforceConnector of(
-			SalesforceConnector instance, 
+	public static SalesforceConnectorOrig of(
+			SalesforceConnectorOrig instance, 
 			UpdateSalesforceConnectorRequest request) {
 		
 		Preconditions.checkNotNull(instance, "instance");
-		return new SalesforceConnector(instance, request);
+		return new SalesforceConnectorOrig(instance, request);
 	}
 	
-	private <T> SalesforceConnector(T document) {
+	private <T> SalesforceConnectorOrig(T document) {
 		modelMapper.map(document, this);
 	}
 	
-	public static SalesforceConnector of(MongoDocument document) {
-		return new SalesforceConnector(document);
+	public static SalesforceConnectorOrig of(MongoDocument document) {
+		return new SalesforceConnectorOrig(document);
 	}
 
 	public String getName() {
@@ -238,33 +238,33 @@ public class SalesforceConnector extends AbstractResource {
 		return tag;
 	}
 	
-	public Set<Job> getJobs() {
-		return jobs;
+	public Set<JobOrig> getJobs() {
+		return jobOrigs;
 	}
 
-	public void addJobs(Set<Job> jobs) {
-		this.jobs = jobs;
+	public void addJobs(Set<JobOrig> jobOrigs) {
+		this.jobOrigs = jobOrigs;
 	}
 
-	public void addService(Service service) {
-		if (services == null) {
-			services = new HashSet<>();
+	public void addService(ServiceOrig serviceOrig) {
+		if (serviceOrigs == null) {
+			serviceOrigs = new HashSet<>();
 		} else {
-			if (services.contains(service)) {
-				throw new IllegalArgumentException(String.format("Unable to add %s since it has already been added to Salesforce Connector", service.getName()));
+			if (serviceOrigs.contains(serviceOrig)) {
+				throw new IllegalArgumentException(String.format("Unable to add %s since it has already been added to Salesforce Connector", serviceOrig.getName()));
 			}
 		}
 		
-		services.add(service);
+		serviceOrigs.add(serviceOrig);
 	}
 	
-	public Service getService(String serviceId) {
+	public ServiceOrig getService(String serviceId) {
 		
-		if (services == null) {
-			services = new HashSet<>();
+		if (serviceOrigs == null) {
+			serviceOrigs = new HashSet<>();
 		}
 		
-		Optional<Service> optional = services.stream()
+		Optional<ServiceOrig> optional = serviceOrigs.stream()
 				.filter(s -> serviceId.equals(s.getServiceId()))
 				.findFirst();
 		
@@ -275,8 +275,8 @@ public class SalesforceConnector extends AbstractResource {
 		return optional.get();
 	}
 	
-	public Set<Service> getServices() {
-		return services;
+	public Set<ServiceOrig> getServices() {
+		return serviceOrigs;
 	}
 
 	public Set<Sobject> getSobjects() {

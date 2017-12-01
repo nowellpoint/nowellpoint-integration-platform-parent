@@ -50,9 +50,9 @@ import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.RunOnSchedule;
 import com.nowellpoint.api.rest.domain.RunWhenSubmitted;
 import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
-import com.nowellpoint.api.rest.domain.SalesforceConnector;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorOrig;
 import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
-import com.nowellpoint.api.rest.domain.Service;
+import com.nowellpoint.api.rest.domain.ServiceOrig;
 import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateSalesforceConnectorRequest;
 import com.nowellpoint.api.rest.domain.AbstractUserInfo;
@@ -115,7 +115,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public SalesforceConnector createSalesforceConnector(Token token) {
+	public SalesforceConnectorOrig createSalesforceConnector(Token token) {
 		
 		Client client = new Client();
 		
@@ -142,20 +142,20 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		
 		AbstractUserInfo createdBy = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
-		SalesforceConnector salesforceConnector = SalesforceConnector.of( 
+		SalesforceConnectorOrig salesforceConnectorOrig = SalesforceConnectorOrig.of( 
 				createdBy,
 				identity, 
 				organization, 
 				connectString, 
 				token);
 		
-		create(salesforceConnector);
+		create(salesforceConnectorOrig);
 		
-		addSalesforceMetadataBackup(salesforceConnector);
+		addSalesforceMetadataBackup(salesforceConnectorOrig);
 		
 		refreshConnectionStrings( token.getId(), connectString );
 
-		return salesforceConnector;
+		return salesforceConnectorOrig;
 	}
 	
 	/**
@@ -165,9 +165,9 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public SalesforceConnector updateSalesforceConnector(String id, UpdateSalesforceConnectorRequest request) {		
-		SalesforceConnector source = findById(id);
-		SalesforceConnector instance = SalesforceConnector.of(source, request);
+	public SalesforceConnectorOrig updateSalesforceConnector(String id, UpdateSalesforceConnectorRequest request) {		
+		SalesforceConnectorOrig source = findById(id);
+		SalesforceConnectorOrig instance = SalesforceConnectorOrig.of(source, request);
 		update(instance);
 		return instance;
 	}
@@ -179,11 +179,11 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public void deleteSalesforceConnector(SalesforceConnector salesforceConnector) {
+	public void deleteSalesforceConnector(SalesforceConnectorOrig salesforceConnectorOrig) {
 		
-		salesforceConnector.removeConnection();
+		salesforceConnectorOrig.removeConnection();
 		
-		Photos photos = salesforceConnector.getIdentity().getPhotos();
+		Photos photos = salesforceConnectorOrig.getIdentity().getPhotos();
 
 		List<KeyVersion> keys = new ArrayList<KeyVersion>();
 		keys.add(new KeyVersion(photos.getPicture().substring(photos.getPicture().lastIndexOf("/") + 1)));
@@ -193,7 +193,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 
 		s3Client.deleteObjects(deleteObjectsRequest);
 		
-		delete(salesforceConnector);
+		delete(salesforceConnectorOrig);
 	}
 	
 	/**
@@ -203,7 +203,7 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public SalesforceConnector findById(String id) {		
+	public SalesforceConnectorOrig findById(String id) {		
 		return super.findById(id);
 	}
 	
@@ -212,38 +212,38 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 	 */
 	
 	@Override
-	public void test(SalesforceConnector salesforceConnector) {	
-		salesforceConnector.connect();
-		update(salesforceConnector);
+	public void test(SalesforceConnectorOrig salesforceConnectorOrig) {	
+		salesforceConnectorOrig.connect();
+		update(salesforceConnectorOrig);
 	}
 	
 	@Override
-	public void build(SalesforceConnector salesforceConnector) {
-		salesforceConnector.describe();
-		update(salesforceConnector);
+	public void build(SalesforceConnectorOrig salesforceConnectorOrig) {
+		salesforceConnectorOrig.describe();
+		update(salesforceConnectorOrig);
 	}
 	
 	@Override
-	public void metadataBackup(SalesforceConnector salesforceConnector) {
+	public void metadataBackup(SalesforceConnectorOrig salesforceConnectorOrig) {
 		
 		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
 		
-		Source source = Source.of(salesforceConnector);
+		Source source = Source.of(salesforceConnectorOrig);
 		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.schedule(RunWhenSubmitted.builder().build())
 				.jobType(jobType)
 				.source(source)
-				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.notificationEmail(salesforceConnectorOrig.getIdentity().getEmail())
 				.build();
 		
 		jobRequestEvent.fire(jobRequest);
 	}
 	
 	@Override
-	public DescribeSobjectResult describeSobject(SalesforceConnector salesforceConnector, String sobject) {
-		DescribeSobjectResult result = salesforceConnector.describeSObject(sobject);
-		update(salesforceConnector);		
+	public DescribeSobjectResult describeSobject(SalesforceConnectorOrig salesforceConnectorOrig, String sobject) {
+		DescribeSobjectResult result = salesforceConnectorOrig.describeSObject(sobject);
+		update(salesforceConnectorOrig);		
 		return result;
 	}
 	
@@ -283,43 +283,43 @@ public class SalesforceConnectorServiceImpl extends AbstractSalesforceConnectorS
 		}
 	}
 	
-	public SalesforceConnector addService(String id, String jobTypeId) {
+	public SalesforceConnectorOrig addService(String id, String jobTypeId) {
 		
-		SalesforceConnector salesforceConnector = findById( id );
+		SalesforceConnectorOrig salesforceConnectorOrig = findById( id );
 		
 		JobType jobType = jobTypeService.findById( jobTypeId );
 		
-		Service service = Service.of(jobType);
+		ServiceOrig serviceOrig = ServiceOrig.of(jobType);
 		
-		salesforceConnector.addService(service);
+		salesforceConnectorOrig.addService(serviceOrig);
 		
-		update(salesforceConnector);
+		update(salesforceConnectorOrig);
 		
-		return salesforceConnector;
+		return salesforceConnectorOrig;
 		
 	}
 	
-	public Service getService(String id, String serviceId) {
+	public ServiceOrig getService(String id, String serviceId) {
 		
-		SalesforceConnector salesforceConnector = findById( id );
+		SalesforceConnectorOrig salesforceConnectorOrig = findById( id );
 		
-		Service service = salesforceConnector.getService(serviceId);
+		ServiceOrig serviceOrig = salesforceConnectorOrig.getService(serviceId);
 		
-		return service;
+		return serviceOrig;
 	}
 	
-	private void addSalesforceMetadataBackup(SalesforceConnector salesforceConnector) {
+	private void addSalesforceMetadataBackup(SalesforceConnectorOrig salesforceConnectorOrig) {
 		JobType jobType = jobTypeService.findByCode("SALESFORCE_METADATA_BACKUP");
 		
-		Source source = Source.of(salesforceConnector);
+		Source source = Source.of(salesforceConnectorOrig);
 		
-		Calendar startAt = getDefaultStartDate(salesforceConnector.getOrganization().getDefaultLocaleSidKey());
+		Calendar startAt = getDefaultStartDate(salesforceConnectorOrig.getOrganization().getDefaultLocaleSidKey());
 		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.scheduleOption(JobScheduleOptions.RUN_ON_SCHEDULE)
 				.jobType(jobType)
 				.source(source)
-				.notificationEmail(salesforceConnector.getIdentity().getEmail())
+				.notificationEmail(salesforceConnectorOrig.getIdentity().getEmail())
 				.schedule(RunOnSchedule.builder()
 						.startAt(startAt.getTime())
 						.timeInterval(1)
