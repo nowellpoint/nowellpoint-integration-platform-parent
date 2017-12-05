@@ -77,44 +77,18 @@ public class SalesforceConnectorController extends AbstractStaticController {
 	
 	public static String viewSalesforceConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
-		
+
 		String id = request.params(":id");
-		
+
 		SalesforceConnector salesforceConnector = NowellpointClient.defaultClient(token)
 				.salesforceConnector()
 				.get(id);
-		
-//		Map<String,String> icons = new HashMap<String,String>();
-//		
-//		salesforceConnector.getSobjects().stream().forEach(sobject -> {
-//			Optional<ThemeItem> item = salesforceConnector.getTheme()
-//					.getThemeItems()
-//					.stream()
-//					.filter(themeItem -> themeItem.getName().equals(sobject.getName()))
-//					.findFirst();
-//			
-//			if (item.isPresent()) {
-//				Optional<Icon> icon = item.get()
-//						.getIcons()
-//						.stream()
-//						.filter(i -> i.getHeight() == 32)
-//						.findFirst();
-//				
-//				if (icon.isPresent()) {
-//					icons.put(sobject.getName(), icon.get().getUrl());
-//				} else {
-//					icons.put(sobject.getName(), "/images/sobject.png");
-//				}
-//			} else {
-//				icons.put(sobject.getName(), "/images/sobject.png");
-//			}
-//		});
-		
+
 		Map<String, Object> model = getModel();
-    	model.put("salesforceConnector", salesforceConnector);
-    	model.put("sobjectCount", salesforceConnector.getSobjects().size());
-		
-    	return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
+		model.put("salesforceConnector", salesforceConnector);
+		model.put("sobjectCount", salesforceConnector.getSobjects().size());
+
+		return render(SalesforceConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
 	};
 
 	/**

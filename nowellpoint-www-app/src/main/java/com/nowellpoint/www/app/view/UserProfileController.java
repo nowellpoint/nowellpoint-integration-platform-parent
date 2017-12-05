@@ -56,13 +56,6 @@ public class UserProfileController extends AbstractStaticController {
 				.userProfile()
 				.get(id);
 		
-		Address address = new Address();
-		address.setCity(identity.getAddress().getCity());
-		address.setPostalCode(identity.getAddress().getPostalCode());
-		address.setState(identity.getAddress().getState());
-		address.setStreet(identity.getAddress().getStreet());
-		address.setCountryCode(userProfile.getAddress().getCountryCode());
-		
 		Map<String, Object> model = getModel();
 		model.put("userProfile", userProfile);
 		model.put("successMessage", request.cookie("update.profile.success"));

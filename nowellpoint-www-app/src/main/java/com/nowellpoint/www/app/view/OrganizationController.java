@@ -181,8 +181,6 @@ public class OrganizationController extends AbstractStaticController {
 	public static String reviewPlan(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
-		
 		String id = request.params(":id");
 		
 		Organization organization = NowellpointClient.defaultClient(token)
@@ -194,28 +192,9 @@ public class OrganizationController extends AbstractStaticController {
 		Plan plan = NowellpointClient.defaultClient(token)
 				.plan()
 				.get(planId);
-		
-		Address address = new Address();
-		address.setCity(identity.getAddress().getCity());
-		address.setPostalCode(identity.getAddress().getPostalCode());
-		address.setState(identity.getAddress().getState());
-		address.setStreet(identity.getAddress().getStreet());
-		address.setCountryCode(identity.getAddress().getCountryCode());
-		
-		Contact contact = new Contact();
-		contact.setFirstName(identity.getFirstName());
-		contact.setLastName(identity.getLastName());
-		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setCardholderName((identity.getFirstName() != null ? identity.getFirstName().concat(" ") : "").concat(identity.getLastName()));
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingAddress(address);
-		creditCard.setBillingContact(contact);
 
 		Map<String, Object> model = getModel();
 		model.put("organization", organization);
-		model.put("creditCard", creditCard);
 		model.put("action", "reviewPlan");
 		model.put("plan", plan);
 			

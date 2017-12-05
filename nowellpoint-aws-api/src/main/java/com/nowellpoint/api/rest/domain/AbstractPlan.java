@@ -58,8 +58,11 @@ public abstract class AbstractPlan extends AbstractImmutableResource {
 			    .collect(Collectors.toSet());
 		
 		ModifiablePlan target = ModifiablePlan.create()
-				.setCreatedBy(modelMapper.map(source.getCreatedBy(), UserInfo.class))
-				.setLastUpdatedBy(modelMapper.map(source.getLastUpdatedBy(), UserInfo.class))
+				.setId(source.getId().toString())
+				.setCreatedBy(modelMapper.map(source.getCreatedBy(), ModifiableUserInfo.class).toImmutable())
+				.setLastUpdatedBy(modelMapper.map(source.getLastUpdatedBy(), ModifiableUserInfo.class).toImmutable())
+				.setCreatedOn(source.getCreatedOn())
+				.setLastUpdatedOn(source.getLastUpdatedOn())
 				.setBillingFrequency(source.getBillingFrequency())
 				.setFeatures(featureList)
 				.setLanguage(source.getLanguage())

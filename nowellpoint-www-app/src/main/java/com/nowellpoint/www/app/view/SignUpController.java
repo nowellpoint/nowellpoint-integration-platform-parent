@@ -1,6 +1,5 @@
 package com.nowellpoint.www.app.view;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -10,9 +9,7 @@ import java.util.stream.Collectors;
 
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.PlanList;
@@ -93,16 +90,10 @@ public class SignUpController extends AbstractStaticController {
 				.filter(plan -> plan.getPlanCode().equals("FREE"))
 				.findFirst();
 		
-		CreditCard creditCard = new CreditCard();
-		creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-		creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-		creditCard.setBillingContact(new Contact());
-		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("planId", optional.get().getId());
 		model.put("plan", optional.get());
 		model.put("countryCode", Locale.getDefault().getCountry());
-		model.put("creditCard", creditCard);
 		model.put("action", "createAccount");
 		
 		return TemplateBuilder.template()
@@ -134,16 +125,10 @@ public class SignUpController extends AbstractStaticController {
 					.plan()
 					.get(planId);
 			
-			CreditCard creditCard = new CreditCard();
-			creditCard.setExpirationMonth(String.valueOf(LocalDate.now().getMonthValue()));
-			creditCard.setExpirationYear(String.valueOf(LocalDate.now().getYear()));
-			creditCard.setBillingContact(new Contact());
-			
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("planId", planId);
 			model.put("plan", plan);
 			model.put("countryCode", Locale.getDefault().getCountry());
-			model.put("creditCard", creditCard);
 			model.put("action", "createAccount");
 			
 			return TemplateBuilder.template()

@@ -65,10 +65,6 @@ public class Job extends AbstractResource {
 		return source;
 	}
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
-
 	public UserInfo getOwner() {
 		return owner;
 	}
@@ -81,111 +77,55 @@ public class Job extends AbstractResource {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getNotificationEmail() {
 		return notificationEmail;
-	}
-
-	public void setNotificationEmail(String notificationEmail) {
-		this.notificationEmail = notificationEmail;
 	}
 
 	public String getSlackWebhookUrl() {
 		return slackWebhookUrl;
 	}
 
-	public void setSlackWebhookUrl(String slackWebhookUrl) {
-		this.slackWebhookUrl = slackWebhookUrl;
-	}
-
 	public String getScheduleOption() {
 		return scheduleOption;
-	}
-
-	public void setScheduleOption(String scheduleOption) {
-		this.scheduleOption = scheduleOption;
 	}
 
 	public Schedule getSchedule() {
 		return schedule;
 	}
 
-	public void setSchedule(Schedule schedule) {
-		this.schedule = schedule;
-	}
-
 	public String getJobName() {
 		return jobName;
-	}
-
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
 	}
 
 	public Long getJobRunTime() {
 		return jobRunTime;
 	}
 
-	public void setJobRunTime(Long jobRunTime) {
-		this.jobRunTime = jobRunTime;
-	}
-
 	public Date getNextFireTime() {
 		return nextFireTime;
-	}
-
-	public void setNextFireTime(Date nextFireTime) {
-		this.nextFireTime = nextFireTime;
 	}
 
 	public Date getFireTime() {
 		return fireTime;
 	}
 
-	public void setFireTime(Date fireTime) {
-		this.fireTime = fireTime;
-	}
-
 	public String getStatus() {
 		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getFailureMessage() {
 		return failureMessage;
 	}
 
-	public void setFailureMessage(String failureMessage) {
-		this.failureMessage = failureMessage;
-	}
-
 	public Integer getNumberOfExecutions() {
 		return numberOfExecutions;
-	}
-
-	public void setNumberOfExecutions(Integer numberOfExecutions) {
-		this.numberOfExecutions = numberOfExecutions;
 	}
 
 	public List<JobExecution> getJobExecutions() {
 		return jobExecutions;
 	}
-
-	public void setJobExecutions(List<JobExecution> jobExecutions) {
-		this.jobExecutions = jobExecutions;
-	}
 	
 	public List<JobOutput> getJobOutputs() {
 		return jobOutputs;
-	}
-
-	public void setJobOutputs(List<JobOutput> jobOutputs) {
-		this.jobOutputs = jobOutputs;
 	}
 }
