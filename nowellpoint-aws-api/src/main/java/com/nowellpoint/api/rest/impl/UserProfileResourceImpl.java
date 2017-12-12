@@ -14,9 +14,7 @@ public class UserProfileResourceImpl implements UserProfileResource {
 
 	@Override
 	public Response getUserProfile(String id) {
-		
 		UserProfile userProfile = userProfileService.findById(id);
-		
 		return Response.ok(userProfile)
 				.build();
 	}
@@ -46,7 +44,8 @@ public class UserProfileResourceImpl implements UserProfileResource {
 
 	@Override
 	public Response deactivateUserProfile(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		userProfileService.deactivateUserProfile(id);
+		return Response.ok()
+				.build();
 	}
 }

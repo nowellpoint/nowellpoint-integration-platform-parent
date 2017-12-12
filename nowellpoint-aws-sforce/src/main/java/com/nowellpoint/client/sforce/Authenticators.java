@@ -42,7 +42,7 @@ public class Authenticators {
 			Token token = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-	    		token = httpResponse.getEntity(Token.class);
+				token = httpResponse.getEntity(Token.class);
 			} else {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 			}
@@ -77,7 +77,7 @@ public class Authenticators {
 			Token token = null;
 			
 			if (httpResponse.getStatusCode() == Status.OK) {
-	    		token = httpResponse.getEntity(Token.class);
+				token = httpResponse.getEntity(Token.class);
 			} else {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 			}

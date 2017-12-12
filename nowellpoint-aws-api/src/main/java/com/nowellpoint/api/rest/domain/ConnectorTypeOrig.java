@@ -1,12 +1,12 @@
 package com.nowellpoint.api.rest.domain;
 
-public class ConnectorType {
+public class ConnectorTypeOrig {
 	
 	private String name;
 	
 	private String code;
 	
-	public ConnectorType() {
+	public ConnectorTypeOrig() {
 		
 	}
 

@@ -14,14 +14,14 @@ public class SalesforceException extends RuntimeException {
 	private String errorDescription;
 
 	public SalesforceException(int statusCode, Error error) {
-		super();
+		super(error.getError().concat(": ").concat(error.getErrorDescription()));
 		this.statusCode = statusCode;
 		this.error = error.getError();
 		this.errorDescription = error.getErrorDescription();
 	}
 	
 	public SalesforceException(int statusCode, ArrayNode node) {
-		super();
+		super(node.get(0).get("errorCode").asText().concat(": ").concat(node.get(0).get("message").asText()));
 		this.statusCode = statusCode;
 		this.error = node.get(0).get("errorCode").asText();
 		this.errorDescription = node.get(0).get("message").asText();

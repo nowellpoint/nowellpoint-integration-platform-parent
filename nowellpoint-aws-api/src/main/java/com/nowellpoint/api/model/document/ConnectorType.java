@@ -22,7 +22,9 @@ public class ConnectorType {
 	
 	private String name;
 	
-	private String code;
+	private String displayName;
+	
+	private String authEndpoint;
 	
 	public ConnectorType() {
 		
@@ -36,11 +38,19 @@ public class ConnectorType {
 		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public String getDisplayName() {
+		return displayName;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getAuthEndpoint() {
+		return authEndpoint;
+	}
+
+	public void setAuthEndpoint(String authEndpoint) {
+		this.authEndpoint = authEndpoint;
 	}
 }

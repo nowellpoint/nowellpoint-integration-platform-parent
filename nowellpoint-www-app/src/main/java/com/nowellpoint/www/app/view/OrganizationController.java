@@ -1,7 +1,6 @@
 package com.nowellpoint.www.app.view;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +13,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.Contact;
 import com.nowellpoint.client.model.ContactRequest;
-import com.nowellpoint.client.model.CreditCard;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.GetPlansRequest;
 import com.nowellpoint.client.model.Identity;

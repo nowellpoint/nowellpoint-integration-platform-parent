@@ -24,6 +24,7 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.api.service.TokenService;
+import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.data.LogManager;
 
@@ -72,6 +73,7 @@ public class SecurityContextFilter implements ContainerRequestFilter, ContainerR
 				
 			try {
 				Jws<Claims> claims = tokenService.verifyToken(accessToken);
+				ClaimsContext.setClaims(claims);
 				UserContext.setUserContext(claims);
 				requestContext.setSecurityContext(UserContext.getSecurityContext());
 			} catch (MalformedJwtException e) {

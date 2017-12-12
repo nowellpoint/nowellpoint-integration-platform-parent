@@ -24,6 +24,7 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.UserProfileResource;
+import com.nowellpoint.client.resource.ConnectorService;
 import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
@@ -94,5 +95,9 @@ public abstract class NowellpointClient  {
 	
 	public OrganizationResource organization() {
 		return new OrganizationResource(token());
+	}
+	
+	public ConnectorService connector() {
+		return new ConnectorService(token());
 	}
 }

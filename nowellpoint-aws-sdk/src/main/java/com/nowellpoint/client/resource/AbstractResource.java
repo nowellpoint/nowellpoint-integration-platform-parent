@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
@@ -21,6 +22,11 @@ public abstract class AbstractResource {
 	
 	protected Token token;
 	protected Environment environment;
+	protected static ObjectMapper objectMapper;
+	
+	static {
+		objectMapper = new ObjectMapper();
+	}
 	
 	public AbstractResource(Token token) {
 		this.token = token;
@@ -56,6 +62,11 @@ public abstract class AbstractResource {
 		public CreateResultImpl(T target) {
 			super();
 			this.target = target;
+		}
+		
+		public CreateResultImpl(Class<T> type, HttpResponse httpResponse) {
+			super(type, httpResponse);
+			this.target = (T) super.getTarget();
 		}
 		
 		public CreateResultImpl(Error error) {
