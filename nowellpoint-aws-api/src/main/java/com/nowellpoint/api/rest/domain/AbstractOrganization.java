@@ -33,7 +33,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(OrganizationResource.class);
+		return resourceToMeta(OrganizationResource.class);
 	}
 	
 	@Override

@@ -44,14 +44,42 @@ public abstract class AbstractResource {
 		return Assert.isNotNull(value) ? dateTimeFormat.format(value) : null;
 	}
 	
-	class DeleteResultImpl extends ResultImpl implements DeleteResult {
+	class DeleteResultImpl implements DeleteResult {
+		
+		protected Boolean isSuccess;
+		
+		protected String error;
+		
+		protected String errorMessage;
 		
 		public DeleteResultImpl() {
 			super();
 		}
 		
-		public DeleteResultImpl(Error error) {
-			super(error);
+		public DeleteResultImpl(HttpResponse httpResponse) {
+			if (httpResponse.getStatusCode() < 300) {
+				this.isSuccess = Boolean.TRUE;
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				this.isSuccess = Boolean.FALSE;
+				this.error = error.getCode();
+				this.errorMessage = error.getErrorMessage();
+			}
+		}
+
+		@Override
+		public Boolean isSuccess() {
+			return isSuccess;
+		}
+
+		@Override
+		public String getError() {
+			return error;
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return errorMessage;
 		}
 	}
 	

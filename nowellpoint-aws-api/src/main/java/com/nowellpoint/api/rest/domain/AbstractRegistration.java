@@ -40,7 +40,7 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(SignUpService.class);
+		return resourceToMeta(SignUpService.class);
 	}
 	
 	public static Registration of(com.nowellpoint.api.model.document.Registration source) {

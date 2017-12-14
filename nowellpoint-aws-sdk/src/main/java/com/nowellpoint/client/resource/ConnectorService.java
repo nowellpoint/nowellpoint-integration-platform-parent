@@ -1,8 +1,10 @@
 package com.nowellpoint.client.resource;
 
 import com.nowellpoint.client.model.Connector;
+import com.nowellpoint.client.model.ConnectorList;
 import com.nowellpoint.client.model.ConnectorRequest;
 import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.exception.NotFoundException;
@@ -41,9 +43,27 @@ public class ConnectorService extends AbstractResource {
 		return resource;
 	}
 	
+	public ConnectorList getConnectors() {
+		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(RESOURCE_CONTEXT)
+				.execute();
+
+		ConnectorList resources = null;
+
+		if (httpResponse.getStatusCode() == Status.OK) {
+			resources = httpResponse.getEntity(ConnectorList.class);
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+		}
+
+		return resources;
+	}
+	
 	public CreateResult<Connector> create(ConnectorRequest request) {
-		HttpResponse httpResponse = RestResource.post(request.getToken().getEnvironmentUrl())
-				.bearerAuthorization(request.getToken().getAccessToken())
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path(RESOURCE_CONTEXT)
@@ -67,10 +87,26 @@ public class ConnectorService extends AbstractResource {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path(RESOURCE_CONTEXT)
 				.path(connectorId)
-				.body(request)
+				.parameter("name", request.getName())
+				.parameter("clientId", request.getClientId())
+				.parameter("clientSecret", request.getClientSecret())
+				.parameter("username", request.getUsername())
+				.parameter("password", request.getPassword())
 				.execute();
 		
 		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
+		
+		return result;
+	}
+	
+	public DeleteResult delete(String connectorId) {
+		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.path(RESOURCE_CONTEXT)
+				.path(connectorId)
+				.execute();
+		
+		DeleteResult result = new DeleteResultImpl(httpResponse);
 		
 		return result;
 	}

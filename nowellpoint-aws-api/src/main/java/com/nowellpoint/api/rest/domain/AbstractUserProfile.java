@@ -51,7 +51,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(UserProfileResource.class);
+		return resourceToMeta(UserProfileResource.class);
 	}
 	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {

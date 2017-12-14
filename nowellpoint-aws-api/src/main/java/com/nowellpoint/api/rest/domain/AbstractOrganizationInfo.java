@@ -13,6 +13,9 @@ import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -43,4 +46,10 @@ public abstract class AbstractOrganizationInfo {
 		ModifiableOrganizationInfo organizationInfo = ModifiableOrganizationInfo.create().setId(id);
 		return organizationInfo.toImmutable();
 	}	
+	
+	public static OrganizationInfo of(Jws<Claims> claims) {
+		Assert.assertNotNull(claims, "Jws claims cannot be null");
+		ModifiableOrganizationInfo organizationInfo = ModifiableOrganizationInfo.create().setId(claims.getBody().getAudience());
+		return organizationInfo.toImmutable();
+	}
 }

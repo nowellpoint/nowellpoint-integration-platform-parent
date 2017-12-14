@@ -1,18 +1,21 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.Date;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
 
 import org.bson.types.ObjectId;
+import org.immutables.value.Value;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -176,14 +179,26 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 		});
 	}
 	
+	private Instant now = Instant.now();
+	
 	public abstract @Nullable String getId();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract void fromDocument(MongoDocument document);
 	public abstract MongoDocument toDocument();
 	public abstract @Nullable Meta getMeta();
 	
-	protected <T> Meta getMetaAs(Class<T> resourceClass) {
+	@Value.Default
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	public Date getCreatedOn() {
+		return Date.from(now);
+	}
+	
+	@Value.Default
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	public Date getLastUpdatedOn() {
+		return Date.from(now);
+	}
+	
+	protected <T> Meta resourceToMeta(Class<T> resourceClass) {
 		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(resourceClass)
 				.path("/{id}")

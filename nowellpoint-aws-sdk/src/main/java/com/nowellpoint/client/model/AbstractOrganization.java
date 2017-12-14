@@ -8,6 +8,4 @@ public abstract class AbstractOrganization {
 	public abstract String getDomain();
 	public abstract Subscription getSubscription();
 	public abstract List<Transaction> getTransactions();
-	
-	private List<UserProfile> users;
 }

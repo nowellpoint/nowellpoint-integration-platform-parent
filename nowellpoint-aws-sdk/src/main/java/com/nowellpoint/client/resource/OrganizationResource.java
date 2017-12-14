@@ -133,16 +133,9 @@ public class OrganizationResource extends AbstractResource {
 				.path(id)
 				.execute();
 		
-		DeleteResult deleteResult = null;
+		DeleteResult result = new DeleteResultImpl(httpResponse);
 		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			deleteResult = new DeleteResultImpl();
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			Error error = httpResponse.getEntity(Error.class);
-			deleteResult = new DeleteResultImpl(error);
-		}
-		
-		return deleteResult;
+		return result;
 	}
 	
 	/**

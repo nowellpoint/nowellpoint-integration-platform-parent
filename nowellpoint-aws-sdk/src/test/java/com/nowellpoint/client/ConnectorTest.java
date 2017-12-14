@@ -1,13 +1,18 @@
 package com.nowellpoint.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.model.Connector;
+import com.nowellpoint.client.model.ConnectorList;
 import com.nowellpoint.client.model.ConnectorRequest;
 import com.nowellpoint.client.model.CreateResult;
+import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.client.model.UpdateResult;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -37,7 +42,7 @@ public class ConnectorTest {
 	@Test
 	public void testCreateConnector() {
 		
-		ConnectorRequest request = ConnectorRequest.builder()
+		ConnectorRequest createRequest = ConnectorRequest.builder()
 				.name("test Salesforce Connector")
 				.token(token)
 				.type("SALESFORCE_PRODUCTION")
@@ -49,14 +54,20 @@ public class ConnectorTest {
 		
 		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
 				.connector()
-				.create(request);
+				.create(createRequest);
+		
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(createResult.getTarget()));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertNotNull(createResult.getTarget());
 		Assert.assertNotNull(createResult.getTarget().getAuthEndpoint());
 		Assert.assertNotNull(createResult.getTarget().getId());
 		Assert.assertNotNull(createResult.getTarget().getName());
-		Assert.assertNotNull(createResult.getTarget().getType());
 		Assert.assertNotNull(createResult.getTarget().getTypeName());
 		Assert.assertNotNull(createResult.getTarget().getCreatedBy());
 		Assert.assertNotNull(createResult.getTarget().getCreatedOn());
@@ -66,6 +77,34 @@ public class ConnectorTest {
 		Assert.assertNotNull(createResult.getTarget().getConnectionDate());
 		Assert.assertNotNull(createResult.getTarget().getMeta());
 		Assert.assertNotNull(createResult.getTarget().getOwner());
+		Assert.assertTrue(createResult.getTarget().getIsConnected());
+		
+		ConnectorRequest updateRequest = ConnectorRequest.builder()
+				.name("")
+				.token(token)
+				.clientId(null) 
+				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.username(System.getenv("SALESFORCE_USERNAME"))
+				.password(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")))
+				.build();
+		
+		UpdateResult<Connector> updateResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.update(createResult.getTarget().getId(), updateRequest);
+		
+		Assert.assertTrue(updateResult.isSuccess());
+		
+		ConnectorList connectorList = NowellpointClient.defaultClient(token)
+				.connector()
+				.getConnectors();
+		
+		Assert.assertTrue(connectorList.getSize() > 0);
+		
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.delete(createResult.getTarget().getId());
+		
+		Assert.assertTrue(deleteResult.isSuccess());
 	}
 	
 	@AfterClass

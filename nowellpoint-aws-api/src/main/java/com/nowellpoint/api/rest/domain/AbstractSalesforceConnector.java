@@ -38,7 +38,7 @@ public abstract class AbstractSalesforceConnector extends AbstractImmutableResou
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(SalesforceConnectorResource.class);
+		return resourceToMeta(SalesforceConnectorResource.class);
 	}
 	
 	@Override

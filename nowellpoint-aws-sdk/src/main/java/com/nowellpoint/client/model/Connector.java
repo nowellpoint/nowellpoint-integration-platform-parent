@@ -5,11 +5,11 @@ import java.util.Date;
 public class Connector extends AbstractResource {
 	
 	private String name;
-	private String type;
 	private String typeName;
 	private String authEndpoint;
 	private String connectionStatus;
 	private Date connectionDate;
+	private Boolean isConnected;
 	private OrganizationInfo owner;
 	
 	public Connector() {
@@ -22,10 +22,6 @@ public class Connector extends AbstractResource {
 
 	public String getAuthEndpoint() {
 		return authEndpoint;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	public String getTypeName() {
@@ -42,5 +38,9 @@ public class Connector extends AbstractResource {
 
 	public Date getConnectionDate() {
 		return connectionDate;
+	}
+	
+	public Boolean getIsConnected() {
+		return isConnected;
 	}
 }

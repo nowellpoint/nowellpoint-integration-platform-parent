@@ -13,6 +13,9 @@ import com.nowellpoint.api.rest.UserProfileResource;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -46,5 +49,11 @@ public abstract class AbstractUserInfo {
 		Assert.assertNotNullOrEmpty(id, "User Id cannot be null or empty");
 		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(id);
 		return userInfo.toImmutable();
-	}	
+	}
+	
+	public static UserInfo of(Jws<Claims> claims) {
+		Assert.assertNotNull(claims, "Jws claims cannot be null");
+		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(claims.getBody().getSubject());
+		return userInfo.toImmutable();
+	}
 }

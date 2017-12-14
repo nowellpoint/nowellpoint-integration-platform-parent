@@ -42,6 +42,8 @@ public class Connector extends MongoDocument {
 	
 	private Date connectionDate;
 	
+	private Boolean isConnected;
+	
 	public Connector() {
 		
 	}
@@ -140,5 +142,13 @@ public class Connector extends MongoDocument {
 
 	public void setConnectionDate(Date connectionDate) {
 		this.connectionDate = connectionDate;
+	}
+
+	public Boolean getIsConnected() {
+		return isConnected;
+	}
+
+	public void setIsConnected(Boolean isConnected) {
+		this.isConnected = isConnected;
 	}
 }

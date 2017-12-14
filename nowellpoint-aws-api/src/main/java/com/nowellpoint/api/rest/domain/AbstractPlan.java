@@ -31,7 +31,7 @@ public abstract class AbstractPlan extends AbstractImmutableResource {
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(PlanResource.class);
+		return resourceToMeta(PlanResource.class);
 	}
 	
 	@Override

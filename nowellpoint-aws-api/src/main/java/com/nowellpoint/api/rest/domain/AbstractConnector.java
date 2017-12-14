@@ -2,13 +2,18 @@ package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
+//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.ConnectorResource;
+import com.nowellpoint.api.util.ClaimsContext;
+//import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
@@ -18,26 +23,48 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 @JsonDeserialize(as = Connector.class)
 public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract String getName();
-	public abstract String getType();
+	public abstract @JsonIgnore String getType();
 	public abstract String getTypeName();
 	public abstract String getAuthEndpoint();
 	public abstract String getGrantType();
 	public abstract String getIconHref();
-	public abstract @JsonIgnore String getCredentialsKey();
+	public abstract @Nullable @JsonIgnore String getCredentialsKey();
 	public abstract String getConnectionStatus();
-	public abstract Date getConnectionDate();
-	public abstract UserInfo getCreatedBy();
-	public abstract UserInfo getLastUpdatedBy();
-	public abstract OrganizationInfo getOwner();
-
-	@Override
-	public Meta getMeta() {
-		return getMetaAs(ConnectorResource.class);
+	public abstract @Nullable Date getConnectionDate();
+	
+	@Value.Default
+	public Boolean getIsConnected() {
+		return Boolean.FALSE;
 	}
 	
+	@Value.Default
+	public UserInfo getCreatedBy() {
+		return UserInfo.of(ClaimsContext.getClaims());
+	}
+	
+	@Value.Default
+	public UserInfo getLastUpdatedBy() {
+		return UserInfo.of(ClaimsContext.getClaims());
+	}
+	
+	@Value.Default
+	public OrganizationInfo getOwner() {
+		return OrganizationInfo.of(ClaimsContext.getClaims());
+	}
+	
+	@Value.Derived
+	public Meta getMeta() {
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(ConnectorResource.class)
+				.build();
+	}
+	
+	//private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
+	
 	@Override
-	public void fromDocument(MongoDocument document) {
-		modelMapper.map(document, this);
+	public void fromDocument(MongoDocument source) {
+		modelMapper.map(source, this);
 	}
 	
 	@Override
@@ -50,7 +77,7 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Connector.class);
 	}
 	
-	public static Connector of(com.nowellpoint.api.model.document.Connector source) {
+	public static Connector of(MongoDocument source) {
 		ModifiableConnector connector = modelMapper.map(source, ModifiableConnector.class);
 		return connector.toImmutable();
 	}

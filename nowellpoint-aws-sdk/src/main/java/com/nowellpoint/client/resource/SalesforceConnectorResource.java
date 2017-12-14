@@ -173,19 +173,12 @@ public class SalesforceConnectorResource extends AbstractResource {
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.path(RESOURCE_CONTEXT)
-    			.path(id)
-    			.execute();
+				.path(id)
+				.execute();
 		
-		DeleteResult deleteResult = null;
+		DeleteResult result = new DeleteResultImpl(httpResponse);
 		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			deleteResult = new DeleteResultImpl();
-		} else if (httpResponse.getStatusCode() == Status.BAD_REQUEST) {
-			Error error = httpResponse.getEntity(Error.class);
-			deleteResult = new DeleteResultImpl(error);
-		}
-		
-		return deleteResult;
+		return result;
 	}
 	
 	private UpdateResult<SalesforceConnector> invokeAction(String id, String action) {

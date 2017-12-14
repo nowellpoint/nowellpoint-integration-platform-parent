@@ -15,6 +15,10 @@ import javax.ws.rs.core.Response;
 public interface ConnectorResource {
 	
 	@GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getConnectors();
+	
+	@GET
 	@Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getConnector(@PathParam("id") String id);
@@ -32,7 +36,7 @@ public interface ConnectorResource {
 	
 	@POST
 	@Path("{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response updateConnector(@PathParam("id") String id, 
 			@FormParam("name") String name, 
@@ -44,4 +48,10 @@ public interface ConnectorResource {
 	@DELETE
 	@Path("{id}")
 	public Response deleteConnector(@PathParam("id") String id);
+	
+	@POST
+	@Path("{id}/actions/{action}/invoke")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response invokeAction(@PathParam(value="id") String id, 
+			@PathParam(value="action") String action);
 }

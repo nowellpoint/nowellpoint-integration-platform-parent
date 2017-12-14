@@ -109,14 +109,7 @@ public class UserProfileResource extends AbstractResource {
 				.path(id)
 				.execute();
 		
-		DeleteResult result = null;
-			
-		if (httpResponse.getStatusCode() == Status.OK) {
-			result = new DeleteResultImpl();
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new DeleteResultImpl(error);
-		}
+		DeleteResult result = new DeleteResultImpl(httpResponse);
 		
 		return result;
 	}
