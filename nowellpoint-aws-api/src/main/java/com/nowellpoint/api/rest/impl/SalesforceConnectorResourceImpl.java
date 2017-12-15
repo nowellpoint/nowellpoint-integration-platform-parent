@@ -55,16 +55,17 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 		
 		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.createSalesforceConnector(token);
 		
+		Meta meta = Meta.builder()
+				.id(salesforceConnectorOrig.getId())
+				.resourceClass(SalesforceConnectorResource.class)
+				.build();
+		
+		salesforceConnectorOrig.setMeta(meta);
+		
 		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
 				.path(SalesforceConnectorResource.class)
 				.path("/{id}")
 				.build(salesforceConnectorOrig.getId());
-		
-		Meta meta = Meta.builder()
-				.href(uri.toString())
-				.build();
-		
-		salesforceConnectorOrig.setMeta(meta);
 		
 		return Response.created(uri)
 				.entity(salesforceConnectorOrig)
@@ -88,13 +89,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 			}
 		}
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceConnectorResource.class)
-				.path("/{id}")
-				.build(salesforceConnectorOrig.getId());
-		
 		Meta meta = Meta.builder()
-				.href(uri.toString())
+				.id(salesforceConnectorOrig.getId())
+				.resourceClass(SalesforceConnectorResource.class)
 				.build();
 		
 		salesforceConnectorOrig.setMeta(meta);
@@ -116,13 +113,9 @@ public class SalesforceConnectorResourceImpl implements SalesforceConnectorResou
 		
 		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.updateSalesforceConnector(id, request);
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceConnectorResource.class)
-				.path("/{id}")
-				.build(salesforceConnectorOrig.getId());
-		
 		Meta meta = Meta.builder()
-				.href(uri.toString())
+				.id(salesforceConnectorOrig.getId())
+				.resourceClass(SalesforceConnectorResource.class)
 				.build();
 		
 		salesforceConnectorOrig.setMeta(meta);

@@ -1,9 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.net.URI;
-
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import org.immutables.value.Value;
 
@@ -11,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.UserProfileResource;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -33,16 +29,10 @@ public abstract class AbstractUserInfo {
 	public abstract @Nullable Photos getPhotos();
 	
 	public Meta getMeta() {
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(UserProfileResource.class)
-				.path("/{id}")
-				.build(Assert.isNotNullOrEmpty(getId()) ? getId() : "{id}");
-				
-		Meta meta = Meta.builder()
-				.href(href.toString())
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(UserProfileResource.class)
 				.build();
-		
-		return meta;
 	}
 	
 	public static UserInfo of(String id) {

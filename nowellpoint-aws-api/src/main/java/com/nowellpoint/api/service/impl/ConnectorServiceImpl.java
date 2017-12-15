@@ -15,20 +15,12 @@ import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
-import com.nowellpoint.api.rest.domain.OrganizationInfo;
-import com.nowellpoint.api.rest.domain.SalesforceCredentials;
-import com.nowellpoint.api.rest.domain.TestConnectorRequest;
+import com.nowellpoint.api.rest.domain.ConnectorWrapper;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.UserContext;
-import com.nowellpoint.client.sforce.Authenticators;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.OauthException;
-import com.nowellpoint.client.sforce.OauthRequests;
-import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
-import com.nowellpoint.util.Assert;
 
 public class ConnectorServiceImpl extends AbstractConnectorService implements ConnectorService {
 	
@@ -62,7 +54,6 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	
 	private static final String CONNECTED = "Connected";
 	private static final String DISCONNECTED = "Disconnected";
-	private static final String FAILED_TO_CONNECT = "Failed to connect";
 	
 	@Override
 	public ConnectorList getConnectors() {
@@ -84,40 +75,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 			throw new IllegalArgumentException(String.format("Invalid Connector Type: %s", request.getType()));
 		}
 		
-		//UserInfo who = UserInfo.of(ClaimsContext.getClaims());
-		
-		//OrganizationInfo owner = OrganizationInfo.of(ClaimsContext.getClaims());
-		
-		//Date now = Date.from(Instant.now());
-		
-		String connectionStatus = testConnection(type, request);
-		
-		SalesforceCredentials credentials = SalesforceCredentials.builder()
-				.clientId(request.getClientId())
-				.clientSecret(request.getClientSecret())
-				.username(request.getUsername())
-				.password(request.getPassword())
-				.build();
-		
-		VaultEntry vaultEntry = vaultEntryService.store(credentials.asString());
-		
-		Connector connector = Connector.builder()
-				//.createdBy(who)
-				//.createdOn(now)
-				//.lastUpdatedBy(who)
-				//.lastUpdatedOn(now)
-				.name(request.getName())
-				.authEndpoint(type.getAuthEndpoint())
-				.grantType(type.getGrantType())
-				.type(type.getName())
-				.iconHref(type.getIconHref())
-				.typeName(type.getDisplayName())
-				.credentialsKey(vaultEntry.getToken())
-				//.owner(owner)
-				.connectionDate(Date.from(Instant.now()))
-				.connectionStatus(connectionStatus)
-				.isConnected(isConnected(connectionStatus))
-				.build();
+		Connector connector = buildConnector(type, request);
 		
 		create(connector);
 		
@@ -131,20 +89,20 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		ConnectorType type = getConnectorType(original.getType());
 		
-		String connectionStatus = testConnection(type, request);
-		
 		VaultEntry vaultEntry = vaultEntryService.retrive(original.getCredentialsKey());
 		
-		SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
+//		SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
+//		
+//		SalesforceCredentials credentials = SalesforceCredentials.builder()
+//				.clientId(Assert.isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : storedCredentials.getClientId())
+//				.clientSecret(Assert.isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : storedCredentials.getClientSecret())
+//				.username(Assert.isNotNullOrEmpty(request.getUsername()) ? request.getUsername() : storedCredentials.getUsername())
+//				.password(Assert.isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : storedCredentials.getPassword())
+//				.build();
 		
-		SalesforceCredentials credentials = SalesforceCredentials.builder()
-				.clientId(Assert.isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : storedCredentials.getClientId())
-				.clientSecret(Assert.isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : storedCredentials.getClientSecret())
-				.username(Assert.isNotNullOrEmpty(request.getUsername()) ? request.getUsername() : storedCredentials.getUsername())
-				.password(Assert.isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : storedCredentials.getPassword())
-				.build();
+		String connectionStatus = null;
 		
-		vaultEntryService.replace(original.getCredentialsKey(), credentials.asString());
+		vaultEntryService.replace(original.getCredentialsKey(), null);
 		
 		Connector connector = Connector.builder()
 				.from(original)
@@ -174,20 +132,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		VaultEntry vaultEntry = vaultEntryService.retrive(original.getCredentialsKey());
 		
-		SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
+		//SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
 		
-		try {
-			
-			OauthAuthenticationResponse authResponse = login(
-					original.getAuthEndpoint(), 
-					storedCredentials.getClientId(), 
-					storedCredentials.getClientSecret(), 
-					storedCredentials.getUsername(), 
-					storedCredentials.getPassword());
-			
-		} catch (OauthException e) {
-			//status = String.format("%s. %s: %s", FAILED_TO_CONNECT, e.getError(), e.getErrorDescription());
-		}
+		
 		
 		
 		
@@ -239,48 +186,26 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	 * 
 	 */
 	
+	private Connector buildConnector(ConnectorType type, ConnectorRequest request) {
+		
+		if ("SALESFORCE_SANDBOX".equals(request.getType()) || "SALESFORCE_PRODUCTION".equals(request.getType())) {
+			
+			ConnectorWrapper wrapper = ConnectorWrapper.builder()
+					.request(request)
+					.type(type)
+					.build();
+			
+			return wrapper.toConnector();
+		}	
+		
+		return null;
+	}
+	
 	private ConnectorType getConnectorType(String type) {
 		return connectorTypes.get(type);
 	}
 	
 	private Boolean isConnected(String connectionStatus) {
 		return CONNECTED.equals(connectionStatus) ? Boolean.TRUE : Boolean.FALSE;
-	}
-	
-	private String testConnection(ConnectorType type, ConnectorRequest request) {
-		String status = null;
-		
-		if ("SALESFORCE_SANDBOX".equals(type.getName()) || "SALESFORCE_PRODUCTION".equals(type.getName())) {
-			try {
-				SalesforceCredentials credentials = SalesforceCredentials.builder()
-						.clientId(request.getClientId())
-						.clientSecret(request.getClientSecret())
-						.username(request.getUsername())
-						.password(request.getPassword())
-						.build();
-				
-				credentials.login(type.getAuthEndpoint());
-				
-				status = CONNECTED;
-				
-			} catch (OauthException e) {
-				status = String.format("%s. %s: %s", FAILED_TO_CONNECT, e.getError(), e.getErrorDescription());
-			}
-		}
-		
-		return status;
-	}
-	
-	private OauthAuthenticationResponse login(String authEndpoint, String clientId, String clientSecret, String username, String password) {
-		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(clientId)
-				.setClientSecret(clientSecret)
-				.setUsername(username)
-				.setPassword(password)
-				.build();
-		
-		OauthAuthenticationResponse authenticationResponse = Authenticators.PASSWORD_GRANT_AUTHENTICATOR.authenticate(request);
-		
-		return authenticationResponse;
 	}
 }

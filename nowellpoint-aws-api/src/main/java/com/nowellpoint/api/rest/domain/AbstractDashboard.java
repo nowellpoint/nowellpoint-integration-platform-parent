@@ -87,9 +87,12 @@ public abstract class AbstractDashboard extends AbstractImmutableResource {
 		return dashboard;
 	}
 	
-	@Override
+	@Value.Derived
 	public Meta getMeta() {
-		return resourceToMeta(DashboardResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(DashboardResource.class)
+				.build();
 	}
 	
 	@Override

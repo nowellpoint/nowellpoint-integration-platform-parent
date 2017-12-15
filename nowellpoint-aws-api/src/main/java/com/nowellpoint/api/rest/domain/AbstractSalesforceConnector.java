@@ -36,9 +36,12 @@ public abstract class AbstractSalesforceConnector extends AbstractImmutableResou
 	public abstract @Nullable Theme getTheme();
 	public abstract @Nullable Set<Service> getServices();
 	
-	@Override
+	@Value.Derived
 	public Meta getMeta() {
-		return resourceToMeta(SalesforceConnectorResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(SalesforceConnectorResource.class)
+				.build();
 	}
 	
 	@Override

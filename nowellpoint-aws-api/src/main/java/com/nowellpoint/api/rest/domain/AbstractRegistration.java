@@ -34,13 +34,16 @@ public abstract class AbstractRegistration extends AbstractImmutableResource {
 	public abstract UserInfo getLastUpdatedBy();
 	public abstract Boolean getVerified();
 	
+	@Value.Derived
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	@Override
 	public Meta getMeta() {
-		return resourceToMeta(SignUpService.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(SignUpService.class)
+				.build();
 	}
 	
 	public static Registration of(com.nowellpoint.api.model.document.Registration source) {

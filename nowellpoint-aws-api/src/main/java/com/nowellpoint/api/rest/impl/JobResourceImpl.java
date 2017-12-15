@@ -213,14 +213,10 @@ public class JobResourceImpl implements JobResource {
 			throw new NotFoundException( String.format( "%s Id: %s does not exist or you do not have access to view", JobOrig.class.getSimpleName(), id ) );
 		}
 		
-		URI uri = UriBuilder.fromUri(uriInfo.getBaseUri())
-				.path(SalesforceConnectorResource.class)
-				.path("/{id}")
-				.build(jobOrig.getId());
-		
 		Meta meta = Meta.builder()
-				.href(uri.toString())
-				.build();
+				.id(jobOrig.getId())
+				.resourceClass(SalesforceConnectorResource.class)
+				.build();		
 		
 		jobOrig.setMeta(meta);
 		

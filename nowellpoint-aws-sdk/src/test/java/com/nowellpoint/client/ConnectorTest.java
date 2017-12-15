@@ -1,7 +1,10 @@
 package com.nowellpoint.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
@@ -13,11 +16,6 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class ConnectorTest {
 	
@@ -55,13 +53,6 @@ public class ConnectorTest {
 		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
 				.connector()
 				.create(createRequest);
-		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(createResult.getTarget()));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertNotNull(createResult.getTarget());

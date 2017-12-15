@@ -7,13 +7,11 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
-//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.ConnectorResource;
 import com.nowellpoint.api.util.ClaimsContext;
-//import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
@@ -52,15 +50,12 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 		return OrganizationInfo.of(ClaimsContext.getClaims());
 	}
 	
-	@Value.Derived
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())
 				.resourceClass(ConnectorResource.class)
 				.build();
 	}
-	
-	//private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
 	
 	@Override
 	public void fromDocument(MongoDocument source) {

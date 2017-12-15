@@ -1,11 +1,9 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import org.bson.types.ObjectId;
 import org.immutables.value.Value;
@@ -15,13 +13,11 @@ import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.nowellpoint.mongodb.document.MongoDocument;
-import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties; 
+import com.nowellpoint.util.Assert; 
 
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({ "id", "createdOn", "lastUpdatedOn" })
@@ -196,18 +192,5 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	public Date getLastUpdatedOn() {
 		return Date.from(now);
-	}
-	
-	protected <T> Meta resourceToMeta(Class<T> resourceClass) {
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(resourceClass)
-				.path("/{id}")
-				.build(Assert.isNotNullOrEmpty(getId()) ? getId() : "{id}");
-				
-		Meta meta = Meta.builder()
-				.href(href.toString())
-				.build();
-		
-		return meta;
 	}
 }

@@ -29,9 +29,11 @@ public abstract class AbstractPlan extends AbstractImmutableResource {
 	public abstract Price getPrice();
 	public abstract Set<Feature> getFeatures();
 	
-	@Override
 	public Meta getMeta() {
-		return resourceToMeta(PlanResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(PlanResource.class)
+				.build();
 	}
 	
 	@Override

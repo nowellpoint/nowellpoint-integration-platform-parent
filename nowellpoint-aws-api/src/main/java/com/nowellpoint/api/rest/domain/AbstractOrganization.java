@@ -31,9 +31,11 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable Set<Transaction> getTransactions();
 	public abstract @Nullable Set<UserProfile> getUsers();
 	
-	@Override
 	public Meta getMeta() {
-		return resourceToMeta(OrganizationResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(OrganizationResource.class)
+				.build();
 	}
 	
 	@Override

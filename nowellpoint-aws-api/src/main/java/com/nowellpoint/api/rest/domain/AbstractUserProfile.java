@@ -45,13 +45,17 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract @Nullable Photos getPhotos();
 	public abstract @JsonIgnore String getReferenceId();
 	
+	@Value.Derived
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	@Override
+	@Value.Derived
 	public Meta getMeta() {
-		return resourceToMeta(UserProfileResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(UserProfileResource.class)
+				.build();
 	}
 	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {
