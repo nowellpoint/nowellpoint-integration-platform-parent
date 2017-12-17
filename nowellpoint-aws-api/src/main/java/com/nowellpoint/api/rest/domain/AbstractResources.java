@@ -11,6 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize(as = Resources.class)
 public abstract class AbstractResources {
 	public abstract String getOrganization();
-	public abstract String getSalesforce();
+	public abstract String getConnectors();
 	public abstract String getJobs();
 }

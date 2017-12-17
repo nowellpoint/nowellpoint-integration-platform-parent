@@ -87,6 +87,8 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = retrieve(id);
 		
+		ConnectorWrapper wrapper = ConnectorWrapper.of(original, request);
+		
 		ConnectorType type = getConnectorType(original.getType());
 		
 		VaultEntry vaultEntry = vaultEntryService.retrive(original.getCredentialsKey());

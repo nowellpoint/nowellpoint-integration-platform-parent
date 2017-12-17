@@ -17,6 +17,7 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -91,16 +92,62 @@ public abstract class AbstractConnectorWrapper {
 		return connector;
 	}
 	
-//	public static SalesforceCredentials of(String credentialsString) {
-//		String[] values = credentialsString.split(":");
-//		
-//		SalesforceCredentials credentials = SalesforceCredentials.builder()
-//				.clientId(values[0])
-//				.clientSecret(values[1])
-//				.username(values[2])
-//				.password(values[3])
-//				.build();
-//		
-//		return credentials;
-//	}
+	public static ConnectorWrapper of(Connector connector, ConnectorRequest request) {
+		
+		ConnectorWrapper original = of(connector);
+		
+		ConnectorRequest newRequest = ConnectorRequest.builder()
+				.clientId(Assert.isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : original.getRequest().getClientId())
+				.clientSecret(Assert.isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : original.getRequest().getClientSecret())
+				.username(Assert.isNotNullOrEmpty(request.getUsername()) ? request.getUsername() : original.getRequest().getUsername())
+				.password(Assert.isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : original.getRequest().getPassword())
+				.build();
+		
+		ConnectorWrapper wrapper = ConnectorWrapper.builder()
+				.from(original)
+				.request(newRequest)
+				.build();
+		
+		return wrapper;
+	}
+	
+	public static ConnectorWrapper of(Connector connector) {
+		
+		ConnectorRequest request = null;
+		
+		if (Assert.isNotNull(connector.getCredentialsKey())) {
+			VaultEntry entry = dynamoDBMapper.load(VaultEntry.class, connector.getCredentialsKey());
+			request = of(entry.getValue());
+		} else {
+			request = ConnectorRequest.builder().build();
+		}
+		
+		ConnectorType type = ConnectorType.builder()
+				.authEndpoint(connector.getAuthEndpoint())
+				.displayName(connector.getTypeName())
+				.grantType(connector.getGrantType())
+				.iconHref(connector.getIconHref())
+				.name(connector.getType())
+				.build();
+		
+		ConnectorWrapper wrapper = ConnectorWrapper.builder()
+				.request(request)
+				.type(type)
+				.build();
+		
+		return wrapper;
+	}
+	
+	private static ConnectorRequest of(String credentialsString) {
+		String[] values = credentialsString.split(":");
+		
+		ConnectorRequest request = ConnectorRequest.builder()
+				.clientId(values[0])
+				.clientSecret(values[1])
+				.username(values[2])
+				.password(values[3])
+				.build();
+		
+		return request;
+	}
 }
