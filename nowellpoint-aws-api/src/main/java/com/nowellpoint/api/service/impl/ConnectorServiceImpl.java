@@ -14,7 +14,7 @@ import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
-import com.nowellpoint.api.rest.domain.ConnectorWrapper;
+import com.nowellpoint.api.rest.domain.SalesforceConnectorWrapper;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.service.VaultEntryService;
@@ -74,7 +74,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 			throw new IllegalArgumentException(String.format("Invalid Connector Type: %s", request.getType()));
 		}
 		
-		Connector connector = buildTypeWrapper(null, type, request);
+		Connector connector = buildConnector(type, request);
 		
 		create(connector);
 		
@@ -86,9 +86,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = retrieve(id);
 		
-		ConnectorType type = getConnectorType(original.getType());
-		
-		Connector connector = buildTypeWrapper(original, type, request);
+		Connector connector = buildConnector(original, request);
 		
 		update(connector);
 		
@@ -111,11 +109,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 			throw new IllegalArgumentException("Unable to Refresh Connector. Conecctor is missing credentials. Please update the connector with valid credentials");
 		}
 		
-		ConnectorType type = getConnectorType(original.getType());
-		
-		ConnectorRequest request = ConnectorRequest.builder().build();
-		
-		Connector connector = buildTypeWrapper(original, type, request);
+		Connector connector = refreshConnector(original);
 		
 		update(connector);
 		
@@ -153,29 +147,29 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	 * 
 	 */
 	
-	private Connector buildTypeWrapper(Connector connector, ConnectorType type, ConnectorRequest request) {
+	private Connector refreshConnector(Connector original) {
+		if ("SALESFORCE_SANDBOX".equals(original.getType()) || "SALESFORCE_PRODUCTION".equals(original.getType())) {
+			SalesforceConnectorWrapper wrapper = SalesforceConnectorWrapper.of(original);
+			return wrapper.toConnector();
+		}
 		
+		return null;
+		
+	}
+	
+	private Connector buildConnector(Connector original, ConnectorRequest request) {
+		if ("SALESFORCE_SANDBOX".equals(original.getType()) || "SALESFORCE_PRODUCTION".equals(original.getType())) {
+			SalesforceConnectorWrapper wrapper = SalesforceConnectorWrapper.of(original, request);
+			return wrapper.toConnector();
+		}
+		
+		return null;
+	}
+	
+	private Connector buildConnector(ConnectorType type, ConnectorRequest request) {
 		if ("SALESFORCE_SANDBOX".equals(request.getType()) || "SALESFORCE_PRODUCTION".equals(request.getType())) {
-			
-			if (Assert.isNull(connector)) {
-				
-				ConnectorWrapper wrapper = ConnectorWrapper.builder()
-						.request(request)
-						.type(type)
-						.build();
-				
-				return wrapper.toConnector();
-				
-			} else {
-				
-				ConnectorWrapper wrapper = ConnectorWrapper.builder()
-						.connector(connector)
-						.request(request)
-						.type(type)
-						.build();
-				
-				return wrapper.toConnector();
-			}
+			SalesforceConnectorWrapper wrapper = SalesforceConnectorWrapper.of(type, request);
+			return wrapper.toConnector();
 		}	
 		
 		return null;

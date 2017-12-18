@@ -59,10 +59,6 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	@Override
 	public Response updateConnector(String id, String name, String clientId, String clientSecret, String username, String password) {
 		
-		System.out.println(name.isEmpty());
-		System.out.println(clientId == null);
-		System.out.println(clientSecret == null);
-		
 		ConnectorRequest payload = ConnectorRequest.builder()
 				.name(name)
 				.clientId(clientId)

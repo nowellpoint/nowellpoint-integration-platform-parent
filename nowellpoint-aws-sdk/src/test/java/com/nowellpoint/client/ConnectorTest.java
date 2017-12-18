@@ -71,9 +71,9 @@ public class ConnectorTest {
 		Assert.assertTrue(createResult.getTarget().getIsConnected());
 		
 		ConnectorRequest updateRequest = ConnectorRequest.builder()
-				.name("")
+				.name("Updated name")
 				.token(token)
-				.clientId(null) 
+				.clientId(System.getenv("SALESFORCE_CLIENT_SECRET")) 
 				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))
 				.username(System.getenv("SALESFORCE_USERNAME"))
 				.password(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")))
@@ -91,11 +91,11 @@ public class ConnectorTest {
 		
 		Assert.assertTrue(connectorList.getSize() > 0);
 		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.connector()
-				.delete(createResult.getTarget().getId());
-		
-		Assert.assertTrue(deleteResult.isSuccess());
+//		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+//				.connector()
+//				.delete(createResult.getTarget().getId());
+//		
+//		Assert.assertTrue(deleteResult.isSuccess());
 	}
 	
 	@AfterClass
