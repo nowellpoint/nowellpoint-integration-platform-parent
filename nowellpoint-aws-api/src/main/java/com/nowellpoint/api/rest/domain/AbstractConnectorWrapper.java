@@ -4,10 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
+import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.aws.provider.DynamoDBMapperProvider;
 import com.nowellpoint.client.sforce.OauthConstants;
 import com.nowellpoint.client.sforce.OauthException;
@@ -24,6 +27,7 @@ import com.nowellpoint.util.Assert;
 public abstract class AbstractConnectorWrapper {
 	public abstract ConnectorType getType();
 	public abstract ConnectorRequest getRequest();
+	public abstract @Nullable Connector getConnector();
 	
 	private static final String OAUTH_TOKEN_URI = "%s/services/oauth2/token";
 	private static final DynamoDBMapper dynamoDBMapper = DynamoDBMapperProvider.getDynamoDBMapper();
@@ -53,19 +57,6 @@ public abstract class AbstractConnectorWrapper {
 	
 	public Connector toConnector() {
 		
-		String connectString = new StringBuilder()
-				.append(getRequest().getClientId())
-				.append(":")
-				.append(getRequest().getClientSecret())
-				.append(":")
-				.append(getRequest().getUsername())
-				.append(":")
-				.append(getRequest().getPassword())
-				.toString();
-		
-		VaultEntry vaultEntry = VaultEntry.of(connectString);
-		dynamoDBMapper.save(vaultEntry);
-		
 		String connectionStatus = "Connected";
 		Boolean isConnected = Boolean.TRUE;
 		
@@ -76,78 +67,99 @@ public abstract class AbstractConnectorWrapper {
 			connectionStatus = String.format("Failed to Connect. (%s + : %s )", e.getError(), e.getErrorDescription());
 		}
 		
-		Connector connector = Connector.builder()
-				.name(getRequest().getName())
-				.authEndpoint(getType().getAuthEndpoint())
-				.grantType(getType().getGrantType())
-				.type(getType().getName())
-				.iconHref(getType().getIconHref())
-				.typeName(getType().getDisplayName())
-				.credentialsKey(vaultEntry.getToken())
-				.connectionDate(Date.from(Instant.now()))
-				.connectionStatus(connectionStatus)
-				.isConnected(isConnected)
-				.build();
-		
-		return connector;
-	}
-	
-	public static ConnectorWrapper of(Connector connector, ConnectorRequest request) {
-		
-		ConnectorWrapper original = of(connector);
-		
-		ConnectorRequest newRequest = ConnectorRequest.builder()
-				.clientId(Assert.isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : original.getRequest().getClientId())
-				.clientSecret(Assert.isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : original.getRequest().getClientSecret())
-				.username(Assert.isNotNullOrEmpty(request.getUsername()) ? request.getUsername() : original.getRequest().getUsername())
-				.password(Assert.isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : original.getRequest().getPassword())
-				.build();
-		
-		ConnectorWrapper wrapper = ConnectorWrapper.builder()
-				.from(original)
-				.request(newRequest)
-				.build();
-		
-		return wrapper;
-	}
-	
-	public static ConnectorWrapper of(Connector connector) {
-		
-		ConnectorRequest request = null;
-		
-		if (Assert.isNotNull(connector.getCredentialsKey())) {
-			VaultEntry entry = dynamoDBMapper.load(VaultEntry.class, connector.getCredentialsKey());
-			request = of(entry.getValue());
+		if (Assert.isNull(getConnector())) {
+			
+			String connectString = new StringBuilder()
+					.append(getRequest().getClientId())
+					.append(":")
+					.append(getRequest().getClientSecret())
+					.append(":")
+					.append(getRequest().getUsername())
+					.append(":")
+					.append(getRequest().getPassword())
+					.toString();
+			
+			VaultEntry vaultEntry = VaultEntry.of(connectString);
+			dynamoDBMapper.save(vaultEntry);
+			
+			Connector connector = Connector.builder()
+					.name(getRequest().getName())
+					.authEndpoint(getType().getAuthEndpoint())
+					.grantType(getType().getGrantType())
+					.type(getType().getName())
+					.iconHref(getType().getIconHref())
+					.typeName(getType().getDisplayName())
+					.credentialsKey(vaultEntry.getToken())
+					.connectionDate(Date.from(Instant.now()))
+					.connectionStatus(connectionStatus)
+					.isConnected(isConnected)
+					.build();
+			
+			return connector;
+			
 		} else {
-			request = ConnectorRequest.builder().build();
-		}
-		
-		ConnectorType type = ConnectorType.builder()
-				.authEndpoint(connector.getAuthEndpoint())
-				.displayName(connector.getTypeName())
-				.grantType(connector.getGrantType())
-				.iconHref(connector.getIconHref())
-				.name(connector.getType())
-				.build();
-		
-		ConnectorWrapper wrapper = ConnectorWrapper.builder()
-				.request(request)
-				.type(type)
-				.build();
-		
-		return wrapper;
-	}
-	
-	private static ConnectorRequest of(String credentialsString) {
-		String[] values = credentialsString.split(":");
-		
-		ConnectorRequest request = ConnectorRequest.builder()
-				.clientId(values[0])
-				.clientSecret(values[1])
-				.username(values[2])
-				.password(values[3])
-				.build();
-		
-		return request;
+			
+			VaultEntry vaultEntry = null;
+			
+			if (Assert.isNotNull(getConnector().getCredentialsKey())) {
+				vaultEntry = dynamoDBMapper.load(VaultEntry.class, getConnector().getCredentialsKey());
+				
+				String[] values = vaultEntry.getValue().split(":");
+				
+				ConnectorRequest connectorRequest = ConnectorRequest.builder()
+						.clientId(values[0])
+						.clientSecret(values[1])
+						.username(values[2])
+						.password(values[3])
+						.build();
+				
+				String connectString = new StringBuilder()
+						.append(Assert.isNotNullOrEmpty(getRequest().getClientId()) ? getRequest().getClientId() : connectorRequest.getClientId())
+						.append(":")
+						.append(Assert.isNotNullOrEmpty(getRequest().getClientSecret()) ? getRequest().getClientSecret() : connectorRequest.getClientSecret())
+						.append(":")
+						.append(Assert.isNotNullOrEmpty(getRequest().getUsername()) ? getRequest().getUsername() : connectorRequest.getUsername())
+						.append(":")
+						.append(Assert.isNotNullOrEmpty(getRequest().getPassword()) ? getRequest().getPassword() : connectorRequest.getPassword())
+						.toString();
+				
+				vaultEntry.setValue(connectString);
+				
+			} else {
+				
+				String connectString = new StringBuilder()
+						.append(getRequest().getClientId())
+						.append(":")
+						.append(getRequest().getClientSecret())
+						.append(":")
+						.append(getRequest().getUsername())
+						.append(":")
+						.append(getRequest().getPassword())
+						.toString();
+				
+				vaultEntry = new VaultEntry();
+				vaultEntry.setValue(connectString);
+			}
+			
+			dynamoDBMapper.save(vaultEntry);
+			
+			Connector connector = Connector.builder()
+					.from(getConnector())
+					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
+					.lastUpdatedOn(Date.from(Instant.now()))
+					.name(getRequest().getName())
+					.authEndpoint(getType().getAuthEndpoint())
+					.grantType(getType().getGrantType())
+					.type(getType().getName())
+					.iconHref(getType().getIconHref())
+					.typeName(getType().getDisplayName())
+					.credentialsKey(vaultEntry.getToken())
+					.connectionDate(Date.from(Instant.now()))
+					.connectionStatus(connectionStatus)
+					.isConnected(isConnected)
+					.build();
+			
+			return connector;
+		}		
 	}
 }

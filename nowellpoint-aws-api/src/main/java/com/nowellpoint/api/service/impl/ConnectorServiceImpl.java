@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
@@ -21,6 +20,7 @@ import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.util.Assert;
 
 public class ConnectorServiceImpl extends AbstractConnectorService implements ConnectorService {
 	
@@ -52,7 +52,6 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		return Collections.unmodifiableMap(connectorTypeList.stream().collect(Collectors.toMap(t -> t.getName(), t -> t)));
 	}
 	
-	private static final String CONNECTED = "Connected";
 	private static final String DISCONNECTED = "Disconnected";
 	
 	@Override
@@ -71,11 +70,11 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		ConnectorType type = getConnectorType(request.getType());
 		
-		if (type == null) {
+		if (Assert.isNull(type)) {
 			throw new IllegalArgumentException(String.format("Invalid Connector Type: %s", request.getType()));
 		}
 		
-		Connector connector = buildConnector(type, request);
+		Connector connector = buildTypeWrapper(null, type, request);
 		
 		create(connector);
 		
@@ -87,34 +86,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = retrieve(id);
 		
-		ConnectorWrapper wrapper = ConnectorWrapper.of(original, request);
-		
 		ConnectorType type = getConnectorType(original.getType());
 		
-		VaultEntry vaultEntry = vaultEntryService.retrive(original.getCredentialsKey());
-		
-//		SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
-//		
-//		SalesforceCredentials credentials = SalesforceCredentials.builder()
-//				.clientId(Assert.isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : storedCredentials.getClientId())
-//				.clientSecret(Assert.isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : storedCredentials.getClientSecret())
-//				.username(Assert.isNotNullOrEmpty(request.getUsername()) ? request.getUsername() : storedCredentials.getUsername())
-//				.password(Assert.isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : storedCredentials.getPassword())
-//				.build();
-		
-		String connectionStatus = null;
-		
-		vaultEntryService.replace(original.getCredentialsKey(), null);
-		
-		Connector connector = Connector.builder()
-				.from(original)
-				.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
-				.lastUpdatedOn(Date.from(Instant.now()))
-				.name(request.getName())
-				.connectionDate(Date.from(Instant.now()))
-				.connectionStatus(connectionStatus)
-				.isConnected(isConnected(connectionStatus))
-				.build();
+		Connector connector = buildTypeWrapper(original, type, request);
 		
 		update(connector);
 		
@@ -130,27 +104,18 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	
 	@Override
 	public Connector refresh(String id) {
+		
 		Connector original = findById(id);
 		
-		VaultEntry vaultEntry = vaultEntryService.retrive(original.getCredentialsKey());
+		if (Assert.isNull(original.getCredentialsKey())) {
+			throw new IllegalArgumentException("Unable to Refresh Connector. Conecctor is missing credentials. Please update the connector with valid credentials");
+		}
 		
-		//SalesforceCredentials storedCredentials = SalesforceCredentials.of(vaultEntry.getValue());
+		ConnectorType type = getConnectorType(original.getType());
 		
+		ConnectorRequest request = ConnectorRequest.builder().build();
 		
-		
-		
-		
-		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
-		
-		Date now = Date.from(Instant.now());
-		
-		Connector connector = Connector.builder()
-				.from(original)
-				.connectionDate(now)
-				//.connectionStatus(connectionStatus)
-				//.isConnected(isConnected(connectionStatus))
-				.connectionStatus(DISCONNECTED)
-				.build();
+		Connector connector = buildTypeWrapper(original, type, request);
 		
 		update(connector);
 		
@@ -188,16 +153,29 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	 * 
 	 */
 	
-	private Connector buildConnector(ConnectorType type, ConnectorRequest request) {
+	private Connector buildTypeWrapper(Connector connector, ConnectorType type, ConnectorRequest request) {
 		
 		if ("SALESFORCE_SANDBOX".equals(request.getType()) || "SALESFORCE_PRODUCTION".equals(request.getType())) {
 			
-			ConnectorWrapper wrapper = ConnectorWrapper.builder()
-					.request(request)
-					.type(type)
-					.build();
-			
-			return wrapper.toConnector();
+			if (Assert.isNull(connector)) {
+				
+				ConnectorWrapper wrapper = ConnectorWrapper.builder()
+						.request(request)
+						.type(type)
+						.build();
+				
+				return wrapper.toConnector();
+				
+			} else {
+				
+				ConnectorWrapper wrapper = ConnectorWrapper.builder()
+						.connector(connector)
+						.request(request)
+						.type(type)
+						.build();
+				
+				return wrapper.toConnector();
+			}
 		}	
 		
 		return null;
@@ -205,9 +183,5 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	
 	private ConnectorType getConnectorType(String type) {
 		return connectorTypes.get(type);
-	}
-	
-	private Boolean isConnected(String connectionStatus) {
-		return CONNECTED.equals(connectionStatus) ? Boolean.TRUE : Boolean.FALSE;
 	}
 }
