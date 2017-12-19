@@ -53,7 +53,7 @@ public class ConnectorTest {
 		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
 				.connector()
 				.create(createRequest);
-		
+				
 		Assert.assertTrue(createResult.isSuccess());
 		Assert.assertNotNull(createResult.getTarget());
 		Assert.assertNotNull(createResult.getTarget().getAuthEndpoint());
@@ -73,7 +73,7 @@ public class ConnectorTest {
 		ConnectorRequest updateRequest = ConnectorRequest.builder()
 				.name("Updated name")
 				.token(token)
-				.clientId(System.getenv("SALESFORCE_CLIENT_SECRET")) 
+				.clientId(System.getenv("SALESFORCE_CLIENT_ID")) 
 				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))
 				.username(System.getenv("SALESFORCE_USERNAME"))
 				.password(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")))
@@ -84,6 +84,22 @@ public class ConnectorTest {
 				.update(createResult.getTarget().getId(), updateRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
+		Assert.assertTrue(updateResult.getTarget().getIsConnected());
+		Assert.assertTrue("Updated name".equals(updateResult.getTarget().getName()));
+		
+		UpdateResult<Connector> refreshResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.refresh(createResult.getTarget().getId());
+		
+		Assert.assertTrue(refreshResult.isSuccess());
+		Assert.assertTrue(refreshResult.getTarget().getIsConnected());
+		
+		UpdateResult<Connector> disconnectResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.disconnect(createResult.getTarget().getId());
+		
+		Assert.assertTrue(disconnectResult.isSuccess());
+		Assert.assertFalse(disconnectResult.getTarget().getIsConnected());
 		
 		ConnectorList connectorList = NowellpointClient.defaultClient(token)
 				.connector()
@@ -91,11 +107,11 @@ public class ConnectorTest {
 		
 		Assert.assertTrue(connectorList.getSize() > 0);
 		
-//		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-//				.connector()
-//				.delete(createResult.getTarget().getId());
-//		
-//		Assert.assertTrue(deleteResult.isSuccess());
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.delete(createResult.getTarget().getId());
+		
+		Assert.assertTrue(deleteResult.isSuccess());
 	}
 	
 	@AfterClass

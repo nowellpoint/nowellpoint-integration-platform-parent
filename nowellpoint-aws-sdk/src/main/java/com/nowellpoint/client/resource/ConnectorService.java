@@ -99,6 +99,40 @@ public class ConnectorService extends AbstractResource {
 		return result;
 	}
 	
+	public UpdateResult<Connector> refresh(String connectorId) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path(RESOURCE_CONTEXT)
+				.path(connectorId)
+				.path("actions")
+				.path("refresh")
+				.path("invoke")
+				.execute();
+		
+		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
+		
+		return result;
+	}
+	
+	public UpdateResult<Connector> disconnect(String connectorId) {
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.path(RESOURCE_CONTEXT)
+				.path(connectorId)
+				.path("actions")
+				.path("disconnect")
+				.path("invoke")
+				.execute();
+		
+		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
+		
+		return result;
+	}
+	
 	public DeleteResult delete(String connectorId) {
 		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
@@ -110,4 +144,6 @@ public class ConnectorService extends AbstractResource {
 		
 		return result;
 	}
+	
+	//{id}/actions/{action}/invoke
 }

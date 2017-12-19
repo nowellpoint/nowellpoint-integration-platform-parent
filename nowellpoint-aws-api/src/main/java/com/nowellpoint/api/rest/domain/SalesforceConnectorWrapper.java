@@ -1,5 +1,8 @@
 package com.nowellpoint.api.rest.domain;
 
+import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNotNull;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
@@ -16,7 +19,6 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
-import com.nowellpoint.util.Assert;
 
 public class SalesforceConnectorWrapper {
 	
@@ -40,7 +42,11 @@ public class SalesforceConnectorWrapper {
 	}
 	
 	public static SalesforceConnectorWrapper of(Connector connector) {
-		return of(connector, ConnectorRequest.builder().build());
+		ConnectorRequest request = ConnectorRequest.builder()
+				.name(connector.getName())
+				.build();
+		
+		return of(connector, request);
 	}
 	
 	public static SalesforceConnectorWrapper of(Connector connector, ConnectorRequest request) {
@@ -70,16 +76,16 @@ public class SalesforceConnectorWrapper {
 		this.request = request;
 	}
 	
-	public Token login() {
+	private Token login(String clientId, String clientSecret, String username, String password) {
 		HttpResponse httpResponse = RestResource.post(String.format(OAUTH_TOKEN_URI, getType().getAuthEndpoint()))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.acceptCharset(StandardCharsets.UTF_8)
 				.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.PASSWORD_GRANT_TYPE)
-				.parameter(OauthConstants.CLIENT_ID_PARAMETER, getRequest().getClientId())
-				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, getRequest().getClientSecret())
-				.parameter(OauthConstants.USERNAME_PARAMETER, getRequest().getUsername())
-				.parameter(OauthConstants.PASSWORD_PARAMETER, getRequest().getPassword())
+				.parameter(OauthConstants.CLIENT_ID_PARAMETER, clientId)
+				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, clientSecret)
+				.parameter(OauthConstants.USERNAME_PARAMETER, username)
+				.parameter(OauthConstants.PASSWORD_PARAMETER, password)
 				.execute();
 		
 		Token token = null;
@@ -98,14 +104,9 @@ public class SalesforceConnectorWrapper {
 		String connectionStatus = "Connected";
 		Boolean isConnected = Boolean.TRUE;
 		
-		try {
-			login();			
-		} catch (OauthException e) {
-			isConnected = Boolean.FALSE;
-			connectionStatus = String.format("Failed to Connect. (%s + : %s )", e.getError(), e.getErrorDescription());
-		}
+		Token token = null;
 		
-		if (Assert.isNull(getConnector())) {
+		if (isNull(getConnector())) {
 			
 			String connectString = new StringBuilder()
 					.append(getRequest().getClientId())
@@ -120,6 +121,13 @@ public class SalesforceConnectorWrapper {
 			VaultEntry vaultEntry = VaultEntry.of(connectString);
 			dynamoDBMapper.save(vaultEntry);
 			
+			try {
+				token = login(connectString);			
+			} catch (OauthException e) {
+				isConnected = Boolean.FALSE;
+				connectionStatus = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
+			}
+			
 			Connector connector = Connector.builder()
 					.name(getRequest().getName())
 					.authEndpoint(getType().getAuthEndpoint())
@@ -128,7 +136,7 @@ public class SalesforceConnectorWrapper {
 					.iconHref(getType().getIconHref())
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
-					.connectionDate(Date.from(Instant.now()))
+					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.connectionStatus(connectionStatus)
 					.isConnected(isConnected)
 					.build();
@@ -139,27 +147,20 @@ public class SalesforceConnectorWrapper {
 			
 			VaultEntry vaultEntry = null;
 			
-			if (Assert.isNotNull(getConnector().getCredentialsKey())) {
+			if (isNotNull(getConnector().getCredentialsKey())) {
 				
 				vaultEntry = dynamoDBMapper.load(VaultEntry.class, getConnector().getCredentialsKey());
 				
 				String[] values = vaultEntry.getValue().split(":");
 				
-				ConnectorRequest connectorRequest = ConnectorRequest.builder()
-						.clientId(values[0])
-						.clientSecret(values[1])
-						.username(values[2])
-						.password(values[3])
-						.build();
-				
 				String connectString = new StringBuilder()
-						.append(Assert.isNotNullOrEmpty(getRequest().getClientId()) ? getRequest().getClientId() : connectorRequest.getClientId())
+						.append(isNotNull(getRequest().getClientId()) ? getRequest().getClientId() : values[0])
 						.append(":")
-						.append(Assert.isNotNullOrEmpty(getRequest().getClientSecret()) ? getRequest().getClientSecret() : connectorRequest.getClientSecret())
+						.append(isNotNull(getRequest().getClientSecret()) ? getRequest().getClientSecret() : values[1])
 						.append(":")
-						.append(Assert.isNotNullOrEmpty(getRequest().getUsername()) ? getRequest().getUsername() : connectorRequest.getUsername())
+						.append(isNotNull(getRequest().getUsername()) ? getRequest().getUsername() : values[2])
 						.append(":")
-						.append(Assert.isNotNullOrEmpty(getRequest().getPassword()) ? getRequest().getPassword() : connectorRequest.getPassword())
+						.append(isNotNull(getRequest().getPassword()) ? getRequest().getPassword() : values[3])
 						.toString();
 				
 				vaultEntry.setValue(connectString);
@@ -182,9 +183,16 @@ public class SalesforceConnectorWrapper {
 			
 			dynamoDBMapper.save(vaultEntry);
 			
+			try {
+				token = login(vaultEntry.getValue());			
+			} catch (OauthException e) {
+				isConnected = Boolean.FALSE;
+				connectionStatus = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
+			}
+			
 			Connector connector = Connector.builder()
 					.from(getConnector())
-					.name(Assert.isNotNull(getRequest().getName()) ? getRequest().getName() : getConnector().getName())
+					.name(isNotNull(getRequest().getName()) ? getRequest().getName() : getConnector().getName())
 					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
 					.lastUpdatedOn(Date.from(Instant.now()))
 					.name(getRequest().getName())
@@ -194,12 +202,17 @@ public class SalesforceConnectorWrapper {
 					.iconHref(getType().getIconHref())
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
-					.connectionDate(Date.from(Instant.now()))
+					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.connectionStatus(connectionStatus)
 					.isConnected(isConnected)
 					.build();
 			
 			return connector;
 		}		
+	}
+	
+	private Token login(String connectString) {
+		String[] values = connectString.split(":");
+		return login(values[0], values[1], values[2], values[3]);
 	}
 }

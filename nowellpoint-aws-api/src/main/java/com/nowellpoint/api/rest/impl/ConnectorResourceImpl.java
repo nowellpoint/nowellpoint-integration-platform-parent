@@ -83,12 +83,12 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	@Override
 	public Response invokeAction(String id, String action) {
 		
-		Connector connector = connectorService.findById(id);
+		Connector connector = null;
 		
 		if ("refresh".equalsIgnoreCase(action)) {
-			//salesforceConnectorService.build(salesforceConnectorOrig);
+			connector = connectorService.refresh(id);
 		} else if ("disconnect".equalsIgnoreCase(action)) {
-			//salesforceConnectorService.test(salesforceConnectorOrig);
+			connector = connectorService.disconnect(id);
 		} else {
 			throw new BadRequestException(String.format("Invalid action: %s", action));
 		}

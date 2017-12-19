@@ -21,7 +21,6 @@ public abstract class AbstractImmutableCollectionResource<R extends AbstractImmu
 			documents.forEach(document -> {
 				try {
 					String className = getItemType().getSuperclass().getName();
-					System.out.println(className);
 					Method method = Class.forName(className).getDeclaredMethod("of", MongoDocument.class);
 					@SuppressWarnings("unchecked")
 					R object = (R) method.invoke(null, document);

@@ -96,7 +96,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public void deleteConnector(String id) {
 		Connector connector = findById(id);
-		vaultEntryService.remove(connector.getCredentialsKey());
+		if (Assert.isNotNull(connector.getCredentialsKey())) {
+			vaultEntryService.remove(connector.getCredentialsKey());
+		}
 		delete(connector);
 	}
 	
@@ -120,7 +122,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	public Connector disconnect(String id) {
 		Connector original = findById(id);
 		
-		vaultEntryService.remove(original.getCredentialsKey());
+		if (Assert.isNotNull(original.getCredentialsKey())) {
+			vaultEntryService.remove(original.getCredentialsKey());
+		}
 		
 		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
 		
