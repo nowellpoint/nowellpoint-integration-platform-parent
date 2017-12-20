@@ -125,7 +125,7 @@ public class SalesforceConnectorWrapper {
 				token = login(connectString);			
 			} catch (OauthException e) {
 				isConnected = Boolean.FALSE;
-				connectionStatus = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
+				connectionStatus = String.format("Failed to Connect. Error: %s [ %s ]", e.getError(), e.getErrorDescription());
 			}
 			
 			Connector connector = Connector.builder()
@@ -136,6 +136,7 @@ public class SalesforceConnectorWrapper {
 					.iconHref(getType().getIconHref())
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
+					.connectedAs(isConnected ? getRequest().getUsername() : null)
 					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.connectionStatus(connectionStatus)
 					.isConnected(isConnected)
@@ -153,38 +154,36 @@ public class SalesforceConnectorWrapper {
 				
 				String[] values = vaultEntry.getValue().split(":");
 				
-				String connectString = new StringBuilder()
-						.append(isNotNull(getRequest().getClientId()) ? getRequest().getClientId() : values[0])
-						.append(":")
-						.append(isNotNull(getRequest().getClientSecret()) ? getRequest().getClientSecret() : values[1])
-						.append(":")
-						.append(isNotNull(getRequest().getUsername()) ? getRequest().getUsername() : values[2])
-						.append(":")
-						.append(isNotNull(getRequest().getPassword()) ? getRequest().getPassword() : values[3])
-						.toString();
+				ConnectorRequest request = ConnectorRequest.builder()
+						.name(isNotNull(getRequest().getName()) ? getRequest().getName() : getConnector().getName())
+						.clientId(isNotNull(getRequest().getClientId()) ? getRequest().getClientId() : values[0])
+						.clientSecret(isNotNull(getRequest().getClientSecret()) ? getRequest().getClientSecret() : values[1])
+						.username(isNotNull(getRequest().getUsername()) ? getRequest().getUsername() : values[2])
+						.password(isNotNull(getRequest().getPassword()) ? getRequest().getPassword() : values[3])
+						.build();
 				
-				vaultEntry.setValue(connectString);
+				this.request = request;	
 				
 			} else {
-				
-				String connectString = new StringBuilder()
-						.append(getRequest().getClientId())
-						.append(":")
-						.append(getRequest().getClientSecret())
-						.append(":")
-						.append(getRequest().getUsername())
-						.append(":")
-						.append(getRequest().getPassword())
-						.toString();
-				
 				vaultEntry = new VaultEntry();
-				vaultEntry.setValue(connectString);
 			}
+			
+			String connectString = new StringBuilder()
+					.append(getRequest().getClientId())
+					.append(":")
+					.append(getRequest().getClientSecret())
+					.append(":")
+					.append(getRequest().getUsername())
+					.append(":")
+					.append(getRequest().getPassword())
+					.toString();
+			
+			vaultEntry.setValue(connectString);
 			
 			dynamoDBMapper.save(vaultEntry);
 			
 			try {
-				token = login(vaultEntry.getValue());			
+				token = login(connectString);			
 			} catch (OauthException e) {
 				isConnected = Boolean.FALSE;
 				connectionStatus = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
@@ -192,16 +191,16 @@ public class SalesforceConnectorWrapper {
 			
 			Connector connector = Connector.builder()
 					.from(getConnector())
-					.name(isNotNull(getRequest().getName()) ? getRequest().getName() : getConnector().getName())
+					.name(getRequest().getName())
 					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
 					.lastUpdatedOn(Date.from(Instant.now()))
-					.name(getRequest().getName())
 					.authEndpoint(getType().getAuthEndpoint())
 					.grantType(getType().getGrantType())
 					.type(getType().getName())
 					.iconHref(getType().getIconHref())
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
+					.connectedAs(isConnected ? getRequest().getUsername() : null)
 					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.connectionStatus(connectionStatus)
 					.isConnected(isConnected)

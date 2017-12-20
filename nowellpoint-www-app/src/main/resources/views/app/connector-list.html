@@ -1,0 +1,101 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="container">
+
+            <div class="dashhead">
+                <div class="dashhead-titles">
+                    <h4 class="dashhead-subtitle">&nbsp;</h4>
+                    <h2 class="dashhead-title">${labels["connectors"]}</h2>
+                </div>
+                <#if connectorsList?size gt 0>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="${links['connectors']}/new" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
+                        </p>
+                    </div>
+                </#if>
+            </div>
+
+            <#if connectorsList?size==0>
+                <br>
+                <br>
+                <br>
+                <p class="text-center">
+                    <span class="icon icon-database fa fa-4x"></span>
+                </p>
+                <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+                <p class="text-center">
+                    <a href="${links['connectors']}/new" class="btn btn-lg btn-outline-primary" role="button">${labels["add.connector"]}</a>
+                </p>
+            </#if>
+
+            <br>
+
+            <#if connectorsList?size gt 0>
+
+                <div id="accordion" role="tablist">
+
+                    <#list connectorsList?sort_by( "createdOn") as connector>
+
+                        <div class="card mb-3">
+                            <div class="card-header" role="tab" id="header_${connector?counter}">
+                                <h5 class="mb-0">
+                            <div class="flextable">
+                                <div class="flextable-item flextable-primary">
+                                    <a role="button" data-toggle="collapse" href="#body_${connector?counter}" aria-expanded="true" aria-controls="body_${connector?counter}" style="text-decoration:none;">
+                                        <span class="toggle-icon icon ${(connector?counter==1)?then('icon-chevron-with-circle-down', 'icon-chevron-with-circle-right')} fa-1x"></span></a>&emsp;${connector.typeName}
+                                </div>
+                                <div class="flextable-item">
+                                    <a href="${links['connectors']}/${connector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm" role="button"><span class="icon icon-edit fa-1x"></span></a>
+                                    <a href="${links['connectors']}/${connector.id!}/edit?view=1" data-toggle="tooltip" title="${labels['edit']}" class="btn btn-sm" role="button"><span class="icon icon-trash fa-1x"></span></a>
+                                </div>
+                            </div>  
+                            </h5>
+                            </div>
+                            <div id="body_${connector?counter}" class="${(connector?counter==1)?then('collapse show', 'collapse')}" role="tabpanel" aria-labelledby="header_${connector?counter}" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img class="float-left rounded" src="${connector.iconHref}" style="height: 50px; width: 75px" alt="Icon">
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="font-weight-normal">${labels["connection"]}</div>
+                                            <div class="font-weight-light"><a href="${links['connectors']}/${connector.id}">${connector.name!}</a></div>
+                                            <div class="text-muted">${connector.connectedAs!}&nbsp;</div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="font-weight-normal">${labels["status"]}</div>
+                                            <#if connector.isConnected>
+                                                <p class="text-success">${connector.connectionStatus!}</p>
+                                                <div class="font-weight-normal">${labels["connected.on"]}</div>
+                                                <div class="font-weight-light">${(connector.connectionDate?date?string.long)!} ${(connector.connectionDate?time?string.medium)!}</div>
+                                            </#if>
+                                            <#if ! connector.isConnected>
+                                                <p class="text-danger text-truncate">${connector.connectionStatus!}</p>
+                                            </#if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </#list>
+
+                </div>
+
+            </#if>
+
+        </div>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('a[data-toggle="collapse"]').click(function() {
+                    $(this).find('span.toggle-icon').toggleClass('icon-chevron-with-circle-right icon-chevron-with-circle-down');
+                })
+            })
+        </script>
+
+
+    </@t.page>

@@ -68,6 +68,7 @@ public class ConnectorTest {
 		Assert.assertNotNull(createResult.getTarget().getConnectionDate());
 		Assert.assertNotNull(createResult.getTarget().getMeta());
 		Assert.assertNotNull(createResult.getTarget().getOwner());
+		Assert.assertNotNull(createResult.getTarget().getConnectedAs());
 		Assert.assertTrue(createResult.getTarget().getIsConnected());
 		
 		ConnectorRequest updateRequest = ConnectorRequest.builder()

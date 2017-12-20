@@ -28,6 +28,7 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract String getIconHref();
 	public abstract @Nullable @JsonIgnore String getCredentialsKey();
 	public abstract String getConnectionStatus();
+	public abstract @Nullable String getConnectedAs();
 	public abstract @Nullable Date getConnectionDate();
 	
 	@Value.Default

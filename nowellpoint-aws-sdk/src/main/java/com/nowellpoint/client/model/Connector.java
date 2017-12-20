@@ -11,6 +11,8 @@ public class Connector extends AbstractResource {
 	private Date connectionDate;
 	private Boolean isConnected;
 	private OrganizationInfo owner;
+	private String iconHref;
+	private String connectedAs;
 	
 	public Connector() {
 		
@@ -42,5 +44,13 @@ public class Connector extends AbstractResource {
 	
 	public Boolean getIsConnected() {
 		return isConnected;
+	}
+	
+	public String getIconHref() {
+		return iconHref;
+	}
+	
+	public String getConnectedAs() {
+		return connectedAs;
 	}
 }

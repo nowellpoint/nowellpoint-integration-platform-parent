@@ -44,6 +44,8 @@ public class Connector extends MongoDocument {
 	
 	private Boolean isConnected;
 	
+	private String connectedAs;
+	
 	public Connector() {
 		
 	}
@@ -150,5 +152,13 @@ public class Connector extends MongoDocument {
 
 	public void setIsConnected(Boolean isConnected) {
 		this.isConnected = isConnected;
+	}
+
+	public String getConnectedAs() {
+		return connectedAs;
+	}
+
+	public void setConnectedAs(String connectedAs) {
+		this.connectedAs = connectedAs;
 	}
 }
