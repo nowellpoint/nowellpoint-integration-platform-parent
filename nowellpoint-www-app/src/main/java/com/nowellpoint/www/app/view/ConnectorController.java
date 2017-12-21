@@ -41,7 +41,7 @@ import spark.Response;
 public class ConnectorController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String SALESFORCE_CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-view.html");
+		public static final String CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "connector-view.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
 		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
 		public static final String CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "connector-list.html");
@@ -88,7 +88,7 @@ public class ConnectorController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("connector", connector);
 
-		return render(ConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_VIEW);
+		return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_VIEW);
 	};
 
 	/**
@@ -184,7 +184,7 @@ public class ConnectorController extends AbstractStaticController {
 			model.put("errorMessage", message);
 
 			return render(ConnectorController.class, configuration, request, response, model,
-					Template.SALESFORCE_CONNECTOR_VIEW);
+					Template.CONNECTOR_VIEW);
 		}
 
 		response.redirect(Path.Route.CONNECTORS_VIEW.replace(":id", id));

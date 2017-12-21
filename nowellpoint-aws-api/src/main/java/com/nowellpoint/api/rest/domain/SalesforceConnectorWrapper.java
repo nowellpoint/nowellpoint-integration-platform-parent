@@ -101,7 +101,7 @@ public class SalesforceConnectorWrapper {
 	
 	public Connector toConnector() {
 		
-		String connectionStatus = "Connected";
+		String status = "Connected";
 		Boolean isConnected = Boolean.TRUE;
 		
 		Token token = null;
@@ -125,7 +125,7 @@ public class SalesforceConnectorWrapper {
 				token = login(connectString);			
 			} catch (OauthException e) {
 				isConnected = Boolean.FALSE;
-				connectionStatus = String.format("Failed to Connect. Error: %s [ %s ]", e.getError(), e.getErrorDescription());
+				status = String.format("Failed to Connect. Error: %s [ %s ]", e.getError(), e.getErrorDescription());
 			}
 			
 			Connector connector = Connector.builder()
@@ -137,8 +137,8 @@ public class SalesforceConnectorWrapper {
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
 					.connectedAs(isConnected ? getRequest().getUsername() : null)
-					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
-					.connectionStatus(connectionStatus)
+					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
+					.status(status)
 					.isConnected(isConnected)
 					.build();
 			
@@ -186,7 +186,7 @@ public class SalesforceConnectorWrapper {
 				token = login(connectString);			
 			} catch (OauthException e) {
 				isConnected = Boolean.FALSE;
-				connectionStatus = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
+				status = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
 			}
 			
 			Connector connector = Connector.builder()
@@ -201,8 +201,8 @@ public class SalesforceConnectorWrapper {
 					.typeName(getType().getDisplayName())
 					.credentialsKey(vaultEntry.getToken())
 					.connectedAs(isConnected ? getRequest().getUsername() : null)
-					.connectionDate(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
-					.connectionStatus(connectionStatus)
+					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
+					.status(status)
 					.isConnected(isConnected)
 					.build();
 			

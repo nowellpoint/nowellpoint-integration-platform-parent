@@ -7,8 +7,8 @@ public class Connector extends AbstractResource {
 	private String name;
 	private String typeName;
 	private String authEndpoint;
-	private String connectionStatus;
-	private Date connectionDate;
+	private String status;
+	private Date connectedOn;
 	private Boolean isConnected;
 	private OrganizationInfo owner;
 	private String iconHref;
@@ -34,14 +34,14 @@ public class Connector extends AbstractResource {
 		return owner;
 	}
 
-	public String getConnectionStatus() {
-		return connectionStatus;
-	}
-
-	public Date getConnectionDate() {
-		return connectionDate;
+	public String getStatus() {
+		return status;
 	}
 	
+	public Date getConnectedOn() {
+		return connectedOn;
+	}
+
 	public Boolean getIsConnected() {
 		return isConnected;
 	}

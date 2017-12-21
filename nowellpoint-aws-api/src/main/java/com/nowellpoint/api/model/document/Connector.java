@@ -38,9 +38,9 @@ public class Connector extends MongoDocument {
 	
 	private String credentialsKey;
 	
-	private String connectionStatus;
+	private String status;
 	
-	private Date connectionDate;
+	private Date connectedOn;
 	
 	private Boolean isConnected;
 	
@@ -130,20 +130,20 @@ public class Connector extends MongoDocument {
 		this.credentialsKey = credentialsKey;
 	}
 
-	public String getConnectionStatus() {
-		return connectionStatus;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setConnectionStatus(String connectionStatus) {
-		this.connectionStatus = connectionStatus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
-	public Date getConnectionDate() {
-		return connectionDate;
+	public Date getConnectedOn() {
+		return connectedOn;
 	}
 
-	public void setConnectionDate(Date connectionDate) {
-		this.connectionDate = connectionDate;
+	public void setConnectedOn(Date connectedOn) {
+		this.connectedOn = connectedOn;
 	}
 
 	public Boolean getIsConnected() {

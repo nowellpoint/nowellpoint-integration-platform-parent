@@ -58,7 +58,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-2">
-                                            <img class="float-left rounded" src="${connector.iconHref}" style="height: 50px; width: 75px" alt="Icon">
+                                            <img class="float-left rounded" src="${connector.iconHref}" style="height: 75px; width: 75px" alt="Icon">
                                         </div>
                                         <div class="col-3">
                                             <div class="font-weight-normal">${labels["connection"]}</div>
@@ -68,12 +68,12 @@
                                         <div class="col-7">
                                             <div class="font-weight-normal">${labels["status"]}</div>
                                             <#if connector.isConnected>
-                                                <p class="text-success">${connector.connectionStatus!}</p>
+                                                <p class="text-success">${connector.status!}</p>
                                                 <div class="font-weight-normal">${labels["connected.on"]}</div>
-                                                <div class="font-weight-light">${(connector.connectionDate?date?string.long)!} ${(connector.connectionDate?time?string.medium)!}</div>
+                                                <div class="font-weight-light">${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}</div>
                                             </#if>
                                             <#if ! connector.isConnected>
-                                                <p class="text-danger text-truncate">${connector.connectionStatus!}</p>
+                                                <p class="text-danger text-truncate">${connector.status!}</p>
                                             </#if>
                                         </div>
                                     </div>

@@ -134,9 +134,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 				.from(original)
 				.lastUpdatedBy(who)
 				.lastUpdatedOn(now)
-				.connectionDate(null)
+				.connectedOn(null)
 				.credentialsKey(null)
-				.connectionStatus(DISCONNECTED)
+				.status(DISCONNECTED)
 				.isConnected(Boolean.FALSE)
 				.build();
 		

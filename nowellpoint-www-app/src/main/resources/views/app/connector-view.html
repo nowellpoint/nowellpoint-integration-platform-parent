@@ -1,0 +1,41 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-12">
+                    <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="media">
+                <img src="${connector.iconHref}" alt="Icon">
+                <div class="media-body">
+                    <span class="font-weight-normal">${connector.name!}</span><br>
+                    <span class="font-weight-light">${connector.connectedAs!}<br>${connector.authEndpoint!}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+
+                <p class="font-weight-normal">${labels["status"]}:&nbsp;
+                <#if connector.isConnected>
+                    <span class="text-success">${connector.status!}&emsp;</span>
+                    <span class="font-weight-normal">${labels["connected.on"]}:&nbsp;</span>
+                    <span class="font-weight-light">${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}</span>
+                </#if>
+                <#if ! connector.isConnected>
+                    <span class="text-danger text-truncate">${connector.status!}</span>
+                </#if>
+                </p>    
+                </div>
+            </div>
+
+
+            <div id="error"></div>
+
+        </div>
+    </@t.page>

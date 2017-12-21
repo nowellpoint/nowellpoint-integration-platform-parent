@@ -64,8 +64,8 @@ public class ConnectorTest {
 		Assert.assertNotNull(createResult.getTarget().getCreatedOn());
 		Assert.assertNotNull(createResult.getTarget().getLastUpdatedBy());
 		Assert.assertNotNull(createResult.getTarget().getLastUpdatedOn());
-		Assert.assertNotNull(createResult.getTarget().getConnectionStatus());
-		Assert.assertNotNull(createResult.getTarget().getConnectionDate());
+		Assert.assertNotNull(createResult.getTarget().getStatus());
+		Assert.assertNotNull(createResult.getTarget().getConnectedOn());
 		Assert.assertNotNull(createResult.getTarget().getMeta());
 		Assert.assertNotNull(createResult.getTarget().getOwner());
 		Assert.assertNotNull(createResult.getTarget().getConnectedAs());
@@ -85,6 +85,7 @@ public class ConnectorTest {
 				.update(createResult.getTarget().getId(), updateRequest);
 		
 		Assert.assertTrue(updateResult.isSuccess());
+		Assert.assertNotNull(updateResult.getTarget().getStatus());
 		Assert.assertTrue(updateResult.getTarget().getIsConnected());
 		Assert.assertTrue("Updated name".equals(updateResult.getTarget().getName()));
 		
@@ -93,6 +94,7 @@ public class ConnectorTest {
 				.refresh(createResult.getTarget().getId());
 		
 		Assert.assertTrue(refreshResult.isSuccess());
+		Assert.assertNotNull(refreshResult.getTarget().getStatus());
 		Assert.assertTrue(refreshResult.getTarget().getIsConnected());
 		
 		UpdateResult<Connector> disconnectResult = NowellpointClient.defaultClient(token)
@@ -100,6 +102,7 @@ public class ConnectorTest {
 				.disconnect(createResult.getTarget().getId());
 		
 		Assert.assertTrue(disconnectResult.isSuccess());
+		Assert.assertNotNull(disconnectResult.getTarget().getStatus());
 		Assert.assertFalse(disconnectResult.getTarget().getIsConnected());
 		
 		ConnectorList connectorList = NowellpointClient.defaultClient(token)
