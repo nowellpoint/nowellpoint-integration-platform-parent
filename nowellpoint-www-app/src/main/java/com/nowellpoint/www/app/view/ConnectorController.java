@@ -25,9 +25,9 @@ import javax.ws.rs.BadRequestException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Connector;
 import com.nowellpoint.client.model.ConnectorList;
+import com.nowellpoint.client.model.ConnectorRequest;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
@@ -43,7 +43,7 @@ public class ConnectorController extends AbstractStaticController {
 	public static class Template {
 		public static final String CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "connector-view.html");
 		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
-		public static final String SALESFORCE_CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "salesforce-connector-edit.html");
+		public static final String CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "connector-edit.html");
 		public static final String CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "connector-list.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-view.html");
@@ -103,7 +103,6 @@ public class ConnectorController extends AbstractStaticController {
 		Token token = getToken(request);
 
 		String id = request.params(":id");
-		String view = request.queryParams("view");
 
 		Connector connector = NowellpointClient.defaultClient(token)
 				.connector()
@@ -111,15 +110,15 @@ public class ConnectorController extends AbstractStaticController {
 
 		Map<String, Object> model = getModel();
 		model.put("connector", connector);
-
-		if (view != null && view.equals("1")) {
-			model.put("cancel", Path.Route.CONNECTORS_LIST);
-		} else {
-			model.put("cancel", Path.Route.CONNECTORS_VIEW.replace(":id", id));
-		}
-
-		return render(ConnectorController.class, configuration, request, response, model,
-				Template.SALESFORCE_CONNECTOR_EDIT);
+		
+		return TemplateBuilder.template()
+				.configuration(configuration)
+				.controllerClass(ConnectorController.class)
+				.identity(getIdentity(request))
+				.locale(getLocale(request))
+				.model(model).templateName(Template.CONNECTOR_EDIT)
+				.timeZone(getTimeZone(request))
+				.build();
 	};
 	
 	/**
@@ -162,26 +161,40 @@ public class ConnectorController extends AbstractStaticController {
 		Token token = getToken(request);
 
 		String id = request.params(":id");
-		String tag = request.queryParams("tag");
-		String name = request.queryParams("name");
+		String clientId = request.queryParamOrDefault("clientId", null);
+		String clientSecret = request.queryParamOrDefault("clientSecret", null);
+		String name = request.queryParamOrDefault("name", null);
+		String username = request.queryParamOrDefault("username", null);
+		String password = request.queryParamOrDefault("password", null);
+		
+		System.out.println(id);
+		System.out.println(clientId);
+		System.out.println(clientSecret);
+		System.out.println(name);
+		System.out.println(username);
+		System.out.println(password);
 
-		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest().withName(name)
-				.withTag(tag);
+		ConnectorRequest connectorRequest = ConnectorRequest.builder()
+				.clientId(clientId)
+				.clientSecret(clientSecret)
+				.name(name)
+				.username(username)
+				.password(password)
+				.build();
 
-		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.update(id, salesforceConnectorRequest);
-
-		String message = null;
+		UpdateResult<Connector> updateResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.update(id, connectorRequest);
 
 		if (!updateResult.isSuccess()) {
 
-			SalesforceConnector salesforceConnector = NowellpointClient.defaultClient(token).salesforceConnector()
+			Connector connector = NowellpointClient.defaultClient(token)
+					.connector()
 					.get(id);
 
 			Map<String, Object> model = getModel();
-			model.put("salesforceConnector", salesforceConnector);
-			model.put("errorMessage", message);
+			model.put("connector", connector);
+			model.put("errorMessage", updateResult.getErrorMessage());
 
 			return render(ConnectorController.class, configuration, request, response, model,
 					Template.CONNECTOR_VIEW);
