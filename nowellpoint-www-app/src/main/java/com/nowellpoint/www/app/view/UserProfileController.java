@@ -222,7 +222,7 @@ public class UserProfileController extends AbstractStaticController {
 		String city = request.queryParams("city");
 		String countryCode = request.queryParams("countryCode");
 		String postalCode = request.queryParams("postalCode");
-		String stateCode = request.queryParams("stateCode");
+		String state = request.queryParams("state");
 		String street = request.queryParams("street");
 		
 		AddressRequest addressRequest = AddressRequest.builder()
@@ -230,7 +230,7 @@ public class UserProfileController extends AbstractStaticController {
 				.countryCode(countryCode)
 				.userProfileId(userProfileId)
 				.postalCode(postalCode)
-				.stateCode(stateCode)
+				.state(state)
 				.street(street)
 				.token(token)
 				.build();

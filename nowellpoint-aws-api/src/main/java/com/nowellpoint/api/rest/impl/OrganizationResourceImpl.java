@@ -61,8 +61,8 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	}
 
 	@Override
-	public Response updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode) {
-		Organization organization = organizationService.updateBillingAddress(id, street, city, stateCode, postalCode, countryCode);
+	public Response updateBillingAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
+		Organization organization = organizationService.updateBillingAddress(id, street, city, state, postalCode, countryCode);
 		return Response.ok(organization)
 				.build();
 	}

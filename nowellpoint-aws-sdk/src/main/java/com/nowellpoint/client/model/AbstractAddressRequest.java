@@ -12,7 +12,7 @@ public abstract class AbstractAddressRequest extends AbstractAuthenticatedReques
 	public abstract @Nullable String getUserProfileId();
 	public abstract String getStreet();
 	public abstract String getCity();
-	public abstract @Nullable String getStateCode();
+	public abstract @Nullable String getState();
 	public abstract String getPostalCode();
 	public abstract String getCountryCode();
 }

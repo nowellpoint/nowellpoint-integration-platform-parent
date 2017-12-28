@@ -33,7 +33,9 @@ public class OrganizationController extends AbstractStaticController {
 	public static class Template {
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
-		public static final String PAYMENT_METHOD_PART = String.format(APPLICATION_CONTEXT, "payment-method-part.html");
+		public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");
+		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization-billing-address.html");
+		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization-billing-contact.html");
 	}
 	
 	/**
@@ -163,7 +165,6 @@ public class OrganizationController extends AbstractStaticController {
 		}
 		
 		return responseBody(updateResult);
-			
 	}
 	
 	/**
@@ -213,7 +214,7 @@ public class OrganizationController extends AbstractStaticController {
 		String city = request.queryParams("city");
 		String countryCode = request.queryParams("countryCode");
 		String postalCode = request.queryParams("postalCode");
-		String stateCode = request.queryParams("stateCode");
+		String state = request.queryParams("state");
 		String street = request.queryParams("street");
 		
 		AddressRequest addressRequest = AddressRequest.builder()
@@ -221,7 +222,7 @@ public class OrganizationController extends AbstractStaticController {
 				.countryCode(countryCode)
 				.organizationId(organizationId)
 				.postalCode(postalCode)
-				.stateCode(stateCode)
+				.state(state)
 				.street(street)
 				.token(token)
 				.build();
@@ -233,11 +234,9 @@ public class OrganizationController extends AbstractStaticController {
 				.update(addressRequest);
 		
 		if (updateResult.isSuccess()) {
-			
 			Map<String, Object> model = getModel();
-			model.put("organization", updateResult.getTarget());
-			
-			return responseBody(updateResult);
+			model.put("organization", updateResult.getTarget());			
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_BILLING_ADDRESS);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -277,11 +276,9 @@ public class OrganizationController extends AbstractStaticController {
 				.update(contactRequest);
 		
 		if (updateResult.isSuccess()) {
-			
 			Map<String, Object> model = getModel();
-			model.put("organization", updateResult.getTarget());
-			
-			return responseBody(updateResult);
+			model.put("organization", updateResult.getTarget());			
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_BILLING_CONTACT);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -295,7 +292,7 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String updateCreditCard(Configuration configuration, Request request, Response response) {
+	public static String updatePaymentMethod(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String organizationId = request.params(":id");
@@ -323,12 +320,9 @@ public class OrganizationController extends AbstractStaticController {
 				.update(creditCardRequest);
 		
 		if (updateResult.isSuccess()) {
-			
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
-			
-			return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
-			
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_PAYMENT_METHOD);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -363,7 +357,7 @@ public class OrganizationController extends AbstractStaticController {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
 			
-			return render(OrganizationController.class, configuration, request, response, model, Template.PAYMENT_METHOD_PART);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_PAYMENT_METHOD);
 			
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());

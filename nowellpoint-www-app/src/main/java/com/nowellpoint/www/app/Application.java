@@ -179,7 +179,7 @@ public class Application implements SparkApplication {
 				-> OrganizationController.changePlan(configuration, request, response));
 		
 		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-				-> OrganizationController.updateCreditCard(configuration, request, response));
+				-> OrganizationController.updatePaymentMethod(configuration, request, response));
 		
 		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 				-> OrganizationController.removeCreditCard(configuration, request, response));

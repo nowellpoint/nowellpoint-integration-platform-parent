@@ -263,14 +263,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 	
 	@Override
-	public Organization updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode) {
+	public Organization updateBillingAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
 		
 		Organization organization = findById(id);
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.postalCode(postalCode)
 				.streetAddress(street)
-				.region(stateCode)
+				.region(state)
 				.locality(city)
 				.countryCodeAlpha2(countryCode);
 		

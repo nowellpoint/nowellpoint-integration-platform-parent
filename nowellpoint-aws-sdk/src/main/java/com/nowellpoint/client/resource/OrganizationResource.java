@@ -263,7 +263,7 @@ public class OrganizationResource extends AbstractResource {
 					.path("billing-address")
 					.parameter("street", addressRequest.getStreet())
 					.parameter("city", addressRequest.getCity())
-					.parameter("stateCode", addressRequest.getStateCode())
+					.parameter("state", addressRequest.getState())
 					.parameter("postalCode", addressRequest.getPostalCode())
 					.parameter("countryCode", addressRequest.getCountryCode())
 					.execute();

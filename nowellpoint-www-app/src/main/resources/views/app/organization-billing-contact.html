@@ -1,0 +1,89 @@
+<div class="col-12">
+    <div class="flextable" style="height: 18px">
+        <div class="flextable-item flextable-primary">
+            <h4><b>${labels["billing.contact"]}</b></h4>
+        </div>
+        <div class="flextable-item">
+            <button class="btn btn-link" id="editBillingContact"><span class="icon icon-pencil"></span></button>
+        </div>
+    </div>
+    <hr>
+    <div id="billingContactView">
+        <div id="billingContactSuccess">
+            <div class="alert alert-success">
+                <strong>${labels["success"]}</strong> ${labels["billing.contact"]} ${labels["success.message"]}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["name"]}</b>
+            </div>
+            <div class="col-9">
+                ${(organization.subscription.billingContact.name)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["email"]}</b>
+            </div>
+            <div class="col-9">
+                ${(organization.subscription.billingContact.email)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["phone"]}</b>
+            </div>
+            <div class="col-9">
+                ${(organization.subscription.billingContact.phone)!}
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div id="billingContactEdit" style="display: none;">
+        <form class="form-vertical" name="billingContactForm" id="billingContactForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-contact">
+            <div class="form-row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="firstName">${labels["first.name"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="firstName" id="firstName" class="form-control" value="${(organization.subscription.billingContact.firstName)!}" autofocus>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="lastName" id="lastName" class="form-control" value="${(organization.subscription.billingContact.lastName)!}" required>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="email">${labels["email"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="email" id="email" class="form-control" value="${(organization.subscription.billingContact.email)!}" required>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" name="phone" id="phone" class="form-control" value="${(organization.subscription.billingContact.phone)!}">
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-4">
+                <button class="btn btn-success" id="saveBillingContact">${labels["save"]}</button>
+                <button class="btn btn-link" id="cancelBillingContact">${labels["cancel"]}</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

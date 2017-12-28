@@ -1,7 +1,7 @@
 <#import "template.html" as t>
 
     <@t.page>
-                
+
         <div class="container">
 
             <br>
@@ -185,7 +185,7 @@
                                 </div>
                                 <hr>
                             </div>
-                            <div id="paymentMethodEdit" style="display: none;">
+                            <div id="paymentMethodEdit" class="hidden">
                                 <form class="form-vertical" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
                                     <div class="row form-group">
                                         <div class="col-3">
@@ -397,7 +397,7 @@
                                     <hr>
                                 </div>
                             </div>
-                            <div id="billingAddressEdit" style="display: none;">
+                            <div id="billingAddressEdit" class="hidden">
                                 <form class="form-vertical" name="billingAddressForm" id="billingAddressForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-address">
                                     <div class="form-row form-group">
                                         <div class="col-3">
@@ -433,10 +433,18 @@
                                     </div>
                                     <div class="form-row form-group">
                                         <div class="col-3">
-                                            <b><label class="control-label" for="state">${labels["country"]}</label></b>
+                                            <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
                                         </div>
                                         <div class="col-4">
-                                            <input type="text" name="country" id="country" class="form-control" value="${(organization.subscription.billingAddress.country)!}" required>
+                                            <select class="form-control" id="countryCode" name="countryCode" required>
+                                                <#list countryList as country>
+                                                    <!-- <#if country.iso2Code==organization.subscription.billingAddress.countryCode> -->
+                                                    <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                                    <!-- <#else> -->
+                                                    <option value="${country.iso2Code}">${country.name}</option>
+                                                    <!-- </#if> -->
+                                                </#list>
+                                            </select>
                                         </div>
                                     </div>
                                 </form>
@@ -547,10 +555,13 @@
              *
              */
 
-            $(document).on('click', 'button#editPaymentMethod', function() {
+            $(document).on('click', 'button#editPaymentMethod', function () {
                 $('#editPaymentMethod').hide();
                 $('#paymentMethodView').hide();
                 $('#paymentMethodEdit').show();
+                $('html, body').animate({
+                    scrollTop: ($('#payment-method').offset().top - 120)},500);
+                $('#cardholderName').focus();
             });
 
             /*-----------------------------------------------------------
@@ -558,7 +569,76 @@
              *
              */
 
-            $(document).on('click', 'button#savePaymentMethod', function() {
+            $(document).on('click', 'button#cancelPaymentMethod', function () {
+                $('#paymentMethodEdit').hide();
+                $('#number').val('');
+                $('#cvv').val('');
+                $('#error').remove();
+                $('#paymentMethodView').show();
+                $('#editPaymentMethod').show();
+            });
+
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editBillingContact', function () {
+                $('#editBillingContact').hide();
+                $('#billingContactView').hide();
+                $('#billingContactEdit').show();
+                $('html, body').animate({
+                    scrollTop: ($('#billing-contact').offset().top - 120)},500);
+                $("#firstName").focus();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#cancelBillingContact', function () {
+                $('#error').remove();
+                $('#billingContactEdit').hide();
+                $('#billingContactView').show();
+                $('#editBillingContact').show();
+            });
+
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editBillingAddress', function () {
+                $('#editBillingAddress').hide();
+                $('#billingAddressView').hide();
+                $('#billingAddressEdit').show();
+                $('html, body').animate({
+                    scrollTop: ($('#billing-address').offset().top - 120)},500);
+                $('#street').focus();
+            });
+
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#cancelBillingAddress', function () {
+                $('#error').remove();
+                $('#billingAddressEdit').hide();
+                $('#billingAddressView').show();
+                $('#editBillingAddress').show();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#savePaymentMethod', function () {
 
                 $form = $("#paymentMethodForm");
 
@@ -569,7 +649,7 @@
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function(response) {
+                    complete: function (response) {
                         if (response.status == 200) {
                             $('#payment-method').html(response.responseText);
                             $('#paymentMethodSuccess').delay(1500).fadeOut('slow');
@@ -587,63 +667,58 @@
              *
              */
 
-            $(document).on('click', 'button#cancelPaymentMethod', function() {
-                $('#paymentMethodEdit').hide();
-                $('#number').val('');
-                $('#cvv').val('');
+            $(document).on('click', 'button#saveBillingAddress', function () {
+
+                $form = $("#billingAddressForm");
+
                 $('#error').remove();
-                $('#paymentMethodView').show();
-                $('#editPaymentMethod').show();
-            });
 
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function (response) {
+                        if (response.status == 200) {
+                            $('#billing-address').html(response.responseText);
+                            $('#billingAddressSuccess').delay(1500).fadeOut('slow');
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
+            });
 
             /*-----------------------------------------------------------
              *
              *
              */
 
-            $(document).on('click', 'button#editBillingContact', function() {
-                $('#editBillingContact').hide();
-                $('#billingContactView').hide();
-                $('#billingContactEdit').show();
-            });
+            $(document).on('click', 'button#saveBillingContact', function () {
 
-            /*-----------------------------------------------------------
-             *
-             *
-             */
+                $form = $("#billingContactForm");
 
-            $(document).on('click', 'button#cancelBillingContact', function() {
-                $('#billingContactEdit').hide();
                 $('#error').remove();
-                $('#billingContactView').show();
-                $('#editBillingContact').show();
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function (response) {
+                        if (response.status == 200) {
+                            $('#billing-contact').html(response.responseText);
+                            $('#billingContactSuccess').delay(1500).fadeOut('slow');
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
             });
-
-
-            /*-----------------------------------------------------------
-             *
-             *
-             */
-
-            $(document).on('click', 'button#editBillingAddress', function() {
-                $('#editBillingAddress').hide();
-                $('#billingAddressView').hide();
-                $('#billingAddressEdit').show();
-            });
-
-
-            /*-----------------------------------------------------------
-             *
-             *
-             */
-
-            $(document).on('click', 'button#cancelBillingAddress', function() {
-                $('#billingAddressEdit').hide();
-                $('#error').remove();
-                $('#billingAddressView').show();
-                $('#editBillingAddress').show();
-            });
+            
         </script>
-
     </@t.page>

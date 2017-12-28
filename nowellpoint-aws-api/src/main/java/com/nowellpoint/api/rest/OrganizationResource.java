@@ -62,7 +62,7 @@ public interface OrganizationResource {
 			@PathParam("id") String id, 
 			@FormParam("street") String street,
 			@FormParam("city") String city,
-			@FormParam("stateCode") String stateCode,
+			@FormParam("state") String state,
 			@FormParam("postalCode") String postalCode,
 			@FormParam("countryCode") String countryCode);
 	

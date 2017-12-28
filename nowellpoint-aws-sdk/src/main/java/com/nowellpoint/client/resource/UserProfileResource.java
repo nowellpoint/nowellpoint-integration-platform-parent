@@ -227,7 +227,7 @@ public class UserProfileResource extends AbstractResource {
 					.path("address")
 					.parameter("city", addressRequest.getCity())
 					.parameter("countryCode", addressRequest.getCountryCode())
-					.parameter("state", addressRequest.getStateCode())
+					.parameter("state", addressRequest.getState())
 					.parameter("postalCode", addressRequest.getPostalCode())
 					.parameter("street", addressRequest.getStreet())
 					.execute();

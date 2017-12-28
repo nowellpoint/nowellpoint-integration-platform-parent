@@ -126,7 +126,7 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.from(original.getAddress())
 				.city(city)
 				.countryCode(countryCode)
-				.stateCode(state)
+				.state(state)
 				.street(street)
 				.updatedOn(Date.from(Instant.now()))
 				.build();
