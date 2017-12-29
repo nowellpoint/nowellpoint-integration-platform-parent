@@ -136,6 +136,8 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 				.lastUpdatedOn(now)
 				.connectedOn(null)
 				.credentialsKey(null)
+				.username(null)
+				.clientId(null)
 				.status(DISCONNECTED)
 				.isConnected(Boolean.FALSE)
 				.build();
@@ -157,8 +159,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 			return wrapper.toConnector();
 		}
 		
-		return null;
-		
+		return null;		
 	}
 	
 	private Connector buildConnector(Connector original, ConnectorRequest request) {

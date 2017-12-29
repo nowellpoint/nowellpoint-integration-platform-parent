@@ -13,6 +13,8 @@ public class Connector extends AbstractResource {
 	private OrganizationInfo owner;
 	private String iconHref;
 	private String connectedAs;
+	private String username;
+	private String clientId;
 	
 	public Connector() {
 		
@@ -52,5 +54,13 @@ public class Connector extends AbstractResource {
 	
 	public String getConnectedAs() {
 		return connectedAs;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	
+	public String getClientId() {
+		return clientId;
 	}
 }

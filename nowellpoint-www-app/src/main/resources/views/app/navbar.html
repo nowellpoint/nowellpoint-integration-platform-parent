@@ -1,31 +1,26 @@
 <nav id="top-nav" class="navbar navbar-expand-lg navbar-light bg-faded sticky-top">
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" 
+            aria-expanded="false" aria-label="${messages['toggle.navigation']}">
         <span class="navbar-toggler-icon"></span>
     </button>
-
-
-        <div class="navbar-brand">${messages["application.title"]}</div>
-
-        <div class="collapse navbar-collapse" id="navbarContent">
-
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="${links['start']}">
-                        <span class="icon icon-star"></span>&nbsp;${messages["start"]}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
-                </li>
-            </ul>
-            <#include "navbar-menu.html" />
-        </div>
-
+    <div class="navbar-brand">${messages["application.title"]}</div>
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="${links['start']}">
+                    <span class="icon icon-star"></span>&nbsp;${messages["start"]}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
+            </li>
+        </ul>
+        <#include "navbar-menu.html" />
+    </div>
 </nav>

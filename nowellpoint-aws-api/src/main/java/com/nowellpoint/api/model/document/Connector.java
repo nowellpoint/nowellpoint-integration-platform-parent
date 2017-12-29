@@ -46,6 +46,10 @@ public class Connector extends MongoDocument {
 	
 	private String connectedAs;
 	
+	private String username;
+	
+	private String clientId;
+	
 	public Connector() {
 		
 	}
@@ -160,5 +164,21 @@ public class Connector extends MongoDocument {
 
 	public void setConnectedAs(String connectedAs) {
 		this.connectedAs = connectedAs;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 }

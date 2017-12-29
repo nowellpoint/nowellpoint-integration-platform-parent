@@ -82,6 +82,7 @@ body {
 .navbar {
     background-color: #fff;
     border-bottom: 1px solid #D3D3D3;
+    border-top: 3px solid #29308B;
 }
 @media(min-width:768px) {
     #wrapper {
