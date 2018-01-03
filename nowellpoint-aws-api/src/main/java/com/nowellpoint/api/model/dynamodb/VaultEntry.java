@@ -10,8 +10,8 @@ import com.nowellpoint.util.Assert;
 @DynamoDBTable(tableName="VaultEntries")
 public class VaultEntry {
 
-	@DynamoDBHashKey(attributeName="Token")
-	private String token;
+	@DynamoDBHashKey(attributeName="Key")
+	private String key;
 	
 	@DynamoDBAttribute(attributeName="Value")  
 	private String value;
@@ -20,9 +20,9 @@ public class VaultEntry {
 		
 	}
 
-	private VaultEntry(String token, String value) {
+	private VaultEntry(String key, String value) {
 		super();
-		this.token = token;
+		this.key = key;
 		this.value = value;
 	}
 	
@@ -31,18 +31,18 @@ public class VaultEntry {
 		return new VaultEntry(UUID.randomUUID().toString().replaceAll("-",  ""), value);
 	}
 	
-	public static VaultEntry of(String token, String value) {
-		Assert.assertNotNullOrEmpty(token, "Missing token for VaultEntry");
-		Assert.assertNotNullOrEmpty(value, "Missing value to encryp for VaultEntry");
-		return new VaultEntry(token, value);
+	public static VaultEntry of(String key, String value) {
+		Assert.assertNotNullOrEmpty(key, "Missing key for VaultEntry");
+		Assert.assertNotNullOrEmpty(value, "Missing value to encrypt for VaultEntry");
+		return new VaultEntry(key, value);
 	}
 
-	public String getToken() {
-		return token;
+	public String getKey() {
+		return key;
 	}
 
-	public void setToken(String token) {
-		this.token = token;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getValue() {

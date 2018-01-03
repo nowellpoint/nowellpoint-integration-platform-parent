@@ -1,0 +1,32 @@
+<div class="media mb-2">
+    <img src="${connector.iconHref}" class="mr-3" alt="icon">
+    <div class="media-body">
+        <p class="mb-0 font-weight-normal">${connector.name!}</p>
+        <p class="mb-0 font-weight-light">${connector.authEndpoint!}<br>${connector.connectedAs!}</p>
+    </div>
+    <div class="pull-right">
+        <div class="dropdown">
+            <button class="btn btn-outline-primary btn-sm" type="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="icon icon-dots-three-horizontal"></span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropDownMenuButton">
+                <a href="#" class="dropdown-item" id="editConnector" data-toggle="modal" data-target="#editConnectorModal">${labels['edit']}</a>
+                <a href="#" class="dropdown-item" id="deleteConnector" data-toggle="modal" data-target="#confirmDelete">${labels['delete']}</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <p><span class="mb-0 font-weight-normal">${labels["status"]}:&nbsp;</span>
+            <#if connector.isConnected>
+                <span class="mb-0 text-success">${connector.status!}&emsp;</span>
+                <span class="mb-0 font-weight-normal">${labels["connected.on"]}:&nbsp;</span>
+                <span class="mb-0 font-weight-light">${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}</span>
+            </#if>
+            <#if ! connector.isConnected>
+                <span class="mb-0 text-danger text-truncate">${connector.status!}</span>
+            </#if>
+        </p>
+    </div>
+</div>

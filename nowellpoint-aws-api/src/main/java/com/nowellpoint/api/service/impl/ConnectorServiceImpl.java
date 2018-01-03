@@ -38,7 +38,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 				.grantType("password")
 				.displayName("Salesforce Sandbox")
 				.authEndpoint("https://test.salesforce.com")
-				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.jpg")
+				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png")
 				.build());
 		
 		connectorTypeList.add(ConnectorType.builder()
@@ -46,7 +46,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 				.grantType("password")
 				.displayName("Salesforce Production")
 				.authEndpoint("https://login.salesforce.com")
-				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.jpg")
+				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png")
 				.build());
 		
 		return Collections.unmodifiableMap(connectorTypeList.stream().collect(Collectors.toMap(t -> t.getName(), t -> t)));
@@ -96,8 +96,8 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public void deleteConnector(String id) {
 		Connector connector = findById(id);
-		if (Assert.isNotNull(connector.getCredentialsKey())) {
-			vaultEntryService.remove(connector.getCredentialsKey());
+		if (connector.getIsConnected()) {
+			vaultEntryService.remove(connector.getId());
 		}
 		delete(connector);
 	}
@@ -107,8 +107,8 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = findById(id);
 		
-		if (Assert.isNull(original.getCredentialsKey())) {
-			throw new IllegalArgumentException("Unable to Refresh Connector. Conecctor is missing credentials. Please update the connector with valid credentials");
+		if (! original.getIsConnected()) {
+			throw new IllegalArgumentException("Connector has been disconnected. Unable to refresh the connector. Please update the connector with valid credentials");
 		}
 		
 		Connector connector = refreshConnector(original);
@@ -122,8 +122,8 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	public Connector disconnect(String id) {
 		Connector original = findById(id);
 		
-		if (Assert.isNotNull(original.getCredentialsKey())) {
-			vaultEntryService.remove(original.getCredentialsKey());
+		if (original.getIsConnected()) {
+			vaultEntryService.remove(original.getId());
 		}
 		
 		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
@@ -135,7 +135,6 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 				.lastUpdatedBy(who)
 				.lastUpdatedOn(now)
 				.connectedOn(null)
-				.credentialsKey(null)
 				.username(null)
 				.clientId(null)
 				.status(DISCONNECTED)

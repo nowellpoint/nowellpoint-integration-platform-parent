@@ -11,18 +11,6 @@ $(document).ready(function () {
     }
 });
 
-$(document).ready(function() {
-    $('#overlay').hide();
-});
-
-$(document).ajaxStart(function () {
-    $('#overlay').show();
-});
-
-$(document).ajaxStop(function () {
-    $('#overlay').hide();
-});
-
 $( document ).ready(function(){
     $('[data-toggle="popover"]').popover(); 
 });

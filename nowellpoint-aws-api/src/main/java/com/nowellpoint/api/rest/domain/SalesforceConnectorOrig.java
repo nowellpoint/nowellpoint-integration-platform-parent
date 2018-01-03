@@ -164,7 +164,7 @@ public class SalesforceConnectorOrig extends AbstractResource {
 				now, 
 				identity, 
 				organization, 
-				vaultEntry.getToken(), 
+				null, 
 				Boolean.TRUE, 
 				token.getInstanceUrl(),
 				now);

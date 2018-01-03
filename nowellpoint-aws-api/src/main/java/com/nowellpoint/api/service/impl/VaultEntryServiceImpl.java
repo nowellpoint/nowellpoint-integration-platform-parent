@@ -20,23 +20,30 @@ public class VaultEntryServiceImpl implements VaultEntryService {
 		dynamoDBMapper.save(vaultEntry);
 		return vaultEntry;
 	}
-
+	
 	@Override
-	public VaultEntry replace(String token, String value) {
-		VaultEntry vaultEntry = VaultEntry.of(token, value);
+	public VaultEntry store(String key, String value) {
+		VaultEntry vaultEntry = VaultEntry.of(key, value);
 		dynamoDBMapper.save(vaultEntry);
 		return vaultEntry;
 	}
 
 	@Override
-	public VaultEntry retrive(String token) {
-		VaultEntry vaultEntry = dynamoDBMapper.load(VaultEntry.class, token);
+	public VaultEntry replace(String key, String value) {
+		VaultEntry vaultEntry = VaultEntry.of(key, value);
+		dynamoDBMapper.save(vaultEntry);
 		return vaultEntry;
 	}
 
 	@Override
-	public void remove(String token) {
-		VaultEntry vaultEntry = VaultEntry.of(token);
+	public VaultEntry retrive(String key) {
+		VaultEntry vaultEntry = dynamoDBMapper.load(VaultEntry.class, key);
+		return vaultEntry;
+	}
+
+	@Override
+	public void remove(String key) {
+		VaultEntry vaultEntry = VaultEntry.of(key);
 		dynamoDBMapper.delete(vaultEntry);
 	}
 

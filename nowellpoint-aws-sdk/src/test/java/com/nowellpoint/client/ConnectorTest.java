@@ -111,11 +111,11 @@ public class ConnectorTest {
 		
 		Assert.assertTrue(connectorList.getSize() > 0);
 		
-		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
-				.connector()
-				.delete(createResult.getTarget().getId());
-		
-		Assert.assertTrue(deleteResult.isSuccess());
+//		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+//				.connector()
+//				.delete(createResult.getTarget().getId());
+//		
+//		Assert.assertTrue(deleteResult.isSuccess());
 	}
 	
 	@AfterClass

@@ -36,8 +36,6 @@ public class Connector extends MongoDocument {
 	
 	private String grantType;
 	
-	private String credentialsKey;
-	
 	private String status;
 	
 	private Date connectedOn;
@@ -124,14 +122,6 @@ public class Connector extends MongoDocument {
 
 	public void setGrantType(String grantType) {
 		this.grantType = grantType;
-	}
-
-	public String getCredentialsKey() {
-		return credentialsKey;
-	}
-
-	public void setCredentialsKey(String credentialsKey) {
-		this.credentialsKey = credentialsKey;
 	}
 
 	public String getStatus() {

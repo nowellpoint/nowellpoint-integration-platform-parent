@@ -2,119 +2,90 @@
 
     <@t.page>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-12 mt-2 mb-2">
-                    <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+        <div class="container-fluid">
+            <div class="container mt-3">
+                <div id="success" class="alert alert-success hidden">
+                    <span class="icon icon-check"></span> ${labels["success.message"]}
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+                    </div>
+                </div>
+                <br>
+                <div id="detail">
+                    <#include "connector-detail.html" />
                 </div>
             </div>
-            <br>
-            <br>
-            <div class="media mb-2">
-                <img src="${connector.iconHref}" class="mr-3" alt="icon">
-                <div class="media-body">
-                    <div class="row">
-                        <div class="col-9">
-                            <p class="mb-0 font-weight-normal">${connector.name!}</p>
-                            <p class="mb-0 font-weight-light">${connector.authEndpoint!}
-                                <br>${connector.connectedAs!}</p>
-                        </div>
-                        <div class="col-3">
-                            <div class=" pull-right">
-                                <a href="#" class="btn btn-outline-primary btn-sm dropdown-toggle" role="button" id="dropDownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="icon icon-cog">&nbsp;</span></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" id="editConnector" href="#">${labels['edit']}</a>
-                                    <a class="dropdown-item" id="deleteConnector" href="#">${labels['delete']}</a>
-                                </div>
-                            </div>
-                        </div>
+        </div>
+        <div class="container-fluid">
+            <div class="container mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        This is some text within a card body.
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <p class="font-weight-normal">${labels["status"]}:&nbsp;
-                        <#if connector.isConnected>
-                            <span class="text-success">${connector.status!}&emsp;</span>
-                            <span class="font-weight-normal">${labels["connected.on"]}:&nbsp;</span>
-                            <span class="font-weight-light">${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}</span>
-                        </#if>
-                        <#if ! connector.isConnected>
-                            <span class="text-danger text-truncate">${connector.status!}</span>
-                        </#if>
-                    </p>
-                </div>
-            </div>
-            <br>
-            <div id="edit-connector-overlay" class="hidden">
-
-                <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/${connector.id}">
-                    <div class="form-group row ml-5">
-                        <div class=" col-6">
-                            <div class="flextable col-5">
-                                <div class="flextable-item flextable-primary">
-                                    <a href="javascript:void(0)" class="closebtn" id="cancelEditConnector">&times;</a>
-                                </div>
-                            </div>
-                        </div>
+        </div>
+        <div class="modal fade" id="editConnectorModal" tabindex="-1" role="dialog" aria-labelledby="editConnectorLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editConnectorLabel">${labels["edit.connector"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <hr>
-                    <br>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <label for="name" class="col-2 col-form-label">${labels["name"]}</label>
-                            <div class="col-5">
+                    <div class="modal-body">
+                        <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/${connector.id}">
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">${labels["name"]}</label>
                                 <input type="text" name="name" id="name" class="form-control" value="${connector.name!}" autofocus>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <label for="clientId" class="col-2 col-form-label">${labels["client.id"]}</label>
-                            <div class="col-5">
+                            <div class="form-group">
+                                <label for="clientId" class="col-form-label">${labels["client.id"]}</label>
                                 <input type="text" name="clientId" id="clientId" class="form-control" value="${connector.clientId!}">
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <label for="clientSecret" class="col-2 col-form-label">${labels["client.secret"]}</label>
-                            <div class="col-5">
-                                <input type="text" name="clientSecret" id="clientSecret" class="form-control">
+                            <div class="form-group">
+                                <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>
+                                <input type="password" name="clientSecret" id="clientSecret" class="form-control">
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <label for="username" class="col-2 col-form-label">${labels["username"]}</label>
-                            <div class="col-5">
+                            <div class="form-group">
+                                <label for="username" class="col-form-label">${labels["username"]}</label>
                                 <input type="text" name="username" id="username" class="form-control" value="${connector.username!}">
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <label for="password" class="col-2 col-form-label">${labels["password"]}</label>
-                            <div class="col-5">
-                                <input type="text" name="password" id="password" class="form-control">
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">${labels["password"]}</label>
+                                <input type="password" name="password" id="password" class="form-control">
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="form-group row ml-5">
-                        <div class="col-6">
-                            <div class="col-5">
-                                <div class="pull-right">
-                                    <button class="btn btn-success" id="saveConnector">${labels["save"]}</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <div id="loader" class="loader"></div>
+                        <button class="btn btn-success" id="saveConnector">${labels["save"]}</button>
+                        <button class="btn btn-link" id="cancel" class="close" data-dismiss="modal">${labels["cancel"]}</button>
                     </div>
-                </form>
+                </div>
             </div>
-
         </div>
-
-
+        <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteLabel">${labels["confirm.delete"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>${labels["confirm.delete.message"]}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="delete-spinner" class="loader"></div>
+                        <button class="btn btn-danger" id="deleteConnector" data-href="${links['connectors']}/${connector.id}/delete" data-redirect="${links['connectors']}">${messages["confirm"]}</button>
+                        <button class="btn btn-link" id="cancel" class="close" data-dismiss="modal">${labels["cancel"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script>
             /*-----------------------------------------------------------
@@ -122,38 +93,40 @@
              *
              */
 
-            $(document).on('click', 'a#editConnector', function () {
-                $('#edit-connector-overlay').show();
-            });
+            $(document).on('click', 'button#saveConnector', function() {
 
-            /*-----------------------------------------------------------
-             *
-             *
-             */
+                $('#loader').toggle();
 
-            $(document).on('click', 'a#cancelEditConnector', function () {
-                $('#edit-connector-overlay').hide();
-            });
-
-            /*-----------------------------------------------------------
-             *
-             *
-             */
-
-            $(document).on('click', 'button#saveConnector', function () {
+                $('#saveConnector').prop("disabled", true);
+                $('#cancel').prop("disabled", true);
+                $('#name').prop("readonly", true);
+                $('#clientId').prop("readonly", true);
+                $('#clientSecret').prop("readonly", true);
+                $('#username').prop("readonly", true);
+                $('#password').prop("readonly", true);
+                $('#success').hide();
+                $('#error').hide();
 
                 $form = $("#connectorForm");
-
-                $('#error').remove();
 
                 $.ajax({
                     method: $form.attr('method'),
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function (response) {
+                    complete: function(response) {
+                        $('#loader').toggle();
+                        $('#saveConnector').prop("disabled", false);
+                        $('#cancel').prop("disabled", false);
+                        $('#name').prop("readonly", false);
+                        $('#clientId').prop("readonly", false);
+                        $('#clientSecret').prop("readonly", false);
+                        $('#username').prop("readonly", false);
+                        $('#password').prop("readonly", false);
                         if (response.status == 200) {
-                            console.log(response);
+                            $('#detail').html(response.responseText);
+                            $('#editConnectorModal').modal('hide');
+                            $('#success').show().delay(1500).fadeOut('slow');
                         } else {
                             $form.prepend(response.responseText);
                         }
@@ -162,6 +135,40 @@
 
                 return false;
             });
+            
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#deleteConnector', function() {
+                
+                $('#delete-spinner').toggle();
+                $('#deleteConnector').prop("disabled", true);
+                $('#cancel').prop("disabled", true);
+                
+                var href = $(this).data( 'href' );
+                var redirect = $(this).data( 'redirect' );
+                
+                $.ajax({
+                    method: 'delete',
+                    url: href,
+                    complete: function(response) {
+                        $('#delete-spinner').toggle();
+                        $('#deleteConnector').prop("disabled", false);
+                        $('#cancel').prop("disabled", false);
+                        if (response.status == 200) {
+                            $('#confirmDelete').modal('hide');
+                            $(location).attr('href', redirect);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
+            });
+            
         </script>
 
     </@t.page>

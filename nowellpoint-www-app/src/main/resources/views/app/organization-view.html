@@ -555,12 +555,40 @@
              *
              */
 
-            $(document).on('click', 'button#editPaymentMethod', function () {
+            $(document).ready(function() {
+                $('#overlay').hide();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).ajaxStart(function() {
+                $('#overlay').show();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).ajaxStop(function() {
+                $('#overlay').hide();
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#editPaymentMethod', function() {
                 $('#editPaymentMethod').hide();
                 $('#paymentMethodView').hide();
                 $('#paymentMethodEdit').show();
                 $('html, body').animate({
-                    scrollTop: ($('#payment-method').offset().top - 120)},500);
+                    scrollTop: ($('#payment-method').offset().top - 120)
+                }, 500);
                 $('#cardholderName').focus();
             });
 
@@ -569,7 +597,7 @@
              *
              */
 
-            $(document).on('click', 'button#cancelPaymentMethod', function () {
+            $(document).on('click', 'button#cancelPaymentMethod', function() {
                 $('#paymentMethodEdit').hide();
                 $('#number').val('');
                 $('#cvv').val('');
@@ -584,12 +612,13 @@
              *
              */
 
-            $(document).on('click', 'button#editBillingContact', function () {
+            $(document).on('click', 'button#editBillingContact', function() {
                 $('#editBillingContact').hide();
                 $('#billingContactView').hide();
                 $('#billingContactEdit').show();
                 $('html, body').animate({
-                    scrollTop: ($('#billing-contact').offset().top - 120)},500);
+                    scrollTop: ($('#billing-contact').offset().top - 120)
+                }, 500);
                 $("#firstName").focus();
             });
 
@@ -598,7 +627,7 @@
              *
              */
 
-            $(document).on('click', 'button#cancelBillingContact', function () {
+            $(document).on('click', 'button#cancelBillingContact', function() {
                 $('#error').remove();
                 $('#billingContactEdit').hide();
                 $('#billingContactView').show();
@@ -611,12 +640,13 @@
              *
              */
 
-            $(document).on('click', 'button#editBillingAddress', function () {
+            $(document).on('click', 'button#editBillingAddress', function() {
                 $('#editBillingAddress').hide();
                 $('#billingAddressView').hide();
                 $('#billingAddressEdit').show();
                 $('html, body').animate({
-                    scrollTop: ($('#billing-address').offset().top - 120)},500);
+                    scrollTop: ($('#billing-address').offset().top - 120)
+                }, 500);
                 $('#street').focus();
             });
 
@@ -626,7 +656,7 @@
              *
              */
 
-            $(document).on('click', 'button#cancelBillingAddress', function () {
+            $(document).on('click', 'button#cancelBillingAddress', function() {
                 $('#error').remove();
                 $('#billingAddressEdit').hide();
                 $('#billingAddressView').show();
@@ -638,7 +668,7 @@
              *
              */
 
-            $(document).on('click', 'button#savePaymentMethod', function () {
+            $(document).on('click', 'button#savePaymentMethod', function() {
 
                 $form = $("#paymentMethodForm");
 
@@ -649,7 +679,7 @@
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function (response) {
+                    complete: function(response) {
                         if (response.status == 200) {
                             $('#payment-method').html(response.responseText);
                             $('#paymentMethodSuccess').delay(1500).fadeOut('slow');
@@ -667,7 +697,7 @@
              *
              */
 
-            $(document).on('click', 'button#saveBillingAddress', function () {
+            $(document).on('click', 'button#saveBillingAddress', function() {
 
                 $form = $("#billingAddressForm");
 
@@ -678,7 +708,7 @@
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function (response) {
+                    complete: function(response) {
                         if (response.status == 200) {
                             $('#billing-address').html(response.responseText);
                             $('#billingAddressSuccess').delay(1500).fadeOut('slow');
@@ -696,7 +726,7 @@
              *
              */
 
-            $(document).on('click', 'button#saveBillingContact', function () {
+            $(document).on('click', 'button#saveBillingContact', function() {
 
                 $form = $("#billingContactForm");
 
@@ -707,7 +737,7 @@
                     url: $form.attr('action'),
                     dataType: "html",
                     data: $form.serialize(),
-                    complete: function (response) {
+                    complete: function(response) {
                         if (response.status == 200) {
                             $('#billing-contact').html(response.responseText);
                             $('#billingContactSuccess').delay(1500).fadeOut('slow');
@@ -719,6 +749,5 @@
 
                 return false;
             });
-            
         </script>
     </@t.page>

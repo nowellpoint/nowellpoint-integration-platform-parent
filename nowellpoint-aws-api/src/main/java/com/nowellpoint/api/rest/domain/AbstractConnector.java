@@ -26,7 +26,6 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract String getAuthEndpoint();
 	public abstract String getGrantType();
 	public abstract String getIconHref();
-	public abstract @Nullable @JsonIgnore String getCredentialsKey();
 	public abstract @Nullable String getUsername();
 	public abstract @Nullable String getClientId();
 	public abstract String getStatus();

@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
+import org.bson.types.ObjectId;
+
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.util.ClaimsContext;
@@ -65,7 +67,7 @@ public class SalesforceConnectorWrapper {
 		return new SalesforceConnectorWrapper(type, request);
 	}
 	
-	private SalesforceConnectorWrapper (Connector connector, ConnectorType type, ConnectorRequest request) {
+	private SalesforceConnectorWrapper(Connector connector, ConnectorType type, ConnectorRequest request) {
 		this.connector = connector;
 		this.type = type;
 		this.request = request;
@@ -118,9 +120,6 @@ public class SalesforceConnectorWrapper {
 					.append(getRequest().getPassword())
 					.toString();
 			
-			VaultEntry vaultEntry = VaultEntry.of(connectString);
-			dynamoDBMapper.save(vaultEntry);
-			
 			try {
 				token = login(connectString);			
 			} catch (OauthException e) {
@@ -129,6 +128,7 @@ public class SalesforceConnectorWrapper {
 			}
 			
 			Connector connector = Connector.builder()
+					.id(new ObjectId().toString())
 					.name(getRequest().getName())
 					.authEndpoint(getType().getAuthEndpoint())
 					.grantType(getType().getGrantType())
@@ -137,12 +137,14 @@ public class SalesforceConnectorWrapper {
 					.typeName(getType().getDisplayName())
 					.username(isConnected ? getRequest().getUsername() : null)
 					.clientId(isConnected ? getRequest().getClientId() : null)
-					.credentialsKey(vaultEntry.getToken())
 					.connectedAs(isConnected ? getRequest().getUsername() : null)
 					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.status(status)
 					.isConnected(isConnected)
 					.build();
+			
+			VaultEntry vaultEntry = VaultEntry.of(connector.getId(), connectString);
+			dynamoDBMapper.save(vaultEntry);
 			
 			return connector;
 			
@@ -150,9 +152,9 @@ public class SalesforceConnectorWrapper {
 			
 			VaultEntry vaultEntry = null;
 			
-			if (isNotNull(getConnector().getCredentialsKey())) {
+			if (getConnector().getIsConnected()) {
 				
-				vaultEntry = dynamoDBMapper.load(VaultEntry.class, getConnector().getCredentialsKey());
+				vaultEntry = dynamoDBMapper.load(VaultEntry.class, getConnector().getId());
 				
 				String[] values = vaultEntry.getValue().split(":");
 				
@@ -180,6 +182,7 @@ public class SalesforceConnectorWrapper {
 					.append(getRequest().getPassword())
 					.toString();
 			
+			vaultEntry.setKey(getConnector().getId());
 			vaultEntry.setValue(connectString);
 			
 			dynamoDBMapper.save(vaultEntry);
@@ -203,7 +206,6 @@ public class SalesforceConnectorWrapper {
 					.typeName(getType().getDisplayName())
 					.username(isConnected ? getRequest().getUsername() : null)
 					.clientId(isConnected ? getRequest().getClientId() : null)
-					.credentialsKey(vaultEntry.getToken())
 					.connectedAs(isConnected ? getRequest().getUsername() : null)
 					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
 					.status(status)
