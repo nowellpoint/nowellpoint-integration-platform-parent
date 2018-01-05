@@ -1,19 +1,12 @@
 package com.nowellpoint.api.service.impl;
 
-import java.time.Instant;
-import java.util.Date;
-
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
-import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.util.ClaimsContext;
-import com.nowellpoint.api.util.UserContext;
 
 public class ConnectorServiceImpl extends AbstractConnectorService implements ConnectorService {
-	
-	private static final String DISCONNECTED = "Disconnected";
 	
 	@Override
 	public ConnectorList getConnectors() {
@@ -29,7 +22,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public Connector createConnector(ConnectorRequest request) {
 		
-		Connector connector = buildConnector(request);
+		Connector connector = build(request);
 		
 		create(connector);
 		
@@ -41,7 +34,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = retrieve(id);
 		
-		Connector connector = buildConnector(original, request);
+		Connector connector = build(original, request);
 		
 		update(connector);
 		
@@ -61,11 +54,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = findById(id);
 		
-		if (! original.getIsConnected()) {
-			throw new IllegalArgumentException("Connector has been disconnected. Unable to refresh the connector. Please update the connector with valid credentials");
-		}
-		
-		Connector connector = refreshConnector(original);
+		Connector connector = refresh(original);
 		
 		update(connector);
 		
@@ -77,22 +66,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = findById(id);
 		
-		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
-		
-		Date now = Date.from(Instant.now());
-		
-		Connector connector = Connector.builder()
-				.from(original)
-				.lastUpdatedBy(who)
-				.lastUpdatedOn(now)
-				.connectedOn(null)
-				.username(null)
-				.password(null)
-				.clientId(null)
-				.clientSecret(null)
-				.status(DISCONNECTED)
-				.isConnected(Boolean.FALSE)
-				.build();
+		Connector connector = disconnect(original);
 		
 		update(connector);
 		

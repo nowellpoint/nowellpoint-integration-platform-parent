@@ -21,12 +21,12 @@ import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
-import com.nowellpoint.api.rest.domain.SalesforceConnectionManager;
-import com.nowellpoint.api.rest.domain.SalesforceConnectorWrapper;
+import com.nowellpoint.api.rest.domain.SalesforceAdapter;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
+import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -34,6 +34,8 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
 
 public class AbstractConnectorService extends AbstractCacheService {
+	
+	private static final String DISCONNECTED = "Disconnected";
 	
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
@@ -110,27 +112,54 @@ public class AbstractConnectorService extends AbstractCacheService {
 		del(connector.getId());
 	}
 	
-	protected Connector refreshConnector(Connector original) {
-		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
-			SalesforceConnectorWrapper wrapper = SalesforceConnectorWrapper.of(original);
-			return wrapper.toConnector();
+	protected Connector refresh(Connector connector) {
+		
+		if (! connector.getIsConnected()) {
+			throw new IllegalArgumentException("Connector has been disconnected. Unable to refresh the connector. Please update the connector with valid credentials");
+		}
+		
+		if ("SALESFORCE_SANDBOX".equals(connector.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(connector.getConnectorType().getName())) {
+			return SalesforceAdapter.refresh(connector);
 		}
 		
 		return null;		
 	}
 	
-	protected Connector buildConnector(Connector original, ConnectorRequest request) {
+	protected Connector disconnect(Connector connector) {
+		
+		if (! connector.getIsConnected()) {
+			throw new IllegalArgumentException("Connector has already been disconnected. Nothing to do");
+		}
+		
+		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
+		
+		Date now = Date.from(Instant.now());
+		
+		return Connector.builder()
+				.from(connector)
+				.lastUpdatedBy(who)
+				.lastUpdatedOn(now)
+				.connectedAs(null)
+				.connectedOn(null)
+				.username(null)
+				.password(null)
+				.clientId(null)
+				.clientSecret(null)
+				.status(DISCONNECTED)
+				.isConnected(Boolean.FALSE)
+				.build();
+	}
+	
+	protected Connector build(Connector original, ConnectorRequest request) {
 		
 		if (original.getIsConnected()) {
 			
-			Connector connector = Connector.builder()
+			return Connector.builder()
 					.from(original)
 					.name(request.getName())
 					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
 					.lastUpdatedOn(Date.from(Instant.now()))
 					.build();
-			
-			return connector;
 		}
 		
 		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
@@ -140,7 +169,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
 			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 				
-			SalesforceConnectionManager salesforceConnector = SalesforceConnectionManager.builder()
+			SalesforceAdapter adapter = SalesforceAdapter.builder()
 					.clientId(request.getClientId())
 					.clientSecret(request.getClientSecret())
 					.connector(original)
@@ -149,13 +178,13 @@ public class AbstractConnectorService extends AbstractCacheService {
 					.username(request.getUsername())
 					.build();
 				
-			return salesforceConnector.toConnector();
+			return adapter.toConnector();
 		}
 		
 		return null;
 	}
 	
-	protected Connector buildConnector(ConnectorRequest request) {
+	protected Connector build(ConnectorRequest request) {
 		
 		ConnectorType connectorType = getConnectorType(request.getType());
 		
@@ -168,7 +197,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
 			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 			
-			SalesforceConnectionManager salesforceConnector = SalesforceConnectionManager.builder()
+			SalesforceAdapter salesforceConnector = SalesforceAdapter.builder()
 					.connectorType(connectorType)
 					.clientId(request.getClientId())
 					.clientSecret(request.getClientSecret())

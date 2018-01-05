@@ -39,22 +39,19 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
-                
                 <p>${labels["confirm.delete.message"]}</p>
-                
                 <div class="card">
                     <div class="card-body">
-                        <div class="media-body">
-        <p class="mb-0 font-weight-normal">${connector.name!}</p>
-        <p class="mb-0 font-weight-light">${connector.typeName!}
-            <br>${connector.connectedAs!}</p>
-    </div>
-                    
+                        <div class="media mb-2">
+                            <img src="${connector.iconHref}" class="mr-3" alt="icon">
+                            <div class="media-body">
+                                <p class="mb-0 font-weight-normal">${connector.name!}</p>
+                                <p class="mb-0 font-weight-light">${connector.typeName!}
+                                    <br>${connector.connectedAs!}</p>
+                            </div>
+                        </div>
                     </div>
-                
                 </div>
-                
-                
             </div>
             <div class="modal-footer">
                 <div id="delete-spinner" class="loader"></div>

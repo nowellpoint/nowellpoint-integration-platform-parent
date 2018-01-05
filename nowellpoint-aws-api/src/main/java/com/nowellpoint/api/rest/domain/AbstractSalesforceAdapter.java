@@ -23,7 +23,7 @@ import com.nowellpoint.http.Status;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-public abstract class AbstractSalesforceConnectionManager {
+public abstract class AbstractSalesforceAdapter {
 	public abstract @Nullable Connector getConnector();
 	public abstract @Nullable ConnectorType getConnectorType();
 	public abstract String getName();
@@ -34,27 +34,17 @@ public abstract class AbstractSalesforceConnectionManager {
 	
 	private static final String OAUTH_TOKEN_URI = "%s/services/oauth2/token";
 	
-	private Token login(String authEndpoint) {
-		HttpResponse httpResponse = RestResource.post(String.format(OAUTH_TOKEN_URI, authEndpoint))
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.accept(MediaType.APPLICATION_JSON)
-				.acceptCharset(StandardCharsets.UTF_8)
-				.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.PASSWORD_GRANT_TYPE)
-				.parameter(OauthConstants.CLIENT_ID_PARAMETER, getClientId())
-				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, getClientSecret())
-				.parameter(OauthConstants.USERNAME_PARAMETER, getUsername())
-				.parameter(OauthConstants.PASSWORD_PARAMETER, getPassword())
-				.execute();
-		
-		Token token = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			token = httpResponse.getEntity(Token.class);
-		} else {
-			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
-		}
-		
-		return token;
+	public static Connector refresh(Connector connector) {
+		SalesforceAdapter adapter = SalesforceAdapter.builder()
+				.clientId(connector.getClientId())
+				.clientSecret(KeyManager.decrypt(connector.getClientSecret()))
+				.connector(connector)
+				.name(connector.getName())
+				.password(KeyManager.decrypt(connector.getPassword()))
+				.username(connector.getUsername())
+				.build();
+			
+		return adapter.toConnector();	
 	}
 	
 	public Connector toConnector() {
@@ -114,5 +104,28 @@ public abstract class AbstractSalesforceConnectionManager {
 			
 			return connector;
 		}		
+	}
+	
+	private Token login(String authEndpoint) {
+		HttpResponse httpResponse = RestResource.post(String.format(OAUTH_TOKEN_URI, authEndpoint))
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.accept(MediaType.APPLICATION_JSON)
+				.acceptCharset(StandardCharsets.UTF_8)
+				.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.PASSWORD_GRANT_TYPE)
+				.parameter(OauthConstants.CLIENT_ID_PARAMETER, getClientId())
+				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, getClientSecret())
+				.parameter(OauthConstants.USERNAME_PARAMETER, getUsername())
+				.parameter(OauthConstants.PASSWORD_PARAMETER, getPassword())
+				.execute();
+		
+		Token token = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			token = httpResponse.getEntity(Token.class);
+		} else {
+			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+		}
+		
+		return token;
 	}
 }
