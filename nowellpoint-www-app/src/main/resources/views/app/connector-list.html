@@ -4,37 +4,33 @@
 
         <div class="container">
 
-            <div class="dashhead">
-                <div class="dashhead-titles">
-                    <h4 class="dashhead-subtitle">&nbsp;</h4>
-                    <h2 class="dashhead-title">${labels["connectors"]}</h2>
-                </div>
-                <#if connectorsList?size gt 0>
-                    <div class="dashhead-toolbar">
-                        <p class="pull-right">
-                            <a href="${links['connectors']}/new" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
-                        </p>
-                    </div>
-                </#if>
-            </div>
-
             <#if connectorsList?size==0>
                 <br>
                 <br>
                 <br>
-                <p class="text-center">
-                    <span class="icon icon-database fa fa-4x"></span>
-                </p>
-                <h4 class="text-muted text-center">${labels["no.records"]}</h4>
-                <p class="text-center">
-                    <a href="${links['connectors']}/new" class="btn btn-lg btn-outline-primary" role="button">${labels["add.connector"]}</a>
-                </p>
+                <br>
+                <blockquote class="blockquote text-center mt-5">
+                        <span class="icon icon-database fa fa-4x text-primary"></span>
+                        <h4 class="text-muted pt-1 pb-1">${labels["no.records"]}</h4>
+                        <a href="${links['connectors']}/new" class="btn btn-lg btn-outline-primary" role="button">&emsp;${labels["add.connector"]}&emsp;</a>
+                </blockquote>    
             </#if>
-
             <br>
-
             <#if connectorsList?size gt 0>
 
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="dashhead-subtitle">&nbsp;</h4>
+                        <h2 class="dashhead-title">${labels["connectors"]}</h2>
+                    </div>
+                    <#if connectorsList?size gt 0>
+                        <div class="dashhead-toolbar">
+                            <p class="pull-right">
+                                <a href="${links['connectors']}/new" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
+                            </p>
+                        </div>
+                    </#if>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
@@ -48,6 +44,7 @@
                             <#list connectorsList?sort_by( "createdOn") as connector>
                                 <tr class="row m-0 table-row" id="${connector.id}" data-href="${links['connectors']}/${connector.id}">
                                     <td class="col-5"><img class="float-left rounded mr-3" src="${connector.iconHref}" alt="icon">${connector.name!}
+                                        <br>${connector.typeName!}
                                         <br>${connector.connectedAs!}</td>
                                     <td class="col-4">
                                         <#if connector.isConnected>
@@ -62,15 +59,12 @@
                                             ${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}
                                         </#if>
                                     </td>
-
                                 </tr>
                             </#list>
                         </tbody>
                     </table>
                 </div>
-
             </#if>
-
         </div>
 
 

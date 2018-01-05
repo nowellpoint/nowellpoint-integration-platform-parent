@@ -20,4 +20,9 @@ public abstract class AbstractConnectorType {
 	public abstract String getAuthEndpoint();
 	public abstract String getIconHref();
 	public abstract Boolean getIsSandbox();
+	
+	public static ConnectorType of(com.nowellpoint.api.model.document.ConnectorType source) {
+		ModifiableConnectorType connectorType = ModifiableConnectorType.create(); //modelMapper.map(source, ModifiableConnectorType.class);
+		return connectorType.toImmutable();
+	}
 }

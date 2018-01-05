@@ -15,6 +15,7 @@ public class Connector extends AbstractResource {
 	private String connectedAs;
 	private String username;
 	private String clientId;
+	private Boolean isSandbox;
 	
 	public Connector() {
 		
@@ -62,5 +63,9 @@ public class Connector extends AbstractResource {
 	
 	public String getClientId() {
 		return clientId;
+	}
+	
+	public Boolean getIsSandbox() {
+		return isSandbox;
 	}
 }

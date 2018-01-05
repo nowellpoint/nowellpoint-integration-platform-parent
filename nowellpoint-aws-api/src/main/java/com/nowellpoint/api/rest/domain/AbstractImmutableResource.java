@@ -86,6 +86,19 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.ConnectorType, ConnectorType>() {
+
+			@Override
+			protected ConnectorType convert(com.nowellpoint.api.model.document.ConnectorType source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableConnectorType target = modelMapper.map(source, ModifiableConnectorType.class);
+				return target.toImmutable();
+			}
+			
+		});
+		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.CreditCard, CreditCard>() {
 
 			@Override
