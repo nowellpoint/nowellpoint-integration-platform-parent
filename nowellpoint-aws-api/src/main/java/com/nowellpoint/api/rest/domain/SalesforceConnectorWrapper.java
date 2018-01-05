@@ -53,11 +53,7 @@ public class SalesforceConnectorWrapper {
 	
 	public static SalesforceConnectorWrapper of(Connector connector, ConnectorRequest request) {
 		ConnectorType type = ConnectorType.builder()
-				.authEndpoint(connector.getAuthEndpoint())
-				.displayName(connector.getTypeName())
-				.grantType(connector.getGrantType())
-				.iconHref(connector.getIconHref())
-				.name(connector.getType())
+				.from(connector.getConnectorType())
 				.build();
 		
 		return new SalesforceConnectorWrapper(connector, type, request);
@@ -130,11 +126,7 @@ public class SalesforceConnectorWrapper {
 			Connector connector = Connector.builder()
 					.id(new ObjectId().toString())
 					.name(getRequest().getName())
-					.authEndpoint(getType().getAuthEndpoint())
-					.grantType(getType().getGrantType())
-					.type(getType().getName())
-					.iconHref(getType().getIconHref())
-					.typeName(getType().getDisplayName())
+					.connectorType(getType())
 					.username(isConnected ? getRequest().getUsername() : null)
 					.clientId(isConnected ? getRequest().getClientId() : null)
 					.connectedAs(isConnected ? getRequest().getUsername() : null)
@@ -199,11 +191,7 @@ public class SalesforceConnectorWrapper {
 					.name(getRequest().getName())
 					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
 					.lastUpdatedOn(Date.from(Instant.now()))
-					.authEndpoint(getType().getAuthEndpoint())
-					.grantType(getType().getGrantType())
-					.type(getType().getName())
-					.iconHref(getType().getIconHref())
-					.typeName(getType().getDisplayName())
+					.connectorType(getType())
 					.username(isConnected ? getRequest().getUsername() : null)
 					.clientId(isConnected ? getRequest().getClientId() : null)
 					.connectedAs(isConnected ? getRequest().getUsername() : null)

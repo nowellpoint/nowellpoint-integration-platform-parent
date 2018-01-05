@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.ConnectorResource;
@@ -21,14 +21,12 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 @JsonDeserialize(as = Connector.class)
 public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract String getName();
-	public abstract @JsonIgnore String getType();
-	public abstract String getTypeName();
-	public abstract String getAuthEndpoint();
-	public abstract String getGrantType();
-	public abstract String getIconHref();
-	public abstract @Nullable String getUsername();
-	public abstract @Nullable String getClientId();
+	public abstract @JsonUnwrapped ConnectorType getConnectorType();
 	public abstract String getStatus();
+	public abstract @Nullable String getUsername();
+	public abstract @Nullable String getPassword();
+	public abstract @Nullable String getClientId();
+	public abstract @Nullable String getClientSecret();
 	public abstract @Nullable String getConnectedAs();
 	public abstract @Nullable Date getConnectedOn();
 	

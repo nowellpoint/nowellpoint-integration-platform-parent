@@ -4,7 +4,7 @@
 	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0/javax.ws.rs-api-2.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0/javax.ws.rs-api-2.0.jar" sourcepath="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0/javax.ws.rs-api-2.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
@@ -23,13 +23,13 @@
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.5.3/jackson-core-2.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.5.3/jackson-databind-2.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.5.3/jackson-annotations-2.5.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-api/0.7.0/okta-sdk-api-0.7.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-api/0.8.1/okta-sdk-api-0.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-impl/0.7.0/okta-sdk-impl-0.7.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-impl/0.8.1/okta-sdk-impl-0.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.7.0/jjwt-0.7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.7/joda-time-2.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-httpclient/0.7.0/okta-sdk-httpclient-0.7.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-httpclient/0.8.1/okta-sdk-httpclient-0.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/okta/okta-sdk/0.0.4/okta-sdk-0.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-joda/2.5.0/jackson-datatype-joda-2.5.0.jar"/>
@@ -39,6 +39,7 @@
 	<classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.228/jmespath-java-1.11.228.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.257/aws-java-sdk-kms-1.11.257.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value/2.5.3/value-2.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.5.3/builder-2.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.5.3/value-fixture-2.5.3.jar"/>
@@ -63,16 +64,15 @@
 	<classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-sdk"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.228/aws-java-sdk-lambda-1.11.228.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.165/aws-java-sdk-lambda-1.11.165.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-data"/>
 	<classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.228/aws-java-sdk-dynamodb-1.11.228.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.228/aws-java-sdk-s3-1.11.228.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.228/aws-java-sdk-kms-1.11.228.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.228/aws-java-sdk-sns-1.11.228.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.228/aws-java-sdk-sqs-1.11.228.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.165/aws-java-sdk-dynamodb-1.11.165.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.165/aws-java-sdk-s3-1.11.165.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.165/aws-java-sdk-sns-1.11.165.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.165/aws-java-sdk-sqs-1.11.165.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.1/amazon-sqs-java-messaging-lib-1.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-dynamodb-encryption-java/1.11.0/aws-dynamodb-encryption-java-1.11.0.jar"/>

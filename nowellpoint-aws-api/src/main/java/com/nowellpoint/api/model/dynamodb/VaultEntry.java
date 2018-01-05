@@ -22,8 +22,8 @@ public class VaultEntry {
 
 	private VaultEntry(String key, String value) {
 		super();
-		this.key = key;
-		this.value = value;
+		setKey(key);
+		setValue(value);
 	}
 	
 	public static VaultEntry of(String value) {
@@ -51,10 +51,5 @@ public class VaultEntry {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-	
-	public VaultEntry withValue(String value) {
-		setValue(value);
-		return this;
 	}
 }

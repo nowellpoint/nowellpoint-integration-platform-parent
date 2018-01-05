@@ -43,7 +43,8 @@ public class VaultEntryServiceImpl implements VaultEntryService {
 
 	@Override
 	public void remove(String key) {
-		VaultEntry vaultEntry = VaultEntry.of(key);
+		VaultEntry vaultEntry = new VaultEntry();
+		vaultEntry.setKey(key);
 		dynamoDBMapper.delete(vaultEntry);
 	}
 

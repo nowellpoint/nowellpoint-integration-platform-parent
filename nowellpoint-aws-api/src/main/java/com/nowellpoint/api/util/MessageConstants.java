@@ -21,4 +21,10 @@ public class MessageConstants {
 	public static final String UNEXPECTED_EXCEPTION = "unexpected.exception";
 	public static final String INVALID_COUNTRY_PARAMETERS = "invalid.country.parameters";
 	public static final String UNABLE_TO_REMOVE_CREDIT_CARD = "unable.to.remove.credit.card";
+	public static final String CONNECTOR_INVALID_TYPE = "connector.invalid.type";
+	public static final String CONNECTOR_MISSING_NAME = "connector.missing.name";
+	public static final String CONNECTOR_MISSING_CLIENT_ID = "connector.missing.client.id";
+	public static final String CONNECTOR_MISSING_CLIENT_SECRET = "connector.missing.client.secret";
+	public static final String CONNECTOR_MISSING_USERNAME = "connector.missing.username";
+	public static final String CONNECTOR_MISSING_PASSWORD = "connector.missing.password";
 }

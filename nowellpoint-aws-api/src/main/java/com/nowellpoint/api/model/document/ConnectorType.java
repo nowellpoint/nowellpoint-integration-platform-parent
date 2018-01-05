@@ -22,9 +22,17 @@ public class ConnectorType {
 	
 	private String name;
 	
+	private String scheme;
+	
+	private String grantType;
+	
 	private String displayName;
 	
 	private String authEndpoint;
+	
+	private String iconHref;
+	
+	private Boolean isSandbox;
 	
 	public ConnectorType() {
 		
@@ -36,6 +44,22 @@ public class ConnectorType {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(String scheme) {
+		this.scheme = scheme;
+	}
+
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
 	}
 
 	public String getDisplayName() {
@@ -52,5 +76,21 @@ public class ConnectorType {
 
 	public void setAuthEndpoint(String authEndpoint) {
 		this.authEndpoint = authEndpoint;
+	}
+
+	public String getIconHref() {
+		return iconHref;
+	}
+
+	public void setIconHref(String iconHref) {
+		this.iconHref = iconHref;
+	}
+
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
 	}
 }

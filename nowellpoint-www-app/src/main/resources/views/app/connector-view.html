@@ -40,23 +40,23 @@
                         <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/${connector.id}">
                             <div class="form-group">
                                 <label for="name" class="col-form-label">${labels["name"]}</label>
-                                <input type="text" name="name" id="name" class="form-control" value="${connector.name!}" autofocus>
+                                <input type="text" name="name" id="name" class="form-control" value="${connector.name!}" required autofocus>
                             </div>
                             <div class="form-group">
                                 <label for="clientId" class="col-form-label">${labels["client.id"]}</label>
-                                <input type="text" name="clientId" id="clientId" class="form-control" value="${connector.clientId!}">
+                                <input type="text" name="clientId" id="clientId" class="form-control" value="${connector.clientId!}" required>
                             </div>
                             <div class="form-group">
                                 <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>
-                                <input type="password" name="clientSecret" id="clientSecret" class="form-control">
+                                <input type="password" name="clientSecret" id="clientSecret" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="username" class="col-form-label">${labels["username"]}</label>
-                                <input type="text" name="username" id="username" class="form-control" value="${connector.username!}">
+                                <input type="text" name="username" id="username" class="form-control" value="${connector.username!}" required>
                             </div>
                             <div class="form-group">
                                 <label for="password" class="col-form-label">${labels["password"]}</label>
-                                <input type="password" name="password" id="password" class="form-control">
+                                <input type="password" name="password" id="password" class="form-control" required>
                             </div>
                         </form>
                     </div>

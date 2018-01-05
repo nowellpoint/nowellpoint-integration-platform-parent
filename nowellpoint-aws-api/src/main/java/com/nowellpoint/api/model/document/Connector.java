@@ -26,15 +26,7 @@ public class Connector extends MongoDocument {
 	
 	private String name;
 	
-	private String type;
-	
-	private String typeName;
-	
-	private String authEndpoint;
-	
-	private String iconHref;
-	
-	private String grantType;
+	private ConnectorType connectorType;
 	
 	private String status;
 	
@@ -46,7 +38,11 @@ public class Connector extends MongoDocument {
 	
 	private String username;
 	
+	private String password;
+	
 	private String clientId;
+	
+	private String clientSecret;
 	
 	public Connector() {
 		
@@ -84,44 +80,12 @@ public class Connector extends MongoDocument {
 		this.name = name;
 	}
 
-	public String getType() {
-		return type;
+	public ConnectorType getConnectorType() {
+		return connectorType;
 	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
-	public String getAuthEndpoint() {
-		return authEndpoint;
-	}
-
-	public void setAuthEndpoint(String authEndpoint) {
-		this.authEndpoint = authEndpoint;
-	}
-
-	public String getIconHref() {
-		return iconHref;
-	}
-
-	public void setIconHref(String iconHref) {
-		this.iconHref = iconHref;
-	}
-
-	public String getGrantType() {
-		return grantType;
-	}
-
-	public void setGrantType(String grantType) {
-		this.grantType = grantType;
+	
+	public void setConnectorType(ConnectorType connectorType) {
+		this.connectorType = connectorType;
 	}
 
 	public String getStatus() {
@@ -170,5 +134,21 @@ public class Connector extends MongoDocument {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
 	}
 }
