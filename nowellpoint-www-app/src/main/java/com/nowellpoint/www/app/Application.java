@@ -275,14 +275,14 @@ public class Application implements SparkApplication {
 		delete(Path.Route.CONNECTORS_DELETE, (request, response) 
 				-> ConnectorController.deleteConnector(configuration, request, response));
 		
-		get(Path.Route.CONNECTORS_EDIT, (request, response) 
-				-> ConnectorController.editConnector(configuration, request, response));
+		get(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
+				-> ConnectorController.disconnectConnector(configuration, request, response));
 		
 		post(Path.Route.CONNECTORS_TEST, (request, response) 
 				-> ConnectorController.testConnector(configuration, request, response));
 		
-		post(Path.Route.CONNECTORS_BUILD, (request, response) 
-				-> ConnectorController.buildConnector(configuration, request, response));
+		post(Path.Route.CONNECTORS_REFRESH, (request, response) 
+				-> ConnectorController.refreshConnector(configuration, request, response));
 		
 		post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP, (request, response) 
 				-> ConnectorController.metadataBackup(configuration, request, response));

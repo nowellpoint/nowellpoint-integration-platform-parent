@@ -45,11 +45,11 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_NEW = String.format(APPLICATION_CONTEXT, "connectors/new");
 		public static final String CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "connectors");
 		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id");
-		public static final String CONNECTORS_EDIT = String.format(APPLICATION_CONTEXT, "connectors/:id/edit");
+		public static final String CONNECTORS_DISCONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/disconnect");
 		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id");
 		public static final String CONNECTORS_DELETE = String.format(APPLICATION_CONTEXT, "connectors/:id/delete");
 		public static final String CONNECTORS_TEST = String.format(APPLICATION_CONTEXT, "connectors/:id/test");
-		public static final String CONNECTORS_BUILD = String.format(APPLICATION_CONTEXT, "connectors/:id/build");
+		public static final String CONNECTORS_REFRESH = String.format(APPLICATION_CONTEXT, "connectors/:id/refresh");
 		public static final String CONNECTORS_SALESFORCE_METADATA_BACKUP = String.format(APPLICATION_CONTEXT, "connectors/:id/metadata-backup");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects/:sobject");
