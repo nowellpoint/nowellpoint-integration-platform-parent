@@ -266,16 +266,13 @@ public class Application implements SparkApplication {
 		get(Path.Route.CONNECTORS_VIEW, (request, response) 
 				-> ConnectorController.viewConnector(configuration, request, response));
 		
-		get(Path.Route.CONNECTORS_FLOW_NEW, (request, response) 
-				-> ConnectorController.newFlow(configuration, request, response));
-		
 		post(Path.Route.CONNECTORS_UPDATE, (request, response) 
 				-> ConnectorController.updateConnector(configuration, request, response));
 		
 		delete(Path.Route.CONNECTORS_DELETE, (request, response) 
 				-> ConnectorController.deleteConnector(configuration, request, response));
 		
-		get(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
+		post(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
 				-> ConnectorController.disconnectConnector(configuration, request, response));
 		
 		post(Path.Route.CONNECTORS_TEST, (request, response) 

@@ -7,6 +7,7 @@
                 <div id="success" class="alert alert-success hidden">
                     <span class="icon icon-check"></span> ${labels["success.message"]}
                 </div>
+                <div id="error"></div>
                 <div class="row">
                     <div class="col-12">
                         <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
@@ -18,6 +19,8 @@
                 </div>
             </div>
         </div>
+        <div id="overlay">
+        </div>
         <div class="container-fluid">
             <div class="container mt-3">
                 <div class="card">
@@ -27,8 +30,30 @@
                 </div>
             </div>
         </div>
-        
+
         <script>
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $('#editConnectorModal').on('hidden.bs.modal', function() {
+                var connector = JSON.parse(sessionStorage.getItem("connector"));
+                $("#name").val(connector.name);
+                $("#clientId").val(connector.clientId);
+                $("#username").val(connector.username);
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $('#editConnectorModal').on('shown.bs.modal', function() {
+                var name = $("#name").val();
+                $("#name").focus().val('').val(name);
+            });
+
             /*-----------------------------------------------------------
              *
              *
@@ -36,7 +61,7 @@
 
             $(document).on('click', 'button#saveConnector', function() {
 
-                $('#loader').toggle();
+                $('#edit-spinner').toggle();
 
                 $('#saveConnector').prop("disabled", true);
                 $('#cancel').prop("disabled", true);
@@ -56,7 +81,7 @@
                     dataType: "html",
                     data: $form.serialize(),
                     complete: function(response) {
-                        $('#loader').toggle();
+                        $('#edit-spinner').toggle();
                         $('#saveConnector').prop("disabled", false);
                         $('#cancel').prop("disabled", false);
                         $('#name').prop("readonly", false);
@@ -65,8 +90,9 @@
                         $('#username').prop("readonly", false);
                         $('#password').prop("readonly", false);
                         if (response.status == 200) {
+                            $('#editConnectorModal').modal().hide();
+                            $('.modal-backdrop').remove();
                             $('#detail').html(response.responseText);
-                            $('#editConnectorModal').modal('hide');
                             $('#success').show().delay(1500).fadeOut('slow');
                         } else {
                             $form.prepend(response.responseText);
@@ -76,21 +102,79 @@
 
                 return false;
             });
-            
+
             /*-----------------------------------------------------------
              *
              *
              */
 
-            $(document).on('click', 'button#refreshConnector', function() {
-                
+            $(document).on('click', 'a#refreshConnector', function(e) {
+                e.preventDefault();
+
+                $('#overlay').toggle();
+
+                var href = $(this).data('href');
+
+                $.ajax({
+                    method: 'post',
+                    url: href,
+                    complete: function(response) {
+                        $('#overlay').toggle();
+                        if (response.status == 200) {
+                            $('#detail').html(response.responseText);
+                            $('#success').show().delay(1500).fadeOut('slow');
+                        } else {
+                            $('#error').html(response.responseText);
+                        }
+                    }
+                });
+
+                return true;
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'a#disconnectConnector', function(e) {
+                e.preventDefault();
+
+                $('#overlay').toggle();
+
+                var href = $(this).data('href');
+
+                $.ajax({
+                    method: 'post',
+                    url: href,
+                    complete: function(response) {
+                        $('#overlay').toggle();
+                        if (response.status == 200) {
+                            $('#detail').html(response.responseText);
+                            $('#success').show().delay(1500).fadeOut('slow');
+                        } else {
+                            $('#error').html(response.responseText);
+                        }
+                    }
+                });
+
+                return true;
+            });
+
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#deleteConnector', function() {
+
                 $('#delete-spinner').toggle();
                 $('#deleteConnector').prop("disabled", true);
                 $('#cancel').prop("disabled", true);
-                
-                var href = $(this).data( 'href' );
-                var redirect = $(this).data( 'redirect' );
-                
+
+                var href = $(this).data('href');
+                var redirect = $(this).data('redirect');
+
                 $.ajax({
                     method: 'delete',
                     url: href,
@@ -109,73 +193,15 @@
 
                 return false;
             });
-            
-            /*-----------------------------------------------------------
-             *
-             *
-             */
 
-            $(document).on('click', 'button#disconnectConnector', function() {
-                
-                $('#delete-spinner').toggle();
-                $('#deleteConnector').prop("disabled", true);
-                $('#cancel').prop("disabled", true);
-                
-                var href = $(this).data( 'href' );
-                var redirect = $(this).data( 'redirect' );
-                
-                $.ajax({
-                    method: 'delete',
-                    url: 'connectors/:id/disconnect',
-                    complete: function(response) {
-                        $('#delete-spinner').toggle();
-                        $('#deleteConnector').prop("disabled", false);
-                        $('#cancel').prop("disabled", false);
-                        if (response.status == 200) {
-                            $('#confirmDelete').modal('hide');
-                            $(location).attr('href', redirect);
-                        } else {
-                            $form.prepend(response.responseText);
-                        }
-                    }
-                });
+            var connector = {
+                id: "${connector.id!}",
+                name: "${connector.name!}",
+                clientId: "${connector.clientId!}",
+                username: "${connector.username!}"
+            }
 
-                return false;
-            });
-            
-            /*-----------------------------------------------------------
-             *
-             *
-             */
-
-            $(document).on('click', 'button#disconnectConnector', function() {
-                
-                $('#delete-spinner').toggle();
-                $('#deleteConnector').prop("disabled", true);
-                $('#cancel').prop("disabled", true);
-                
-                var href = $(this).data( 'href' );
-                var redirect = $(this).data( 'redirect' );
-                
-                $.ajax({
-                    method: 'delete',
-                    url: 'connectors/:id/disconnect',
-                    complete: function(response) {
-                        $('#delete-spinner').toggle();
-                        $('#deleteConnector').prop("disabled", false);
-                        $('#cancel').prop("disabled", false);
-                        if (response.status == 200) {
-                            $('#confirmDelete').modal('hide');
-                            $(location).attr('href', redirect);
-                        } else {
-                            $form.prepend(response.responseText);
-                        }
-                    }
-                });
-
-                return false;
-            });
-            
+            sessionStorage.setItem("connector", JSON.stringify(connector));
         </script>
 
     </@t.page>

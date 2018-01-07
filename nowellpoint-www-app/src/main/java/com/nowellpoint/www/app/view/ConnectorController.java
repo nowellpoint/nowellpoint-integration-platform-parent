@@ -323,27 +323,4 @@ public class ConnectorController extends AbstractStaticController {
 
 		return render(ConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
 	}
-	
-	public static String newFlow(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		SalesforceConnector salesforceConnector = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.get(id);
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
-		
-		return TemplateBuilder.template()
-				.configuration(configuration)
-				.controllerClass(ConnectorController.class)
-				.identity(getIdentity(request))
-				.locale(getLocale(request))
-				.model(model)
-				.templateName(Template.SALESFORCE_CONNECTOR_FLOW_NEW)
-				.timeZone(getTimeZone(request))
-				.build();
-	}
 }

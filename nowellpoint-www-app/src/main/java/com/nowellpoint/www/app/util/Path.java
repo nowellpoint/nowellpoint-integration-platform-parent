@@ -54,7 +54,6 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects/:sobject");
 		public static final String CONNECTORS_SERVICE_SETUP = String.format(APPLICATION_CONTEXT, "connectors/:id/services/:serviceId/setup");
-		public static final String CONNECTORS_FLOW_NEW = String.format(APPLICATION_CONTEXT, "connectors/:id/new-flow");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id");
 		public static final String USER_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "user-profile/:id/picture");
