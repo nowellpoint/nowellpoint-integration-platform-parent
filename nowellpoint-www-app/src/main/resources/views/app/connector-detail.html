@@ -27,7 +27,7 @@
     </div>
     <div class="col-10">
         <!-- <#if connector.isConnected> -->
-        <span class="text-success">${connector.status!}&nbsp;</span>${labels["connected.on"]}
+        <span class="text-success">${connector.status!}&nbsp;</span>${labels["on"]}
         <span class="font-weight-light">${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}</span>
         <!-- <#else> -->
         <span class="text-danger text-truncate">${connector.status!}</span>

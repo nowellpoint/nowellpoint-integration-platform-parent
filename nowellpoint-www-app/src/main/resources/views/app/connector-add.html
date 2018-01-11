@@ -1,0 +1,79 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div class="container">
+            <div class="dashhead">
+                <div class="dashhead-titles">
+                    <h4 class="dashhead-subtitle">&nbsp;</h4>
+                    <h2 class="dashhead-title">${labels["available.connectors"]}</h2>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-6 col-md-9 col-xs-12">
+                    <button class="btn btn-link" data-toggle="modal" data-target="#addConnectorModal" class="d-block mb-4" style="height:75px; width: 75px">
+                        <img src="https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png" alt="icon" class="rounded">
+                        <br>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="addConnectorModal" role="dialog" aria-labelledby="addConnectorLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addConnectorLabel">${labels["add.connector"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="media mb-2">
+                                    <img src="https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png" class="mr-3" alt="icon">
+                                    <div class="media-body">
+                                        <p class="mb-0 font-weight-normal">Salesforce</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/add">
+                            <div class="form-group">
+                                <label for="name" class="col-form-label">${labels["name"]}</label>
+                                <input type="text" name="name" id="name" class="form-control" required autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientId" class="col-form-label">${labels["client.id"]}</label>
+                                <input type="text" name="clientId" id="clientId" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>
+                                <input type="password" name="clientSecret" id="clientSecret" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username" class="col-form-label">${labels["username"]}</label>
+                                <input type="text" name="username" id="username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="col-form-label">${labels["password"]}</label>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">   
+                                <label for="type" class="col-form-label">${labels["sandbox"]}</label>
+                                <select class="form-control" id="type" name="type" required>
+                                    <option value="SALESFORCE_PRODUCTION" selected="selected">${labels["no"]}</option>
+                                    <option value="SALESFORCE_SANDBOX">${labels["yes"]}</option>
+                                </select> 
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="edit-spinner" class="loader"></div>
+                        <button class="btn btn-link" id="cancel" class="close" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button class="btn btn-success" id="saveConnector">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </@t.page>

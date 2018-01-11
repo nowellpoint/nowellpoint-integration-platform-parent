@@ -260,8 +260,11 @@ public class Application implements SparkApplication {
 		get(Path.Route.CONNECTORS_LIST, (request, response) 
 				-> ConnectorController.listConnectors(configuration, request, response));
 		
-		get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) 
-				-> ConnectorController.newConnector(configuration, request, response));
+		get(Path.Route.CONNECTORS_ADD, (request, response) 
+				-> ConnectorController.showAvailableConnectors(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_ADD, (request, response) 
+				-> ConnectorController.showAvailableConnectors(configuration, request, response));
 		
 		get(Path.Route.CONNECTORS_VIEW, (request, response) 
 				-> ConnectorController.viewConnector(configuration, request, response));

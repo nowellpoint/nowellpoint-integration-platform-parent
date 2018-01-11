@@ -6,6 +6,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
         <dependent-module archiveName="nowellpoint-aws-sdk-1.0.9-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sdk/nowellpoint-aws-sdk">
             <dependency-type>uses</dependency-type>

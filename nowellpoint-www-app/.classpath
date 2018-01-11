@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
@@ -29,11 +30,11 @@
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.8.1/jackson-core-2.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-annotations/2.8.1/jackson-annotations-2.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.8.1/jackson-databind-2.8.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/j2html/j2html/0.88/j2html-0.88.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/j2html/j2html/1.2.0/j2html-1.2.0.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-sdk"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.165/aws-java-sdk-lambda-1.11.165.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.165/aws-java-sdk-core-1.11.165.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-lambda/1.11.228/aws-java-sdk-lambda-1.11.228.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.228/aws-java-sdk-core-1.11.228.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.2/httpclient-4.5.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.4/httpcore-4.4.4.jar"/>
@@ -41,7 +42,7 @@
 	<classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.165/jmespath-java-1.11.165.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.228/jmespath-java-1.11.228.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
 	<classpathentry kind="src" path="target/generated-sources/annotations">

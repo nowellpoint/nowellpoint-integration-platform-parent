@@ -24,6 +24,7 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.Connector;
 import com.nowellpoint.client.model.ConnectorList;
 import com.nowellpoint.client.model.ConnectorRequest;
+import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
@@ -39,7 +40,7 @@ public class ConnectorController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String CONNECTOR_VIEW = String.format(APPLICATION_CONTEXT, "connector-view.html");
-		public static final String SALESFORCE_CONNECTOR_NEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-new.html");
+		public static final String CONNECTOR_ADD = String.format(APPLICATION_CONTEXT, "connector-add.html");
 		public static final String CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "connector-list.html");
 		public static final String CONNECTOR_DETAIL = String.format(APPLICATION_CONTEXT, "connector-detail.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
@@ -56,13 +57,8 @@ public class ConnectorController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String newConnector(Configuration configuration, Request request, Response response) {		
-		String id = request.params(":id");
-		
-		Map<String, Object> model = getModel();
-		model.put("id", id);
-		
-		return render(ConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_NEW);
+	public static String showAvailableConnectors(Configuration configuration, Request request, Response response) {		
+		return render(ConnectorController.class, configuration, request, response, getModel(), Template.CONNECTOR_ADD);
 	};
 	
 	/**
@@ -115,6 +111,47 @@ public class ConnectorController extends AbstractStaticController {
 				.timeZone(getTimeZone(request))
 				.build();
 	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String addConnector(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+
+		String clientId = request.queryParamOrDefault("clientId", null);
+		String clientSecret = request.queryParamOrDefault("clientSecret", null);
+		String name = request.queryParamOrDefault("name", null);
+		String username = request.queryParamOrDefault("username", null);
+		String password = request.queryParamOrDefault("password", null);
+		String type = request.queryParams("type");
+
+		ConnectorRequest connectorRequest = ConnectorRequest.builder()
+				.clientId(clientId)
+				.clientSecret(clientSecret)
+				.name(name)
+				.username(username)
+				.password(password)
+				.token(token)
+				.type(type)
+				.build();
+
+		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.create(connectorRequest);
+		
+		if (createResult.isSuccess()) {
+			Map<String, Object> model = getModel();
+			model.put("connector", createResult.getTarget());			
+			return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_DETAIL);
+		} else {
+			return showErrorMessage(ConnectorController.class, configuration, request, response, createResult.getErrorMessage());
+		}
+	};
 
 	/**
 	 * 

@@ -42,7 +42,7 @@ public class Path {
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
-		public static final String CONNECTORS_SALESFORCE_NEW = String.format(APPLICATION_CONTEXT, "connectors/new");
+		public static final String CONNECTORS_ADD = String.format(APPLICATION_CONTEXT, "connectors/add");
 		public static final String CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "connectors");
 		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id");
 		public static final String CONNECTORS_DISCONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/disconnect");
