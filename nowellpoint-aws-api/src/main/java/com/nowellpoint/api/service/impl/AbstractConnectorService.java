@@ -20,6 +20,7 @@ import org.bson.types.ObjectId;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
+import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
 import com.nowellpoint.api.rest.domain.SalesforceAdapter;
 import com.nowellpoint.api.rest.domain.UserInfo;
@@ -208,6 +209,30 @@ public class AbstractConnectorService extends AbstractCacheService {
 			
 			return salesforceConnector.toConnector();
 		}	
+		
+		return null;
+	}
+	
+	protected Connector connect(Connector original, ConnectorStatusRequest request) {
+		
+		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
+			
+			assertNotNull(request.getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
+			assertNotNull(request.getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
+			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
+			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
+				
+			SalesforceAdapter adapter = SalesforceAdapter.builder()
+					.connector(original)
+					.clientId(request.getClientId())
+					.clientSecret(request.getClientSecret())
+					.name(original.getName())
+					.password(request.getPassword())
+					.username(request.getUsername())
+					.build();
+				
+			return adapter.toConnector();
+		}
 		
 		return null;
 	}

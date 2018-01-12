@@ -14,6 +14,7 @@ import com.nowellpoint.api.rest.ConnectorResource;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
+import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
@@ -105,5 +106,24 @@ public class ConnectorResourceImpl implements ConnectorResource {
 		return Response.ok(connector)
 				.build();
 		
+	}
+	
+	@Override
+	public Response updateConnectorStatus(String id, ConnectorStatusRequest request) {
+		
+		Connector connector = null;
+		
+		if ("connect".equalsIgnoreCase(request.getStatus())) {
+			connector = connectorService.connect(id, request);
+		} else if ("refresh".equalsIgnoreCase(request.getStatus())) {
+			connector = connectorService.refresh(id);
+		} else if ("disconnect".equalsIgnoreCase(request.getStatus())) {
+			connector = connectorService.disconnect(id);
+		} else {
+			throw new BadRequestException(String.format("Invalid status: %s", request.getStatus()));
+		}
+		
+		return Response.ok(connector)
+				.build();
 	}
 }

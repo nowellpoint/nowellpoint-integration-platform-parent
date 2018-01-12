@@ -1,5 +1,7 @@
 package com.nowellpoint.client.resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.client.model.Connector;
 import com.nowellpoint.client.model.ConnectorList;
 import com.nowellpoint.client.model.ConnectorRequest;
@@ -99,16 +101,41 @@ public class ConnectorService extends AbstractResource {
 		return result;
 	}
 	
-	public UpdateResult<Connector> refresh(String connectorId) {
+	public UpdateResult<Connector> connect(String connectorId, ConnectorRequest request) {
+		ObjectNode json = new ObjectMapper().createObjectNode()
+				.put("status", "connect")
+				.put("clientId", request.getClientId())
+				.put("clientSecret", request.getClientSecret())
+				.put("username", request.getPassword())
+				.put("password", request.getPassword());
+		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path(RESOURCE_CONTEXT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.path("connectors")
 				.path(connectorId)
-				.path("actions")
-				.path("refresh")
-				.path("invoke")
+				.path("status")
+				.body(json)
+				.execute();
+		
+		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
+		
+		return result;
+	}
+	
+	public UpdateResult<Connector> refresh(String connectorId) {
+		ObjectNode json = new ObjectMapper().createObjectNode()
+				.put("status", "refresh");
+				
+		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
+				.bearerAuthorization(token.getAccessToken())
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.path("connectors")
+				.path(connectorId)
+				.path("status")
+				.body(json)
 				.execute();
 		
 		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
@@ -117,15 +144,17 @@ public class ConnectorService extends AbstractResource {
 	}
 	
 	public UpdateResult<Connector> disconnect(String connectorId) {
+		ObjectNode json = new ObjectMapper().createObjectNode()
+				.put("status", "disconnect");
+				
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path(RESOURCE_CONTEXT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.path("connectors")
 				.path(connectorId)
-				.path("actions")
-				.path("disconnect")
-				.path("invoke")
+				.path("status")
+				.body(json)
 				.execute();
 		
 		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);

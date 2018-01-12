@@ -1,22 +1,32 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="container">
-            <div class="dashhead">
-                <div class="dashhead-titles">
-                    <h4 class="dashhead-subtitle">&nbsp;</h4>
-                    <h2 class="dashhead-title">${labels["available.connectors"]}</h2>
+        <div class="container-fluid">
+            <div class="container mt-3">
+                <div id="success" class="alert alert-success hidden">
+                    <span class="icon icon-check"></span> ${labels["success.message"]}
                 </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-lg-6 col-md-9 col-xs-12">
-                    <button class="btn btn-link" data-toggle="modal" data-target="#addConnectorModal" class="d-block mb-4" style="height:75px; width: 75px">
-                        <img src="https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png" alt="icon" class="rounded">
-                        <br>
-                    </button>
+                <div id="error"></div>
+                <div class="row">
+                    <div class="col-12">
+                        <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+                    </div>
+                </div>
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="dashhead-subtitle">&nbsp;</h4>
+                        <h2 class="dashhead-title">${labels["available.connectors"]}</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-9 col-xs-12">
+                        <button class="btn btn-link" data-toggle="modal" data-target="#addConnectorModal" class="d-block mb-4" style="height:75px; width: 75px">
+                            <img src="https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png" alt="icon" class="rounded">
+                            <br>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="modal fade" id="addConnectorModal" role="dialog" aria-labelledby="addConnectorLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -58,22 +68,75 @@
                                 <label for="password" class="col-form-label">${labels["password"]}</label>
                                 <input type="password" name="password" id="password" class="form-control" required>
                             </div>
-                            <div class="form-group">   
+                            <div class="form-group">
                                 <label for="type" class="col-form-label">${labels["sandbox"]}</label>
                                 <select class="form-control" id="type" name="type" required>
                                     <option value="SALESFORCE_PRODUCTION" selected="selected">${labels["no"]}</option>
                                     <option value="SALESFORCE_SANDBOX">${labels["yes"]}</option>
-                                </select> 
+                                </select>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div id="edit-spinner" class="loader"></div>
+                        <div id="spinner" class="loader"></div>
                         <button class="btn btn-link" id="cancel" class="close" data-dismiss="modal">${labels["cancel"]}</button>
                         <button class="btn btn-success" id="saveConnector">${labels["save"]}</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script>
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#saveConnector', function() {
+
+                $('#spinner').toggle();
+
+                $('#saveConnector').prop("disabled", true);
+                $('#cancel').prop("disabled", true);
+                $('#name').prop("readonly", true);
+                $('#clientId').prop("readonly", true);
+                $('#clientSecret').prop("readonly", true);
+                $('#username').prop("readonly", true);
+                $('#password').prop("readonly", true);
+                $('#type').prop("readonly", true);
+                $('#success').hide();
+                $('#error').hide();
+
+                $form = $("#connectorForm");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $('#spinner').toggle();
+                        $('#saveConnector').prop("disabled", false);
+                        $('#cancel').prop("disabled", false);
+                        $('#name').prop("readonly", false);
+                        $('#clientId').prop("readonly", false);
+                        $('#clientSecret').prop("readonly", false);
+                        $('#username').prop("readonly", false);
+                        $('#password').prop("readonly", false);
+                        $('#type').prop("readonly", false);
+                        if (response.status == 200) {
+                            $('#addConnectorModal').modal().hide();
+                            $('.modal-backdrop').remove();
+                            $('#detail').html(response.responseText);
+                            $('#success').show().delay(1500).fadeOut('slow');
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
+            });
+        </script>
 
     </@t.page>

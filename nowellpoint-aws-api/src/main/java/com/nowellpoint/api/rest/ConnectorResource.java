@@ -11,6 +11,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
+
 @Path("/connectors")
 public interface ConnectorResource {
 	
@@ -54,4 +56,10 @@ public interface ConnectorResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response invokeAction(@PathParam(value="id") String id, 
 			@PathParam(value="action") String action);
+	
+	@POST
+	@Path("{id}/status")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateConnectorStatus(@PathParam("id") String id, ConnectorStatusRequest request);
 }

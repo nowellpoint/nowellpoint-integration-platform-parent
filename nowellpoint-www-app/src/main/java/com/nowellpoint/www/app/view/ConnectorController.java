@@ -193,6 +193,38 @@ public class ConnectorController extends AbstractStaticController {
 		}
 	};
 	
+	public static String connect(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+		
+		String id = request.params(":id");
+		String clientId = request.queryParamOrDefault("clientId", null);
+		String clientSecret = request.queryParamOrDefault("clientSecret", null);
+		String name = request.queryParamOrDefault("name", null);
+		String username = request.queryParamOrDefault("username", null);
+		String password = request.queryParamOrDefault("password", null);
+
+		ConnectorRequest connectorRequest = ConnectorRequest.builder()
+				.clientId(clientId)
+				.clientSecret(clientSecret)
+				.name(name)
+				.username(username)
+				.password(password)
+				.token(token)
+				.build();
+
+		UpdateResult<Connector> updateResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.connect(id, connectorRequest);
+		
+		if (updateResult.isSuccess()) {
+			Map<String, Object> model = getModel();
+			model.put("connector", updateResult.getTarget());			
+			return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_DETAIL);
+		} else {
+			return showErrorMessage(ConnectorController.class, configuration, request, response, updateResult.getErrorMessage());
+		}
+	}
+	
 	/**
 	 * 
 	 * @param configuration

@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
@@ -16,6 +18,9 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 
 public class ConnectorTest {
 	
@@ -90,6 +95,8 @@ public class ConnectorTest {
 				.connector()
 				.refresh(createResult.getTarget().getId());
 		
+		System.out.println(refreshResult.getErrorMessage());
+		
 		Assert.assertTrue(refreshResult.isSuccess());
 		Assert.assertNotNull(refreshResult.getTarget().getStatus());
 		Assert.assertTrue(refreshResult.getTarget().getIsConnected());
@@ -101,6 +108,21 @@ public class ConnectorTest {
 		Assert.assertTrue(disconnectResult.isSuccess());
 		Assert.assertNotNull(disconnectResult.getTarget().getStatus());
 		Assert.assertFalse(disconnectResult.getTarget().getIsConnected());
+		
+		ConnectorRequest updateRequest3 = ConnectorRequest.builder()
+				.name("Updated Salesforce Connector")
+				.token(token)
+				.clientId(System.getenv("SALESFORCE_CLIENT_ID")) 
+				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.username(System.getenv("SALESFORCE_USERNAME"))
+				.password(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")))
+				.build();
+		
+		UpdateResult<Connector> updateResult3 = NowellpointClient.defaultClient(token)
+				.connector()
+				.connect(createResult.getTarget().getId(), updateRequest3);
+		
+		Assert.assertTrue(updateResult3.isSuccess());
 		
 		ConnectorRequest updateRequest2 = ConnectorRequest.builder()
 				.name("Updated Salesforce Connector")
