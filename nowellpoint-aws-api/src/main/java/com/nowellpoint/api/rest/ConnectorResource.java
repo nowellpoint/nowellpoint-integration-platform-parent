@@ -11,7 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
+import com.nowellpoint.api.rest.domain.ConnectorRequest;
 
 @Path("/connectors")
 public interface ConnectorResource {
@@ -26,15 +26,9 @@ public interface ConnectorResource {
     public Response getConnector(@PathParam("id") String id);
 
 	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createConnector(
-			@FormParam("type") String type,
-			@FormParam("name") String name, 
-			@FormParam("clientId") String clientId, 
-			@FormParam("clientSecret") String clientSecret, 
-			@FormParam("username") String username, 
-			@FormParam("password") String password);
+	public Response createConnector(ConnectorRequest request);
 	
 	@POST
 	@Path("{id}")
@@ -61,5 +55,5 @@ public interface ConnectorResource {
 	@Path("{id}/status")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateConnectorStatus(@PathParam("id") String id, ConnectorStatusRequest request);
+	public Response updateConnectorStatus(@PathParam("id") String id, ConnectorRequest request);
 }

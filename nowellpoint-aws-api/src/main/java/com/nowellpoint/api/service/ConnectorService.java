@@ -3,7 +3,6 @@ package com.nowellpoint.api.service;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
-import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 
 public interface ConnectorService {
 	
@@ -15,7 +14,7 @@ public interface ConnectorService {
 	
 	public Connector updateConnector(String id, ConnectorRequest request);
 	
-	public Connector connect(String id, ConnectorStatusRequest request);
+	public Connector connect(String id, ConnectorRequest request);
 	
 	public void deleteConnector(String id);
 	

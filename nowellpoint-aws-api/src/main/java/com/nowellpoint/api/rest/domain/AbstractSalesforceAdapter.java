@@ -1,10 +1,12 @@
 package com.nowellpoint.api.rest.domain;
 
+import static com.nowellpoint.util.Assert.assertNotNull;
 import static com.nowellpoint.util.Assert.isNull;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -12,8 +14,9 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.KeyManager;
+import com.nowellpoint.api.util.MessageConstants;
+import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.client.sforce.OauthConstants;
-import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
@@ -31,82 +34,79 @@ public abstract class AbstractSalesforceAdapter {
 	public abstract String getPassword();
 	public abstract String getClientId();
 	public abstract String getClientSecret();
+	public abstract String getStatus();
 	
 	private static final String OAUTH_TOKEN_URI = "%s/services/oauth2/token";
 	
-	public static Connector refresh(Connector connector) {
-		SalesforceAdapter adapter = SalesforceAdapter.builder()
-				.clientId(connector.getClientId())
-				.clientSecret(KeyManager.decrypt(connector.getClientSecret()))
-				.connector(connector)
-				.name(connector.getName())
-				.password(KeyManager.decrypt(connector.getPassword()))
-				.username(connector.getUsername())
-				.build();
-			
-		return adapter.toConnector();	
-	}
-	
 	public Connector toConnector() {
 		
-		String status = "Connected";
-		Boolean isConnected = Boolean.TRUE;
-		
-		Token token = null;
-		
-		if (isNull(getConnector())) {
+		if (Connector.CONNECTED.equals(getStatus())) {
 			
-			try {
-				token = login(getConnectorType().getAuthEndpoint());			
-			} catch (OauthException e) {
-				isConnected = Boolean.FALSE;
-				status = String.format("Failed to Connect. Error: %s [ %s ]", e.getError(), e.getErrorDescription());
-			}
+			assertNotNull(getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
+			assertNotNull(getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
+			assertNotNull(getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
+			assertNotNull(getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
+			
+			SalesforceLoginResult loginResult = null;
+			
+			if (isNull(getConnector())) {
+				
+				loginResult = login(getConnectorType().getAuthEndpoint());		
+				
+				Connector connector = Connector.builder()
+						.name(getName())
+						.connectorType(getConnectorType())
+						.username(getUsername())
+						.password(KeyManager.encrypt(getPassword()))
+						.clientId(getClientId())
+						.clientSecret(KeyManager.encrypt(getClientSecret()))
+						.connectedAs(loginResult.getIsConnected() ? getUsername() : null)
+						.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
+						.status(loginResult.getStatus())
+						.isConnected(loginResult.getIsConnected())
+						.build();
+				
+				return connector;
+				
+			} else {
+				
+				loginResult = login(getConnectorType().getAuthEndpoint());	
+				
+				Connector connector = Connector.builder()
+						.from(getConnector())
+						.name(getName())
+						.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
+						.lastUpdatedOn(Date.from(Instant.now()))
+						.username(getUsername())
+						.password(KeyManager.encrypt(getPassword()))
+						.clientId(getClientId())
+						.clientSecret(KeyManager.encrypt(getClientSecret()))
+						.connectedAs(loginResult.getIsConnected() ? getUsername() : null)
+						.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
+						.status(loginResult.getStatus())
+						.isConnected(loginResult.getIsConnected())
+						.build();
+				
+				return connector;
+			}		
+		} else {
 			
 			Connector connector = Connector.builder()
 					.name(getName())
 					.connectorType(getConnectorType())
-					.username(isConnected ? getUsername() : null)
-					.password(isConnected ? KeyManager.encrypt(getPassword()) : null)
-					.clientId(isConnected ? getClientId() : null)
-					.clientSecret(isConnected ? KeyManager.encrypt(getClientSecret()) : null)
-					.connectedAs(isConnected ? getUsername() : null)
-					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
-					.status(status)
-					.isConnected(isConnected)
+					.username(getUsername())
+					.password(KeyManager.encrypt(getPassword()))
+					.clientId(getClientId())
+					.clientSecret(KeyManager.encrypt(getClientSecret()))
+					.status(Connector.NOT_CONNECTED)
+					.isConnected(Boolean.FALSE)
 					.build();
 			
 			return connector;
-			
-		} else {
-			
-			try {
-				token = login(getConnector().getConnectorType().getAuthEndpoint());			
-			} catch (OauthException e) {
-				isConnected = Boolean.FALSE;
-				status = String.format("Failed to Connect. Error: %s - %s )", e.getError(), e.getErrorDescription());
-			}
-			
-			Connector connector = Connector.builder()
-					.from(getConnector())
-					.name(getName())
-					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
-					.lastUpdatedOn(Date.from(Instant.now()))
-					.username(isConnected ? getUsername() : null)
-					.password(isConnected ? KeyManager.encrypt(getPassword()) : null)
-					.clientId(isConnected ? getClientId() : null)
-					.clientSecret(isConnected ? KeyManager.encrypt(getClientSecret()) : null)
-					.connectedAs(isConnected ? getUsername() : null)
-					.connectedOn(isConnected ? new Date(Long.valueOf(token.getIssuedAt())) : null)
-					.status(status)
-					.isConnected(isConnected)
-					.build();
-			
-			return connector;
-		}		
+		}
 	}
 	
-	private Token login(String authEndpoint) {
+	private SalesforceLoginResult login(String authEndpoint) {
 		HttpResponse httpResponse = RestResource.post(String.format(OAUTH_TOKEN_URI, authEndpoint))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
@@ -118,14 +118,18 @@ public abstract class AbstractSalesforceAdapter {
 				.parameter(OauthConstants.PASSWORD_PARAMETER, getPassword())
 				.execute();
 		
-		Token token = null;
-		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			token = httpResponse.getEntity(Token.class);
+			return SalesforceLoginResult.builder()
+					.isConnected(Boolean.TRUE)
+					.status(Connector.CONNECTED)
+					.token(httpResponse.getEntity(Token.class))
+					.build();
 		} else {
-			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			Error error = httpResponse.getEntity(Error.class);
+			return SalesforceLoginResult.builder()
+					.isConnected(Boolean.FALSE)
+					.status(String.format("%s. Error: %s - %s )", Connector.FAILED_TO_CONNECT, error.getError(), error.getErrorDescription()))
+					.build();
 		}
-		
-		return token;
 	}
 }

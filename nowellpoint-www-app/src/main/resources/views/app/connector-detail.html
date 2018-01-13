@@ -16,7 +16,9 @@
                 <a href="#" class="dropdown-item" id="refreshConnector" data-href="${links['connectors']}/${connector.id}/refresh">${labels['refresh']}</a>
                 <a href="#" class="dropdown-item" id="disconnectConnector" data-href="${links['connectors']}/${connector.id}/disconnect">${labels['disconnect']}</a>
                 <!-- </#if> -->
+                <!-- <#if ! connector.isConnected> -->
                 <a href="#" class="dropdown-item" id="deleteConnector" data-toggle="modal" data-target="#confirmDelete">${labels['delete']}</a>
+                <!-- </#if> -->
             </div>
         </div>
     </div>

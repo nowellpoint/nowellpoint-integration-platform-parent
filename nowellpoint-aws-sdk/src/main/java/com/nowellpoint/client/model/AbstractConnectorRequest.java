@@ -8,7 +8,8 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 public abstract class AbstractConnectorRequest extends AbstractAuthenticatedRequest {
-	public abstract String getName();
+	public abstract @Nullable String getName();
+	public abstract @Nullable String getStatus();
 	public abstract @Nullable String getType();
 	public abstract @Nullable String getClientId();
 	public abstract @Nullable String getClientSecret();

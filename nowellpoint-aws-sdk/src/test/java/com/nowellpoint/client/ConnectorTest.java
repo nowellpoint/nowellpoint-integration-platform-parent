@@ -5,8 +5,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
@@ -18,9 +18,6 @@ import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
 
 public class ConnectorTest {
 	
@@ -43,6 +40,35 @@ public class ConnectorTest {
 	}
 	
 	@Test
+	public void testConnector() {
+		
+		ConnectorRequest createRequest = ConnectorRequest.builder()
+				.token(token)
+				.name("Test Salesforce Connector")
+				.status("connect")
+				.type("SALESFORCE_PRODUCTION")
+				.clientId(System.getenv("SALESFORCE_CLIENT_ID")) 
+				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.username(System.getenv("SALESFORCE_USERNAME"))
+				.password(System.getenv("SALESFORCE_PASSWORD").concat(System.getenv("SALESFORCE_SECURITY_TOKEN")))
+				.build();
+		
+		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.create(createRequest);
+		
+		System.out.println(createResult.isSuccess());
+		System.out.println(createResult.getErrorMessage());
+		
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(createResult.getTarget()));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//@Test
 	public void testCreateConnector() {
 		
 		ConnectorRequest createRequest = ConnectorRequest.builder()
@@ -94,8 +120,6 @@ public class ConnectorTest {
 		UpdateResult<Connector> refreshResult = NowellpointClient.defaultClient(token)
 				.connector()
 				.refresh(createResult.getTarget().getId());
-		
-		System.out.println(refreshResult.getErrorMessage());
 		
 		Assert.assertTrue(refreshResult.isSuccess());
 		Assert.assertNotNull(refreshResult.getTarget().getStatus());

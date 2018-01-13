@@ -14,7 +14,6 @@ import com.nowellpoint.api.rest.ConnectorResource;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
-import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
@@ -39,20 +38,9 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	}
 
 	@Override
-	public Response createConnector(String type, String name, String clientId, String clientSecret, String username, String password) {
+	public Response createConnector(ConnectorRequest request) {
 		
-		assertNotNull(name, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
-		
-		ConnectorRequest payload = ConnectorRequest.builder()
-				.name(name)
-				.type(type)
-				.clientId(clientId)
-				.clientSecret(clientSecret)
-				.username(username)
-				.password(password)
-				.build();
-		
-		Connector connector = connectorService.createConnector(payload);
+		Connector connector = connectorService.createConnector(request);
 		
 		URI uri = UriBuilder.fromUri(connector.getMeta().getHref())
 				.path(ConnectorResource.class)
@@ -109,7 +97,7 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	}
 	
 	@Override
-	public Response updateConnectorStatus(String id, ConnectorStatusRequest request) {
+	public Response updateConnectorStatus(String id, ConnectorRequest request) {
 		
 		Connector connector = null;
 		

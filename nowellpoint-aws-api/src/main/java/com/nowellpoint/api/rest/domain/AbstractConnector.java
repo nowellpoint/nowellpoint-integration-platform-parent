@@ -20,9 +20,13 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 @JsonSerialize(as = Connector.class)
 @JsonDeserialize(as = Connector.class)
 public abstract class AbstractConnector extends AbstractImmutableResource {
+	public static final String NOT_CONNECTED = "Not Connected";
+	public static final String CONNECTED = "Connected";
+	public static final String DISCONNECTED = "Disconnected";
+	public static final String FAILED_TO_CONNECT = "Failed to connect";
+	
 	public abstract String getName();
 	public abstract @JsonUnwrapped ConnectorType getConnectorType();
-	public abstract String getStatus();
 	public abstract @Nullable String getUsername();
 	public abstract @Nullable String getPassword();
 	public abstract @Nullable String getClientId();
@@ -33,6 +37,11 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	@Value.Default
 	public Boolean getIsConnected() {
 		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public String getStatus() {
+		return NOT_CONNECTED;
 	}
 	
 	@Value.Default

@@ -2,6 +2,7 @@ package com.nowellpoint.api.service.impl;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.nowellpoint.util.Assert.assertNotNull;
+import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import org.bson.types.ObjectId;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
-import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
 import com.nowellpoint.api.rest.domain.SalesforceAdapter;
 import com.nowellpoint.api.rest.domain.UserInfo;
@@ -36,7 +36,7 @@ import com.nowellpoint.util.Assert;
 
 public class AbstractConnectorService extends AbstractCacheService {
 	
-	private static final String DISCONNECTED = "Disconnected";
+	
 	
 	@Inject
 	protected DocumentManagerFactory documentManagerFactory;
@@ -120,7 +120,18 @@ public class AbstractConnectorService extends AbstractCacheService {
 		}
 		
 		if ("SALESFORCE_SANDBOX".equals(connector.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(connector.getConnectorType().getName())) {
-			return SalesforceAdapter.refresh(connector);
+			
+			SalesforceAdapter adapter = SalesforceAdapter.builder()
+					.clientId(connector.getClientId())
+					.clientSecret(connector.getClientSecret())
+					.connector(connector)
+					.name(connector.getName())
+					.password(connector.getPassword())
+					.username(connector.getUsername())
+					.status(Connector.CONNECTED)
+					.build();
+				
+			return adapter.toConnector();	
 		}
 		
 		return null;		
@@ -146,7 +157,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 				.password(null)
 				.clientId(null)
 				.clientSecret(null)
-				.status(DISCONNECTED)
+				.status(Connector.DISCONNECTED)
 				.isConnected(Boolean.FALSE)
 				.build();
 	}
@@ -164,11 +175,6 @@ public class AbstractConnectorService extends AbstractCacheService {
 		}
 		
 		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
-			
-			assertNotNull(request.getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
-			assertNotNull(request.getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
-			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
-			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 				
 			SalesforceAdapter adapter = SalesforceAdapter.builder()
 					.clientId(request.getClientId())
@@ -177,6 +183,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 					.name(request.getName())
 					.password(request.getPassword())
 					.username(request.getUsername())
+					.status(isNotNullOrEmpty(request.getStatus()) ? request.getStatus() : original.getStatus())
 					.build();
 				
 			return adapter.toConnector();
@@ -185,7 +192,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 		return null;
 	}
 	
-	protected Connector build(ConnectorRequest request) {
+	protected Connector create(ConnectorRequest request) {
 		
 		ConnectorType connectorType = getConnectorType(request.getType());
 		
@@ -193,18 +200,16 @@ public class AbstractConnectorService extends AbstractCacheService {
 		
 		if ("SALESFORCE_SANDBOX".equals(connectorType.getName()) || "SALESFORCE_PRODUCTION".equals(connectorType.getName())) {
 			
-			assertNotNull(request.getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
-			assertNotNull(request.getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
-			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
-			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
+			String status = "connect".equals(request.getStatus()) ? Connector.CONNECTED : Connector.NOT_CONNECTED;
 			
 			SalesforceAdapter salesforceConnector = SalesforceAdapter.builder()
 					.connectorType(connectorType)
 					.clientId(request.getClientId())
 					.clientSecret(request.getClientSecret())
-					.name(request.getName())
+					.name(isNotNullOrEmpty(request.getName()) ? request.getName() : "New Salesforce Connector")
 					.password(request.getPassword())
 					.username(request.getUsername())
+					.status(status)
 					.build();
 			
 			return salesforceConnector.toConnector();
@@ -213,22 +218,18 @@ public class AbstractConnectorService extends AbstractCacheService {
 		return null;
 	}
 	
-	protected Connector connect(Connector original, ConnectorStatusRequest request) {
+	protected Connector connect(Connector original, ConnectorRequest request) {
 		
 		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
-			
-			assertNotNull(request.getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
-			assertNotNull(request.getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
-			assertNotNull(request.getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
-			assertNotNull(request.getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 				
 			SalesforceAdapter adapter = SalesforceAdapter.builder()
 					.connector(original)
-					.clientId(request.getClientId())
-					.clientSecret(request.getClientSecret())
-					.name(original.getName())
-					.password(request.getPassword())
-					.username(request.getUsername())
+					.clientId(isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : original.getClientId())
+					.clientSecret(isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : original.getClientSecret())
+					.name(isNotNullOrEmpty(request.getName()) ? request.getName() : original.getName())
+					.password(isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : original.getPassword())
+					.username(isNotNullOrEmpty(request.getUsername()) ? request.getPassword() : original.getPassword())
+					.status(Connector.CONNECTED)
 					.build();
 				
 			return adapter.toConnector();

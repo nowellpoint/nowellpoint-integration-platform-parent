@@ -3,7 +3,6 @@ package com.nowellpoint.api.service.impl;
 import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
-import com.nowellpoint.api.rest.domain.ConnectorStatusRequest;
 import com.nowellpoint.api.service.ConnectorService;
 import com.nowellpoint.api.util.ClaimsContext;
 
@@ -23,7 +22,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public Connector createConnector(ConnectorRequest request) {
 		
-		Connector connector = build(request);
+		Connector connector = create(request);
 		
 		create(connector);
 		
@@ -43,7 +42,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	}
 	
 	@Override
-	public Connector connect(String id, ConnectorStatusRequest request) {
+	public Connector connect(String id, ConnectorRequest request) {
 		
 		Connector original = retrieve(id);
 		
