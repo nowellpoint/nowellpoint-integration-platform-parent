@@ -86,17 +86,21 @@ public class ConnectorService extends AbstractResource {
 	}
 	
 	public UpdateResult<Connector> update(String connectorId, ConnectorRequest request) {
+		ObjectNode payload = objectMapper.createObjectNode()
+				.put("status", "connect")
+				.put("name", request.getName())
+				.put("clientId", request.getClientId())
+				.put("clientSecret", request.getClientSecret())
+				.put("username", request.getUsername())
+				.put("password", request.getPassword());
+		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(connectorId)
-				.parameter("name", request.getName())
-				.parameter("clientId", request.getClientId())
-				.parameter("clientSecret", request.getClientSecret())
-				.parameter("username", request.getUsername())
-				.parameter("password", request.getPassword())
+				.body(payload)
 				.execute();
 		
 		UpdateResult<Connector> result = new UpdateResultImpl<Connector>(Connector.class, httpResponse);
@@ -109,14 +113,14 @@ public class ConnectorService extends AbstractResource {
 				.put("status", "connect")
 				.put("clientId", request.getClientId())
 				.put("clientSecret", request.getClientSecret())
-				.put("username", request.getPassword())
+				.put("username", request.getUsername())
 				.put("password", request.getPassword());
 		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
-				.path("connectors")
+				.path(RESOURCE_CONTEXT)
 				.path(connectorId)
 				.path("status")
 				.body(payload)
@@ -135,7 +139,7 @@ public class ConnectorService extends AbstractResource {
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
-				.path("connectors")
+				.path(RESOURCE_CONTEXT)
 				.path(connectorId)
 				.path("status")
 				.body(payload)
@@ -154,7 +158,7 @@ public class ConnectorService extends AbstractResource {
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
-				.path("connectors")
+				.path(RESOURCE_CONTEXT)
 				.path(connectorId)
 				.path("status")
 				.body(payload)

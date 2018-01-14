@@ -27,4 +27,5 @@ public class MessageConstants {
 	public static final String CONNECTOR_MISSING_CLIENT_SECRET = "connector.missing.client.secret";
 	public static final String CONNECTOR_MISSING_USERNAME = "connector.missing.username";
 	public static final String CONNECTOR_MISSING_PASSWORD = "connector.missing.password";
+	public static final String CONNECTOR_INVALID_STATUS = "connector.invalid.status";
 }

@@ -10,6 +10,14 @@ import com.nowellpoint.client.sforce.model.Token;
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 public abstract class AbstractSalesforceLoginResult {
 	public abstract @Nullable Token getToken();
-	public abstract String getStatus();
-	public abstract Boolean getIsConnected();
+	
+	@Value.Default
+	public String getStatus() {
+		return Connector.NOT_CONNECTED;
+	}
+	
+	@Value.Default
+	public Boolean getIsConnected() {
+		return Boolean.FALSE;
+	}
 }

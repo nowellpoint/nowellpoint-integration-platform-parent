@@ -32,9 +32,9 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public Connector updateConnector(String id, ConnectorRequest request) {
 		
-		Connector original = retrieve(id);
+		Connector original = findById(id);
 		
-		Connector connector = build(original, request);
+		Connector connector = update(original, request);
 		
 		update(connector);
 		
@@ -44,7 +44,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public Connector connect(String id, ConnectorRequest request) {
 		
-		Connector original = retrieve(id);
+		Connector original = findById(id);
 		
 		Connector connector = connect(original, request);
 		

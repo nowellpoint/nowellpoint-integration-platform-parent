@@ -5,8 +5,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
@@ -40,11 +38,10 @@ public class ConnectorTest {
 	}
 	
 	@Test
-	public void testConnector() {
+	public void testCreateNoName() {
 		
 		ConnectorRequest createRequest = ConnectorRequest.builder()
 				.token(token)
-				.name("Test Salesforce Connector")
 				.status("connect")
 				.type("SALESFORCE_PRODUCTION")
 				.clientId(System.getenv("SALESFORCE_CLIENT_ID")) 
@@ -57,23 +54,47 @@ public class ConnectorTest {
 				.connector()
 				.create(createRequest);
 		
-		System.out.println(createResult.isSuccess());
-		System.out.println(createResult.getErrorMessage());
+		Assert.assertTrue(createResult.isSuccess());
+		Assert.assertTrue(createResult.getTarget().getIsConnected());
+		Assert.assertTrue("New Salesforce Connector".equals(createResult.getTarget().getName()));
 		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(createResult.getTarget()));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.delete(createResult.getTarget().getId());
+		
+		Assert.assertTrue(deleteResult.isSuccess());
 	}
 	
-	//@Test
+	@Test
+	public void testCreateNoNameNoStatus() {
+		
+		ConnectorRequest createRequest = ConnectorRequest.builder()
+				.token(token)
+				.type("SALESFORCE_PRODUCTION")
+				.build();
+		
+		CreateResult<Connector> createResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.create(createRequest);
+		
+		Assert.assertTrue(createResult.isSuccess());
+		Assert.assertFalse(createResult.getTarget().getIsConnected());
+		Assert.assertTrue("New Salesforce Connector".equals(createResult.getTarget().getName()));
+		
+		DeleteResult deleteResult = NowellpointClient.defaultClient(token)
+				.connector()
+				.delete(createResult.getTarget().getId());
+		
+		Assert.assertTrue(deleteResult.isSuccess());
+	}
+	
+	@Test
 	public void testCreateConnector() {
 		
 		ConnectorRequest createRequest = ConnectorRequest.builder()
 				.name("Test Salesforce Connector")
 				.token(token)
+				.status("connect")
 				.type("SALESFORCE_PRODUCTION")
 				.clientId(System.getenv("SALESFORCE_CLIENT_ID")) 
 				.clientSecret(System.getenv("SALESFORCE_CLIENT_SECRET"))

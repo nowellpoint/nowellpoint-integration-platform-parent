@@ -53,16 +53,16 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	}
 
 	@Override
-	public Response updateConnector(String id, String name, String clientId, String clientSecret, String username, String password) {
+	public Response updateConnector(String id, ConnectorRequest request) {
 		
-		assertNotNull(name, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
+		assertNotNull(request.getName(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
 		
 		ConnectorRequest payload = ConnectorRequest.builder()
-				.name(name)
-				.clientId(clientId)
-				.clientSecret(clientSecret)
-				.username(username)
-				.password(password)
+				.name(request.getName())
+				.clientId(request.getClientId())
+				.clientSecret(request.getClientSecret())
+				.username(request.getUsername())
+				.password(request.getPassword())
 				.build();
 		
 		Connector connector = connectorService.updateConnector(id, payload);
@@ -79,24 +79,6 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	}
 	
 	@Override
-	public Response invokeAction(String id, String action) {
-		
-		Connector connector = null;
-		
-		if ("refresh".equalsIgnoreCase(action)) {
-			connector = connectorService.refresh(id);
-		} else if ("disconnect".equalsIgnoreCase(action)) {
-			connector = connectorService.disconnect(id);
-		} else {
-			throw new BadRequestException(String.format("Invalid action: %s", action));
-		}
-		
-		return Response.ok(connector)
-				.build();
-		
-	}
-	
-	@Override
 	public Response updateConnectorStatus(String id, ConnectorRequest request) {
 		
 		Connector connector = null;
@@ -108,7 +90,7 @@ public class ConnectorResourceImpl implements ConnectorResource {
 		} else if ("disconnect".equalsIgnoreCase(request.getStatus())) {
 			connector = connectorService.disconnect(id);
 		} else {
-			throw new BadRequestException(String.format("Invalid status: %s", request.getStatus()));
+			throw new BadRequestException(String.format("Invalid status action: %s", request.getStatus()));
 		}
 		
 		return Response.ok(connector)

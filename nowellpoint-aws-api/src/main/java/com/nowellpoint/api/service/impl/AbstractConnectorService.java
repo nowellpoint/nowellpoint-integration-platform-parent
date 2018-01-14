@@ -122,12 +122,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 		if ("SALESFORCE_SANDBOX".equals(connector.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(connector.getConnectorType().getName())) {
 			
 			SalesforceAdapter adapter = SalesforceAdapter.builder()
-					.clientId(connector.getClientId())
-					.clientSecret(connector.getClientSecret())
 					.connector(connector)
-					.name(connector.getName())
-					.password(connector.getPassword())
-					.username(connector.getUsername())
 					.status(Connector.CONNECTED)
 					.build();
 				
@@ -162,7 +157,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 				.build();
 	}
 	
-	protected Connector build(Connector original, ConnectorRequest request) {
+	protected Connector update(Connector original, ConnectorRequest request) {
 		
 		if (original.getIsConnected()) {
 			
@@ -183,7 +178,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 					.name(request.getName())
 					.password(request.getPassword())
 					.username(request.getUsername())
-					.status(isNotNullOrEmpty(request.getStatus()) ? request.getStatus() : original.getStatus())
+					.status(isNotNullOrEmpty(request.getStatus()) ? request.getStatus() : null)
 					.build();
 				
 			return adapter.toConnector();
@@ -224,11 +219,11 @@ public class AbstractConnectorService extends AbstractCacheService {
 				
 			SalesforceAdapter adapter = SalesforceAdapter.builder()
 					.connector(original)
-					.clientId(isNotNullOrEmpty(request.getClientId()) ? request.getClientId() : original.getClientId())
-					.clientSecret(isNotNullOrEmpty(request.getClientSecret()) ? request.getClientSecret() : original.getClientSecret())
-					.name(isNotNullOrEmpty(request.getName()) ? request.getName() : original.getName())
-					.password(isNotNullOrEmpty(request.getPassword()) ? request.getPassword() : original.getPassword())
-					.username(isNotNullOrEmpty(request.getUsername()) ? request.getPassword() : original.getPassword())
+					.clientId(request.getClientId())
+					.clientSecret(request.getClientSecret())
+					.name(request.getName())
+					.password(request.getPassword())
+					.username(request.getUsername())
 					.status(Connector.CONNECTED)
 					.build();
 				

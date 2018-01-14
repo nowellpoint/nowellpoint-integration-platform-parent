@@ -2,7 +2,6 @@ package com.nowellpoint.api.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,24 +31,13 @@ public interface ConnectorResource {
 	
 	@POST
 	@Path("{id}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateConnector(@PathParam("id") String id, 
-			@FormParam("name") String name, 
-			@FormParam("clientId") String clientId, 
-			@FormParam("clientSecret") String clientSecret, 
-			@FormParam("username") String username, 
-			@FormParam("password") String password);
+	public Response updateConnector(@PathParam("id") String id, ConnectorRequest request);
 	
 	@DELETE
 	@Path("{id}")
 	public Response deleteConnector(@PathParam("id") String id);
-	
-	@POST
-	@Path("{id}/actions/{action}/invoke")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response invokeAction(@PathParam(value="id") String id, 
-			@PathParam(value="action") String action);
 	
 	@POST
 	@Path("{id}/status")

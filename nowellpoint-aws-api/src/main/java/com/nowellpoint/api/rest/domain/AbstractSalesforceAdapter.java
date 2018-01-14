@@ -1,6 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
 import static com.nowellpoint.util.Assert.assertNotNull;
+import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import static com.nowellpoint.util.Assert.isNull;
 
 import java.nio.charset.StandardCharsets;
@@ -29,67 +30,32 @@ import com.nowellpoint.http.Status;
 public abstract class AbstractSalesforceAdapter {
 	public abstract @Nullable Connector getConnector();
 	public abstract @Nullable ConnectorType getConnectorType();
-	public abstract String getName();
-	public abstract String getUsername();
-	public abstract String getPassword();
-	public abstract String getClientId();
-	public abstract String getClientSecret();
-	public abstract String getStatus();
+	public abstract @Nullable String getName();
+	public abstract @Nullable String getUsername();
+	public abstract @Nullable String getPassword();
+	public abstract @Nullable String getClientId();
+	public abstract @Nullable String getClientSecret();
+	public abstract @Nullable String getStatus();
 	
 	private static final String OAUTH_TOKEN_URI = "%s/services/oauth2/token";
 	
 	public Connector toConnector() {
 		
-		if (Connector.CONNECTED.equals(getStatus())) {
+		SalesforceLoginResult loginResult = SalesforceLoginResult.builder().build();
+		
+		if (isNull(getConnector())) {
 			
-			assertNotNull(getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
-			assertNotNull(getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
-			assertNotNull(getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
-			assertNotNull(getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
+			assertNotNull(getName(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
 			
-			SalesforceLoginResult loginResult = null;
-			
-			if (isNull(getConnector())) {
+			if (Connector.CONNECTED.equals(getStatus())) {
 				
-				loginResult = login(getConnectorType().getAuthEndpoint());		
+				assertNotNull(getClientId(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
+				assertNotNull(getClientSecret(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
+				assertNotNull(getUsername(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
+				assertNotNull(getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 				
-				Connector connector = Connector.builder()
-						.name(getName())
-						.connectorType(getConnectorType())
-						.username(getUsername())
-						.password(KeyManager.encrypt(getPassword()))
-						.clientId(getClientId())
-						.clientSecret(KeyManager.encrypt(getClientSecret()))
-						.connectedAs(loginResult.getIsConnected() ? getUsername() : null)
-						.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
-						.status(loginResult.getStatus())
-						.isConnected(loginResult.getIsConnected())
-						.build();
-				
-				return connector;
-				
-			} else {
-				
-				loginResult = login(getConnectorType().getAuthEndpoint());	
-				
-				Connector connector = Connector.builder()
-						.from(getConnector())
-						.name(getName())
-						.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
-						.lastUpdatedOn(Date.from(Instant.now()))
-						.username(getUsername())
-						.password(KeyManager.encrypt(getPassword()))
-						.clientId(getClientId())
-						.clientSecret(KeyManager.encrypt(getClientSecret()))
-						.connectedAs(loginResult.getIsConnected() ? getUsername() : null)
-						.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
-						.status(loginResult.getStatus())
-						.isConnected(loginResult.getIsConnected())
-						.build();
-				
-				return connector;
-			}		
-		} else {
+				loginResult = login(getConnectorType().getAuthEndpoint(), getClientId(), getClientSecret(), getUsername(), getPassword());	
+			}
 			
 			Connector connector = Connector.builder()
 					.name(getName())
@@ -98,24 +64,74 @@ public abstract class AbstractSalesforceAdapter {
 					.password(KeyManager.encrypt(getPassword()))
 					.clientId(getClientId())
 					.clientSecret(KeyManager.encrypt(getClientSecret()))
-					.status(Connector.NOT_CONNECTED)
-					.isConnected(Boolean.FALSE)
+					.connectedAs(loginResult.getIsConnected() ? getUsername() : null)
+					.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
+					.status(loginResult.getStatus())
+					.isConnected(loginResult.getIsConnected())
+					.build();
+			
+			return connector;
+			
+		} else {
+			
+			String name = isNotNullOrEmpty(getName()) ? getName() : getConnector().getName();
+			String username = isNotNullOrEmpty(getUsername()) ? getUsername() : getConnector().getUsername();
+			String password = isNotNullOrEmpty(getPassword()) ? getPassword() : KeyManager.decrypt(getConnector().getPassword());
+			String clientId = isNotNullOrEmpty(getClientId()) ? getClientId() : getConnector().getClientId();
+			String clientSecret = isNotNullOrEmpty(getClientSecret()) ? getClientSecret() : KeyManager.decrypt(getConnector().getClientSecret());
+			String status = isNotNullOrEmpty(getStatus()) ? getStatus() : getConnector().getStatus();
+			
+			if (! Connector.CONNECTED.equals(status) 
+					&& ! Connector.DISCONNECTED.equals(status) 
+					&& ! Connector.NOT_CONNECTED.equals(status)
+					&& status.indexOf(Connector.FAILED_TO_CONNECT) == -1) {
+				
+				throw new IllegalArgumentException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_INVALID_STATUS), status));
+			}
+			
+			assertNotNull(name, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
+			
+			if (Connector.CONNECTED.equals(status)) {
+				
+				assertNotNull(clientId, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_ID));
+				assertNotNull(clientSecret, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_CLIENT_SECRET));
+				assertNotNull(username, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_USERNAME));
+				assertNotNull(password, MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
+				
+				loginResult = login(getConnector().getConnectorType().getAuthEndpoint(), clientId, clientSecret, username, password);	
+				
+				status = loginResult.getStatus();
+			}
+			
+			Connector connector = Connector.builder()
+					.from(getConnector())
+					.name(name)
+					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
+					.lastUpdatedOn(Date.from(Instant.now()))
+					.username(username)
+					.password(password)
+					.clientId(clientId)
+					.clientSecret(clientSecret)
+					.connectedAs(loginResult.getIsConnected() ? loginResult.getToken().getId() : null)
+					.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
+					.status(status)
+					.isConnected(loginResult.getIsConnected())
 					.build();
 			
 			return connector;
 		}
 	}
 	
-	private SalesforceLoginResult login(String authEndpoint) {
+	private SalesforceLoginResult login(String authEndpoint, String clientId, String clientSecret, String username, String password) {
 		HttpResponse httpResponse = RestResource.post(String.format(OAUTH_TOKEN_URI, authEndpoint))
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.accept(MediaType.APPLICATION_JSON)
 				.acceptCharset(StandardCharsets.UTF_8)
 				.parameter(OauthConstants.GRANT_TYPE_PARAMETER, OauthConstants.PASSWORD_GRANT_TYPE)
-				.parameter(OauthConstants.CLIENT_ID_PARAMETER, getClientId())
-				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, getClientSecret())
-				.parameter(OauthConstants.USERNAME_PARAMETER, getUsername())
-				.parameter(OauthConstants.PASSWORD_PARAMETER, getPassword())
+				.parameter(OauthConstants.CLIENT_ID_PARAMETER, clientId)
+				.parameter(OauthConstants.CLIENT_SECRET_PARAMETER, clientSecret)
+				.parameter(OauthConstants.USERNAME_PARAMETER, username)
+				.parameter(OauthConstants.PASSWORD_PARAMETER, password)
 				.execute();
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
