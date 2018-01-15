@@ -3,6 +3,7 @@ package com.nowellpoint.api.rest.domain;
 import static com.nowellpoint.util.Assert.assertNotNull;
 import static com.nowellpoint.util.Assert.isNotNullOrEmpty;
 import static com.nowellpoint.util.Assert.isNull;
+import static com.nowellpoint.util.Assert.isNotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -103,9 +104,16 @@ public abstract class AbstractSalesforceAdapter {
 				status = loginResult.getStatus();
 			}
 			
+			if (! getConnector().getConnectorType().getScheme().equals(getConnector().getConnectorType().getScheme())) {
+				throw new IllegalArgumentException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_TYPE_SCHEME_MISMATCH), 
+						getConnector().getConnectorType().getScheme(), 
+						getConnector().getConnectorType().getScheme()));
+			}
+			
 			Connector connector = Connector.builder()
 					.from(getConnector())
 					.name(name)
+					.connectorType(isNotNull(getConnectorType()) ? getConnectorType() : getConnector().getConnectorType())
 					.lastUpdatedBy(UserInfo.of(ClaimsContext.getClaims()))
 					.lastUpdatedOn(Date.from(Instant.now()))
 					.username(username)

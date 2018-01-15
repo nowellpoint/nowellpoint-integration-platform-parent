@@ -1,9 +1,6 @@
 package com.nowellpoint.api.rest.impl;
 
-import static com.nowellpoint.util.Assert.assertNotNull;
-
 import java.net.URI;
-import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.ws.rs.BadRequestException;
@@ -15,8 +12,6 @@ import com.nowellpoint.api.rest.domain.Connector;
 import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
 import com.nowellpoint.api.service.ConnectorService;
-import com.nowellpoint.api.util.MessageConstants;
-import com.nowellpoint.api.util.MessageProvider;
 
 public class ConnectorResourceImpl implements ConnectorResource {
 	
@@ -55,17 +50,7 @@ public class ConnectorResourceImpl implements ConnectorResource {
 	@Override
 	public Response updateConnector(String id, ConnectorRequest request) {
 		
-		assertNotNull(request.getName(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_NAME));
-		
-		ConnectorRequest payload = ConnectorRequest.builder()
-				.name(request.getName())
-				.clientId(request.getClientId())
-				.clientSecret(request.getClientSecret())
-				.username(request.getUsername())
-				.password(request.getPassword())
-				.build();
-		
-		Connector connector = connectorService.updateConnector(id, payload);
+		Connector connector = connectorService.updateConnector(id, request);
 		
 		return Response.ok(connector)
 				.build();

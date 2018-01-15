@@ -28,4 +28,7 @@ public class MessageConstants {
 	public static final String CONNECTOR_MISSING_USERNAME = "connector.missing.username";
 	public static final String CONNECTOR_MISSING_PASSWORD = "connector.missing.password";
 	public static final String CONNECTOR_INVALID_STATUS = "connector.invalid.status";
+	public static final String CONNECTOR_TYPE_SCHEME_MISMATCH = "connector.type.scheme.mismatch";
+	public static final String CONNECTOR_ALREADY_DISCONNECTED = "connector.already.disconnected";
+	public static final String CONNECTOR_CANNOT_REFRESH = "connector.cannot.refresh";
 }

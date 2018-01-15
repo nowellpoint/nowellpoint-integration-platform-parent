@@ -116,7 +116,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 	protected Connector refresh(Connector connector) {
 		
 		if (! connector.getIsConnected()) {
-			throw new IllegalArgumentException("Connector has been disconnected. Unable to refresh the connector. Please update the connector with valid credentials");
+			throw new IllegalArgumentException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_CANNOT_REFRESH));
 		}
 		
 		if ("SALESFORCE_SANDBOX".equals(connector.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(connector.getConnectorType().getName())) {
@@ -135,7 +135,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 	protected Connector disconnect(Connector connector) {
 		
 		if (! connector.getIsConnected()) {
-			throw new IllegalArgumentException("Connector has already been disconnected. Nothing to do");
+			throw new IllegalArgumentException(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_ALREADY_DISCONNECTED));
 		}
 		
 		UserInfo who = UserInfo.of(UserContext.getPrincipal().getName());
@@ -170,8 +170,15 @@ public class AbstractConnectorService extends AbstractCacheService {
 		}
 		
 		if ("SALESFORCE_SANDBOX".equals(original.getConnectorType().getName()) || "SALESFORCE_PRODUCTION".equals(original.getConnectorType().getName())) {
-				
+			
+			ConnectorType connectorType = null;
+			
+			if (isNotNullOrEmpty(request.getType())) {
+				connectorType = getConnectorType(request.getType());
+			}
+
 			SalesforceAdapter adapter = SalesforceAdapter.builder()
+					.connectorType(connectorType)
 					.clientId(request.getClientId())
 					.clientSecret(request.getClientSecret())
 					.connector(original)
@@ -190,8 +197,6 @@ public class AbstractConnectorService extends AbstractCacheService {
 	protected Connector create(ConnectorRequest request) {
 		
 		ConnectorType connectorType = getConnectorType(request.getType());
-		
-		assertNotNull(connectorType, String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_INVALID_TYPE), request.getType()));
 		
 		if ("SALESFORCE_SANDBOX".equals(connectorType.getName()) || "SALESFORCE_PRODUCTION".equals(connectorType.getName())) {
 			
@@ -234,6 +239,8 @@ public class AbstractConnectorService extends AbstractCacheService {
 	}
 	
 	private ConnectorType getConnectorType(String type) {
-		return connectorTypes.get(type);
+		ConnectorType connectorType = connectorTypes.get(type);
+		assertNotNull(connectorType, String.format(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_INVALID_TYPE), type));
+		return connectorType;
 	}
 }
