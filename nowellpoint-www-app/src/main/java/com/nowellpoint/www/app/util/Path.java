@@ -42,13 +42,14 @@ public class Path {
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
+		public static final String CONNECTORS_SHOW = String.format(APPLICATION_CONTEXT, "connectors/show");
 		public static final String CONNECTORS_ADD = String.format(APPLICATION_CONTEXT, "connectors/add");
+		public static final String CONNECTORS_CONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/connect");
 		public static final String CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "connectors");
-		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id");
+		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/view");
 		public static final String CONNECTORS_DISCONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/disconnect");
-		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id");
+		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id/update");
 		public static final String CONNECTORS_DELETE = String.format(APPLICATION_CONTEXT, "connectors/:id/delete");
-		public static final String CONNECTORS_TEST = String.format(APPLICATION_CONTEXT, "connectors/:id/test");
 		public static final String CONNECTORS_REFRESH = String.format(APPLICATION_CONTEXT, "connectors/:id/refresh");
 		public static final String CONNECTORS_SALESFORCE_METADATA_BACKUP = String.format(APPLICATION_CONTEXT, "connectors/:id/metadata-backup");
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects");

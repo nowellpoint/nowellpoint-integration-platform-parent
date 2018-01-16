@@ -157,7 +157,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 				.build();
 	}
 	
-	protected Connector update(Connector original, ConnectorRequest request) {
+	protected Connector build(Connector original, ConnectorRequest request) {
 		
 		if (original.getIsConnected()) {
 			
@@ -194,7 +194,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 		return null;
 	}
 	
-	protected Connector create(ConnectorRequest request) {
+	protected Connector build(ConnectorRequest request) {
 		
 		ConnectorType connectorType = getConnectorType(request.getType());
 		

@@ -260,11 +260,14 @@ public class Application implements SparkApplication {
 		get(Path.Route.CONNECTORS_LIST, (request, response) 
 				-> ConnectorController.listConnectors(configuration, request, response));
 		
-		get(Path.Route.CONNECTORS_ADD, (request, response) 
-				-> ConnectorController.showAvailableConnectors(configuration, request, response));
+		get(Path.Route.CONNECTORS_SHOW, (request, response) 
+				-> ConnectorController.showConnectors(configuration, request, response));
 		
 		post(Path.Route.CONNECTORS_ADD, (request, response) 
-				-> ConnectorController.showAvailableConnectors(configuration, request, response));
+				-> ConnectorController.addConnector(configuration, request, response));
+		
+		get(Path.Route.CONNECTORS_CONNECT, (request, response) 
+				-> ConnectorController.connectConnector(configuration, request, response));
 		
 		get(Path.Route.CONNECTORS_VIEW, (request, response) 
 				-> ConnectorController.viewConnector(configuration, request, response));
@@ -277,9 +280,6 @@ public class Application implements SparkApplication {
 		
 		post(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
 				-> ConnectorController.disconnectConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_TEST, (request, response) 
-				-> ConnectorController.testConnector(configuration, request, response));
 		
 		post(Path.Route.CONNECTORS_REFRESH, (request, response) 
 				-> ConnectorController.refreshConnector(configuration, request, response));

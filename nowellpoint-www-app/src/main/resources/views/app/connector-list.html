@@ -12,7 +12,7 @@
                 <blockquote class="blockquote text-center mt-5">
                     <span class="icon icon-database fa fa-4x text-primary"></span>
                     <h4 class="text-muted pt-1 pb-1">${labels["no.records"]}</h4>
-                    <a href="${links['connectors']}/new" class="btn btn-lg btn-outline-primary" role="button">&emsp;${labels["add.connector"]}&emsp;</a>
+                    <a href="${links['connectors']}/show" class="btn btn-lg btn-outline-primary" role="button">&emsp;${labels["add.connector"]}&emsp;</a>
                 </blockquote>
             </#if>
             <br>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="dashhead-toolbar">
                         <p class="pull-right">
-                            <a href="${links['connectors']}/add" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
+                            <a href="${links['connectors']}/show" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
                         </p>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                         </thead>
                         <tbody style="cursor: pointer;">
                             <#list connectorsList?sort_by( "createdOn") as connector>
-                                <tr class="row m-0 table-row" id="${connector.id}" data-href="${links['connectors']}/${connector.id}">
+                                <tr class="row m-0 table-row" id="${connector.id}" data-href="${links['connectors']}/${connector.id}/view">
                                     <td class="col-5"><img class="float-left rounded mr-3" src="${connector.iconHref}" alt="icon">${connector.name!}
                                         <br>${connector.typeName!}
                                         <br>${connector.connectedAs!}</td>

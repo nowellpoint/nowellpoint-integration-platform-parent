@@ -22,7 +22,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 	@Override
 	public Connector createConnector(ConnectorRequest request) {
 		
-		Connector connector = create(request);
+		Connector connector = build(request);
 		
 		create(connector);
 		
@@ -34,7 +34,7 @@ public class ConnectorServiceImpl extends AbstractConnectorService implements Co
 		
 		Connector original = findById(id);
 		
-		Connector connector = update(original, request);
+		Connector connector = build(original, request);
 		
 		update(connector);
 		

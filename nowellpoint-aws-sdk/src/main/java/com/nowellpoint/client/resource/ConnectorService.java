@@ -87,8 +87,8 @@ public class ConnectorService extends AbstractResource {
 	
 	public UpdateResult<Connector> update(String connectorId, ConnectorRequest request) {
 		ObjectNode payload = objectMapper.createObjectNode()
-				.put("status", "connect")
 				.put("name", request.getName())
+				.put("type", request.getType())
 				.put("clientId", request.getClientId())
 				.put("clientSecret", request.getClientSecret())
 				.put("username", request.getUsername())
@@ -111,6 +111,8 @@ public class ConnectorService extends AbstractResource {
 	public UpdateResult<Connector> connect(String connectorId, ConnectorRequest request) {
 		ObjectNode payload = objectMapper.createObjectNode()
 				.put("status", "connect")
+				.put("type", request.getType())
+				.put("name", request.getName())
 				.put("clientId", request.getClientId())
 				.put("clientSecret", request.getClientSecret())
 				.put("username", request.getUsername())

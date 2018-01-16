@@ -30,6 +30,7 @@ import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
+import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
 import freemarker.template.Configuration;
@@ -43,6 +44,7 @@ public class ConnectorController extends AbstractStaticController {
 		public static final String CONNECTOR_ADD = String.format(APPLICATION_CONTEXT, "connector-add.html");
 		public static final String CONNECTOR_LIST = String.format(APPLICATION_CONTEXT, "connector-list.html");
 		public static final String CONNECTOR_DETAIL = String.format(APPLICATION_CONTEXT, "connector-detail.html");
+		public static final String CONNECTOR_EDIT = String.format(APPLICATION_CONTEXT, "connector-edit.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-list.html");
 		public static final String SALESFORCE_CONNECTOR_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "salesforce-connector-sobject-view.html");
 		public static final String SALESFORCE_CONNECTOR_ADD_SERVICE = String.format(APPLICATION_CONTEXT, "salesforce-connector-add-service.html");
@@ -57,7 +59,7 @@ public class ConnectorController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String showAvailableConnectors(Configuration configuration, Request request, Response response) {		
+	public static String showConnectors(Configuration configuration, Request request, Response response) {		
 		return render(ConnectorController.class, configuration, request, response, getModel(), Template.CONNECTOR_ADD);
 	};
 	
@@ -123,19 +125,9 @@ public class ConnectorController extends AbstractStaticController {
 	public static String addConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 
-		String clientId = request.queryParamOrDefault("clientId", null);
-		String clientSecret = request.queryParamOrDefault("clientSecret", null);
-		String name = request.queryParamOrDefault("name", null);
-		String username = request.queryParamOrDefault("username", null);
-		String password = request.queryParamOrDefault("password", null);
 		String type = request.queryParams("type");
 
 		ConnectorRequest connectorRequest = ConnectorRequest.builder()
-				.clientId(clientId)
-				.clientSecret(clientSecret)
-				.name(name)
-				.username(username)
-				.password(password)
 				.token(token)
 				.type(type)
 				.build();
@@ -145,12 +137,34 @@ public class ConnectorController extends AbstractStaticController {
 				.create(connectorRequest);
 		
 		if (createResult.isSuccess()) {
-			Map<String, Object> model = getModel();
-			model.put("connector", createResult.getTarget());			
-			return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_DETAIL);
+			response.header("Location", Path.Route.CONNECTORS_CONNECT.replace(":id", createResult.getTarget().getId()));
+			return "";
 		} else {
 			return showErrorMessage(ConnectorController.class, configuration, request, response, createResult.getErrorMessage());
 		}
+	};
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	public static String connectConnector(Configuration configuration, Request request, Response response) {
+		Token token = getToken(request);
+
+		String id = request.params(":id");
+
+		Connector connector = NowellpointClient.defaultClient(token)
+				.connector()
+				.get(id);
+
+		Map<String, Object> model = getModel();
+		model.put("connector", connector);
+
+		return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_EDIT);
 	};
 
 	/**
@@ -170,6 +184,7 @@ public class ConnectorController extends AbstractStaticController {
 		String name = request.queryParamOrDefault("name", null);
 		String username = request.queryParamOrDefault("username", null);
 		String password = request.queryParamOrDefault("password", null);
+		String type = request.queryParams("type");
 
 		ConnectorRequest connectorRequest = ConnectorRequest.builder()
 				.clientId(clientId)
@@ -178,6 +193,7 @@ public class ConnectorController extends AbstractStaticController {
 				.username(username)
 				.password(password)
 				.token(token)
+				.type(type)
 				.build();
 
 		UpdateResult<Connector> updateResult = NowellpointClient.defaultClient(token)
@@ -293,6 +309,9 @@ public class ConnectorController extends AbstractStaticController {
 				.connector()
 				.refresh(id);
 		
+		System.out.println(updateResult.isSuccess());
+		System.out.println(updateResult.getTarget().getConnectedOn());
+		
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("connector", updateResult.getTarget());			
@@ -301,30 +320,6 @@ public class ConnectorController extends AbstractStaticController {
 			return showErrorMessage(ConnectorController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 		
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String testConnector(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.test(id);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
 	}
 	
 	/**

@@ -65,13 +65,12 @@
                             <img src="${connector.iconHref}" class="mr-3" alt="icon">
                             <div class="media-body">
                                 <p class="mb-0 font-weight-normal">${connector.name!}</p>
-                                <p class="mb-0 font-weight-light">${connector.typeName!}
-                                    <br>${connector.connectedAs!}</p>
+                                <p class="mb-0 font-weight-light">${connector.typeName!}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/${connector.id}">
+                <form class="form-vertical" name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/${connector.id}/update">
                     <div class="form-group">
                         <label for="name" class="col-form-label">${labels["name"]}</label>
                         <input type="text" name="name" id="name" class="form-control" value="${connector.name!}" required autofocus>
