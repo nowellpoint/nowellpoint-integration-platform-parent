@@ -147,18 +147,12 @@ public class Application implements SparkApplication {
 		// user profile routes
 		//
 
-		get(Path.Route.USER_PROFILE,
+		get(Path.Route.USER_PROFILE_VIEW,
 				(request, response) -> UserProfileController.viewUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_INVOICE_DOWNLOAD,
-				(request, response) -> UserProfileController.downloadInvoice(configuration, request, response));
-		post(Path.Route.USER_PROFILE,
+		
+		post(Path.Route.USER_PROFILE_VIEW,
 				(request, response) -> UserProfileController.updateUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController
-				.confirmDeactivateAccountProfile(configuration, request, response));
-		post(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController
-				.deactivateAccountProfile(configuration, request, response));
-		delete(Path.Route.USER_PROFILE_PICTURE,
-				(request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
+		
 		post(Path.Route.USER_PROFILE_ADDRESS,
 				(request, response) -> UserProfileController.updateAddress(configuration, request, response));
 

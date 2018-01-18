@@ -57,11 +57,8 @@ public class Path {
 		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects/:sobject");
 		public static final String CONNECTORS_SERVICE_SETUP = String.format(APPLICATION_CONTEXT, "connectors/:id/services/:serviceId/setup");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
-		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id");
-		public static final String USER_PROFILE_PICTURE = String.format(APPLICATION_CONTEXT, "user-profile/:id/picture");
-		public static final String USER_PROFILE_INVOICE_DOWNLOAD = String.format(APPLICATION_CONTEXT, "user-profile/:id/invoice/:invoiceNumber");
+		public static final String USER_PROFILE_VIEW = String.format(APPLICATION_CONTEXT, "user-profile/:id");
 		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");
-		public static final String USER_PROFILE_DEACTIVATE = String.format(APPLICATION_CONTEXT, "user-profile/:id/deactivate");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
