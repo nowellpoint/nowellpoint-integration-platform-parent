@@ -11,7 +11,7 @@
                 <span class="icon icon-dots-three-horizontal"></span>
             </button>
             <div id="actionMenu" class="dropdown-menu dropdown-menu-right" aria-labelledby="actionMenuButton">
-                <a href="#" class="dropdown-item" id="editConnector" data-toggle="modal" data-target="#editConnectorModal">${labels['edit']}</a>
+                <a href="${links['connectors']}/${connector.id}/edit" class="dropdown-item" id="editConnector">${labels['edit']}</a>
                 <!-- <#if connector.isConnected> -->
                 <a href="#" class="dropdown-item" id="refreshConnector" data-href="${links['connectors']}/${connector.id}/refresh">${labels['refresh']}</a>
                 <a href="#" class="dropdown-item" id="disconnectConnector" data-href="${links['connectors']}/${connector.id}/disconnect">${labels['disconnect']}</a>

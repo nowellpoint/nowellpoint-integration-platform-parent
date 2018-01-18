@@ -42,7 +42,8 @@
                                 <tr class="row m-0 table-row" id="${connector.id}" data-href="${links['connectors']}/${connector.id}/view">
                                     <td class="col-5"><img class="float-left rounded mr-3" src="${connector.iconHref}" alt="icon">${connector.name!}
                                         <br>${connector.typeName!}
-                                        <br>${connector.connectedAs!}</td>
+                                        <br>${connector.connectedAs!}
+                                    </td>
                                     <td class="col-4">
                                         <#if connector.isConnected>
                                             <p class="text-success">${connector.status!}</p>

@@ -137,7 +137,7 @@ public class ConnectorController extends AbstractStaticController {
 				.create(connectorRequest);
 		
 		if (createResult.isSuccess()) {
-			response.header("Location", Path.Route.CONNECTORS_CONNECT.replace(":id", createResult.getTarget().getId()));
+			response.header("Location", Path.Route.CONNECTORS_EDIT.replace(":id", createResult.getTarget().getId()));
 			return "";
 		} else {
 			return showErrorMessage(ConnectorController.class, configuration, request, response, createResult.getErrorMessage());
@@ -152,7 +152,7 @@ public class ConnectorController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String connectConnector(Configuration configuration, Request request, Response response) {
+	public static String editConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 
 		String id = request.params(":id");
@@ -209,7 +209,7 @@ public class ConnectorController extends AbstractStaticController {
 		}
 	};
 	
-	public static String connect(Configuration configuration, Request request, Response response) {
+	public static String connectConnector(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");

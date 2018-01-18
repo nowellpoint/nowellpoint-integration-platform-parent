@@ -1,74 +1,163 @@
 <#import "template.html" as t>
     <@t.page>
         <div class="container mt-3">
-            <br>
-                    <div class="media">
-                        <img src="${connector.iconHref}" class="mr-3" alt="icon">
-                        <div class="media-body">
-                            <p class="mb-0 font-weight-normal">${connector.name!}</p>
-                            <span class="mb-0 font-weight-light">${connector.typeName!}
-                                    <br>${connector.connectedAs!}</span>
-                            
-                            <!-- <#if ! connector.isConnected> -->
-                <a href="#" class="dropdown-item" id="deleteConnector" data-toggle="modal" data-target="#confirmDelete">${labels['delete']}</a>
+            <div class="row">
+                <div class="col-12">
+                    <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+                </div>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div class="media">
+                <img src="${connector.iconHref}" class="mr-3" alt="icon">
+                <div class="media-body">
+                    <p class="mb-0 font-weight-normal">${connector.name!}</p>
+                    <span class="mb-0 font-weight-light">${connector.typeName!}</span>
+                </div>
+                <!-- <#if ! connector.isConnected> -->
+                <div class="pull-right">
+                    <button id="deleteConnector" class="btn btn-danger" data-toggle="modal" data-target="#confirmDelete">${labels['delete']}</button>
+                </div>
                 <!-- </#if> -->
+            </div>
+        </div>
+        <hr>
+        <br>
+        <div class="container mt-3">
+            <div class="card bg-light">
+                <div class="card-body m-3">
+                    <div class="row justify-content-center">
+                        <div class="col"></div>
+                        <div class="col-6">
+                            <br>
+                            <!-- <#if connector.isConnected> -->
+                            <form class="form" id="connector-form" role="form" method="post" action="${links['connectors']}/${connector.id}/update">
+                                <div class="form-group">
+                                    <label for="name" class="col-form-label">${labels["name"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="name" id="name" class="form-control" value="${connector.name}" required autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientId" class="col-form-label">${labels["client.id"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="clientId" id="clientId" class="form-control" value="${connector.clientId!}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="password" name="clientSecret" id="clientSecret" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="username" class="col-form-label">${labels["username"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="username" id="username" class="form-control" value="${connector.username!}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="col-form-label">${labels["password"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="password" name="password" id="password" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type" class="col-form-label">${labels["sandbox"]}</label>&nbsp;&nbsp;<small>(${labels["optional"]})</small>
+                                    <select class="form-control form-control" id="type" name="type" readonly>
+                                        <!-- <#if connector.isSandbox> -->
+                                        <option value="SALESFORCE_SANDBOX" selected>${labels["yes"]}</option>
+                                        <!-- <#else> -->
+                                        <option value="SALESFORCE_PRODUCTION" selected>${labels["no"]}</option>
+                                        <!-- </#if> -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <div class="pull-right">
+                                        <a href="${links['connectors']}/${connector.id}/view" id="cancel" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                                        <button class="btn btn-success" id="saveConnector">${labels["update"]}</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- <#else> -->
+                            <form class="form" id="connector-form" role="form" method="post" action="${links['connectors']}/${connector.id}/connect">
+                                <div class="form-group">
+                                    <label for="name" class="col-form-label">${labels["name"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="name" id="name" class="form-control" value="${connector.name}" required autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientId" class="col-form-label">${labels["client.id"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="clientId" id="clientId" class="form-control" value="${connector.clientId!}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="password" name="clientSecret" id="clientSecret" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="username" class="col-form-label">${labels["username"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="text" name="username" id="username" class="form-control" value="${connector.username!}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="col-form-label">${labels["password"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
+                                    <input type="password" name="password" id="password" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type" class="col-form-label">${labels["sandbox"]}</label>&nbsp;&nbsp;<small>(${labels["optional"]})</small>
+                                    <select class="form-control form-control" id="type" name="type">
+                                        <!-- <#if connector.isSandbox> -->
+                                        <option value="SALESFORCE_PRODUCTION">${labels["no"]}</option>
+                                        <option value="SALESFORCE_SANDBOX" selected>${labels["yes"]}</option>
+                                        <!-- <#else> -->
+                                        <option value="SALESFORCE_PRODUCTION" selected>${labels["no"]}</option>
+                                        <option value="SALESFORCE_SANDBOX">${labels["yes"]}</option>
+                                        <!-- </#if> -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <div class="pull-right">
+                                        <a href="${links['connectors']}/${connector.id}/view" id="cancel" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                                        <button class="btn btn-success" id="saveConnector">${labels["connect"]}</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- </#if> -->
                         </div>
+                        <div class="col"></div>
                     </div>
-            <div class="row justify-content-center">
-                <div class="col"></div>
-                <div class="col-6">
-                    <br>
-                    <form class="form" id="connector-form" role="form" method="post" action="${links['connectors']}/${connector.id}/update">
-                        <div class="form-group">
-                            <label for="name" class="col-form-label">${labels["name"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
-                            <input type="text" name="name" id="name" class="form-control" value="${connector.name}" required autofocus>
-                        </div>
-                        <div class="form-group">
-                            <label for="clientId" class="col-form-label">${labels["client.id"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
-                            <input type="text" name="clientId" id="clientId" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="clientSecret" class="col-form-label">${labels["client.secret"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
-                            <input type="password" name="clientSecret" id="clientSecret" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="username" class="col-form-label">${labels["username"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
-                            <input type="text" name="username" id="username" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="col-form-label">${labels["password"]}</label>&nbsp;&nbsp;<small>(${labels["required"]})</small>
-                            <input type="password" name="password" id="password" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="type" class="col-form-label">${labels["sandbox"]}</label>&nbsp;&nbsp;<small>(${labels["optional"]})</small>
-                            <select class="form-control form-control" id="type" name="type">
-                                <option value="SALESFORCE_PRODUCTION" selected="selected">${labels["no"]}</option>
-                                <option value="SALESFORCE_SANDBOX">${labels["yes"]}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <div class="pull-right">
-                                <a href="${links['connectors']}" id="cancel" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
-                                <button class="btn btn-success" id="connect">${labels["connect"]}</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="confirmDelete" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteLabel">${labels["confirm.delete"]}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>${labels["confirm.delete.message"]}</p>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="media mb-2">
+                                    <img src="${connector.iconHref}" class="mr-3" alt="icon">
+                                    <div class="media-body">
+                                        <p class="mb-0 font-weight-normal">${connector.name!}</p>
+                                        <p class="mb-0 font-weight-light">${connector.typeName!}
+                                            <br>${connector.connectedAs!}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="delete-spinner" class="loader"></div>
+                        <button class="btn btn-link" id="cancel" class="close" data-dismiss="modal">${labels["cancel"]}</button>
+                        <button class="btn btn-danger" id="deleteConnector" data-href="${links['connectors']}/${connector.id}/delete" data-redirect="${links['connectors']}">${messages["confirm"]}</button>
+                    </div>
                 </div>
-                <div class="col"></div>
             </div>
         </div>
         <div id="overlay"></div>
         <script>
-            
             /*-----------------------------------------------------------
              *
              *
              */
 
-            $(document).on('click', 'button#connect', function() {
-                
+            $(document).on('click', 'button#saveConnector', function() {
+
                 $form = $("#connector-form");
-                
+
                 $form.validate();
 
                 $('#overlay').toggle();
@@ -106,6 +195,37 @@
                 return false;
             });
 
-            
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#deleteConnector', function() {
+
+                $('#delete-spinner').toggle();
+                $('#deleteConnector').prop("disabled", true);
+                $('#cancel').prop("disabled", true);
+
+                var href = $(this).data('href');
+                var redirect = $(this).data('redirect');
+
+                $.ajax({
+                    method: 'delete',
+                    url: href,
+                    complete: function(response) {
+                        $('#delete-spinner').toggle();
+                        $('#deleteConnector').prop("disabled", false);
+                        $('#cancel').prop("disabled", false);
+                        if (response.status == 200) {
+                            $('#confirmDelete').modal('hide');
+                            $(location).attr('href', redirect);
+                        } else {
+                            $form.prepend(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
+            });
         </script>
     </@t.page>

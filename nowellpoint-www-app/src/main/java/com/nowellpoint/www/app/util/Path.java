@@ -44,6 +44,7 @@ public class Path {
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
 		public static final String CONNECTORS_SHOW = String.format(APPLICATION_CONTEXT, "connectors/show");
 		public static final String CONNECTORS_ADD = String.format(APPLICATION_CONTEXT, "connectors/add");
+		public static final String CONNECTORS_EDIT = String.format(APPLICATION_CONTEXT, "connectors/:id/edit");
 		public static final String CONNECTORS_CONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/connect");
 		public static final String CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "connectors");
 		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/view");
