@@ -24,7 +24,6 @@ import spark.Response;
 public class UserProfileController extends AbstractStaticController {
 	
 	public static class Template {
-		public static final String USER_PROFILE_ME = String.format(APPLICATION_CONTEXT, "user-profile-me.html");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
 	}
 	
@@ -47,15 +46,14 @@ public class UserProfileController extends AbstractStaticController {
 				.userProfile()
 				.get(id);
 		
+		Boolean readonly = ! userProfile.getId().equals(identity.getId());
+		
 		Map<String, Object> model = getModel();
 		model.put("userProfile", userProfile);
 		model.put("successMessage", request.cookie("update.profile.success"));
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 		model.put("timeZones", getTimeZones());
-		
-		if (userProfile.getId().equals(identity.getId())) {
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_ME);
-		}
+		model.put("readonly", readonly);
 
 		return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE);
 	}
