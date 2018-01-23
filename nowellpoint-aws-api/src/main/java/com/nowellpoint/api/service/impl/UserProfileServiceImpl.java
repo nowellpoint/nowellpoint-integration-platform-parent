@@ -27,9 +27,11 @@ import com.nowellpoint.api.rest.domain.OrganizationInfo;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
+import com.nowellpoint.api.rest.domain.UserProfileRequest;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.UserProfileService;
+import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
@@ -97,7 +99,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.firstName(firstName)
 				.lastName(lastName)
 				.email(email)
-				.username(email)
 				.address(address)
 				.locale(Locale.getDefault())
 				.timeZone(TimeZone.getDefault())
@@ -114,6 +115,34 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		create(userProfile);
 		
 		sendWelcomeMessage(userProfile.getEmail(), userProfile.getEmail(), userProfile.getName(), temporaryPassword);
+		
+		return userProfile;
+	}
+	
+	@Override
+	public UserProfile updateUserProfile(String id, UserProfileRequest request) {
+		UserProfile original = findById(id);
+		
+		UserInfo userInfo = UserInfo.of(ClaimsContext.getClaims().getBody().getSubject());
+		
+		Date now = Date.from(Instant.now());
+		
+		identityProviderService.updateUser(original.getReferenceId(), request.getEmail(), request.getFirstName(), request.getLastName());
+		
+		UserProfile userProfile = UserProfile.builder()
+				.from(original)
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
+				.locale(new Locale(request.getLocale()))
+				.phone(request.getPhone())
+				.timeZone(TimeZone.getTimeZone(request.getTimeZone()))
+				.title(request.getTitle())
+				.build();
+		
+		update(userProfile);
 		
 		return userProfile;
 	}

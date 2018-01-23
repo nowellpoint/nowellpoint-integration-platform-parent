@@ -14,7 +14,9 @@ import javax.ws.rs.core.Response;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-@Path("user-profile")
+import com.nowellpoint.api.rest.domain.UserProfileRequest;
+
+@Path("user-profiles")
 public interface UserProfileResource {
 	
 	@GET
@@ -55,22 +57,9 @@ public interface UserProfileResource {
 	
 	@POST
 	@Path("{id}")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response udpateUserProfile(
-			@PathParam("id") String id,
-			@FormParam("firstName") String firstName,
-    		@FormParam("lastName") @NotEmpty String lastName,
-    		@FormParam("company") String company,
-    		@FormParam("division") String division,
-    		@FormParam("department") String department,
-    		@FormParam("title") String title,
-    		@FormParam("email") @Email @NotEmpty String email,
-    		@FormParam("mobilePhone") String mobilePhone,
-    		@FormParam("phone") String phone,
-    		@FormParam("extension") String extension,
-    		@FormParam("locale") @NotEmpty String locale,
-    		@FormParam("timeZone") @NotEmpty String timeZone);
+	public Response udpateUserProfile(@PathParam("id") String id, UserProfileRequest request);
 
 
 	@DELETE

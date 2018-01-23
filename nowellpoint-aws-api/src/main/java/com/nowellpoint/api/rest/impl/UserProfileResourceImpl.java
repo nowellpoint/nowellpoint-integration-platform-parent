@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.UserProfileResource;
 import com.nowellpoint.api.rest.domain.UserProfile;
+import com.nowellpoint.api.rest.domain.UserProfileRequest;
 import com.nowellpoint.api.service.UserProfileService;
 
 public class UserProfileResourceImpl implements UserProfileResource {
@@ -35,11 +36,10 @@ public class UserProfileResourceImpl implements UserProfileResource {
 	}
 
 	@Override
-	public Response udpateUserProfile(String id, String firstName, String lastName, String company, String division,
-			String department, String title, String email, String mobilePhone, String phone, String extension,
-			String locale, String timeZone) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response udpateUserProfile(String id, UserProfileRequest request) {
+		UserProfile userProfile = userProfileService.updateUserProfile(id, request);
+		return Response.ok(userProfile)
+				.build();
 	}
 
 	@Override

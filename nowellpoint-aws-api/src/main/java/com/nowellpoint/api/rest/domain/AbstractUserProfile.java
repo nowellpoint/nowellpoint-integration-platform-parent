@@ -25,17 +25,11 @@ import com.nowellpoint.util.Assert;
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract UserInfo getCreatedBy();
 	public abstract UserInfo getLastUpdatedBy();
-	public abstract String getUsername();
 	public abstract String getLastName();
 	public abstract String getFirstName();
-	public abstract @Nullable String getCompany();
-	public abstract @Nullable String getDivision();
-	public abstract @Nullable String getDepartment();
 	public abstract @Nullable String getTitle();
 	public abstract String getEmail();
 	public abstract @Nullable String getPhone();
-	public abstract @Nullable String getExtension();
-	public abstract @Nullable String getMobilePhone();
 	public abstract Boolean getIsActive();
 	public abstract TimeZone getTimeZone();
 	public abstract Locale getLocale();
@@ -56,6 +50,11 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 				.id(getId())
 				.resourceClass(UserProfileResource.class)
 				.build();
+	}
+	
+	@Value.Derived
+	public String getUsername() {
+		return getEmail();
 	}
 	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {

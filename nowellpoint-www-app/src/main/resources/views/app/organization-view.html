@@ -391,7 +391,7 @@
                                         ${(organization.subscription.billingAddress.country)!}
                                     </div>
                                     <hr>
-                                </div>
+                                </div>    
                             </div>
                             <div id="billingAddressEdit" class="hidden">
                                 <form class="form-vertical" name="billingAddressForm" id="billingAddressForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-address">
@@ -455,7 +455,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade" id="transactionsTab">
@@ -596,6 +595,8 @@
                 $('#paymentMethodEdit').hide();
                 $('#number').val('');
                 $('#cvv').val('');
+                $('#cardholdername').val(organization.cardholdername);
+                $('#expirationMonth').val(organization.expirationMonth);
                 $('#error').remove();
                 $('#paymentMethodView').show();
                 $('#editPaymentMethod').show();
@@ -624,6 +625,10 @@
 
             $(document).on('click', 'button#cancelBillingContact', function() {
                 $('#error').remove();
+                $('#firstName').val(organization.billingContact.firstName);
+                $('#lastName').val(organization.billingContact.lastName);
+                $('#email').val(organization.billingContact.email);
+                $('#phone').val(organization.billingContact.phone);
                 $('#billingContactEdit').hide();
                 $('#billingContactView').show();
                 $('#editBillingContact').show();
@@ -653,6 +658,11 @@
 
             $(document).on('click', 'button#cancelBillingAddress', function() {
                 $('#error').remove();
+                $('#street').val(organization.billingAddress.street);
+                $('#city').val(organization.billingAddress.city);
+                $('#state').val(organization.billingAddress.state);
+                $('#postalCode').val(organization.billingAddress.postalCode);
+                $('#countryCode').val(organization.billingAddress.countryCode);
                 $('#billingAddressEdit').hide();
                 $('#billingAddressView').show();
                 $('#editBillingAddress').show();
@@ -722,6 +732,8 @@
              */
 
             $(document).on('click', 'button#saveBillingContact', function() {
+                
+                console.log("saving");
 
                 $form = $("#billingContactForm");
 
@@ -744,5 +756,35 @@
 
                 return false;
             });
+            
+            var billingContact = {
+                firstName: "${(organization.subscription.billingContact.firstName)!}",
+                lastName: "${(organization.subscription.billingContact.lastName)!}",
+                email: "${(organization.subscription.billingContact.email)!}",
+                phone: "${(organization.subscription.billingContact.phone)!}"
+            }
+            
+            var billingAddress = {
+                street: "${(organization.subscription.billingAddress.street)!}",
+                city: "${(organization.subscription.billingAddress.city)!}",
+                state: "${(organization.subscription.billingAddress.state)!}",
+                postalCode: "${(organization.subscription.billingAddress.postalCode)!}",
+                countryCode: "${(organization.subscription.billingAddress.countryCode)!}"
+            }
+
+            var organization = {
+                basePath: "${links['organization']}",
+                id: "${organization.id}",
+                cardholdername: "${(organization.subscription.creditCard.cardholderName)!}",
+                lastFour: "${(organization.subscription.creditCard.lastFour)!}",
+                cardType: "${(organization.subscription.creditCard.cardType)!}",
+                expirationMonth: "${(organization.subscription.creditCard.expirationMonth)!}",
+                expirationYear: "${(organization.subscription.creditCard.expirationYear)!}",
+                billingContact : billingContact,
+                billingAddress : billingAddress
+            }
+
+            sessionStorage.setItem("organization", JSON.stringify(organization));
+            
         </script>
     </@t.page>

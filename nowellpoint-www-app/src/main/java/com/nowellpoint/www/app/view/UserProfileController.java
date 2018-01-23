@@ -69,23 +69,19 @@ public class UserProfileController extends AbstractStaticController {
 	public static String updateUserProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		UserProfileRequest userProfileRequest = new UserProfileRequest()
-				.withFirstName(request.queryParams("firstName"))
-				.withLastName(request.queryParams("lastName"))
-				.withCompany(request.queryParams("company"))
-				.withDivision(request.queryParams("division"))
-				.withDepartment(request.queryParams("department"))
-				.withTitle(request.queryParams("title"))
-				.withEmail(request.queryParams("email"))
-				.withMobilePhone(request.queryParams("mobilePhone"))
-				.withPhone(request.queryParams("phone"))
-				.withExtension(request.queryParams("extension"))
-				.withLocale(request.queryParams("locale"))
-				.withTimeZone(request.queryParams("timeZone"));
+		UserProfileRequest abstractUserProfileRequest = UserProfileRequest.builder()
+				.firstName(request.queryParams("firstName"))
+				.lastName(request.queryParams("lastName"))
+				.title(request.queryParams("title"))
+				.email(request.queryParams("email"))
+				.phone(request.queryParams("phone"))
+				.locale(request.queryParams("locale"))
+				.timeZone(request.queryParams("timeZone"))
+				.build();
 
 		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
-				.update(request.params(":id"), userProfileRequest);
+				.update(request.params(":id"), abstractUserProfileRequest);
 		
 		if (! updateResult.isSuccess()) {
 			response.status(400);

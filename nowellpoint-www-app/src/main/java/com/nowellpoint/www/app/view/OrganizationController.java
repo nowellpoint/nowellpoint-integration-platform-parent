@@ -96,7 +96,7 @@ public class OrganizationController extends AbstractStaticController {
 		
 		try {
 			byte[] data = NowellpointClient.defaultClient(token)
-					.userProfile()
+					.organization()
 					.downloadInvoice(id, invoiceNumber);
 			
 			HttpServletResponse httpServletResponse = response.raw();

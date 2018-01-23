@@ -1,13 +1,8 @@
 package com.nowellpoint.client.resource;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import com.amazonaws.util.IOUtils;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UserProfile;
@@ -25,7 +20,7 @@ import com.nowellpoint.http.Status;
  */
 public class UserProfileResource extends AbstractResource {
 	
-	private static final String RESOURCE_CONTEXT = "user-profile";
+	private static final String RESOURCE_CONTEXT = "user-profiles";
 	
 	/**
 	 * 
@@ -64,120 +59,33 @@ public class UserProfileResource extends AbstractResource {
 		return resource;
 	} 
 	
-	
-	/**
-	 * 
-	 * @param id
-	 * @param invoiceNumber
-	 * @return
-	 * @throws IOException 
-	 */
-	
-	public byte[] downloadInvoice(String id, String invoiceNumber) throws IOException {
-		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.accept(MediaType.APPLICATION_OCTET_STREAM)
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.path("invoice")
-				.path(invoiceNumber)
-				.execute();
-		
-		InputStream resource = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		resource = httpResponse.getEntity();
-    	} else if (httpResponse.getStatusCode() == Status.NOT_FOUND) {
-			throw new NotFoundException(httpResponse.getAsString());
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return IOUtils.toByteArray(resource);
-	} 
-	
-	/**
-	 * 
-	 * @param id
-	 * @return
-	 */
-	
-	public DeleteResult deactivate(String id) {
-		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.path(RESOURCE_CONTEXT)
-				.path(id)
-				.execute();
-		
-		DeleteResult result = new DeleteResultImpl(httpResponse);
-		
-		return result;
-	}
-	
 	/**
 	 * 
 	 * @param accountProfileId
-	 * @param userProfileRequest
+	 * @param abstractUserProfileRequest
 	 * @return
 	 */
 	
 	public UpdateResult<UserProfile> update(String accountProfileId, UserProfileRequest userProfileRequest) {
+		ObjectNode payload = objectMapper.createObjectNode()
+				.put("firstName", userProfileRequest.getFirstName())
+				.put("lastName", userProfileRequest.getLastName())
+				.put("title", userProfileRequest.getTitle())
+				.put("email", userProfileRequest.getEmail())
+				.put("phone", userProfileRequest.getPhone())
+				.put("locale", userProfileRequest.getLocale())
+				.put("timeZone", userProfileRequest.getTimeZone());
+		
 		HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.contentType(MediaType.APPLICATION_JSON)
 				.path(RESOURCE_CONTEXT)
 				.path(accountProfileId)
-				.parameter("firstName", userProfileRequest.getFirstName())
-				.parameter("lastName", userProfileRequest.getLastName())
-				.parameter("company", userProfileRequest.getCompany())
-				.parameter("division", userProfileRequest.getDivision())
-				.parameter("department", userProfileRequest.getDepartment())
-				.parameter("title", userProfileRequest.getTitle())
-				.parameter("email", userProfileRequest.getEmail())
-				.parameter("mobilePhone", userProfileRequest.getMobilePhone())
-				.parameter("phone", userProfileRequest.getPhone())
-				.parameter("extension", userProfileRequest.getExtension())
-				.parameter("locale", userProfileRequest.getLocale())
-				.parameter("timeZone", userProfileRequest.getTimeZone())
+				.body(payload)
 				.execute();
 		
-		UpdateResult<UserProfile> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			UserProfile resource = httpResponse.getEntity(UserProfile.class);
-			result = new UpdateResultImpl<UserProfile>(resource);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<UserProfile>(error);
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * 
-	 * @param accountProfileId
-	 * @return
-	 */
-	
-	public UpdateResult<UserProfile> removeProfilePicture(String userProfileId) {
-		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-    			.bearerAuthorization(token.getAccessToken())
-        		.path(RESOURCE_CONTEXT)
-        		.path(userProfileId)
-        		.path("photo")
-        		.execute();
-		
-		UpdateResult<UserProfile> result = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			UserProfile resource = httpResponse.getEntity(UserProfile.class);
-			result = new UpdateResultImpl<UserProfile>(resource);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			result = new UpdateResultImpl<UserProfile>(error);
-		}
+		UpdateResult<UserProfile> result = new UpdateResultImpl<UserProfile>(UserProfile.class, httpResponse);
 		
 		return result;
 	}
@@ -232,15 +140,7 @@ public class UserProfileResource extends AbstractResource {
 					.parameter("street", addressRequest.getStreet())
 					.execute();
 			
-			UpdateResult<Address> result = null;
-			
-			if (httpResponse.getStatusCode() == Status.OK) {
-				Address resource = httpResponse.getEntity(Address.class);
-				result = new UpdateResultImpl<Address>(resource);
-			} else {
-				Error error = httpResponse.getEntity(Error.class);
-				result = new UpdateResultImpl<Address>(error);
-			}
+			UpdateResult<Address> result = new UpdateResultImpl<Address>(Address.class, httpResponse);
 			
 			return result;
 		}

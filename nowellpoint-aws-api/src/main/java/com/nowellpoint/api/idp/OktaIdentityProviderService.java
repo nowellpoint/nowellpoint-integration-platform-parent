@@ -60,7 +60,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 		
 		User user = client.instantiate(User.class)
 				.setProfile(userProfile)
-				.setStatus(UserStatus.ACTIVE)
+				//.setStatus(UserStatus.ACTIVE)
 				.setCredentials(userCredentials);
 		
 		user = client.createUser(user);
@@ -76,7 +76,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	
 	@Override
 	public User updateUser(String id, String email, String firstName, String lastName) {
-		
+
 		User user = client.getUser(id);
 		
 		UserProfile userProfile = user.getProfile()

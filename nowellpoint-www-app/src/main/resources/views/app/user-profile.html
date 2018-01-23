@@ -1,5 +1,29 @@
 <#import "template.html" as t>
     <@t.page>
+        <script>
+            var userProfile = {
+                basePath: "${links['user.profile']}",
+                id: "${userProfile.id!}",
+                firstName: "${userProfile.firstName!}",
+                lastName: "${userProfile.lastName!}",
+                street: "${(userProfile.address.street)!}",
+                city: "${(userProfile.address.city)!}",
+                state: "${(userProfile.address.state)!}",
+                postalCode: "${(userProfile.address.postalCode)!}",
+                countryCode: "${(userProfile.address.countryCode)!}",
+                company: "${userProfile.company!}",
+                department: "${userProfile.department!}",
+                title: "${userProfile.title!}",
+                email: "${userProfile.email!}",
+                mobilePhone: "${userProfile.mobilePhone!}",
+                phone: "${userProfile.phone!}",
+                extension: "${userProfile.extension!}",
+                fax: "${userProfile.fax!}",
+                locale: "${userProfile.locale!}",
+                timeZone: "${userProfile.timeZone.ID!}"
+            }
+            sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
+        </script>
         <br>
         <br>
         <div class="container mt-3">
@@ -73,7 +97,7 @@
                         <hr>
                     </div>
                     <div id="userProfileEdit" class="hidden">
-                        <form class="form-vertical" name="userProfileEdit" id="userProfileEdit" role="form" method="post" action="${links['user.profile']}/${userProfile.id}">
+                        <form class="form-vertical" name="profile-details" id="profile-details" role="form" method="post" action="${links['user.profile']}/${userProfile.id}">
                             <div class="row form-group">
                                 <div class="col-3">
                                     <b><label class="control-label" for="firstName">${labels["first.name"]}</label></b>
@@ -221,7 +245,7 @@
                         <hr>
                     </div>
                     <div id="addressEdit" class="hidden">
-                        <form class="form-vertical" name="address-form" id="address-form" role="form" method="post">
+                        <form class="form-vertical" name="profile-address" id="profile-address" role="form" method="post">
                             <div class="row form-group">
                                 <div class="col-3">
                                     <b><label class="control-label" for="street">${labels["street"]}</label></b>
@@ -283,177 +307,7 @@
                     </div>
                 </div>
             </div>
-            <script>
-                /*-----------------------------------------------------------
-                 *
-                 *
-                 */
-
-                $(document).on('click', 'button#editUserProfile', function() {
-                    $('#editUserProfile').hide();
-                    $('#userView').hide();
-                    $('#userProfileEdit').show();
-                    $('#firstName').focus();
-
-                });
-
-                /*-----------------------------------------------------------
-                 *
-                 *
-                 */
-
-                $(document).on('click', 'button#cancelUserProfile', function() {
-                    $('#userProfileEdit').hide();
-                    $('#firstName').val(userProfile.firstName);
-                    $('#lastName').val(userProfile.lastName);
-                    $('#email').val(userProfile.email);
-                    $('#phone').val(userProfile.phone);
-                    $('#title').val(userProfile.title);
-                    $('#locale').val(userProfile.locale);
-                    $('#timeZone').val(userProfile.timeZone);
-                    $('#error').remove();
-                    $('#userView').show();
-                    $('#editUserProfile').show();
-                });
-                
-                /*-----------------------------------------------------------
-                 *
-                 *
-                 */
-
-                $(document).on('click', 'button#editAddress', function() {
-                    $('#editAddress').hide();
-                    $('#street').val(userProfile.street);
-                    $('#addressView').hide();
-                    $('#addressEdit').show();
-                    $('#street').focus();
-
-                });
-
-                /*-----------------------------------------------------------
-                 *
-                 *
-                 */
-
-                $(document).on('click', 'button#cancelAddress', function() {
-                    $('#addressEdit').hide();
-                    $('#street').val('');
-                    $('#error').remove();
-                    $('#addressView').show();
-                    $('#editAddress').show();
-                });
-
-                $("#update-user-profile").click(function(e) {
-                    e.preventDefault();
-
-                    $form = $("#user-profile-form");
-                    $dialog = $("#user-profile-dialog");
-
-                    $.ajax({
-                        method: $form.attr('method'),
-                        url: $form.attr('action'),
-                        dataType: "html",
-                        data: $form.serialize(),
-                        complete: function(response) {
-                            $("#overlay").hide();
-                            if (response.status == 200) {
-                                $dialog.slideUp('slow').fadeOut();
-                                jQuery("#notification").modal('show');
-                                setTimeout(function() {
-                                    $("#notification").slideUp('slow').fadeOut(function() {
-                                        location.href = "${links['user.profile']}/${userProfile.id}";
-                                    });
-                                }, 1000);
-                            } else {
-                                $form.prepend(response.responseText);
-                            }
-                        }
-                    });
-                });
-
-                $("#update-address").click(function(e) {
-                    e.preventDefault();
-
-                    $form = $("#address-form");
-                    $dialog = $("#address-dialog");
-
-                    $.ajax({
-                        method: $form.attr('method'),
-                        url: $form.attr('action'),
-                        dataType: "html",
-                        data: $form.serialize(),
-                        complete: function(response) {
-                            $("#overlay").hide();
-                            if (response.status == 200) {
-                                $dialog.slideUp('slow').fadeOut();
-                                jQuery("#notification").modal('show');
-                                setTimeout(function() {
-                                    $("#notification").slideUp('slow').fadeOut(function() {
-                                        location.href = "${links['user.profile']}/${userProfile.id}";
-                                    });
-                                }, 1000);
-                            } else {
-                                $form.prepend(response.responseText);
-                            }
-                        }
-
-                    });
-                });
-
-                $("#edit-user-profile").click(function(e) {
-                    var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
-                    $("#firstName").val(userProfile.firstName);
-                    $("#lastName").val(userProfile.lastName);
-                    $("#division").val(userProfile.division);
-                    $("#company").val(userProfile.company);
-                    $("#department").val(userProfile.department);
-                    $("#title").val(userProfile.title);
-                    $("#email").val(userProfile.email);
-                    $("#mobilePhone").val(userProfile.mobilePhone);
-                    $("#phone").val(userProfile.phone);
-                    $("#extension").val(userProfile.extension);
-                    $("#fax").val(userProfile.fax);
-                    $("#languageSidKey").val(userProfile.languageSidKey);
-                    $("#localeSidKey").val(userProfile.localeSidKey);
-                    $("#timeZoneSidKey").val(userProfile.timeZoneSidKey);
-                });
-
-                $('#user-profile-dialog').on('shown.bs.modal', function() {
-                    $('#firstName').focus();
-                });
-
-                $('#address-dialog').on('shown.bs.modal', function() {
-                    $('#street').focus();
-                });
-
-                $('#payment-method-dialog').on('shown.bs.modal', function() {
-                    $('#cardholderName').focus();
-                });
-
-                var userProfile = {
-                    basePath: "${links['user.profile']}",
-                    id: "${userProfile.id!}",
-                    firstName: "${userProfile.firstName!}",
-                    lastName: "${userProfile.lastName!}",
-                    street: "${(userProfile.address.street)!}",
-                    city: "${(userProfile.address.city)!}",
-                    state: "${(userProfile.address.state)!}",
-                    postalCode: "${(userProfile.address.postalCode)!}",
-                    countryCode: "${(userProfile.address.countryCode)!}",
-                    company: "${(userProfile.company)!}",
-                    department: "${(userProfile.department)!}",
-                    title: "${(userProfile.title)!}",
-                    email: "${(userProfile.email)!}",
-                    mobilePhone: "${(userProfile.mobilePhone)!}",
-                    phone: "${(userProfile.phone)!}",
-                    extension: "${(userProfile.extension)!}",
-                    fax: "${(userProfile.fax)!}",
-                    locale: "${(userProfile.locale)!}",
-                    timeZone: "${(userProfile.timeZone.ID)!}"
-                }
-
-                sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
-            </script>
+            <div id="overlay"></div>
 
             <script src="/js/user-profile.js"></script>
 
