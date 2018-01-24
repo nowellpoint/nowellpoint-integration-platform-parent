@@ -3,8 +3,13 @@ package com.nowellpoint.okta;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.math.BigInteger;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Base64;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,17 +25,9 @@ import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.ClientBuilder;
 import com.okta.sdk.client.Clients;
-import com.okta.sdk.clients.AuthApiClient;
-import com.okta.sdk.framework.ApiClientConfiguration;
-import com.okta.sdk.models.auth.AuthResult;
 import com.okta.sdk.resource.ResourceException;
-import com.okta.sdk.resource.group.Group;
-import com.okta.sdk.resource.group.GroupProfile;
-import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
-import com.okta.sdk.resource.user.UserCredentials;
-import com.okta.sdk.resource.user.UserProfile;
-import com.okta.sdk.resource.user.UserStatus;
+import com.okta.sdk.resource.user.UserBuilder;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -39,13 +36,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import io.jsonwebtoken.SigningKeyResolverAdapter;
-
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
 
 public class TestOktaAuthentication {
 	
@@ -66,7 +56,7 @@ public class TestOktaAuthentication {
 		
 	}
 	
-	@Test
+	//@Test
 	public void testAuthenticate() {
 		
 		HttpResponse httpResponse = RestResource.post(System.getenv("OKTA_AUTHORIZATION_SERVER"))
@@ -202,61 +192,42 @@ public class TestOktaAuthentication {
 		
 	}
 	
-	//@Test
+	@Test
 	public void testCreateUser() {
 		
 		try {
 			
-			UserProfile userProfile = client.instantiate(UserProfile.class)
+			User user = UserBuilder.instance()
+					.setEmail("nowellpoint@mailinator.com")
+					.setLogin("nowellpoint@mailinator.com")
 					.setFirstName("John")
 					.setLastName("Herson")
-					.setEmail("nowellpoint@mailinator.com")
-					.setLogin("nowellpoint@mailinator.com");
+					.addGroup("00gax53y4htYrgYWB0h7")
+					.buildAndCreate(client);
 			
-			PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
-					.setValue("MuwKNl26k0Ee");
-			
-			UserCredentials userCredentials = client.instantiate(UserCredentials.class)
-					.setPassword(passwordCredential);
-			
-			User user = client.instantiate(User.class)
-					.setProfile(userProfile)
-					.setStatus(UserStatus.ACTIVE)
-					.setCredentials(userCredentials);
-			
-			user = client.createUser(user);
-			
-			GroupProfile groupProfile = client.instantiate(GroupProfile.class);
-			groupProfile.setName("Test Group");
-			
-			Group group = client.instantiate(Group.class).setProfile(groupProfile);
-			
-			group = client.createGroup(group);
-			
-			client.getUser(user.getId()).addToGroup(group.getId());
-			
-			ApiClientConfiguration config = new ApiClientConfiguration(ORG_URL, API_KEY);
-			
-			AuthApiClient authApiClient = new AuthApiClient(config);		
-			AuthResult result = authApiClient.authenticate("nowellpoint@mailinator.com", "MuwKNl26k0Ee", null);
-			
-			assertNotNull(result.getSessionToken());
-			
-			passwordCredential = client.instantiate(PasswordCredential.class)
-					.setValue("MuwKNl26k0Ed");
-			
-			userCredentials = client.instantiate(UserCredentials.class)
-					.setPassword(passwordCredential);
-						
-			userProfile = user.getProfile().setFirstName("Maou");
-			
-			user.setProfile(userProfile).setCredentials(userCredentials).update();
+//			
+//			ApiClientConfiguration config = new ApiClientConfiguration(ORG_URL, API_KEY);
+//			
+//			AuthApiClient authApiClient = new AuthApiClient(config);		
+//			AuthResult result = authApiClient.authenticate("nowellpoint@mailinator.com", "MuwKNl26k0Ee", null);
+//			
+//			assertNotNull(result.getSessionToken());
+//			
+//			passwordCredential = client.instantiate(PasswordCredential.class)
+//					.setValue("MuwKNl26k0Ed");
+//			
+//			userCredentials = client.instantiate(UserCredentials.class)
+//					.setPassword(passwordCredential);
+//						
+//			userProfile = user.getProfile().setFirstName("Maou");
+//			
+//			user.setProfile(userProfile).setCredentials(userCredentials).update();
 			
 			client.getUser(user.getId()).deactivate();
 			
 			client.getUser(user.getId()).delete();
 			
-			client.getGroup(group.getId()).delete();
+			//client.getGroup(group.getId()).delete();
 			
 		} catch (ResourceException e) {
 			System.out.println(e.getOktaError().getCode());
@@ -267,8 +238,8 @@ public class TestOktaAuthentication {
 			e.getOktaError().getCauses().forEach(error -> {
 				System.out.println(error.getSummary());
 			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+		} //catch (IOException e) {
+			//e.printStackTrace();
+		//}	
 	}
 }

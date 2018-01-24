@@ -8,6 +8,7 @@ import com.nowellpoint.client.auth.Authenticators;
 import com.nowellpoint.client.auth.OauthAuthenticationResponse;
 import com.nowellpoint.client.auth.OauthRequests;
 import com.nowellpoint.client.auth.PasswordGrantRequest;
+import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.client.model.UserProfile;
@@ -35,7 +36,7 @@ public class UserProfileTest {
 	
 	@Test
 	public void updateUserProfile() {
-		UserProfileRequest abstractUserProfileRequest = UserProfileRequest.builder()
+		UserProfileRequest userProfileRequest = UserProfileRequest.builder()
 				.token(token)
 				.firstName("John")
 				.lastName("Herson")
@@ -48,10 +49,26 @@ public class UserProfileTest {
 
 		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
-				.update("59d592cf5e7a9bb2231a87ee", abstractUserProfileRequest);
+				.update("59d592cf5e7a9bb2231a87ee", userProfileRequest);
 		
 		System.out.println(updateResult.isSuccess());
 		System.out.println(updateResult.getTarget().getTitle());
+		
+		AddressRequest addressRequest = AddressRequest.builder()
+				.city("Raleigh")
+				.countryCode("US")
+				.postalCode("27601")
+				.state("NC")
+				.street("129 S. Bloodworth Street")
+				.token(token)
+				.build();
+		
+		UpdateResult<UserProfile> addressUpdateResult = NowellpointClient.defaultClient(token)
+				.userProfile()
+				.address()
+				.update("59d592cf5e7a9bb2231a87ee", addressRequest);
+		
+		System.out.println(addressUpdateResult.isSuccess());
 	}
 	
 	@AfterClass

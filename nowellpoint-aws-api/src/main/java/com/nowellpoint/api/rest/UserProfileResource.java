@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.nowellpoint.api.rest.domain.AddressRequest;
 import com.nowellpoint.api.rest.domain.UserProfileRequest;
 
 @Path("user-profiles")
@@ -26,15 +27,9 @@ public interface UserProfileResource {
 	
 	@POST
 	@Path("{id}/address")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateAddress(
-			@PathParam("id") String id, 
-			@FormParam("city") String city,
-			@FormParam("countryCode") String countryCode,
-			@FormParam("postalCode") String postalCode,
-			@FormParam("state") String state,
-			@FormParam("street") String street);
+	public Response updateAddress(@PathParam("id") String id, AddressRequest request);
 	
 	@POST
 	@Path("{id}")

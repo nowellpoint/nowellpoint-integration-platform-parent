@@ -22,6 +22,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.rest.domain.Address;
+import com.nowellpoint.api.rest.domain.AddressRequest;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.OrganizationInfo;
 import com.nowellpoint.api.rest.domain.Photos;
@@ -127,7 +128,11 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 		
 		Date now = Date.from(Instant.now());
 		
-		identityProviderService.updateUser(original.getReferenceId(), request.getEmail(), request.getFirstName(), request.getLastName());
+		identityProviderService.updateUser(
+				original.getReferenceId(), 
+				request.getEmail(), 
+				request.getFirstName(), 
+				request.getLastName());
 		
 		UserProfile userProfile = UserProfile.builder()
 				.from(original)
@@ -148,15 +153,16 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	}
 	
 	@Override
-	public UserProfile updateAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
+	public UserProfile updateAddress(String id, AddressRequest request) {
 		UserProfile original = findById(id);
 		
 		Address address = Address.builder()
 				.from(original.getAddress())
-				.city(city)
-				.countryCode(countryCode)
-				.state(state)
-				.street(street)
+				.city(request.getCity())
+				.countryCode(request.getCountryCode())
+				.postalCode(request.getPostalCode())
+				.state(request.getState())
+				.street(request.getStreet())
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		

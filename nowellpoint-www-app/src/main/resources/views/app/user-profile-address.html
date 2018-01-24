@@ -1,0 +1,119 @@
+<div class="col-12">
+    <div class="flextable" style="height: 18px">
+        <div class="flextable-item flextable-primary">
+            <h4><b>${labels["address"]}</b></h4>
+        </div>
+        <div class="flextable-item">
+            <button class="btn btn-link" id="editAddress"><span class="icon icon-pencil"></span></button>
+        </div>
+    </div>
+    <hr>
+    <div id="addressView">
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["street"]}</b>
+            </div>
+            <div class="col-9">
+                ${(userProfile.address.street)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["city"]}</b>
+            </div>
+            <div class="col-9">
+                ${(userProfile.address.city)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["state"]}</b>
+            </div>
+            <div class="col-9">
+                ${(userProfile.address.state)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["postal.code"]}</b>
+            </div>
+            <div class="col-9">
+                ${(userProfile.address.postalCode)!}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <b>${labels["country"]}</b>
+            </div>
+            <div class="col-9">
+                ${(userProfile.address.country)!}
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div id="addressEdit" class="hidden">
+        <form class="form-vertical" name="profile-address" id="profile-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address">
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="street">${labels["street"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="city">${labels["city"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="state">${labels["state"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-3">
+                    <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
+                </div>
+                <div class="col-4">
+                    <select id="countryCode" name="countryCode" class="form-control" required>
+                        <#list countryList as country>
+                            <#if country.iso2Code==userProfile.address.countryCode>
+                                <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                            </#if>
+                            <#if country.iso2Code !=userProfile.address.countryCode>
+                                <option value="${country.iso2Code}">${country.name}</option>
+                            </#if>
+                        </#list>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-4">
+                <button class="btn btn-success" id="saveAddress">${labels["save"]}</button>
+                <button class="btn btn-link" id="cancelAddress">${labels["cancel"]}</button>
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,6 @@
 package com.nowellpoint.client.resource;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
@@ -124,23 +123,26 @@ public class UserProfileResource extends AbstractResource {
 		 * @return
 		 */
 		
-		public UpdateResult<Address> update(String userProfileId, AddressRequest addressRequest) {
+		public UpdateResult<UserProfile> update(String userProfileId, AddressRequest addressRequest) {
+			ObjectNode payload = objectMapper.createObjectNode()
+					.put("street", addressRequest.getStreet())
+					.put("city", addressRequest.getCity())
+					.put("state", addressRequest.getState())
+					.put("postalCode", addressRequest.getPostalCode())
+					.put("countryCode", addressRequest.getCountryCode());
+
 			HttpResponse httpResponse = RestResource.post(token.getEnvironmentUrl())
 					.bearerAuthorization(token.getAccessToken())
 					.accept(MediaType.APPLICATION_JSON)
-					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.contentType(MediaType.APPLICATION_JSON)
 					.acceptCharset("UTF-8")
 					.path(RESOURCE_CONTEXT)
 					.path(userProfileId)
 					.path("address")
-					.parameter("city", addressRequest.getCity())
-					.parameter("countryCode", addressRequest.getCountryCode())
-					.parameter("state", addressRequest.getState())
-					.parameter("postalCode", addressRequest.getPostalCode())
-					.parameter("street", addressRequest.getStreet())
+					.body(payload)
 					.execute();
 			
-			UpdateResult<Address> result = new UpdateResultImpl<Address>(Address.class, httpResponse);
+			UpdateResult<UserProfile> result = new UpdateResultImpl<UserProfile>(UserProfile.class, httpResponse);
 			
 			return result;
 		}

@@ -8,9 +8,9 @@ import com.okta.sdk.client.Clients;
 import com.okta.sdk.resource.user.ChangePasswordRequest;
 import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
+import com.okta.sdk.resource.user.UserBuilder;
 import com.okta.sdk.resource.user.UserCredentials;
 import com.okta.sdk.resource.user.UserProfile;
-import com.okta.sdk.resource.user.UserStatus;
 
 public class OktaIdentityProviderService implements IdentityProviderService {
 	
@@ -46,26 +46,14 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	@Override
 	public User createUser(String email, String firstName, String lastName, String password) {	
 		
-		UserProfile userProfile = client.instantiate(UserProfile.class)
-			    .setEmail(email)
-			    .setLogin(email)
-			    .setFirstName(firstName)
-			    .setLastName(lastName);
-		
-		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
-				.setValue(password);
-		
-		UserCredentials userCredentials = client.instantiate(UserCredentials.class)
-				.setPassword(passwordCredential);
-		
-		User user = client.instantiate(User.class)
-				.setProfile(userProfile)
-				//.setStatus(UserStatus.ACTIVE)
-				.setCredentials(userCredentials);
-		
-		user = client.createUser(user);
-		
-		client.getUser(user.getId()).addToGroup(System.getProperty(Properties.OKTA_GROUP_ID));
+		User user = UserBuilder.instance()
+				.setEmail(email)
+				.setLogin(email)
+				.setFirstName(firstName)
+				.setLastName(lastName)
+				.setActive(Boolean.TRUE)
+				.addGroup(System.getProperty(Properties.OKTA_GROUP_ID))
+				.buildAndCreate(client);
 		
 		return user;
 	}
@@ -92,7 +80,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	
 	/**
 	 * 
-	 * @param href
+	 * @param id
 	 */
 	
 	@Override

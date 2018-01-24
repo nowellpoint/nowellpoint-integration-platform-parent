@@ -81,12 +81,7 @@ $(document).on('click', 'button#saveUserProfile', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                jQuery("#notification").modal('show');
-                setTimeout(function () {
-                    $("#notification").slideUp('slow').fadeOut(function () {
-                        location.href = "${links['user.profile']}/${userProfile.id}";
-                    });
-                }, 1000);
+                $('#detail').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }
@@ -118,12 +113,7 @@ $(document).on('click', 'button#saveAddress', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                jQuery("#notification").modal('show');
-                setTimeout(function () {
-                    $("#notification").slideUp('slow').fadeOut(function () {
-                        location.href = "${links['user.profile']}/${userProfile.id}";
-                    });
-                }, 1000);
+                $('#address').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }

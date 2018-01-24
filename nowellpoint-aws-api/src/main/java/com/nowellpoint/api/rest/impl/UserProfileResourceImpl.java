@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 import com.nowellpoint.api.rest.UserProfileResource;
+import com.nowellpoint.api.rest.domain.AddressRequest;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.UserProfileRequest;
 import com.nowellpoint.api.service.UserProfileService;
@@ -21,10 +22,10 @@ public class UserProfileResourceImpl implements UserProfileResource {
 	}
 
 	@Override
-	public Response updateAddress(String id, String city, String countryCode, String postalCode, String state,
-			String street) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response updateAddress(String id, AddressRequest request) {
+		UserProfile userProfile = userProfileService.updateAddress(id, request);
+		return Response.ok(userProfile)
+				.build();
 	}
 
 	@Override

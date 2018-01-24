@@ -9,7 +9,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.Address;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Token;
@@ -25,6 +24,8 @@ public class UserProfileController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
+		public static final String USER_PROFILE_DETAIL = String.format(APPLICATION_CONTEXT, "user-profile-detail.html");
+		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile-address.html");
 	}
 	
 	/**
@@ -50,7 +51,6 @@ public class UserProfileController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
 		model.put("userProfile", userProfile);
-		model.put("successMessage", request.cookie("update.profile.success"));
 		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 		model.put("timeZones", getTimeZones());
 		model.put("readonly", readonly);
@@ -69,25 +69,43 @@ public class UserProfileController extends AbstractStaticController {
 	public static String updateUserProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		UserProfileRequest abstractUserProfileRequest = UserProfileRequest.builder()
-				.firstName(request.queryParams("firstName"))
-				.lastName(request.queryParams("lastName"))
-				.title(request.queryParams("title"))
-				.email(request.queryParams("email"))
-				.phone(request.queryParams("phone"))
-				.locale(request.queryParams("locale"))
-				.timeZone(request.queryParams("timeZone"))
+		Identity identity = getIdentity(request);
+		
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		String title = request.queryParams("title");
+		String email = request.queryParams("email");
+		String phone = request.queryParams("phone");
+		String locale = request.queryParams("locale");
+		String timeZone = request.queryParams("timeZone");
+		
+		UserProfileRequest userProfileRequest = UserProfileRequest.builder()
+				.firstName(firstName)
+				.lastName(lastName)
+				.title(title)
+				.email(email)
+				.phone(phone)
+				.locale(locale)
+				.timeZone(timeZone)
+				.token(token)
 				.build();
 
 		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
-				.update(request.params(":id"), abstractUserProfileRequest);
+				.update(request.params(":id"), userProfileRequest);
 		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
+		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
+		
+		if (updateResult.isSuccess()) {
+			Map<String, Object> model = getModel();
+			model.put("userProfile", updateResult.getTarget());
+			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
+			model.put("timeZones", getTimeZones());
+			model.put("readonly", readonly);
+			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_DETAIL);
+		} else {
+			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
-		
-		return responseBody(updateResult);
 	}
 	
 	/**
@@ -100,6 +118,8 @@ public class UserProfileController extends AbstractStaticController {
 	
 	public static String updateAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
+		
+		Identity identity = getIdentity(request);
 		
 		String userProfileId = request.params(":id");
 		
@@ -119,16 +139,21 @@ public class UserProfileController extends AbstractStaticController {
 				.token(token)
 				.build();
 		
-		UpdateResult<Address> updateResult = NowellpointClient.defaultClient(token)
+		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
 				.userProfile()
 				.address()
 				.update(request.params(":id"), addressRequest);
 		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
+		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
 		
-		return responseBody(updateResult);
+		if (updateResult.isSuccess()) {
+			Map<String, Object> model = getModel();
+			model.put("userProfile", updateResult.getTarget());
+			model.put("readonly", readonly);
+			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_ADDRESS);
+		} else {
+			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
+		}
 	}
 	
 	/**

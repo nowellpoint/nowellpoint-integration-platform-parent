@@ -477,7 +477,7 @@ public abstract class AbstractDocumentManager extends AbstractAsyncClient {
 					if (field.getType().isAssignableFrom(Locale.class)) {
 						value = String.valueOf(value);
 					} else if (field.getType().isAssignableFrom(TimeZone.class)) {
-						value = String.valueOf(value);
+						value = ((TimeZone) value).getID();
 					} else if (field.getType().isAssignableFrom(Currency.class)) {
 						value = String.valueOf(value);
 					} else if (field.getType().isAssignableFrom(URL.class)) {
