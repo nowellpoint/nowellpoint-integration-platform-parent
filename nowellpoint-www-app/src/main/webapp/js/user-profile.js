@@ -84,7 +84,6 @@ $(document).on('click', 'button#saveUserProfile', function(e) {
             $("#overlay").hide();
             if (response.status == 200) {
                 $('#profile-content').html(response.responseText);
-                $("#success").show();
             } else {
                 $form.prepend(response.responseText);
             }
@@ -116,7 +115,7 @@ $(document).on('click', 'button#saveAddress', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                $('#profile-content').html(response.responseText);
+                $('#content').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }

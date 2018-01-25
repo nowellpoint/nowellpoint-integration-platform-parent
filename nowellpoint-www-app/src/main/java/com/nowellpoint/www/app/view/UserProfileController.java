@@ -151,7 +151,7 @@ public class UserProfileController extends AbstractStaticController {
 			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 			model.put("timeZones", getTimeZones());
 			model.put("readonly", readonly);
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_CONTENT);
+			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE);
 		} else {
 			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
