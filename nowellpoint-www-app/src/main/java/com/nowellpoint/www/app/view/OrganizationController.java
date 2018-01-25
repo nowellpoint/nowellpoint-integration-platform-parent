@@ -32,10 +32,11 @@ public class OrganizationController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
-		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization-view.html");
-		public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");
-		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization-billing-address.html");
-		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization-billing-contact.html");
+		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization.html");
+		public static final String ORGANIZATION_CONTENT = String.format(APPLICATION_CONTEXT, "organization-content.html");
+		//public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");
+		//public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization-billing-address.html");
+		//public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization-billing-contact.html");
 	}
 	
 	/**
@@ -124,7 +125,7 @@ public class OrganizationController extends AbstractStaticController {
 		Map<String, Object> model = getModel();
 		model.put("organization", organization);
 		
-		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_VIEW);	
+		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);	
 	}
 	
 	/**
@@ -236,7 +237,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_BILLING_ADDRESS);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -278,7 +279,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_BILLING_CONTACT);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -322,7 +323,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_PAYMENT_METHOD);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -357,7 +358,7 @@ public class OrganizationController extends AbstractStaticController {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
 			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_PAYMENT_METHOD);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
 			
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());

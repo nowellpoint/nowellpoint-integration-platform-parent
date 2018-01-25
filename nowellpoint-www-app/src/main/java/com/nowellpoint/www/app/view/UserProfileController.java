@@ -24,8 +24,7 @@ public class UserProfileController extends AbstractStaticController {
 	
 	public static class Template {
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
-		public static final String USER_PROFILE_DETAIL = String.format(APPLICATION_CONTEXT, "user-profile-detail.html");
-		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile-address.html");
+		public static final String USER_PROFILE_CONTENT = String.format(APPLICATION_CONTEXT, "user-profile-content.html");
 	}
 	
 	/**
@@ -102,7 +101,7 @@ public class UserProfileController extends AbstractStaticController {
 			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 			model.put("timeZones", getTimeZones());
 			model.put("readonly", readonly);
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_DETAIL);
+			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_CONTENT);
 		} else {
 			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -149,8 +148,10 @@ public class UserProfileController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("userProfile", updateResult.getTarget());
+			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
+			model.put("timeZones", getTimeZones());
 			model.put("readonly", readonly);
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_ADDRESS);
+			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE_CONTENT);
 		} else {
 			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}

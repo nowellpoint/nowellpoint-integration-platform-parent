@@ -1,42 +1,11 @@
 <#import "template.html" as t>
     <@t.page>
-        <script>
-            var userProfile = {
-                basePath: "${links['user.profile']}",
-                id: "${userProfile.id!}",
-                firstName: "${userProfile.firstName!}",
-                lastName: "${userProfile.lastName!}",
-                street: "${(userProfile.address.street)!}",
-                city: "${(userProfile.address.city)!}",
-                state: "${(userProfile.address.state)!}",
-                postalCode: "${(userProfile.address.postalCode)!}",
-                countryCode: "${(userProfile.address.countryCode)!}",
-                company: "${userProfile.company!}",
-                department: "${userProfile.department!}",
-                title: "${userProfile.title!}",
-                email: "${userProfile.email!}",
-                mobilePhone: "${userProfile.mobilePhone!}",
-                phone: "${userProfile.phone!}",
-                extension: "${userProfile.extension!}",
-                fax: "${userProfile.fax!}",
-                locale: "${userProfile.locale!}",
-                timeZone: "${userProfile.timeZone.ID!}"
-            }
-            sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
-        </script>
         <br>
         <br>
-        <div class="container mt-3">
-            <div class="row" id="detail">
-                <#include "user-profile-detail.html"/>
-            </div>
-            <br>
-            <br>
-            <div class="row" id="address">
-                <#include "user-profile-address.html"/>
-            </div>
-            <div id="overlay"></div>
-
-            <script src="/js/user-profile.js"></script>
-
+        <div id="profile-content" class="container mt-3">
+            <#include "user-profile-content.html"/>
+        </div>    
+        <br>
+        <br>
+        <script src="/js/user-profile.js"></script>
     </@t.page>

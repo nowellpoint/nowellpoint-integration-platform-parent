@@ -16,6 +16,7 @@ $(document).on('click', 'button#editUserProfile', function () {
  */
 
 $(document).on('click', 'button#cancelUserProfile', function () {
+    var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
     $('#userProfileEdit').hide();
     $('#firstName').val(userProfile.firstName);
     $('#lastName').val(userProfile.lastName);
@@ -48,6 +49,7 @@ $(document).on('click', 'button#editAddress', function () {
  */
 
 $(document).on('click', 'button#cancelAddress', function () {
+    var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
     $('#addressEdit').hide();
     $('#street').val(userProfile.street);
     $('#city').val(userProfile.city);
@@ -81,7 +83,8 @@ $(document).on('click', 'button#saveUserProfile', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                $('#detail').html(response.responseText);
+                $('#profile-content').html(response.responseText);
+                $("#success").show();
             } else {
                 $form.prepend(response.responseText);
             }
@@ -113,7 +116,7 @@ $(document).on('click', 'button#saveAddress', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                $('#address').html(response.responseText);
+                $('#profile-content').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }
@@ -121,27 +124,4 @@ $(document).on('click', 'button#saveAddress', function(e) {
     });
     
     return true;
-});
-
-/*-----------------------------------------------------------
- *
- *
- */
-
-$("#edit-user-profile").click(function (e) {
-    var userProfile = JSON.parse(sessionStorage.getItem("userProfile"));
-    $("#firstName").val(userProfile.firstName);
-    $("#lastName").val(userProfile.lastName);
-    $("#division").val(userProfile.division);
-    $("#company").val(userProfile.company);
-    $("#department").val(userProfile.department);
-    $("#title").val(userProfile.title);
-    $("#email").val(userProfile.email);
-    $("#mobilePhone").val(userProfile.mobilePhone);
-    $("#phone").val(userProfile.phone);
-    $("#extension").val(userProfile.extension);
-    $("#fax").val(userProfile.fax);
-    $("#languageSidKey").val(userProfile.languageSidKey);
-    $("#localeSidKey").val(userProfile.localeSidKey);
-    $("#timeZoneSidKey").val(userProfile.timeZoneSidKey);
 });
