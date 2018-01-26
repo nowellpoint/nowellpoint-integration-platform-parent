@@ -31,7 +31,7 @@ public abstract class AbstractDashboard extends AbstractImmutableResource {
 	public abstract Set<JobExecution> getRecentJobExecutions();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastRefreshedOn();
 	
-	public static Dashboard of(SalesforceConnectorList salesforceConnectorList, JobList jobList) {
+	public static Dashboard of(ConnectorList connectorList, JobList jobList) {
 		
 		Set<JobStatusAggregation> jobStatusSummary = Collections.emptySet();
 		Set<JobExecution> recentJobExecutions = Collections.emptySet();
@@ -74,7 +74,7 @@ public abstract class AbstractDashboard extends AbstractImmutableResource {
 		}
 		
 		Dashboard dashboard = ModifiableDashboard.create()
-				.setConnectors(salesforceConnectorList.getSize())
+				.setConnectors(connectorList.getSize())
 				.setJobs(jobList.getSize())
 				.setLastRefreshedOn(Date.from(Instant.now()))
 				.setData(data)

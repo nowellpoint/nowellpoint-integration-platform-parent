@@ -38,6 +38,7 @@ public class AbstractStaticController {
 	
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
+	protected static final String CONSOLE = String.format(APPLICATION_CONTEXT, "main.html");
 	protected static final String TOKEN = "com.nowellpoint.auth.token";
 	protected static final String IDENTITY = "com.nowellpoint.auth.identity";
 	protected static final String LOCALE = "com.nowellpoint.default.locale";

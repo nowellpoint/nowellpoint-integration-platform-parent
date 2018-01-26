@@ -36,7 +36,7 @@ import com.nowellpoint.util.DateUtil;
 
 public class JobOrig extends AbstractResource {
 	
-	private Source source;
+	private Connector source;
 	
 	private AbstractUserInfo createdBy;
 	
@@ -83,7 +83,7 @@ public class JobOrig extends AbstractResource {
 	
 	private JobOrig(
 			String id,
-			Source source,
+			Connector source,
 			String jobName,
 			String groupName,
 			String className,
@@ -193,11 +193,11 @@ public class JobOrig extends AbstractResource {
 		return new JobOrig(document);
 	}
 
-	public Source getSource() {
+	public Connector getSource() {
 		return source;
 	}
 
-	public void setSource(Source source) {
+	public void setSource(Connector source) {
 		this.source = source;
 	}
 

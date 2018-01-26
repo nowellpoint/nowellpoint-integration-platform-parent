@@ -36,7 +36,7 @@ public interface UserProfileResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createUserProfile(
-			@FormParam("firstName") String firstName,
+		@FormParam("firstName") String firstName,
     		@FormParam("lastName") @NotEmpty String lastName,
     		@FormParam("company") String company,
     		@FormParam("division") String division,
@@ -49,7 +49,6 @@ public interface UserProfileResource {
     		@FormParam("locale") @NotEmpty String locale,
     		@FormParam("timeZone") @NotEmpty String timeZone);
 
-	
 	@POST
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)

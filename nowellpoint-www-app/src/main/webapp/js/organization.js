@@ -118,7 +118,7 @@
             complete: function (response) {
                 $('#overlay').hide();
                 if (response.status == 200) {
-                    $('#organization-content').html(response.responseText);
+                    $('#content').html(response.responseText);
                 } else {
                     $form.prepend(response.responseText);
                 }
@@ -149,7 +149,7 @@
             complete: function (response) {
                 $('#overlay').hide();
                 if (response.status == 200) {
-                    $('#organization-content').html(response.responseText);
+                    $('#content').html(response.responseText);
                 } else {
                     $form.prepend(response.responseText);
                 }
@@ -181,7 +181,7 @@
             complete: function (response) {
                 $('#overlay').hide();
                 if (response.status == 200) {
-                    $('#organization-content').html(response.responseText);
+                    $('#content').html(response.responseText);
                 } else {
                     $form.prepend(response.responseText);
                 }

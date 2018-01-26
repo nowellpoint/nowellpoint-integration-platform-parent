@@ -1,13 +1,8 @@
 package com.nowellpoint.www.app.view;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +28,6 @@ public class OrganizationController extends AbstractStaticController {
 	public static class Template {
 		public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization.html");
-		public static final String ORGANIZATION_CONTENT = String.format(APPLICATION_CONTEXT, "organization-content.html");
-		//public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");
-		//public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization-billing-address.html");
-		//public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization-billing-contact.html");
 	}
 	
 	/**
@@ -74,9 +65,6 @@ public class OrganizationController extends AbstractStaticController {
 		model.put("organization", organization);
 		model.put("action", "listPlans");
 		model.put("plans", plans);
-		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-		model.put("languages", getSupportedLanguages());
-		model.put("timeZones", getTimeZones());
 
 		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
 	}
@@ -124,8 +112,9 @@ public class OrganizationController extends AbstractStaticController {
 		
 		Map<String, Object> model = getModel();
 		model.put("organization", organization);
+		model.put("content", Template.ORGANIZATION);
 		
-		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);	
+		return render(OrganizationController.class, configuration, request, response, model, CONSOLE);	
 	}
 	
 	/**
@@ -237,7 +226,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -279,7 +268,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -323,7 +312,7 @@ public class OrganizationController extends AbstractStaticController {
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
@@ -358,47 +347,10 @@ public class OrganizationController extends AbstractStaticController {
 			Map<String, Object> model = getModel();
 			model.put("organization", updateResult.getTarget());
 			
-			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CONTENT);
+			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
 			
 		} else {
 			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 	};
-	
-	/**
-	 * 
-	 * @param locale
-	 * @return Locale map 
-	 */
-	
-	private static Map<String,String> getLocales(Locale locale) {
-		Locale.setDefault(locale);
-		
-		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
-				.stream()
-				.collect(Collectors.toMap(l -> l.toString(), l -> l.getDisplayLanguage()
-						.concat(! l.getCountry().isEmpty() ? " (".concat(l.getDisplayCountry().concat(")")) : "")));
-		
-		return localeMap;
-	}
-	
-	/**
-	 * 
-	 * @return application supported languages
-	 */
-	
-	private static Map<String,String> getSupportedLanguages() {
-		Map<String,String> languageMap = new HashMap<String,String>();
-		languageMap.put(Locale.US.toString(), Locale.US.getDisplayLanguage());
-		return languageMap;
-	}
-	
-	/**
-	 * 
-	 * @return application supported timezones
-	 */
-	
-	private static List<String> getTimeZones() {
-		return Arrays.asList(TimeZone.getAvailableIDs());
-	}
 }

@@ -120,7 +120,7 @@ public abstract class AbstractSalesforceAdapter {
 					.password(KeyManager.encrypt(password))
 					.clientId(clientId)
 					.clientSecret(KeyManager.encrypt(clientSecret))
-					.connectedAs(loginResult.getIsConnected() ? loginResult.getToken().getId() : null)
+					.connectedAs(loginResult.getIsConnected() ? username : null)
 					.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
 					.status(status)
 					.isConnected(loginResult.getIsConnected())

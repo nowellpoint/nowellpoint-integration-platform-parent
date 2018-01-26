@@ -33,19 +33,15 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.nowellpoint.api.rest.JobResource;
-import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
 import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobType;
 import com.nowellpoint.api.rest.domain.Meta;
-import com.nowellpoint.api.rest.domain.SalesforceConnectorOrig;
-import com.nowellpoint.api.rest.domain.Source;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
 import com.nowellpoint.api.service.JobService;
 import com.nowellpoint.api.service.JobTypeService;
-import com.nowellpoint.api.service.SalesforceConnectorService;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 
@@ -58,9 +54,6 @@ public class JobResourceImpl implements JobResource {
 	
 	@Inject
 	private JobTypeService jobTypeService;
-	
-	@Inject
-	private SalesforceConnectorService salesforceConnectorService;
 	
 	@Context
 	private SecurityContext securityContext;
@@ -120,10 +113,6 @@ public class JobResourceImpl implements JobResource {
 		
 		JobType jobType = jobTypeService.findById(jobTypeId);
 		
-		SalesforceConnectorOrig salesforceConnectorOrig = salesforceConnectorService.findById(connectorId);
-		
-		Source source = Source.of(salesforceConnectorOrig);
-		
 		CreateJobRequest jobRequest = CreateJobRequest.builder()
 				.dayOfMonth(dayOfMonth)
 				.dayOfWeek(dayOfWeek)
@@ -143,7 +132,7 @@ public class JobResourceImpl implements JobResource {
 				.timeZone(timeZone)
 				.year(year)
 				.jobType(jobType)
-				.source(source)
+				//.source(source)
 				.build();
 		
 		JobOrig jobOrig = jobService.createJob(jobRequest);
@@ -215,7 +204,7 @@ public class JobResourceImpl implements JobResource {
 		
 		Meta meta = Meta.builder()
 				.id(jobOrig.getId())
-				.resourceClass(SalesforceConnectorResource.class)
+				.resourceClass(JobResource.class)
 				.build();		
 		
 		jobOrig.setMeta(meta);

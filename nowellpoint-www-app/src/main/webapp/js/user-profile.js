@@ -83,7 +83,7 @@ $(document).on('click', 'button#saveUserProfile', function(e) {
         complete: function (response) {
             $("#overlay").hide();
             if (response.status == 200) {
-                $('#profile-content').html(response.responseText);
+                $('#content').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }

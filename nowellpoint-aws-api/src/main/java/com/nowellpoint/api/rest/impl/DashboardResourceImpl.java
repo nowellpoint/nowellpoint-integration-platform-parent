@@ -8,9 +8,9 @@ import javax.ws.rs.core.SecurityContext;
 import com.nowellpoint.api.rest.DashboardResource;
 import com.nowellpoint.api.rest.domain.Dashboard;
 import com.nowellpoint.api.rest.domain.JobList;
-import com.nowellpoint.api.rest.domain.SalesforceConnectorList;
+import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.service.JobService;
-import com.nowellpoint.api.service.SalesforceConnectorService;
+import com.nowellpoint.api.service.ConnectorService;
 
 public class DashboardResourceImpl implements DashboardResource {
 	
@@ -18,7 +18,7 @@ public class DashboardResourceImpl implements DashboardResource {
 	private SecurityContext securityContext;
 	
 	@Inject
-	private SalesforceConnectorService salesforceConnectorService;
+	private ConnectorService connectorService;
 	
 	@Inject
 	private JobService jobService;
@@ -27,10 +27,10 @@ public class DashboardResourceImpl implements DashboardResource {
 	public Response getDashboard() {
 		String owner = securityContext.getUserPrincipal().getName();
 		
-		SalesforceConnectorList salesforceConnectorList = salesforceConnectorService.findAllByOwner(owner);
+		ConnectorList connectorList = connectorService.getConnectors();
 		JobList jobList = jobService.findAllByOwner(owner);
 		
-		Dashboard dashboard = Dashboard.of(salesforceConnectorList, jobList);
+		Dashboard dashboard = Dashboard.of(connectorList, jobList);
 		
 		return Response.ok(dashboard).build();
 	}
