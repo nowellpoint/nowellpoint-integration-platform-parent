@@ -33,6 +33,7 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract @Nullable String getClientSecret();
 	public abstract @Nullable String getConnectedAs();
 	public abstract @Nullable Date getConnectedOn();
+	public abstract @Nullable SalesforceMetadata getSalesforceMetaData();
 	
 	@Value.Default
 	public Boolean getIsConnected() {
