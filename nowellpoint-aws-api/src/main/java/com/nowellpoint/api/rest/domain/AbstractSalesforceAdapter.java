@@ -14,8 +14,6 @@ import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.KeyManager;
 import com.nowellpoint.api.util.MessageConstants;
@@ -65,23 +63,6 @@ public abstract class AbstractSalesforceAdapter {
 				assertNotNull(getPassword(), MessageProvider.getMessage(Locale.getDefault(), MessageConstants.CONNECTOR_MISSING_PASSWORD));
 				
 				loginResult = login(getConnectorType().getAuthEndpoint(), getClientId(), getClientSecret(), getUsername(), getPassword());
-				
-				Identity identity = getIdentity(loginResult.getToken().getAccessToken(), loginResult.getToken().getId());
-				
-				Organization organization = getOrganization(loginResult.getToken().getAccessToken(), identity.getUrls().getSobjects(), identity.getOrganizationId());
-				
-				SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
-						.identity(identity)
-						.organization(organization)
-						.serviceEndpoint(loginResult.getToken().getInstanceUrl())
-						.build();
-				
-				try {
-					System.out.println(new ObjectMapper().writeValueAsString(salesforceMetadata));
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 			
 			Connector connector = Connector.builder()
@@ -95,6 +76,7 @@ public abstract class AbstractSalesforceAdapter {
 					.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
 					.status(loginResult.getStatus())
 					.isConnected(loginResult.getIsConnected())
+					.salesforceMetadata(loginResult.getIsConnected() ? getSalesforceMetadata(loginResult) : null)
 					.build();
 			
 			return connector;
@@ -129,22 +111,6 @@ public abstract class AbstractSalesforceAdapter {
 				
 				status = loginResult.getStatus();
 				
-Identity identity = getIdentity(loginResult.getToken().getAccessToken(), loginResult.getToken().getId());
-				
-				Organization organization = getOrganization(loginResult.getToken().getAccessToken(), identity.getUrls().getSobjects(), identity.getOrganizationId());
-				
-				SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
-						.identity(identity)
-						.organization(organization)
-						.serviceEndpoint(loginResult.getToken().getInstanceUrl())
-						.build();
-				
-				try {
-					System.out.println(new ObjectMapper().writeValueAsString(salesforceMetadata));
-				} catch (JsonProcessingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 			
 			if (! getConnector().getConnectorType().getScheme().equals(getConnector().getConnectorType().getScheme())) {
@@ -167,6 +133,7 @@ Identity identity = getIdentity(loginResult.getToken().getAccessToken(), loginRe
 					.connectedOn(loginResult.getIsConnected() ? new Date(Long.valueOf(loginResult.getToken().getIssuedAt())) : null)
 					.status(status)
 					.isConnected(loginResult.getIsConnected())
+					.salesforceMetadata(loginResult.getIsConnected() ? getSalesforceMetadata(loginResult) : null)
 					.build();
 			
 			return connector;
@@ -198,6 +165,20 @@ Identity identity = getIdentity(loginResult.getToken().getAccessToken(), loginRe
 					.status(String.format("%s. Error: %s - %s )", Connector.FAILED_TO_CONNECT, error.getError(), error.getErrorDescription()))
 					.build();
 		}
+	}
+	
+	private SalesforceMetadata getSalesforceMetadata(SalesforceLoginResult loginResult) {
+		Identity identity = getIdentity(loginResult.getToken().getAccessToken(), loginResult.getToken().getId());
+		
+		Organization organization = getOrganization(loginResult.getToken().getAccessToken(), identity.getUrls().getSobjects(), identity.getOrganizationId());
+		
+		SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
+				.identity(identity)
+				.organization(organization)
+				.serviceEndpoint(loginResult.getToken().getInstanceUrl())
+				.build();
+		
+		return salesforceMetadata;
 	}
 	
 	private Identity getIdentity(String accessToken, String identityId) {

@@ -3,6 +3,7 @@ package com.nowellpoint.api.model.document;
 import java.util.Date;
 
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
 
@@ -43,6 +44,9 @@ public class Connector extends MongoDocument {
 	private String clientId;
 	
 	private String clientSecret;
+	
+	@EmbedOne
+	private SalesforceMetadata salesforceMetadata;
 	
 	public Connector() {
 		
@@ -150,5 +154,13 @@ public class Connector extends MongoDocument {
 
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
+	}
+
+	public SalesforceMetadata getSalesforceMetadata() {
+		return salesforceMetadata;
+	}
+
+	public void setSalesforceMetadata(SalesforceMetadata salesforceMetadata) {
+		this.salesforceMetadata = salesforceMetadata;
 	}
 }

@@ -186,6 +186,18 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				return target.toImmutable();
 			}
 		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.SalesforceMetadata, SalesforceMetadata>() {
+
+			@Override
+			protected SalesforceMetadata convert(com.nowellpoint.api.model.document.SalesforceMetadata source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableSalesforceMetadata target = modelMapper.map(source, ModifiableSalesforceMetadata.class);
+				return target.toImmutable();
+			}
+		});
 	}
 	
 	private Instant now = Instant.now();
