@@ -18,13 +18,6 @@ public class Source {
 		this.connectionString = connectionString;
 	}
 	
-	public static Source of(SalesforceConnector connector) {
-		return new Source(
-				Types.SALESFORCE, 
-				connector.getId(), 
-				connector.getConnectionString());
-	}
-	
 	public class Types {
 		public static final String SALESFORCE = "SALESFORCE";
 	}

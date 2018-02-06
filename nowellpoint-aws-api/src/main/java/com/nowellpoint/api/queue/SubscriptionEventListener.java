@@ -44,7 +44,7 @@ public class SubscriptionEventListener implements MessageListener {
 				
 				LOGGER.info(String.format("Recevied SubscriptionEvent for Subscription %s", id));
 				
-				com.nowellpoint.api.model.document.Organization document = documentManager.findOne(com.nowellpoint.api.model.document.Organization.class, eq ( "subscription.subscriptionId", id ));
+				com.nowellpoint.api.model.document.Organization document = documentManager.findOne(com.nowellpoint.api.model.document.Organization.class, eq ( "subscription.number", id ));
 				
 				Organization organization = Organization.updateSubscription(document, subscriptionEvent);
 				

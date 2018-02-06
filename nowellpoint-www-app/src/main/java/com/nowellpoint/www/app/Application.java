@@ -222,8 +222,6 @@ public class Application implements SparkApplication {
 				(request, response) -> SalesforceOauthController.oauth(configuration, request, response));
 		get(Path.Route.SALESFORCE_OAUTH.concat("/callback"),
 				(request, response) -> SalesforceOauthController.callback(configuration, request, response));
-		get(Path.Route.SALESFORCE_OAUTH.concat("/token"),
-				(request, response) -> SalesforceOauthController.getSalesforceToken(configuration, request, response));
 
 		//
 		// signup routes
@@ -280,15 +278,6 @@ public class Application implements SparkApplication {
 		
 		post(Path.Route.CONNECTORS_REFRESH, (request, response) 
 				-> ConnectorController.refreshConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP, (request, response) 
-				-> ConnectorController.metadataBackup(configuration, request, response));
-		
-		get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST, (request, response) 
-				-> ConnectorController.listSObjects(configuration, request, response));
-		
-		get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW, (request, response) 
-				-> ConnectorController.viewSObject(configuration, request, response));
 
 		//
 		// jobs routes

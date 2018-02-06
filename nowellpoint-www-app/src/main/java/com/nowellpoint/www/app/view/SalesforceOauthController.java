@@ -5,11 +5,7 @@ import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 
 import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.CreateSalesforceConnectorRequest;
-import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.client.model.sforce.OauthToken;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -50,45 +46,14 @@ public class SalesforceOauthController extends AbstractStaticController {
 	 */
 	
 	public static String callback(Configuration configuration, Request request, Response response) {
-    	
-    	Optional<String> code = Optional.ofNullable(request.queryParams("code"));
-    	
-    	if (! code.isPresent()) {
-    		throw new BadRequestException("missing OAuth code from Salesforce");
-    	}
-    	
-    	return render(SalesforceOauthController.class, configuration, request, response, getModel(), Template.SALESFORCE_OAUTH);
-    };
-	
-    /**
-     * 
-     * @param configuration
-     * @param request
-     * @param response
-     * @return
-     */
-	
-	public static String getSalesforceToken(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
 
-		OauthToken oauthToken = NowellpointClient.defaultClient(token)
-				.salesforce()
-				.getOauthToken(request.queryParams("code"));
+		Optional<String> code = Optional.ofNullable(request.queryParams("code"));
 
-		CreateSalesforceConnectorRequest createSalesforceConnectorRequest = new CreateSalesforceConnectorRequest()
-				.withId(oauthToken.getId())
-				.withAccessToken(oauthToken.getAccessToken())
-				.withInstanceUrl(oauthToken.getInstanceUrl())
-				.withRefreshToken(oauthToken.getRefreshToken());
+		if (!code.isPresent()) {
+			throw new BadRequestException("missing OAuth code from Salesforce");
+		}
 
-		CreateResult<SalesforceConnector> createResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.create(createSalesforceConnectorRequest);
-
-//		SalesforceConnector salesforceConnector = createResult.getTarget();
-//
-//		response.redirect(String.format("/app/connectors/salesforce/%s", salesforceConnector.getId()));
-
-		return "";
+		return render(SalesforceOauthController.class, configuration, request, response, getModel(),
+				Template.SALESFORCE_OAUTH);
 	};
 }

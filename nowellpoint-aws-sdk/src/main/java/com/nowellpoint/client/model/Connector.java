@@ -16,6 +16,7 @@ public class Connector extends AbstractResource {
 	private String username;
 	private String clientId;
 	private Boolean isSandbox;
+	private SalesforceMetadata salesforceMetadata;
 	
 	public Connector() {
 		
@@ -67,5 +68,9 @@ public class Connector extends AbstractResource {
 	
 	public Boolean getIsSandbox() {
 		return isSandbox;
+	}
+
+	public SalesforceMetadata getSalesforceMetadata() {
+		return salesforceMetadata;
 	}
 }

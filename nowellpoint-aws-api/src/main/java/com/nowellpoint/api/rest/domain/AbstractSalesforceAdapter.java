@@ -173,8 +173,9 @@ public abstract class AbstractSalesforceAdapter {
 		Organization organization = getOrganization(loginResult.getToken().getAccessToken(), identity.getUrls().getSobjects(), identity.getOrganizationId());
 		
 		SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
-				.identity(identity)
-				.organization(organization)
+				.organizationId(organization.getId())
+				.instanceName(organization.getInstanceName())
+				.organizationName(organization.getName())
 				.serviceEndpoint(loginResult.getToken().getInstanceUrl())
 				.build();
 		

@@ -132,8 +132,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableTransaction target = modelMapper.map(source, ModifiableTransaction.class);
-				return target.toImmutable();
+				Transaction target = Transaction.of(source);
+				return target;
 			}
 		});
 		

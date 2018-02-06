@@ -33,4 +33,18 @@ public abstract class AbstractTransaction {
 		
 		return instance;
 	}
+	
+	public static Transaction of(com.nowellpoint.api.model.document.Transaction source) {
+		Transaction instance = Transaction.builder()
+				.amount(source.getAmount())
+				.createdOn(source.getCreatedOn())
+				.updatedOn(source.getUpdatedOn())
+				.creditCard(CreditCard.of(source.getCreditCard()))
+				.currencyIsoCode(source.getCurrencyIsoCode())
+				.id(source.getId())
+				.status(source.getStatus())
+				.build();
+		
+		return instance;
+	}
 }

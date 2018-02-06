@@ -52,10 +52,6 @@ public class Path {
 		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id/update");
 		public static final String CONNECTORS_DELETE = String.format(APPLICATION_CONTEXT, "connectors/:id/delete");
 		public static final String CONNECTORS_REFRESH = String.format(APPLICATION_CONTEXT, "connectors/:id/refresh");
-		public static final String CONNECTORS_SALESFORCE_METADATA_BACKUP = String.format(APPLICATION_CONTEXT, "connectors/:id/metadata-backup");
-		public static final String CONNECTORS_SALESFORCE_SOBJECT_LIST = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects");
-		public static final String CONNECTORS_SALESFORCE_SOBJECT_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/sobjects/:sobject");
-		public static final String CONNECTORS_SERVICE_SETUP = String.format(APPLICATION_CONTEXT, "connectors/:id/services/:serviceId/setup");
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String USER_PROFILE_VIEW = String.format(APPLICATION_CONTEXT, "user-profile/:id");
 		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");

@@ -12,4 +12,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonDeserialize(as = Photos.class)
 public abstract class AbstractPhotos {
 	public abstract String getProfilePicture();
+	
+	public static Photos of(com.nowellpoint.api.model.document.Photos source) {
+		Photos photos = Photos.builder()
+				.profilePicture(source.getProfilePicture())
+				.build();
+		
+		return photos;
+	}
 }

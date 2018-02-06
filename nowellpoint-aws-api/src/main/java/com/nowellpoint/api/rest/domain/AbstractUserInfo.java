@@ -41,6 +41,23 @@ public abstract class AbstractUserInfo {
 		return userInfo.toImmutable();
 	}
 	
+	public static UserInfo of(com.nowellpoint.api.model.document.UserRef source) {
+		UserInfo userInfo = UserInfo.builder()
+				.company(source.getCompany())
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.lastName(source.getLastName())
+				.mobilePhone(source.getMobilePhone())
+				.name(source.getName())
+				.phone(source.getPhone())
+				.photos(Photos.of(source.getPhotos()))
+				.build();
+		
+		return userInfo;
+				
+	}
+	
 	public static UserInfo of(Jws<Claims> claims) {
 		Assert.assertNotNull(claims, "Jws claims cannot be null");
 		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(claims.getBody().getSubject());

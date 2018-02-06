@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -54,13 +55,14 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	}
 	
 	public static Organization of(com.nowellpoint.api.model.document.Organization source) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
+		ModifiableOrganization organization = sourceToModifiableOrganization(source);
 		return organization.toImmutable();
 	}
 	
 	public static Organization updateSubscription(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
 		
+		ModifiableOrganization organization = sourceToModifiableOrganization(source);
+				
 		ModifiableSubscription subscription = ModifiableSubscription.create()
 				.from(organization.getSubscription())
 				.setStatus(subscriptionEvent.get("status").asText())
@@ -105,5 +107,25 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		organization.setSubscription(subscription.toImmutable());
 		
 		return organization.toImmutable();
+	}
+	
+	private static ModifiableOrganization sourceToModifiableOrganization(com.nowellpoint.api.model.document.Organization source) {
+		Set<Transaction> transactions = source.getTransactions().stream()
+				.map(feature -> Transaction.of(feature))
+				.collect(Collectors.toSet());
+		
+		ModifiableOrganization organization = new ModifiableOrganization()
+				.setCreatedBy(UserInfo.of(source.getCreatedBy()))
+				.setCreatedOn(source.getCreatedOn())
+				.setDomain(source.getDomain())
+				.setId(source.getId().toString())
+				.setLastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
+				.setLastUpdatedOn(source.getLastUpdatedOn())
+				.setName(source.getName())
+				.setNumber(source.getNumber())
+				.setSubscription(Subscription.of(source.getSubscription()))
+				.setTransactions(transactions);
+		
+		return organization;
 	}
 }

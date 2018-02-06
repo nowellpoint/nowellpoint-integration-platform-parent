@@ -32,7 +32,6 @@ import com.nowellpoint.client.resource.JobTypeResource;
 import com.nowellpoint.client.resource.OrganizationResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.RegistrationResource;
-import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
 
 @Value.Immutable
@@ -75,10 +74,6 @@ public abstract class NowellpointClient  {
 	
 	public JobResource job() {
 		return new JobResource(token());
-	}
-	
-	public SalesforceConnectorResource salesforceConnector() {
-		return new SalesforceConnectorResource(token());
 	}
 	
 	public JobTypeResource scheduledJobType() {

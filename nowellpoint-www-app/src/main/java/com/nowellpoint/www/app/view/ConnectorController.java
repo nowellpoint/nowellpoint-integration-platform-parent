@@ -26,10 +26,8 @@ import com.nowellpoint.client.model.ConnectorList;
 import com.nowellpoint.client.model.ConnectorRequest;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
-import com.nowellpoint.client.model.SalesforceConnector;
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.sforce.DescribeSobjectResult;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -320,71 +318,5 @@ public class ConnectorController extends AbstractStaticController {
 			return showErrorMessage(ConnectorController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 		
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String metadataBackup(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.metadataBackup(id);
-		
-		if (! updateResult.isSuccess()) {
-			response.status(400);
-		}
-		
-		return responseBody(updateResult);
-	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String listSObjects(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		
-		SalesforceConnector salesforceConnector = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.get(id);
-		
-		Map<String, Object> model = getModel();
-    	model.put("salesforceConnector", salesforceConnector);
-
-		return render(ConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_LIST);
-	}
-	
-	public static String viewSObject(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
-		String id = request.params(":id");
-		String sobject = request.params(":sobject");
-		
-		SalesforceConnector salesforceConnector = new SalesforceConnector(id);
-		
-		DescribeSobjectResult result = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.describeSobject(id, sobject);
-		
-		Map<String, Object> model = getModel();
-		model.put("salesforceConnector", salesforceConnector);
- 	model.put("sobject", result);
-
-		return render(ConnectorController.class, configuration, request, response, model, Template.SALESFORCE_CONNECTOR_SOBJECT_VIEW);
 	}
 }
