@@ -1,6 +1,7 @@
 package com.nowellpoint.client.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Connector extends AbstractResource {
 	
@@ -17,6 +18,7 @@ public class Connector extends AbstractResource {
 	private String clientId;
 	private Boolean isSandbox;
 	private SalesforceMetadata salesforceMetadata;
+	private List<Service> services;
 	
 	public Connector() {
 		
@@ -72,5 +74,9 @@ public class Connector extends AbstractResource {
 
 	public SalesforceMetadata getSalesforceMetadata() {
 		return salesforceMetadata;
+	}
+	
+	public List<Service> getServices() {
+		return services;
 	}
 }

@@ -1,10 +1,7 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.util.Date;
-
 import org.immutables.value.Value;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -14,12 +11,19 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = Service.class)
 @JsonDeserialize(as = Service.class)
 public abstract class AbstractService {
-	public abstract String getServiceId();
+	public abstract String getId();
 	public abstract String getName();
 	public abstract String getType();
-	public abstract String getTemplate();
-	public abstract String getHref();
-	public abstract String getWhatId();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	public abstract Boolean getIsEnabled();
+	
+	public static Service of(com.nowellpoint.api.model.document.Service source) {
+		Service service = Service.builder()
+				.id(source.getId())
+				.isEnabled(source.getIsEnabled())
+				.name(source.getName())
+				.type(source.getType())
+				.build();
+		
+		return service;
+	}
 }

@@ -22,7 +22,16 @@ public abstract class AbstractConnectorType {
 	public abstract Boolean getIsSandbox();
 	
 	public static ConnectorType of(com.nowellpoint.api.model.document.ConnectorType source) {
-		ModifiableConnectorType connectorType = ModifiableConnectorType.create(); //modelMapper.map(source, ModifiableConnectorType.class);
-		return connectorType.toImmutable();
+		ConnectorType instance = ConnectorType.builder()
+				.authEndpoint(source.getAuthEndpoint())
+				.displayName(source.getDisplayName())
+				.grantType(source.getGrantType())
+				.iconHref(source.getIconHref())
+				.isSandbox(source.getIsSandbox())
+				.name(source.getName())
+				.scheme(source.getScheme())
+				.build();
+		
+		return instance;
 	}
 }

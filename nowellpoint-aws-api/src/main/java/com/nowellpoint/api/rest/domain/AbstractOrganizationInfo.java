@@ -43,4 +43,17 @@ public abstract class AbstractOrganizationInfo {
 		ModifiableOrganizationInfo organizationInfo = ModifiableOrganizationInfo.create().setId(claims.getBody().getAudience());
 		return organizationInfo.toImmutable();
 	}
+	
+	public static OrganizationInfo of(com.nowellpoint.api.model.document.Organization source) {
+		OrganizationInfo instance = OrganizationInfo.builder()
+				.createdBy(UserInfo.of(source.getCreatedBy()))
+				.domain(source.getDomain())
+				.id(source.getId().toString())
+				.lastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
+				.number(source.getNumber())
+				.build();
+		
+		return instance;
+				
+	}
 }

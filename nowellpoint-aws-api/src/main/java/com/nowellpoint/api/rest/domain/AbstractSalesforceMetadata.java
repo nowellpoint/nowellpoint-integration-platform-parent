@@ -15,4 +15,15 @@ public abstract class AbstractSalesforceMetadata {
 	public abstract String getOrganizationId();
 	public abstract String getInstanceName();
 	public abstract String getOrganizationName();
+	
+	public static SalesforceMetadata of(com.nowellpoint.api.model.document.SalesforceMetadata source) {
+		SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
+				.instanceName(source.getInstanceName())
+				.organizationId(source.getOrganizationId())
+				.organizationName(source.getOrganizationName())
+				.serviceEndpoint(source.getServiceEndpoint())
+				.build();
+		
+		return salesforceMetadata;
+	}
 }

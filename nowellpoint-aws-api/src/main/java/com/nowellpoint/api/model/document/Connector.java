@@ -1,8 +1,11 @@
 package com.nowellpoint.api.model.document;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.nowellpoint.mongodb.annotation.Document;
+import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 import com.nowellpoint.mongodb.annotation.Reference;
 import com.nowellpoint.mongodb.document.MongoDocument;
@@ -48,8 +51,11 @@ public class Connector extends MongoDocument {
 	@EmbedOne
 	private SalesforceMetadata salesforceMetadata;
 	
+	@EmbedMany
+	private Set<Service> services;
+	
 	public Connector() {
-		
+		services = new LinkedHashSet<Service>();
 	}
 
 	public UserRef getCreatedBy() {
@@ -162,5 +168,13 @@ public class Connector extends MongoDocument {
 
 	public void setSalesforceMetadata(SalesforceMetadata salesforceMetadata) {
 		this.salesforceMetadata = salesforceMetadata;
+	}
+
+	public Set<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 }

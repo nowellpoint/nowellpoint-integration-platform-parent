@@ -1,6 +1,8 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -16,7 +18,7 @@ import com.nowellpoint.mongodb.document.MongoDocument;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralizeDictionary = {"service:services"})
 @JsonSerialize(as = Connector.class)
 @JsonDeserialize(as = Connector.class)
 public abstract class AbstractConnector extends AbstractImmutableResource {
@@ -34,6 +36,36 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract @Nullable String getConnectedAs();
 	public abstract @Nullable Date getConnectedOn();
 	public abstract @Nullable SalesforceMetadata getSalesforceMetadata();
+	public abstract @Nullable Set<Service> getServices();
+	
+	public static Connector of(com.nowellpoint.api.model.document.Connector source) {
+		Set<Service> services = source.getServices().stream()
+				.map(feature -> Service.of(feature))
+				.collect(Collectors.toSet());
+		
+		Connector instance = Connector.builder()
+				.clientId(source.getClientId())
+				.clientSecret(source.getClientSecret())
+				.connectedAs(source.getConnectedAs())
+				.connectedOn(source.getConnectedOn())
+				.connectorType(ConnectorType.of(source.getConnectorType()))
+				.createdBy(UserInfo.of(source.getCreatedBy()))
+				.createdOn(source.getCreatedOn())
+				.id(source.getId().toString())
+				.isConnected(source.getIsConnected())
+				.lastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
+				.lastUpdatedOn(source.getLastUpdatedOn())
+				.name(source.getName())
+				.owner(OrganizationInfo.of(source.getOwner()))
+				.password(source.getPassword())
+				.salesforceMetadata(SalesforceMetadata.of(source.getSalesforceMetadata()))
+				.services(services)
+				.status(source.getStatus())
+				.username(source.getUsername())
+				.build();
+		
+		return instance;
+	}
 	
 	@Value.Default
 	public Boolean getIsConnected() {
@@ -83,7 +115,10 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	}
 	
 	public static Connector of(MongoDocument source) {
-		ModifiableConnector connector = modelMapper.map(source, ModifiableConnector.class);
-		return connector.toImmutable();
+		if (source instanceof com.nowellpoint.api.model.document.Connector) {
+			return of((com.nowellpoint.api.model.document.Connector) source);
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 }
