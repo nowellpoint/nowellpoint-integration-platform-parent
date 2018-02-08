@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.ContactRequest;
@@ -264,6 +265,13 @@ public class OrganizationController extends AbstractStaticController {
 				.subscription()
 				.billingContact()
 				.update(contactRequest);
+		
+		try {
+			System.out.println(objectMapper.writeValueAsString(updateResult.getTarget()));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();

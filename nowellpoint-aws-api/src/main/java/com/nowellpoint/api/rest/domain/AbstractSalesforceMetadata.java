@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
@@ -17,6 +18,10 @@ public abstract class AbstractSalesforceMetadata {
 	public abstract String getOrganizationName();
 	
 	public static SalesforceMetadata of(com.nowellpoint.api.model.document.SalesforceMetadata source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
 		SalesforceMetadata salesforceMetadata = SalesforceMetadata.builder()
 				.instanceName(source.getInstanceName())
 				.organizationId(source.getOrganizationId())

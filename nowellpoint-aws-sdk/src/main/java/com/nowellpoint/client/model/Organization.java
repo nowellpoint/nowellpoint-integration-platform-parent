@@ -15,12 +15,12 @@ public class Organization extends AbstractResource {
 	
 	private List<Transaction> transactions;
 	
-	private List<UserProfile> users;
+	private List<UserInfo> users;
 	
 	public Organization() {
 		subscription = new Subscription();
 		transactions = new ArrayList<Transaction>();
-		users = new ArrayList<UserProfile>();
+		users = new ArrayList<UserInfo>();
 	}
 
 	public String getNumber() {
@@ -43,7 +43,7 @@ public class Organization extends AbstractResource {
 		return transactions;
 	}
 	
-	public List<UserProfile> getUsers() {
+	public List<UserInfo> getUsers() {
 		return users;
 	}
 }

@@ -8,9 +8,11 @@ import javax.annotation.Nullable;
 import org.bson.types.ObjectId;
 import org.immutables.value.Value;
 import org.modelmapper.AbstractConverter;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MappingContext;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -146,8 +148,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				Transaction target = Transaction.of(source);
-				return target;
+				
+				return modelMapper.map(source, ModifiableTransaction.class).toImmutable();
 			}
 		});
 		
@@ -212,7 +214,15 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				return target.toImmutable();
 			}
 		});
-	}
+		
+		
+		modelMapper.createTypeMap(com.nowellpoint.api.model.document.Organization.class, Organization.class).setConverter(
+				new Converter<com.nowellpoint.api.model.document.Organization, Organization>() {
+					public Organization convert(MappingContext<com.nowellpoint.api.model.document.Organization, Organization> ctx) {
+						return ctx.getDestination();
+					}
+		        });
+		}
 	
 	private Instant now = Instant.now();
 	

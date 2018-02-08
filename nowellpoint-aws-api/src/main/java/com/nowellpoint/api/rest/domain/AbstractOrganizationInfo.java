@@ -45,6 +45,10 @@ public abstract class AbstractOrganizationInfo {
 	}
 	
 	public static OrganizationInfo of(com.nowellpoint.api.model.document.Organization source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
 		OrganizationInfo instance = OrganizationInfo.builder()
 				.createdBy(UserInfo.of(source.getCreatedBy()))
 				.domain(source.getDomain())
@@ -54,6 +58,5 @@ public abstract class AbstractOrganizationInfo {
 				.build();
 		
 		return instance;
-				
 	}
 }

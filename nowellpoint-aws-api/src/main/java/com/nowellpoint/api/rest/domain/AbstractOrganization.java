@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
@@ -110,6 +111,10 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	}
 	
 	private static ModifiableOrganization sourceToModifiableOrganization(com.nowellpoint.api.model.document.Organization source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
 		Set<Transaction> transactions = source.getTransactions().stream()
 				.map(feature -> Transaction.of(feature))
 				.collect(Collectors.toSet());

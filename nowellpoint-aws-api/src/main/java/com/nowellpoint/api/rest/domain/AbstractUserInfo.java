@@ -42,7 +42,11 @@ public abstract class AbstractUserInfo {
 	}
 	
 	public static UserInfo of(com.nowellpoint.api.model.document.UserRef source) {
-		UserInfo userInfo = UserInfo.builder()
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
+		UserInfo instance = UserInfo.builder()
 				.company(source.getCompany())
 				.email(source.getEmail())
 				.firstName(source.getFirstName())
@@ -54,7 +58,7 @@ public abstract class AbstractUserInfo {
 				.photos(Photos.of(source.getPhotos()))
 				.build();
 		
-		return userInfo;
+		return instance;
 				
 	}
 	
