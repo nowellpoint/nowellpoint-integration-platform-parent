@@ -31,8 +31,9 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable String getName();
 	public abstract @Nullable Subscription getSubscription();
 	public abstract @Nullable Set<Transaction> getTransactions();
-	public abstract @Nullable Set<UserProfile> getUsers();
+	public abstract @Nullable Set<UserInfo> getUsers();
 	
+	@Override
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())
@@ -41,7 +42,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	}
 	
 	@Override
-	public void fromDocument(MongoDocument document) {
+	public void replace(MongoDocument document) {
 		modelMapper.map(document, this);
 	}
 	
@@ -60,7 +61,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		return organization.toImmutable();
 	}
 	
-	public static Organization updateSubscription(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
+	public static Organization of(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
 		
 		ModifiableOrganization organization = sourceToModifiableOrganization(source);
 				
@@ -116,7 +117,7 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		}
 		
 		Set<Transaction> transactions = source.getTransactions().stream()
-				.map(feature -> Transaction.of(feature))
+				.map(t -> Transaction.of(t))
 				.collect(Collectors.toSet());
 		
 		ModifiableOrganization organization = new ModifiableOrganization()

@@ -11,7 +11,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.api.rest.domain.Organization;
-import com.nowellpoint.api.rest.domain.UserProfile;
+import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
@@ -27,7 +27,7 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		MongoDocument document = organization.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		organization.fromDocument( document );
+		organization.replace( document );
 		set( organization.getId(), document );
 	}
 	
@@ -42,7 +42,7 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		MongoDocument document = organization.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		organization.fromDocument( document );
+		organization.replace( document );
 		set( organization.getId(), document );
 	}
 	
@@ -54,7 +54,7 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 			set(id, document);
 		}
 		
-		Set<UserProfile> users = getUsers( id );
+		Set<UserInfo> users = getUsers( id );
 		
 		Organization organization = Organization.builder()
 				.from(Organization.of( document ))
@@ -67,7 +67,7 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 	protected Organization query(Bson query) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		com.nowellpoint.api.model.document.Organization document = documentManager.findOne( com.nowellpoint.api.model.document.Organization.class, query );
-		Set<UserProfile> users = getUsers( document.getId().toString() );
+		Set<UserInfo> users = getUsers( document.getId().toString() );
 		
 		Organization organization = Organization.builder()
 				.from(Organization.of( document ))
@@ -77,12 +77,12 @@ public abstract class AbstractOrganizationService extends AbstractCacheService {
 		return organization;
 	}
 	
-	private Set<UserProfile> getUsers(String id) {
+	private Set<UserInfo> getUsers(String id) {
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		Set<com.nowellpoint.api.model.document.UserProfile> documents = documentManager.find( com.nowellpoint.api.model.document.UserProfile.class, eq ( "organization", new ObjectId( id ) ) );
-		Set<UserProfile> userProfiles = new HashSet<>();
+		Set<UserInfo> userProfiles = new HashSet<>();
 		documents.stream().forEach(document -> {
-			userProfiles.add( UserProfile.of( document ) );
+			userProfiles.add( UserInfo.of(document) );
 		});
 		return userProfiles;
 	}

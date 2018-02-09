@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.ContactRequest;
@@ -91,7 +90,7 @@ public class OrganizationController extends AbstractStaticController {
 			
 			HttpServletResponse httpServletResponse = response.raw();
 	        httpServletResponse.setContentType("application/pdf");
-	        httpServletResponse.addHeader("Content-Disposition", "inline; filename=mypdf.pdf");
+	        httpServletResponse.addHeader("Content-Disposition", String.format("inline; filename=invoice_%s.pdf", invoiceNumber));
 	        httpServletResponse.getOutputStream().write(data);
 	        httpServletResponse.getOutputStream().close();
 			
@@ -265,13 +264,6 @@ public class OrganizationController extends AbstractStaticController {
 				.subscription()
 				.billingContact()
 				.update(contactRequest);
-		
-		try {
-			System.out.println(objectMapper.writeValueAsString(updateResult.getTarget()));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();

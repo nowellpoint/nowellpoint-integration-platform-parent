@@ -227,7 +227,7 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 	private Instant now = Instant.now();
 	
 	public abstract @Nullable String getId();
-	public abstract void fromDocument(MongoDocument document);
+	public abstract void replace(MongoDocument document);
 	public abstract MongoDocument toDocument();
 	public abstract @Nullable Meta getMeta();
 	

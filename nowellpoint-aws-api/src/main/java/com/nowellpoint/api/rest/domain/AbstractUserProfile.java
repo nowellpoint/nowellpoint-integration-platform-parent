@@ -62,7 +62,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 		return userProfile.toImmutable();
 	}
 	
-	public void fromDocument(MongoDocument document) {
+	public void replace(MongoDocument document) {
 		modelMapper.map(document, this);
 	}
 	

@@ -94,7 +94,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 		MongoDocument document = connector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		connector.fromDocument(document);
+		connector.replace(document);
 		set(connector.getId(), document);
 	}
 	
@@ -102,7 +102,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 		MongoDocument document = connector.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		connector.fromDocument(document);
+		connector.replace(document);
 		set(connector.getId(), document);
 	}
 	

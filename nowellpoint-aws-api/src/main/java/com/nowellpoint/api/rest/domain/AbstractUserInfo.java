@@ -22,10 +22,8 @@ public abstract class AbstractUserInfo {
 	public abstract @Nullable String getLastName();
 	public abstract @Nullable String getFirstName();
 	public abstract @Nullable String getName();
-	public abstract @Nullable String getCompany();
 	public abstract @Nullable String getEmail();
 	public abstract @Nullable String getPhone();
-	public abstract @Nullable String getMobilePhone();
 	public abstract @Nullable Photos getPhotos();
 	
 	public Meta getMeta() {
@@ -41,18 +39,35 @@ public abstract class AbstractUserInfo {
 		return userInfo.toImmutable();
 	}
 	
+	public static UserInfo of(com.nowellpoint.api.model.document.UserProfile source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
+		UserInfo instance = UserInfo.builder()
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.lastName(source.getLastName())
+				.name(source.getName())
+				.phone(source.getPhone())
+				.photos(Photos.of(source.getPhotos()))
+				.build();
+		
+		return instance;
+		
+	}
+	
 	public static UserInfo of(com.nowellpoint.api.model.document.UserRef source) {
 		if (Assert.isNull(source)) {
 			return null;
 		}
 		
 		UserInfo instance = UserInfo.builder()
-				.company(source.getCompany())
 				.email(source.getEmail())
 				.firstName(source.getFirstName())
 				.id(source.getId().toString())
 				.lastName(source.getLastName())
-				.mobilePhone(source.getMobilePhone())
 				.name(source.getName())
 				.phone(source.getPhone())
 				.photos(Photos.of(source.getPhotos()))

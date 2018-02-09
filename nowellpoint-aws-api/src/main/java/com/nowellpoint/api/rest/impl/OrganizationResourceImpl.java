@@ -1,7 +1,12 @@
 package com.nowellpoint.api.rest.impl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.api.rest.domain.Organization;
@@ -71,6 +76,27 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	public Response updateBillingContact(String id, String firstName, String lastName, String email, String phone) {
 		Organization organization = organizationService.updateBillingContact(id, firstName, lastName, email, phone);
 		return Response.ok(organization)
+				.build();
+	}
+	
+	@Override
+	public Response getInvoice(String id, String invoiceNumber) {
+		byte[] bytes = organizationService.getInvoice(id, invoiceNumber);
+		
+		StreamingOutput output = new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+                try {
+                    output.write(bytes);
+                } catch (Exception e) {
+                    throw new WebApplicationException(e);
+                }
+            }
+		};
+		
+		return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"invoice_%s.pdf\"", invoiceNumber))
+				.header("Content-Length", bytes.length)
+				.entity(output)
 				.build();
 	}
 }

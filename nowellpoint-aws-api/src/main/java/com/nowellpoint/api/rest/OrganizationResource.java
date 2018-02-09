@@ -77,4 +77,8 @@ public interface OrganizationResource {
 			@FormParam("email") String email,
 			@FormParam("phone") String phone);
 	
+	@GET
+	@Path("{id}/invoice/{invoiceNumber}")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getInvoice(@PathParam("id") String id, @PathParam("invoiceNumber") String invoiceNumber);
 }

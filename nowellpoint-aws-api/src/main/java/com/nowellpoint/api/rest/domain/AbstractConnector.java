@@ -100,7 +100,7 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	}
 	
 	@Override
-	public void fromDocument(MongoDocument source) {
+	public void replace(MongoDocument source) {
 		modelMapper.map(source, this);
 	}
 	
@@ -112,13 +112,5 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	@Override
 	public MongoDocument toDocument() {
 		return modelMapper.map(this, com.nowellpoint.api.model.document.Connector.class);
-	}
-	
-	public static Connector of(MongoDocument source) {
-		if (source instanceof com.nowellpoint.api.model.document.Connector) {
-			return of((com.nowellpoint.api.model.document.Connector) source);
-		} else {
-			throw new IllegalArgumentException();
-		}
 	}
 }

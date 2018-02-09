@@ -12,13 +12,9 @@ public class UserInfo {
 
 	private String name;
 
-	private String company;
-
 	private String email;
 
 	private String phone;
-
-	private String mobilePhone;
 	
 	private Photos photos;
 	
@@ -50,20 +46,12 @@ public class UserInfo {
 		return name;
 	}
 
-	public String getCompany() {
-		return company;
-	}
-
 	public String getEmail() {
 		return email;
 	}
 
 	public String getPhone() {
 		return phone;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
 	}
 
 	public Photos getPhotos() {

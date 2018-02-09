@@ -21,12 +21,12 @@ public abstract class AbstractImmutableCollectionResource<R extends AbstractImmu
 			documents.forEach(document -> {
 				try {
 					String className = getItemType().getSuperclass().getName();
-					Method method = Class.forName(className).getDeclaredMethod("of", MongoDocument.class);
+					Method method = Class.forName(className).getDeclaredMethod("of", document.getClass());
 					@SuppressWarnings("unchecked")
 					R object = (R) method.invoke(null, document);
 					items.add(object);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
-					LOGGER.info("Unable to invoke of method for: " + getItemType().getSuperclass().getName());
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException  e) {
+					LOGGER.info("Unable to invoke of method for: " + getItemType().getName());
 					e.printStackTrace();
 				}
 			});
