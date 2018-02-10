@@ -183,6 +183,9 @@ public class Application implements SparkApplication {
 		
 		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
 				-> OrganizationController.updateBillingContact(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
+				-> OrganizationController.getInvoice(configuration, request, response));
 
 		//
 		// authentication routes

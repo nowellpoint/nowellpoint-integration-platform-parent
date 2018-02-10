@@ -35,6 +35,7 @@ import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
+import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.UserContext;
 import com.nowellpoint.util.Assert;
@@ -493,7 +494,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	@Override
 	public byte[] getInvoice(String id, String invoiceNumber) {
-		if (UserContext.getPrincipal().getName().equals(id)) {
+		if (ClaimsContext.getClaims().getBody().getAudience().equals(id)) {
 			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
 			builder.setBucket("nowellpoint-invoices");
 			builder.setKey(invoiceNumber);
@@ -511,6 +512,8 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			} catch (IOException e) {
 				LOGGER.error(e);
 			}
+		} else {
+			throw new IllegalArgumentException("Unauthorized: The orgaization assoicated with your profile does not match the organization for the requested invoice.");
 		}
 		
 		return null;

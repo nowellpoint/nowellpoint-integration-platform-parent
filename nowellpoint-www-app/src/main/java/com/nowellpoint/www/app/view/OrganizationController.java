@@ -77,7 +77,7 @@ public class OrganizationController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String downloadInvoice(Configuration configuration, Request request, Response response) {
+	public static String getInvoice(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		String id = request.params(":id");
