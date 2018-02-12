@@ -80,8 +80,9 @@ public class ConnectorController extends AbstractStaticController {
 
 		Map<String, Object> model = getModel();
 		model.put("connector", connector);
+		model.put("content", Template.CONNECTOR_VIEW);
 
-		return render(ConnectorController.class, configuration, request, response, model, Template.CONNECTOR_VIEW);
+		return render(ConnectorController.class, configuration, request, response, model, CONSOLE);
 	};
 	
 	/**
@@ -306,9 +307,6 @@ public class ConnectorController extends AbstractStaticController {
 		UpdateResult<Connector> updateResult = NowellpointClient.defaultClient(token)
 				.connector()
 				.refresh(id);
-		
-		System.out.println(updateResult.isSuccess());
-		System.out.println(updateResult.getTarget().getConnectedOn());
 		
 		if (updateResult.isSuccess()) {
 			Map<String, Object> model = getModel();

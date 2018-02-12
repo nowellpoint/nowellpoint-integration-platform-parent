@@ -1,5 +1,10 @@
 package com.nowellpoint.api.rest.domain;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -20,8 +25,13 @@ public abstract class AbstractConnectorType {
 	public abstract String getAuthEndpoint();
 	public abstract String getIconHref();
 	public abstract Boolean getIsSandbox();
+	public abstract @Nullable Set<Service> getServices();
 	
 	public static ConnectorType of(com.nowellpoint.api.model.document.ConnectorType source) {
+		Set<Service> services = source.getServices().stream()
+				.map(s -> Service.of(s))
+				.collect(Collectors.toSet());
+		
 		ConnectorType instance = ConnectorType.builder()
 				.authEndpoint(source.getAuthEndpoint())
 				.displayName(source.getDisplayName())
@@ -30,6 +40,7 @@ public abstract class AbstractConnectorType {
 				.isSandbox(source.getIsSandbox())
 				.name(source.getName())
 				.scheme(source.getScheme())
+				.services(services)
 				.build();
 		
 		return instance;

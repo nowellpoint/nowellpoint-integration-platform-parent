@@ -1,8 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -36,12 +34,8 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 	public abstract @Nullable String getConnectedAs();
 	public abstract @Nullable Date getConnectedOn();
 	public abstract @Nullable SalesforceMetadata getSalesforceMetadata();
-	public abstract @Nullable Set<Service> getServices();
 	
 	public static Connector of(com.nowellpoint.api.model.document.Connector source) {
-		Set<Service> services = source.getServices().stream()
-				.map(feature -> Service.of(feature))
-				.collect(Collectors.toSet());
 		
 		Connector instance = Connector.builder()
 				.clientId(source.getClientId())
@@ -59,7 +53,6 @@ public abstract class AbstractConnector extends AbstractImmutableResource {
 				.owner(OrganizationInfo.of(source.getOwner()))
 				.password(source.getPassword())
 				.salesforceMetadata(SalesforceMetadata.of(source.getSalesforceMetadata()))
-				.services(services)
 				.status(source.getStatus())
 				.username(source.getUsername())
 				.build();

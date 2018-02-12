@@ -18,6 +18,9 @@
 
 package com.nowellpoint.api.model.document;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class ConnectorType {
 	
 	private String name;
@@ -34,8 +37,10 @@ public class ConnectorType {
 	
 	private Boolean isSandbox;
 	
+	private Set<Service> services;
+	
 	public ConnectorType() {
-		
+		services = new LinkedHashSet<Service>();
 	}
 
 	public String getName() {
@@ -92,5 +97,13 @@ public class ConnectorType {
 
 	public void setIsSandbox(Boolean isSandbox) {
 		this.isSandbox = isSandbox;
+	}
+
+	public Set<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 }

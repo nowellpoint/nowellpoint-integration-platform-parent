@@ -23,6 +23,7 @@ import com.nowellpoint.api.rest.domain.ConnectorList;
 import com.nowellpoint.api.rest.domain.ConnectorRequest;
 import com.nowellpoint.api.rest.domain.ConnectorType;
 import com.nowellpoint.api.rest.domain.SalesforceAdapter;
+import com.nowellpoint.api.rest.domain.Service;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.MessageConstants;
@@ -45,6 +46,13 @@ public class AbstractConnectorService extends AbstractCacheService {
 
 	private static Map<String,ConnectorType> createTypeMap() {
 		
+		Service service = Service.builder()
+				.id("1")
+				.isEnabled(Boolean.FALSE)
+				.name("Daily Backup")
+				.type("DAILY_BACKUP")
+				.build();
+		
 		List<ConnectorType> connectorTypeList = new ArrayList<ConnectorType>();
 		
 		connectorTypeList.add(ConnectorType.builder()
@@ -55,6 +63,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 				.authEndpoint("https://test.salesforce.com")
 				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png")
 				.isSandbox(Boolean.TRUE)
+				.addServices(service)
 				.build());
 		
 		connectorTypeList.add(ConnectorType.builder()
@@ -65,6 +74,7 @@ public class AbstractConnectorService extends AbstractCacheService {
 				.authEndpoint("https://login.salesforce.com")
 				.iconHref("https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png")
 				.isSandbox(Boolean.FALSE)
+				.addServices(service)
 				.build());
 		
 		return Collections.unmodifiableMap(connectorTypeList.stream().collect(Collectors.toMap(t -> t.getName(), t -> t)));
