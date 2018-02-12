@@ -9,11 +9,11 @@
     sessionStorage.setItem("connector", JSON.stringify(connector));
 </script>
 
-<div class="container-fluid mt-3 mb-3">
-    <div class="row">
+<div class="container-fluid">
+    <div class="row pt-3 pb-3 bg-secondary">
         <div class="col-2"></div>
         <div class="col-8">
-            <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+            <a href="${links['connectors']}" style="text-decoration: none;" id="back" role="button"><span class="text-white"><span class="icon icon-arrow-bold-left"></span>&nbsp;<span class="font-weight-bold">${labels["back.to.connectors"]}</span></span></a>
         </div>
         <div class="col-2"></div>
     </div>

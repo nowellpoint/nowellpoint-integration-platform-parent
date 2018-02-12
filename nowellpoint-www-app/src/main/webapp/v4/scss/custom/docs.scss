@@ -25,8 +25,8 @@ body {
   margin-bottom: 30px;
   font-size: 20px;
   color: #fff;
-  background-color: $brand-primary;
-  background-image: linear-gradient(to bottom, darken($brand-primary, 15%), $brand-primary);
+  background-color: theme-color("primary");
+  background-image: linear-gradient(to bottom, darken(theme-color("primary"), 15%), theme-color("primary"));
 
   h1 {
     margin-bottom: 5px;
@@ -37,7 +37,7 @@ body {
   p {
     font-weight: 300;
     line-height: 1.4;
-    color: lighten($brand-primary, 30%);
+    color: lighten(theme-color("primary"), 30%);
   }
 
   @include media-breakpoint-up(sm) {
@@ -100,7 +100,7 @@ body {
   @include media-breakpoint-up(sm) {
 
     a {
-      color: $gray;
+      color: $gray-500;
       padding-left: 20px;
     }
 
@@ -114,9 +114,9 @@ body {
 
     .active {
       padding-left: 18px;
-      color: $brand-primary;
+      color: theme-color("primary");
       background-color: transparent;
-      border-left: 2px solid $brand-primary;
+      border-left: 2px solid theme-color("primary");
     }
 
     float: right;
@@ -175,10 +175,10 @@ body {
 
 .container .docs-jumbotron {
   @include media-breakpoint-up(sm) {
-    padding-right: $grid-gutter-width-base;
-    padding-left: $grid-gutter-width-base;
-    margin-right: ($grid-gutter-width-base / -2);
-    margin-left: ($grid-gutter-width-base / -2);
+    padding-right: $grid-gutter-width;
+    padding-left: $grid-gutter-width;
+    margin-right: ($grid-gutter-width / -2);
+    margin-left: ($grid-gutter-width / -2);
     border-radius: 0;
   }
 }
@@ -196,7 +196,7 @@ body {
     // NOTE: fix this – all the variables below are NOT a real variable so needs to be fixed
     padding-bottom: (($spacer / 2) - 1);
     margin: ($spacer * 2) 0 $spacer;
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: 1px solid $gray-100;
 
 
     + p {
@@ -215,7 +215,7 @@ body {
   }
 
   @include media-breakpoint-up(sm) {
-    padding-right: ($docs-sidebar-width + $docs-sidebar-gutter + ($grid-gutter-width-base / 2));
+    padding-right: ($docs-sidebar-width + $docs-sidebar-gutter + ($grid-gutter-width / 2));
   }
 }
 

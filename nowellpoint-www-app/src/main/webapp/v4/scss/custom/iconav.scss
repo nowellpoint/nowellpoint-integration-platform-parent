@@ -59,6 +59,8 @@
 }
 
 .iconav-nav {
+  flex-wrap: nowrap;
+
   // For unread counts and the like
   .label {
     position: absolute;

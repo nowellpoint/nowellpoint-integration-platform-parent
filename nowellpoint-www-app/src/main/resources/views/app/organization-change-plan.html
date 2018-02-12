@@ -69,11 +69,11 @@
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice gt organization.subscription.unitPrice> -->
                                                 <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice lt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-secondary" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-light" role="button">${labels["downgrade"]}</a>
                                                 <!-- <#elseif organization.subscription?? && plan.price.unitPrice gt organization.subscription.unitPrice> -->
                                                 <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-primary" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#else> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-secondary" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-light" role="button">${labels["downgrade"]}</a>
                                                 <!-- </#if> -->
                                             </td>
                                         </#list>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="row">
                     <div class="col-12 text-right">
-                        <a href="${links['organization']}/${organization.id}#subscription" id="back" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
+                        <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-light" role="button">${labels["cancel"]}</a>
                     </div>
                 </div>
             </#if>
