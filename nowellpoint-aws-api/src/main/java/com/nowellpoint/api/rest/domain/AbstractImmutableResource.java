@@ -62,18 +62,31 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 			
 		});
 		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Connector, Connector>() {
+//		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Connector, Connector>() {
+//
+//			@Override
+//			protected Connector convert(com.nowellpoint.api.model.document.Connector source) {
+//				if (Assert.isNull(source)) {
+//					return null;
+//				}
+//				
+//				Connector target = Connector.of(source);
+//				return target;
+//			}
+//			
+//		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Service, Service>() {
 
 			@Override
-			protected Connector convert(com.nowellpoint.api.model.document.Connector source) {
+			protected Service convert(com.nowellpoint.api.model.document.Service source) {
 				if (Assert.isNull(source)) {
 					return null;
 				}
 				
-				Connector target = Connector.of(source);
+				Service target = Service.of(source);
 				return target;
 			}
-			
 		});
 		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Plan, Plan>() {
@@ -109,8 +122,9 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableConnectorType target = modelMapper.map(source, ModifiableConnectorType.class);
-				return target.toImmutable();
+				
+				ConnectorType target = ConnectorType.of(source);
+				return target;
 			}
 			
 		});
