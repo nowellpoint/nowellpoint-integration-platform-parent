@@ -23,9 +23,9 @@ public class PlanResourceImpl implements PlanResource {
 	
 	public Response findById(String id) {
 		
-		Plan plan = planService.findById(id);
+		Plan planOrig = planService.findById(id);
 		
-		return Response.ok(plan)
+		return Response.ok(planOrig)
 				.build();
 		
 	}

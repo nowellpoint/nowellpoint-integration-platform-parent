@@ -10,7 +10,7 @@ public class JobTypeInfo {
 	
 	private String description;
 	
-	private ConnectorType connectorType;
+	private ConnectorTypeOrig connectorTypeOrig;
 	
 	public JobTypeInfo() {
 		
@@ -56,11 +56,11 @@ public class JobTypeInfo {
 		this.description = description;
 	}
 
-	public ConnectorType getConnectorType() {
-		return connectorType;
+	public ConnectorTypeOrig getConnectorType() {
+		return connectorTypeOrig;
 	}
 
-	public void setConnectorType(ConnectorType connectorType) {
-		this.connectorType = connectorType;
+	public void setConnectorType(ConnectorTypeOrig connectorTypeOrig) {
+		this.connectorTypeOrig = connectorTypeOrig;
 	}
 }

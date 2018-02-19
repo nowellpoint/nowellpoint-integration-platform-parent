@@ -5,9 +5,14 @@ Use the new `.navbar-transparent` variation for placing navbars over backgrounds
 {% example html %}
 <div class="py-5 px-1" style="background: url({{ relative }}assets/img/kanye.jpg) top center; background-size: cover">
 
-  <nav class="navbar navbar-transparent navbar-padded navbar-toggleable-sm">
+
+  <nav class="navbar navbar-transparent navbar-padded navbar-expand-sm">
+    <a class="navbar-brand" href="#">
+      <h4 class="text-uppercase my-0">Project Name</h4>
+    </a>
+
     <button
-      class="navbar-toggler navbar-toggler-right hidden-md-up"
+      class="navbar-toggler navbar-toggler-right d-md-none"
       type="button"
       data-toggle="collapse"
       data-target="#navbarResponsive"
@@ -16,10 +21,6 @@ Use the new `.navbar-transparent` variation for placing navbars over backgrounds
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <a class="navbar-brand" href="#">
-      <h4 class="text-uppercase my-0">Project Name</h4>
-    </a>
 
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="nav navbar-nav ml-auto">

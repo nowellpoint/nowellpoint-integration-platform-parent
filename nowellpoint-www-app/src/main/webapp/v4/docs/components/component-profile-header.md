@@ -14,8 +14,8 @@ Simple profile headers to show off a user's profile information
   </div>
   <nav class="profile-header-nav">
     <ul class="nav nav-tabs justify-content-center">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Photos</a>
+      <li class="nav-item">
+        <a class="nav-link active" href="#">Photos</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Others</a>

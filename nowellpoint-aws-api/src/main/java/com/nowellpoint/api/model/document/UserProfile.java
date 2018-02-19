@@ -32,21 +32,11 @@ public class UserProfile extends MongoDocument {
 
 	private String name;
 
-	private String company;
-
-	private String division;
-
-	private String department;
-
 	private String title;
 
 	private String email;
 
 	private String phone;
-
-	private String extension;
-
-	private String mobilePhone;
 
 	private Boolean isActive;
 
@@ -119,30 +109,6 @@ public class UserProfile extends MongoDocument {
 		this.name = name;
 	}
 
-	public String getCompany() {
-		return company;
-	}
-
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	public String getDivision() {
-		return division;
-	}
-
-	public void setDivision(String division) {
-		this.division = division;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -165,22 +131,6 @@ public class UserProfile extends MongoDocument {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getExtension() {
-		return extension;
-	}
-
-	public void setExtension(String extension) {
-		this.extension = extension;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
 	}
 
 	public Boolean getIsActive() {

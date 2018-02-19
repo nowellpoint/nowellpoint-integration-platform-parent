@@ -1,24 +1,25 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.net.URI;
+import java.time.Instant;
 import java.util.Date;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import org.bson.types.ObjectId;
+import org.immutables.value.Value;
 import org.modelmapper.AbstractConverter;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MappingContext;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.nowellpoint.mongodb.document.MongoDocument;
-import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties; 
+import com.nowellpoint.util.Assert; 
 
 @JsonInclude(Include.NON_NULL)
 @JsonPropertyOrder({ "id", "createdOn", "lastUpdatedOn" })
@@ -54,10 +55,37 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableSubscription subscription = modelMapper.map(source, ModifiableSubscription.class);
-				return subscription.toImmutable();
+				
+				Subscription target = Subscription.of(source);
+				return target;
 			}
 			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Service, Service>() {
+
+			@Override
+			protected Service convert(com.nowellpoint.api.model.document.Service source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				
+				Service target = Service.of(source);
+				return target;
+			}
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Plan, Plan>() {
+
+			@Override
+			protected Plan convert(com.nowellpoint.api.model.document.Plan source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				
+				Plan target = Plan.of(source);
+				return target;
+			}
 		});
 		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Address, Address>() {
@@ -67,8 +95,22 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableAddress address = modelMapper.map(source, ModifiableAddress.class);
-				return address.toImmutable();
+				ModifiableAddress target = modelMapper.map(source, ModifiableAddress.class);
+				return target.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.ConnectorType, ConnectorType>() {
+
+			@Override
+			protected ConnectorType convert(com.nowellpoint.api.model.document.ConnectorType source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				
+				ConnectorType target = ConnectorType.of(source);
+				return target;
 			}
 			
 		});
@@ -80,8 +122,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableCreditCard creditCard = modelMapper.map(source, ModifiableCreditCard.class);
-				return creditCard.toImmutable();
+				ModifiableCreditCard target = modelMapper.map(source, ModifiableCreditCard.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -93,34 +135,8 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableContact contact = modelMapper.map(source, ModifiableContact.class);
-				return contact.toImmutable();
-			}
-			
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, UserInfo>() {
-
-			@Override
-			protected UserInfo convert(com.nowellpoint.api.model.document.UserRef source) {
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiableUserInfo userInfo = modelMapper.map(source, ModifiableUserInfo.class);
-				return userInfo.toImmutable();
-			}
-			
-		});
-		
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Photos, Photos>() {
-
-			@Override
-			protected Photos convert(com.nowellpoint.api.model.document.Photos source) {
-				if (Assert.isNull(source)) {
-					return null;
-				}
-				ModifiablePhotos photos = modelMapper.map(source, ModifiablePhotos.class);
-				return photos.toImmutable();
+				ModifiableContact target = modelMapper.map(source, ModifiableContact.class);
+				return target.toImmutable();
 			}
 			
 		});
@@ -132,9 +148,35 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableTransaction transaction = modelMapper.map(source, ModifiableTransaction.class);
-				return transaction.toImmutable();
+				
+				return modelMapper.map(source, ModifiableTransaction.class).toImmutable();
 			}
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.UserRef, UserInfo>() {
+
+			@Override
+			protected UserInfo convert(com.nowellpoint.api.model.document.UserRef source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableUserInfo target = modelMapper.map(source, ModifiableUserInfo.class);
+				return target.toImmutable();
+			}
+			
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Photos, Photos>() {
+
+			@Override
+			protected Photos convert(com.nowellpoint.api.model.document.Photos source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiablePhotos target = modelMapper.map(source, ModifiablePhotos.class);
+				return target.toImmutable();
+			}
+			
 		});
 		
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Organization, OrganizationInfo>() {
@@ -144,29 +186,60 @@ public abstract class AbstractImmutableResource implements Resource, Createable,
 				if (Assert.isNull(source)) {
 					return null;
 				}
-				ModifiableOrganizationInfo organizationInfo = modelMapper.map(source, ModifiableOrganizationInfo.class);
-				return organizationInfo.toImmutable();
+				ModifiableOrganizationInfo target = modelMapper.map(source, ModifiableOrganizationInfo.class);
+				return target.toImmutable();
 			}
 		});
-	}
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.Dashboard, Dashboard>() {
+
+			@Override
+			protected Dashboard convert(com.nowellpoint.api.model.document.Dashboard source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableDashboard target = modelMapper.map(source, ModifiableDashboard.class);
+				return target.toImmutable();
+			}
+		});
+		
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.api.model.document.SalesforceMetadata, SalesforceMetadata>() {
+
+			@Override
+			protected SalesforceMetadata convert(com.nowellpoint.api.model.document.SalesforceMetadata source) {
+				if (Assert.isNull(source)) {
+					return null;
+				}
+				ModifiableSalesforceMetadata target = modelMapper.map(source, ModifiableSalesforceMetadata.class);
+				return target.toImmutable();
+			}
+		});
+		
+		
+		modelMapper.createTypeMap(com.nowellpoint.api.model.document.Organization.class, Organization.class).setConverter(
+				new Converter<com.nowellpoint.api.model.document.Organization, Organization>() {
+					public Organization convert(MappingContext<com.nowellpoint.api.model.document.Organization, Organization> ctx) {
+						return ctx.getDestination();
+					}
+		        });
+		}
+	
+	private Instant now = Instant.now();
 	
 	public abstract @Nullable String getId();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
-	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
-	public abstract void fromDocument(MongoDocument document);
+	public abstract void replace(MongoDocument document);
 	public abstract MongoDocument toDocument();
 	public abstract @Nullable Meta getMeta();
 	
-	protected <T> Meta getMetaAs(Class<T> resourceClass) {
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(resourceClass)
-				.path("/{id}")
-				.build(Assert.isNotNullOrEmpty(getId()) ? getId() : "{id}");
-				
-		Meta meta = Meta.builder()
-				.href(href.toString())
-				.build();
-		
-		return meta;
+	@Value.Default
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	public Date getCreatedOn() {
+		return Date.from(now);
+	}
+	
+	@Value.Default
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	public Date getLastUpdatedOn() {
+		return Date.from(now);
 	}
 }

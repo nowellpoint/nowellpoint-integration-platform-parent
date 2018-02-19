@@ -1,0 +1,515 @@
+<script>
+    var billingContact = {
+        firstName: "${(organization.subscription.billingContact.firstName)!}",
+        lastName: "${(organization.subscription.billingContact.lastName)!}",
+        email: "${(organization.subscription.billingContact.email)!}",
+        phone: "${(organization.subscription.billingContact.phone)!}"
+    }
+
+    var billingAddress = {
+        street: "${(organization.subscription.billingAddress.street)!}",
+        city: "${(organization.subscription.billingAddress.city)!}",
+        state: "${(organization.subscription.billingAddress.state)!}",
+        postalCode: "${(organization.subscription.billingAddress.postalCode)!}",
+        countryCode: "${(organization.subscription.billingAddress.countryCode)!}"
+    }
+
+    var organization = {
+        basePath: "${links['organization']}",
+        id: "${organization.id}",
+        cardholdername: "${(organization.subscription.creditCard.cardholderName)!}",
+        lastFour: "${(organization.subscription.creditCard.lastFour)!}",
+        cardType: "${(organization.subscription.creditCard.cardType)!}",
+        expirationMonth: "${(organization.subscription.creditCard.expirationMonth)!}",
+        expirationYear: "${(organization.subscription.creditCard.expirationYear)!}",
+        billingContact: billingContact,
+        billingAddress: billingAddress
+    }
+
+    sessionStorage.setItem("organization", JSON.stringify(organization));
+</script>
+
+<br>
+<br>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row" id="organization">
+                <div class="col-6">
+                    <div class="statcard statcard-primary p-4">
+                        <span class="statcard-desc">${labels["domain"]}</span>
+                        <h4 class="statcard-number"><b>${organization.domain}</b></h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="statcard statcard-primary p-4">
+                        <span class="statcard-desc">${labels["account.number"]}</span>
+                        <h4 class="statcard-number"><b>${organization.number}</b></h4>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row" id="subscription">
+                <div class="col-12">
+                    <div class="flextable" style="height: 18px">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["subscription"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-3">
+                            ${labels["plan.name"]}
+                        </div>
+                        <div class="col-9">
+                            <span class="font-weight-normal">${organization.subscription.planName}&emsp;&emsp;&emsp;<a href="${links['organization']}/${organization.id}/plans">${labels["change.plan"]}</a></span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-3">
+                            ${labels["price"]} (${organization.subscription.billingFrequency})
+                        </div>
+                        <div class="col-9">
+                            <span class="font-weight-normal">${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-3">
+                            ${labels["next.billing.date"]}
+                        </div>
+                        <div class="col-9">
+                            <span class="font-weight-normal">${organization.subscription.nextBillingDate?date?string.long}</span>
+                        </div>
+                    </div>
+                    <#list organization.subscription.features?sort_by( "sortOrder") as feature>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${feature.name}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${feature.quantity}</span>
+                            </div>
+                        </div>
+                    </#list>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="row" id="payment-method">
+                <div class="col-12">
+                    <div class="flextable" style="height: 18px">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["payment.method"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            <button class="btn btn-link" id="editPaymentMethod"><span class="icon icon-pencil"></span></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="paymentMethodView">
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["card.type"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal"><img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["name.on.card"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${organization.subscription.creditCard.cardholderName}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["expires.on"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}</span>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div id="paymentMethodEdit" class="hidden">
+                        <form class="form-vertical" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
+                            <div class="row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="cardholderName">${labels["name.on.card"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="cardholderName" id="cardholderName" class="form-control" value="${organization.subscription.creditCard.cardholderName}" autofocus required>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="number">${labels["number"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="expirationMonth">${labels["month"]} / ${labels["year"]} / ${labels["cvv"]}</label></b>
+                                </div>
+                                <div class="col-1">
+                                    <select class="form-control" name="expirationMonth" id="expirationMonth">
+                                        <#assign x=12 />
+                                        <#list 1..x as month>
+                                            <#if organization.subscription.creditCard.expirationMonth?eval==month>
+                                                <option value="${month?c}" selected="selected">${month?c}</option>
+                                            </#if>
+                                            <#if organization.subscription.creditCard.expirationMonth?eval !=month>
+                                                <option value="${month?c}">${month?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="col-1">
+                                    <select class="form-control" name="expirationYear" id="expirationYear">
+                                        <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                        <#list .now?string[ "yyyy"]?number..x as year>
+                                            <#if organization.subscription.creditCard.expirationYear?eval==year>
+                                                <option value="${year?c}" selected="selected">${year?c}</option>
+                                            </#if>
+                                            <#if organization.subscription.creditCard.expirationYear?eval !=year>
+                                                <option value="${year?c}">${year?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="col-1">
+                                    <input type="text" name="cvv" id="cvv" class="form-control" required>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-4">
+                                <button class="btn btn-success" id="savePaymentMethod">${labels["save"]}</button>
+                                <button class="btn btn-link" id="cancelPaymentMethod">${labels["cancel"]}</button>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="billing-contact">
+                <div class="col-12">
+                    <div class="flextable" style="height: 18px">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["billing.contact"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            <button class="btn btn-link" id="editBillingContact"><span class="icon icon-pencil"></span></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="billingContactView">
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["name"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingContact.name)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["email"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingContact.email)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["phone"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingContact.phone)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div id="billingContactEdit" class="hidden">
+                        <form class="form-vertical" name="billingContactForm" id="billingContactForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-contact">
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="firstName">${labels["first.name"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="firstName" id="firstName" class="form-control" value="${(organization.subscription.billingContact.firstName)!}" autofocus>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="lastName" id="lastName" class="form-control" value="${(organization.subscription.billingContact.lastName)!}" required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="email">${labels["email"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="email" id="email" class="form-control" value="${(organization.subscription.billingContact.email)!}" required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="phone" id="phone" class="form-control" value="${(organization.subscription.billingContact.phone)!}">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-4">
+                                <button class="btn btn-success" id="saveBillingContact">${labels["save"]}</button>
+                                <button class="btn btn-link" id="cancelBillingContact">${labels["cancel"]}</button>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="billing-address">
+                <div class="col-12">
+                    <div class="flextable" style="height: 18px">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["billing.address"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            <button class="btn btn-link" id="editBillingAddress"><span class="icon icon-pencil"></span></button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="billingAddressView">
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["street"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingAddress.street)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["city"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingAddress.city)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["state"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingAddress.state)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["postal.code"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingAddress.postalCode)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-3">
+                                ${labels["country"]}
+                            </div>
+                            <div class="col-9">
+                                <span class="font-weight-normal">${(organization.subscription.billingAddress.country)!}</span>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div id="billingAddressEdit" class="hidden">
+                        <form class="form-vertical" name="billingAddressForm" id="billingAddressForm" role="form" method="post" action="${links['organization']}/${organization.id}/billing-address">
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="street">${labels["street"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="street" id="street" class="form-control" value="${(organization.subscription.billingAddress.street)!}" autofocus required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="city">${labels["city"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="city" id="city" class="form-control" value="${(organization.subscription.billingAddress.city)!}" required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="state">${labels["state"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="state" id="state" class="form-control" value="${(organization.subscription.billingAddress.state)!}" required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <input type="text" name="postalCode" id="postalCode" class="form-control" value="${(organization.subscription.billingAddress.postalCode)!}" required>
+                                </div>
+                            </div>
+                            <div class="form-row form-group">
+                                <div class="col-3">
+                                    <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <select class="form-control" id="countryCode" name="countryCode" required>
+                                        <#list countryList as country>
+                                            <!-- <#if country.iso2Code==organization.subscription.billingAddress.countryCode> -->
+                                            <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                            <!-- <#else> -->
+                                            <option value="${country.iso2Code}">${country.name}</option>
+                                            <!-- </#if> -->
+                                        </#list>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-4">
+                                <button class="btn btn-success" id="saveBillingAddress">${labels["save"]}</button>
+                                <button class="btn btn-link" id="cancelBillingAddress">${labels["cancel"]}</button>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="divider"></div>
+            <br>
+            <div class="row" id="transactions">
+                <div class="col-12">
+                    <div class="flextable">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["transactions"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive w-100 d-block d-md-table">
+                                <thead>
+                                    <tr class="row m-0">
+                                        <th class="col-2">${labels["id"]}</th>
+                                        <th class="col-2">${labels["payment.method"]}</th>
+                                        <th class="col-2 text-right">${labels["amount"]}</th>
+                                        <th class="col-2">${labels["transaction.date"]}</th>
+                                        <th class="col-3">${labels["status"]}</th>
+                                        <th class="col-1 text-right">${labels["download"]}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <#if organization.transactions?size==0>
+                                        <tr class="row m-0">
+                                            <td colspan="6">${labels["no.transactions"]}</td>
+                                        </tr>
+                                    </#if>
+                                    <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                                        <tr class="row m-0">
+                                            <td class="col-2">${transaction.id}</td>
+                                            <td class="col-2"><img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a></td>
+                                            <td class="col-2 text-right p-r-md">${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}</td>
+                                            <td class="col-2">${(transaction.updatedOn?date?string.long)!}</td>
+                                            <td class="col-3">${transaction.status}</td>
+                                            <td class="col-1 text-right"><a href="${links['organization']}/${organization.id}/invoice/${transaction.id}" download="${transaction.id}"><span class="icon icon-download"></span></a></td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="divider"></div>
+            <br>
+            <div class="row" id="users">
+                <div class="col-12">
+                    <div class="flextable">
+                        <div class="flextable-item flextable-primary">
+                            <h4><b>${labels["users"]}</b></h4>
+                        </div>
+                        <div class="flextable-item">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive w-100 d-block d-md-table">
+                                <thead>
+                                    <tr class="row m-0">
+                                        <th class="col-4">${labels["name"]}</th>
+                                        <th class="col-4">${labels["email"]}</th>
+                                        <th class="col-4">&nbsp;</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <#if organization.users?size==0>
+                                        <tr class="row m-0">
+                                            <td colspan="3">${labels["no.users"]}</td>
+                                        </tr>
+                                    </#if>
+                                    <#list organization.users?sort_by( "lastName")?reverse as user>
+                                        <tr class="row m-0">
+                                            <td class="col-4">${user.name}</td>
+                                            <td class="col-4">${user.email}</td>
+                                            <td class="col-4">&nbsp;</td>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+<div id="overlay"></div>
+<br>
+<br>
+<script src="/js/organization.js"></script>

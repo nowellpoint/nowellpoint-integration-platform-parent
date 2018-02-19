@@ -26,9 +26,9 @@ public class JobType extends AbstractResource {
 	
 	private String href;
 	
-	private ConnectorType source;
+	private ConnectorTypeOrig source;
 	
-	private ConnectorType target;
+	private ConnectorTypeOrig target;
 	
 	public JobType() {
 		
@@ -130,19 +130,19 @@ public class JobType extends AbstractResource {
 		this.href = href;
 	}
 
-	public ConnectorType getSource() {
+	public ConnectorTypeOrig getSource() {
 		return source;
 	}
 
-	public void setSource(ConnectorType source) {
+	public void setSource(ConnectorTypeOrig source) {
 		this.source = source;
 	}
 
-	public ConnectorType getTarget() {
+	public ConnectorTypeOrig getTarget() {
 		return target;
 	}
 
-	public void setTarget(ConnectorType target) {
+	public void setTarget(ConnectorTypeOrig target) {
 		this.target = target;
 	}
 

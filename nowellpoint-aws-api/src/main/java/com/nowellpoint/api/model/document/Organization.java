@@ -1,5 +1,6 @@
 package com.nowellpoint.api.model.document;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nowellpoint.mongodb.annotation.Document;
@@ -32,7 +33,7 @@ public class Organization extends MongoDocument {
 	private Set<Transaction> transactions;
 	
 	public Organization() {
-		
+		transactions = new LinkedHashSet<Transaction>();
 	}
 
 	public UserRef getCreatedBy() {

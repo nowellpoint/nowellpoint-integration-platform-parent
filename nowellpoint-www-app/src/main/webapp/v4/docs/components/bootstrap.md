@@ -219,13 +219,13 @@
   </ol>
   <div class="carousel-inner" role="listbox">
     <div class="item active">
-      <img src="http://placehold.it/1140x500/777/555" alt="First slide">
+      <img src="https://placehold.it/1140x500/777/555" alt="First slide">
     </div>
     <div class="item">
-      <img src="http://placehold.it/1140x500/666/444" alt="Second slide">
+      <img src="https://placehold.it/1140x500/666/444" alt="Second slide">
     </div>
     <div class="item">
-      <img src="http://placehold.it/1140x500/555/333" alt="Third slide">
+      <img src="https://placehold.it/1140x500/555/333" alt="Third slide">
     </div>
   </div>
   <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">

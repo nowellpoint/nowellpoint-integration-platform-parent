@@ -1,35 +1,25 @@
 package com.nowellpoint.client.model;
 
-import java.util.Date;
-
 public class Service {
 	
-	private String serviceId;
+	private String id;
 	
 	private String name;
 	
 	private String type;
 	
-	private String template;
-	
-	private String href;
-	
-	private String whatId;
-	
-	private Date addedOn;
-
-	private Date updatedOn;
+	private Boolean isEnabled;
 	
 	public Service() {
 		
 	}
 
-	public String getServiceId() {
-		return serviceId;
+	public String getId() {
+		return id;
 	}
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -48,43 +38,11 @@ public class Service {
 		this.type = type;
 	}
 
-	public String getTemplate() {
-		return template;
+	public Boolean getIsEnabled() {
+		return isEnabled;
 	}
 
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	public String getHref() {
-		return href;
-	}
-
-	public void setHref(String href) {
-		this.href = href;
-	}
-
-	public String getWhatId() {
-		return whatId;
-	}
-
-	public void setWhatId(String whatId) {
-		this.whatId = whatId;
-	}
-
-	public Date getAddedOn() {
-		return addedOn;
-	}
-
-	public void setAddedOn(Date addedOn) {
-		this.addedOn = addedOn;
-	}
-
-	public Date getUpdatedOn() {
-		return updatedOn;
-	}
-
-	public void setUpdatedOn(Date updatedOn) {
-		this.updatedOn = updatedOn;
+	public void setIsEnabled(Boolean isEnabled) {
+		this.isEnabled = isEnabled;
 	}
 }

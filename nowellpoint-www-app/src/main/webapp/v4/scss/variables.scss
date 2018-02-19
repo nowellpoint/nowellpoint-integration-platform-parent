@@ -1,24 +1,28 @@
+
 // Colors
 //
-// Overrides Bootstrap defaults.
 $body-color:             #000;
-$gray-base:              #000;
-$gray-dark:              #222;
-$gray-darker:            #111;
-$gray:                   #555;
-$gray-light:             #aaa;
-$gray-lighter:           #f5f5f5;
 
 // special light gray for flourishes like hr's
 $gray-subtle:            #eee;
 
-$brand-primary:          #1997c6;
-$brand-success:          #1BC98E;
-$brand-info:             #9F86FF;
-$brand-warning:          #E4D836;
-$brand-danger:           #E64759;
+// Brand Scale
+$theme-colors: (
+  primary: #1997c6,
+  success: #1BC98E,
+  info: #9F86FF,
+  warning: #E4D836,
+  danger: #E64759,
+  dark: darken(#252830, 5%)
+);
 
+@import "./bootstrap/_functions.scss";
 @import "./bootstrap/_variables.scss";
+
+// deleted bs.4 vars
+$font-family-serif: Georgia, "Times New Roman", Times, serif !default;
+$font-size-xs:      .75rem !default;
+$nav-tabs-active-link-hover-bg: $body-bg !default;
 
 // Local variables
 //
@@ -33,10 +37,10 @@ $icon-font-name: "toolkit-entypo";
 //
 // Overrides Bootstrap defaults.
 
-$state-success-text:             $brand-success;
-$state-info-text:                $brand-info;
-$state-warning-text:             $brand-warning;
-$state-danger-text:              $brand-danger;
+$state-success-text:             theme-color("success");
+$state-info-text:                theme-color("info");
+$state-warning-text:             theme-color("warning");
+$state-danger-text:              theme-color("danger");
 
 
 // Spacing
@@ -62,7 +66,7 @@ $font-size-base:          0.9rem;
 $font-weight-base:        300;
 $letter-spacing-base:     0;
 $line-height-base:        1.5;
-$text-color:              $gray;
+$text-color:              $gray-700;
 
 // Lead
 $lead-font-size:      $font-size-base * 1.15;
@@ -84,7 +88,7 @@ $hr-border:               $gray-subtle;
 // Overrides Bootstrap defaults.
 
 $input-border:                   #d5d5d5;
-$input-border-focus:             $brand-primary;
+$input-border-focus:             theme-color("primary");
 $input-weight:                   300;
 
 
@@ -99,8 +103,8 @@ $btn-letter-spacing: normal;
 
 // Overrides
 $btn-font-weight:                normal;
-$btn-secondary-color:            $gray-darker;
-$btn-secondary-bg:               $gray-lighter;
+$btn-secondary-color:            $gray-900;
+$btn-secondary-bg:               $gray-100;
 $btn-secondary-border:           darken($btn-secondary-bg, 10%);
 $btn-toolbar-divider-bg:         #eee;
 
@@ -116,20 +120,20 @@ $badge-color:                 #fff;
 //
 // Overrides Bootstrap defaults.
 
-$alert-success-bg:            $brand-success;
-$alert-success-text:          lighten($brand-success, 50%);
+$alert-success-bg:            theme-color("success");
+$alert-success-text:          lighten(theme-color("success"), 50%);
 $alert-success-border:        $alert-success-bg;
 
-$alert-info-bg:               $brand-info;
-$alert-info-text:             lighten($brand-info, 50%);
+$alert-info-bg:               theme-color("info");
+$alert-info-text:             lighten(theme-color("info"), 50%);
 $alert-info-border:           $alert-info-bg;
 
-$alert-warning-bg:            $brand-warning;
-$alert-warning-text:          lighten($brand-warning, 50%);
+$alert-warning-bg:            theme-color("warning");
+$alert-warning-text:          lighten(theme-color("warning"), 50%);
 $alert-warning-border:        $alert-warning-bg;
 
-$alert-danger-bg:             $brand-danger;
-$alert-danger-text:           lighten($brand-danger, 45%);
+$alert-danger-bg:             theme-color("danger");
+$alert-danger-text:           lighten(theme-color("danger"), 45%);
 $alert-danger-border:         $alert-danger-bg;
 
 
@@ -165,18 +169,18 @@ $nav-bordered-color-active:       #777;
 $nav-bordered-font-weight:        300;
 $nav-bordered-font-weight-active: 500;
 
-$nav-link-hover-bg: lighten($brand-primary, 45%);
+$nav-link-hover-bg: lighten(theme-color("primary"), 45%);
 
 $nav-pills-active-weight: 500;
-$nav-header-color: lighten($gray, 35%);
+$nav-header-color: lighten($gray-700, 35%);
 
 // Navbar
 //
 // Overrides Bootstrap defaults.
 
 $navbar-border:     transparent;
-$navbar-inverse-bg: $gray-darker;
-$navbar-inverse-border: $gray-darker;
+$navbar-inverse-bg: $gray-900;
+$navbar-inverse-border: $gray-900;
 $navbar-brand-padding-y: .125rem;
 
 
@@ -196,11 +200,11 @@ $iconav-border:              #fff;
 $iconav-width:               70px;
 $iconav-brand-color:         $gray-subtle;
 $iconav-brand-hover-color:   inherit;
-$iconav-brand-bg:            $brand-primary;
+$iconav-brand-bg:            theme-color("primary");
 $iconav-brand-border:        $iconav-border;
 $iconav-link-color:          inherit;
 $iconav-link-border:         $iconav-border;
-$iconav-link-active-color:   $gray;
+$iconav-link-active-color:   $gray-700;
 $iconav-link-active-bg:      $iconav-border;
 
 $list-group-bg: transparent;
@@ -210,26 +214,19 @@ $statlist-border-color: #e5e5e5;
 $statlist-link-color:   inherit;
 $statlist-progress-bg:  #f5f5f5;
 
-$hr-divider-content-color:  $gray;
+$hr-divider-content-color:  $gray-700;
 $hr-divider-content-bg:     $body-bg;
 $hr-divider-before-bg:      $gray-subtle;
 
 $custom-select-color:       $input-color;
 $custom-select-bg:          $input-bg;
-$custom-select-disabled-bg: $input-bg-disabled;
+$custom-select-disabled-bg: $input-disabled-bg;
 
 $custom-control-indicator-bg:     $input-bg;
 $custom-control-indicator-box-shadow: rgba(0,0,0,.15);
 
-// $custom-control-indicator-checked-bg:      $brand-primary;
-// $custom-control-indicator-checked-border:  $brand-primary;
-// $custom-control-indicator-active-bg:       lighten($brand-primary, 15%);
-// $custom-control-indicator-active-border:   lighten($brand-primary, 15%);
-// $custom-control-indicator-disabled-bg:     darken($input-bg, 5%);
-// $custom-control-indicator-disabled-border: $custom-control-indicator-border;
-
-$sidebar-brand-color:          $gray;
-$sidebar-brand-hover-color:    $gray-dark;
+$sidebar-brand-color:          $gray-700;
+$sidebar-brand-hover-color:    $gray-800;
 $sidebar-toggler-color:        #ccc;
 $sidebar-toggler-hover-color:  #fff;
 

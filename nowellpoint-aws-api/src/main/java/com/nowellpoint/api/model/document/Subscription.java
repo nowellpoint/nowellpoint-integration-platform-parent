@@ -21,7 +21,9 @@ package com.nowellpoint.api.model.document;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import com.nowellpoint.mongodb.annotation.EmbedMany;
 import com.nowellpoint.mongodb.annotation.EmbedOne;
 
 public class Subscription implements Serializable {
@@ -64,6 +66,9 @@ public class Subscription implements Serializable {
 	
 	@EmbedOne
 	private CreditCard creditCard;
+	
+	@EmbedMany
+	private Set<Feature> features;
 	
 	public Subscription() {
 		
@@ -203,5 +208,13 @@ public class Subscription implements Serializable {
 
 	public void setCreditCard(CreditCard creditCard) {
 		this.creditCard = creditCard;
+	}
+
+	public Set<Feature> getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(Set<Feature> features) {
+		this.features = features;
 	}
 }

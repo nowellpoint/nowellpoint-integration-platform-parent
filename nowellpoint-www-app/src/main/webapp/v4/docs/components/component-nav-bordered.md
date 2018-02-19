@@ -22,7 +22,7 @@ The bordered nav builds on Bootstrap's `.nav` base styles with a new, bolder var
 Bordered nav links can also be stacked:
 
 {% example html %}
-<ul class="nav nav-bordered nav-stacked flex-column">
+<ul class="nav nav-bordered nav-stacked flex-md-column">
   <li class="nav-header">Examples</li>
   <li class="nav-item">
     <a class="nav-link active" href="#">Bold</a>
@@ -30,7 +30,7 @@ Bordered nav links can also be stacked:
   <li class="nav-item">
     <a class="nav-link" href="#">Minimal</a>
   </li>
-  
+
   <li class="nav-header">Sections</li>
 
   <li class="nav-item">

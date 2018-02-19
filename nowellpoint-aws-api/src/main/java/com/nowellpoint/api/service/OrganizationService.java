@@ -60,7 +60,9 @@ public interface OrganizationService {
 			String number, 
 			String cvv);
 	
-	public Organization updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode);
+	public Organization removeCreditCard(String id);
+	
+	public Organization updateBillingAddress(String id, String street, String city, String state, String postalCode, String countryCode);
 	
 	public Organization updateBillingContact(String id, String firstName, String lastName, String email, String phone);
 	

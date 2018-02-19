@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.text.CharacterPredicates;
@@ -26,7 +27,6 @@ import com.nowellpoint.api.rest.domain.Plan;
 import com.nowellpoint.api.rest.domain.Registration;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
-import com.nowellpoint.api.rest.domain.ValidationException;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PlanService;
@@ -61,45 +61,47 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 	}
 
 	@Override
-	public Registration register(String firstName, String lastName, String email, String phone, String countryCode, String domain, String planId) {
-		
+	public Registration register(String firstName, String lastName, String email, String phone, String countryCode,
+			String domain, String planId) {
+
 		List<String> errors = new ArrayList<>();
-    	
-    	if (Assert.isNullOrEmpty(lastName)) {
-    		errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_LAST_NAME));
-    	}
-    	
-    	if (Assert.isNullOrEmpty(email)) {
-    		errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_EMAIL));
-    	}
-    	
-    	if (Assert.isNullOrEmpty(countryCode)) {
-    		errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_COUNTRY_CODE));
-    	}
-    	
-    	if (Assert.isNullOrEmpty(planId)) {
-    		errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_PLAN_ID));
-    	}
-    	
-    	if (! errors.isEmpty()) {
-    		throw new ValidationException(errors);
-    	}
-    	
-    	Plan plan = findPlanById(planId);
-    	
-    	isRegistred(email, domain);
-		
+
+		if (Assert.isNullOrEmpty(lastName)) {
+			errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_LAST_NAME));
+		}
+
+		if (Assert.isNullOrEmpty(email)) {
+			errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_EMAIL));
+		}
+
+		if (Assert.isNullOrEmpty(countryCode)) {
+			errors.add(MessageProvider.getMessage(Locale.getDefault(),
+					MessageConstants.REGISTRATION_MISSING_COUNTRY_CODE));
+		}
+
+		if (Assert.isNullOrEmpty(planId)) {
+			errors.add(MessageProvider.getMessage(Locale.getDefault(), MessageConstants.REGISTRATION_MISSING_PLAN_ID));
+		}
+
+		if (!errors.isEmpty()) {
+			throw new ValidationException(String.join(" ", errors));
+		}
+
+		Plan plan = findPlanById(planId);
+
+		isRegistred(email, domain);
+
 		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
-		
+
 		Date now = Date.from(Instant.now());
-		
+
 		String emailVerificationToken = new RandomStringGenerator.Builder()
 				.withinRange('0', 'z')
 				.filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
 				.usingRandom(new SecureRandom()::nextInt)
 				.build()
 				.generate(24);
-		
+
 		Registration registration = Registration.builder()
 				.countryCode(countryCode)
 				.email(email)
@@ -116,16 +118,14 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				.domain(Assert.isNotNullOrEmpty(domain) ? domain : emailVerificationToken)
 				.expiresAt(Instant.now().plusSeconds(1209600).toEpochMilli())
 				.build();
-		
+
 		create(registration);
-		
+
 		if (Assert.isNotNullOrEmpty(domain)) {
-			sendVerificationEmail(
-					registration.getEmail(), 
-					registration.getName(), 
+			sendVerificationEmail(registration.getEmail(), registration.getName(),
 					registration.getEmailVerificationToken());
 		}
-		
+
 		return registration;
 	}
 	

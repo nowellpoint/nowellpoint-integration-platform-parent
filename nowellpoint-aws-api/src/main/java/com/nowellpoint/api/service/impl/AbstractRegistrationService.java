@@ -21,7 +21,7 @@ public class AbstractRegistrationService extends AbstractCacheService {
 		MongoDocument document = registration.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		registration.fromDocument( document );
+		registration.replace( document );
 		set( registration.getId(), document );
 	}
 	
@@ -29,7 +29,7 @@ public class AbstractRegistrationService extends AbstractCacheService {
 		MongoDocument document = registration.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		registration.fromDocument( document );
+		registration.replace( document );
 		set( registration.getId(), document );
 	}
 	

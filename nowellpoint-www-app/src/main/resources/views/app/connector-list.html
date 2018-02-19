@@ -1,0 +1,77 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="container">
+
+            <#if connectorsList?size==0>
+                <br>
+                <br>
+                <br>
+                <br>
+                <blockquote class="blockquote text-center mt-5">
+                    <span class="icon icon-database fa fa-4x text-primary"></span>
+                    <h4 class="text-muted pt-1 pb-1">${labels["no.records"]}</h4>
+                    <a href="${links['connectors']}/show" class="btn btn-lg btn-outline-primary" role="button">&emsp;${labels["add.connector"]}&emsp;</a>
+                </blockquote>
+            </#if>
+            <br>
+            <#if connectorsList?size gt 0>
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="dashhead-subtitle">&nbsp;</h4>
+                        <h2 class="dashhead-title">${labels["connectors"]}</h2>
+                    </div>
+                    <div class="dashhead-toolbar">
+                        <p class="pull-right">
+                            <a href="${links['connectors']}/show" class="btn btn-outline-primary" role="button">${labels["add.connector"]}</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr class="row m-0">
+                                <th class="col-5">${labels["connection"]}</th>
+                                <th class="col-4">${labels["status"]}</th>
+                                <th class="col-3">${labels["connected.on"]}</th>
+                            </tr>
+                        </thead>
+                        <tbody style="cursor: pointer;">
+                            <#list connectorsList?sort_by( "createdOn") as connector>
+                                <tr class="row m-0 table-row" id="${connector.id}" data-href="${links['connectors']}/${connector.id}/view">
+                                    <td class="col-5"><img class="float-left rounded mr-3" src="${connector.iconHref}" alt="icon">${connector.name!}
+                                        <br>${connector.typeName!}
+                                        <br>${connector.connectedAs!}
+                                    </td>
+                                    <td class="col-4">
+                                        <#if connector.isConnected>
+                                            <p class="text-success">${connector.status!}</p>
+                                        </#if>
+                                        <#if ! connector.isConnected>
+                                            <p class="text-danger">${connector.status!}</p>
+                                        </#if>
+                                    </td>
+                                    <td class="col-3">
+                                        <#if connector.isConnected>
+                                            ${(connector.connectedOn?date?string.long)!} ${(connector.connectedOn?time?string.medium)!}
+                                        </#if>
+                                    </td>
+                                </tr>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </#if>
+        </div>
+
+
+        <script type="text/javascript">
+            $(document).ready(function($) {
+                $(".table-row").click(function() {
+                    window.document.location = $(this).data("href");
+                });
+            });
+        </script>
+
+    </@t.page>

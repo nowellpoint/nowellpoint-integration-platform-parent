@@ -1,7 +1,12 @@
 package com.nowellpoint.api.rest.impl;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.api.rest.domain.Organization;
@@ -26,6 +31,12 @@ public class OrganizationResourceImpl implements OrganizationResource {
 	}
 	
 	@Override
+	public Response deleteOrganization(String id) {
+		organizationService.deleteOrganization(id);
+		return Response.ok().build();
+	}
+	
+	@Override
 	public Response changePlan(String id, String planId, String cardholderName, String number, String expirationMonth, String expirationYear, String cvv) {
 		Plan plan = planService.findById(planId);
 		
@@ -46,10 +57,17 @@ public class OrganizationResourceImpl implements OrganizationResource {
 		return Response.ok(organization)
 				.build();
 	}
+	
+	@Override
+	public Response removeCreditCard(String id) {
+		Organization organization = organizationService.removeCreditCard(id);
+		return Response.ok(organization)
+				.build();
+	}
 
 	@Override
-	public Response updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode) {
-		Organization organization = organizationService.updateBillingAddress(id, street, city, stateCode, postalCode, countryCode);
+	public Response updateBillingAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
+		Organization organization = organizationService.updateBillingAddress(id, street, city, state, postalCode, countryCode);
 		return Response.ok(organization)
 				.build();
 	}
@@ -60,10 +78,25 @@ public class OrganizationResourceImpl implements OrganizationResource {
 		return Response.ok(organization)
 				.build();
 	}
-
+	
 	@Override
-	public Response deleteOrganization(String id) {
-		organizationService.deleteOrganization(id);
-		return Response.ok().build();
+	public Response getInvoice(String id, String invoiceNumber) {
+		byte[] bytes = organizationService.getInvoice(id, invoiceNumber);
+		
+		StreamingOutput output = new StreamingOutput() {
+			public void write(OutputStream output) throws IOException, WebApplicationException {
+                try {
+                    output.write(bytes);
+                } catch (Exception e) {
+                    throw new WebApplicationException(e);
+                }
+            }
+		};
+		
+		return Response.ok()
+				.header("Content-Disposition", String.format("attachment; filename=\"invoice_%s.pdf\"", invoiceNumber))
+				.header("Content-Length", bytes.length)
+				.entity(output)
+				.build();
 	}
 }

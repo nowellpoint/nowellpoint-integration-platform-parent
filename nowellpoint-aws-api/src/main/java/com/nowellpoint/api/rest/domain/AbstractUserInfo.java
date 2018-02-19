@@ -1,9 +1,6 @@
 package com.nowellpoint.api.rest.domain;
 
-import java.net.URI;
-
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import org.immutables.value.Value;
 
@@ -11,7 +8,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.UserProfileResource;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 
 @Value.Immutable
 @Value.Modifiable
@@ -23,28 +22,64 @@ public abstract class AbstractUserInfo {
 	public abstract @Nullable String getLastName();
 	public abstract @Nullable String getFirstName();
 	public abstract @Nullable String getName();
-	public abstract @Nullable String getCompany();
 	public abstract @Nullable String getEmail();
 	public abstract @Nullable String getPhone();
-	public abstract @Nullable String getMobilePhone();
 	public abstract @Nullable Photos getPhotos();
 	
 	public Meta getMeta() {
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(UserProfileResource.class)
-				.path("/{id}")
-				.build(Assert.isNotNullOrEmpty(getId()) ? getId() : "{id}");
-				
-		Meta meta = Meta.builder()
-				.href(href.toString())
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(UserProfileResource.class)
 				.build();
-		
-		return meta;
 	}
 	
 	public static UserInfo of(String id) {
 		Assert.assertNotNullOrEmpty(id, "User Id cannot be null or empty");
 		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(id);
 		return userInfo.toImmutable();
-	}	
+	}
+	
+	public static UserInfo of(com.nowellpoint.api.model.document.UserProfile source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
+		UserInfo instance = UserInfo.builder()
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.lastName(source.getLastName())
+				.name(source.getName())
+				.phone(source.getPhone())
+				.photos(Photos.of(source.getPhotos()))
+				.build();
+		
+		return instance;
+		
+	}
+	
+	public static UserInfo of(com.nowellpoint.api.model.document.UserRef source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
+		UserInfo instance = UserInfo.builder()
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.lastName(source.getLastName())
+				.name(source.getName())
+				.phone(source.getPhone())
+				.photos(Photos.of(source.getPhotos()))
+				.build();
+		
+		return instance;
+				
+	}
+	
+	public static UserInfo of(Jws<Claims> claims) {
+		Assert.assertNotNull(claims, "Jws claims cannot be null");
+		ModifiableUserInfo userInfo = ModifiableUserInfo.create().setId(claims.getBody().getSubject());
+		return userInfo.toImmutable();
+	}
 }

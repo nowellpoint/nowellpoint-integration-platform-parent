@@ -25,17 +25,11 @@ import com.nowellpoint.util.Assert;
 public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract UserInfo getCreatedBy();
 	public abstract UserInfo getLastUpdatedBy();
-	public abstract String getUsername();
 	public abstract String getLastName();
 	public abstract String getFirstName();
-	public abstract @Nullable String getCompany();
-	public abstract @Nullable String getDivision();
-	public abstract @Nullable String getDepartment();
 	public abstract @Nullable String getTitle();
 	public abstract String getEmail();
 	public abstract @Nullable String getPhone();
-	public abstract @Nullable String getExtension();
-	public abstract @Nullable String getMobilePhone();
 	public abstract Boolean getIsActive();
 	public abstract TimeZone getTimeZone();
 	public abstract Locale getLocale();
@@ -45,13 +39,22 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 	public abstract @Nullable Photos getPhotos();
 	public abstract @JsonIgnore String getReferenceId();
 	
+	@Value.Derived
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	@Override
+	@Value.Derived
 	public Meta getMeta() {
-		return getMetaAs(UserProfileResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(UserProfileResource.class)
+				.build();
+	}
+	
+	@Value.Derived
+	public String getUsername() {
+		return getEmail();
 	}
 	
 	public static UserProfile of(com.nowellpoint.api.model.document.UserProfile source) {
@@ -59,7 +62,7 @@ public abstract class AbstractUserProfile extends AbstractImmutableResource {
 		return userProfile.toImmutable();
 	}
 	
-	public void fromDocument(MongoDocument document) {
+	public void replace(MongoDocument document) {
 		modelMapper.map(document, this);
 	}
 	

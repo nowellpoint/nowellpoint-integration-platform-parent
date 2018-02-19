@@ -21,7 +21,6 @@ var Paths = {
   SCSS_TOOLKIT_SOURCES : './scss/toolkit*',
   SCSS                 : './scss/**/**',
   JS                   : [
-
       "./js/bootstrap/util.js",
       "./js/bootstrap/alert.js",
       "./js/bootstrap/button.js",
@@ -110,7 +109,8 @@ gulp.task('js', function () {
           ]
         ],
         "plugins": [
-          "transform-es2015-modules-strip"
+          "transform-es2015-modules-strip",
+          "transform-object-rest-spread"
         ]
       }
     ))

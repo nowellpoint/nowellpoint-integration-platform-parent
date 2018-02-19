@@ -11,7 +11,6 @@ import org.immutables.value.Value;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
@@ -22,7 +21,8 @@ public abstract class AbstractAddress {
 	public abstract @Nullable String getId();
 	public abstract @Nullable String getStreet();
 	public abstract @Nullable String getCity();
-	public abstract @Nullable String getStateCode();
+	public abstract @Nullable String getState();
+	//public abstract @Nullable String getStateCode();
 	public abstract @Nullable String getPostalCode();
 	public abstract String getCountryCode();
 	public abstract @Nullable String getLatitude();
@@ -34,12 +34,29 @@ public abstract class AbstractAddress {
 		return ResourceBundle.getBundle("countries", Locale.getDefault()).getString(getCountryCode());
 	}
 	
-	public String getState() {
-		if (Assert.isNotNullOrEmpty(getStateCode())) {
-			return ResourceBundle.getBundle("states", Locale.getDefault()).getString(getStateCode());
-		} else {
-			return null;
-		}
+//	public String getState() {
+//		if (Assert.isNotNullOrEmpty(getStateCode())) {
+//			return ResourceBundle.getBundle("states", Locale.getDefault()).getString(getStateCode());
+//		} else {
+//			return null;
+//		}
+//	}
+	
+	public static Address of(com.nowellpoint.api.model.document.Address source) {
+		Address instance = ModifiableAddress.create()
+				.setAddedOn(source.getAddedOn())
+				.setCity(source.getCity())
+				.setCountryCode(source.getCountryCode())
+				.setId(source.getId())
+				.setLatitude(source.getLatitude())
+				.setLongitude(source.getLongitude())
+				.setPostalCode(source.getPostalCode())
+				.setState(source.getState())
+				.setStreet(source.getStreet())
+				.setUpdatedOn(source.getUpdatedOn())
+				.toImmutable();
+		
+		return instance;
 	}
 	
 	public static Address of(com.braintreegateway.Address source) {
@@ -49,7 +66,7 @@ public abstract class AbstractAddress {
 				.countryCode(source.getCountryCodeAlpha2())
 				.id(source.getId())
 				.postalCode(source.getPostalCode())
-				.stateCode(source.getRegion())
+				.state(source.getRegion())
 				.addedOn(source.getCreatedAt().getTime())
 				.updatedOn(source.getUpdatedAt().getTime())
 				.build();

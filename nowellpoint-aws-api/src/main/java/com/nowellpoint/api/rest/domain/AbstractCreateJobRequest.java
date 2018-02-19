@@ -25,6 +25,6 @@ public abstract class AbstractCreateJobRequest {
 	public abstract Optional<String> getYear();
 	public abstract Optional<String> getScheduleOption();
 	public abstract JobType getJobType();
-	public abstract Source getSource();
+	public abstract Connector getSource();
 	public abstract Optional<AbstractSchedule> getSchedule();
 }

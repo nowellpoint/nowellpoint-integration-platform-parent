@@ -44,9 +44,9 @@ public class SubscriptionEventListener implements MessageListener {
 				
 				LOGGER.info(String.format("Recevied SubscriptionEvent for Subscription %s", id));
 				
-				com.nowellpoint.api.model.document.Organization document = documentManager.findOne(com.nowellpoint.api.model.document.Organization.class, eq ( "subscription.subscriptionId", id ));
+				com.nowellpoint.api.model.document.Organization document = documentManager.findOne(com.nowellpoint.api.model.document.Organization.class, eq ( "subscription.number", id ));
 				
-				Organization organization = Organization.updateSubscription(document, subscriptionEvent);
+				Organization organization = Organization.of(document, subscriptionEvent);
 				
 				updateOrganization(organization);
 				
@@ -61,7 +61,7 @@ public class SubscriptionEventListener implements MessageListener {
 	private void updateOrganization(Organization organization) {
 		MongoDocument document = organization.toDocument();
 		documentManager.replaceOne( document );
-		organization.fromDocument( document );
+		organization.replace( document );
 		CacheManager.set(document.getId().toString(), document);
 	}
 }

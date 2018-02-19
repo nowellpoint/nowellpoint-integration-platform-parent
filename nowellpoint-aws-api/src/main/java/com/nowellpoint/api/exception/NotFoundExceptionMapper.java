@@ -20,8 +20,6 @@ package com.nowellpoint.api.exception;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -32,9 +30,15 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
 
 	@Override
 	public Response toResponse(NotFoundException exception) {
-		Error error = new Error(5000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("UNABLE_TO_LOCATE_RESOURCE")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.NOT_FOUND)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

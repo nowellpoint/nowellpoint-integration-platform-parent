@@ -2,7 +2,7 @@ package com.nowellpoint.client.model;
 
 public class Resources {
 	
-	private String salesforce;
+	private String connectors;
 	
 	private String jobs;
 	
@@ -12,12 +12,8 @@ public class Resources {
 		
 	}
 
-	public String getSalesforce() {
-		return salesforce;
-	}
-
-	public void setSalesforce(String salesforce) {
-		this.salesforce = salesforce;
+	public String getConnectors() {
+		return connectors;
 	}
 
 	public String getJobs() {

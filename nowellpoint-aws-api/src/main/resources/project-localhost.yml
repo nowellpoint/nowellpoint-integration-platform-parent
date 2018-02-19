@@ -24,4 +24,4 @@ api:
     hostname: http://localhost:5000/rest
 verify:
     email:
-      redirect: https://localhost:8443/verify-email
+      redirect: https://localhost:8443/verify-email     

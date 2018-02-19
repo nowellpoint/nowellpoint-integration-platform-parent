@@ -7,10 +7,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriBuilder;
 
+import com.nowellpoint.api.rest.ConnectorResource;
 import com.nowellpoint.api.rest.IdentityResource;
 import com.nowellpoint.api.rest.JobResource;
 import com.nowellpoint.api.rest.OrganizationResource;
-import com.nowellpoint.api.rest.SalesforceConnectorResource;
 import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.rest.domain.Identity;
 import com.nowellpoint.api.rest.domain.Organization;
@@ -49,19 +49,19 @@ public class IdentityResourceImpl implements IdentityResource {
 				.build()
 				.toString();
 		
-		String salesforceHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
-				.path(SalesforceConnectorResource.class)
-				.build()
-				.toString();
-		
 		String jobsHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
 				.path(JobResource.class)
 				.build()
 				.toString();
 		
+		String connectorsHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+				.path(ConnectorResource.class)
+				.build()
+				.toString();
+		
 		Resources resources = Resources.builder()
+				.connectors(connectorsHref)
 				.organization(organizationHref)
-				.salesforce(salesforceHref)
 				.jobs(jobsHref)
 				.build();
 		

@@ -3,22 +3,17 @@ $("#menu-toggle").click(function (e) {
     $("#wrapper").toggleClass("toggled");
 });
 
+
 $(document).ready(function () {
-    $('.dropdown-toggle').dropdown();
+    var token = Cookies.getJSON("com.nowellpoint.auth.token");
+    if (token == null) {
+        $(location).attr('href','/login');
+    }
 });
 
-$(document).ready(function() {
-    $('#overlay').hide();
+$( document ).ready(function(){
+    $('[data-toggle="popover"]').popover(); 
 });
-
-$(document)
-    .ajaxStart(function () {
-        $('#overlay').show();
-    })
-    .ajaxStop(function () {
-        $('#overlay').hide();
-        
-    });
 
 $(document).ready(function () {
     var path = window.location.pathname;

@@ -28,6 +28,7 @@ var App = {
     if ($toc[0]) {
       $('#markdown-toc li').addClass('nav-item')
       $('#markdown-toc li > a').addClass('nav-link')
+      $('#markdown-toc li > ul').addClass('nav')
 
       maybeActivateDocNavigation()
       $window.on('resize', maybeActivateDocNavigation)
@@ -87,8 +88,7 @@ var App = {
           .on('scroll.theme.nav', measure)
 
         $('body').scrollspy({
-          target: '#markdown-toc',
-          children: 'li > a'
+          target: '#markdown-toc'
         })
 
         setTimeout(function () {

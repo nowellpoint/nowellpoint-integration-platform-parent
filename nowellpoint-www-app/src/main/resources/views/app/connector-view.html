@@ -1,0 +1,217 @@
+<script>
+    var connector = {
+        id: "${connector.id!}",
+        name: "${connector.name!}",
+        clientId: "${connector.clientId!}",
+        username: "${connector.username!}"
+    }
+
+    sessionStorage.setItem("connector", JSON.stringify(connector));
+</script>
+
+<div class="container-fluid">
+    <div class="row pt-3 pb-3 bg-secondary">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <a href="${links['connectors']}" style="text-decoration: none;" id="back" role="button"><span class="text-white"><span class="icon icon-arrow-bold-left"></span>&nbsp;<span class="font-weight-bold">${labels["back.to.connectors"]}</span></span></a>
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="mt-3">
+                <div id="success" class="alert alert-success hidden">
+                    <span class="icon icon-check"></span> ${labels["success.message"]}
+                </div>
+                <div id="error"></div>
+                <div id="detail">
+                    <#include "connector-detail.html" />
+                </div>
+            </div>
+            <div>
+                <#list connector.services?sort_by( "name") as service>
+                    <div class="row">
+                        <div class="col-9">
+                            <h5>${service.name}</h5>
+                        </div>
+                        <div class="col-3 text-right">
+                            <!-- <#if service.isEnabled> -->
+                            <button class="btn btn-outline-primary btn-sm" type="button" id="start"><span class="icon icon-ccw"></span>&nbsp;${labels["start"]}</button>
+                            <!-- <#else> -->
+                            <button class="btn btn-outline-primary btn-sm" type="button" id="stop"><span class="icon icon-ccw"></span>&nbsp;${labels["stop"]}</button>
+                            <!-- </#if> -->
+                        </div>
+                    </div>
+
+                </#list>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <script>
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $('#editConnectorModal').on('hidden.bs.modal', function() {
+            var connector = JSON.parse(sessionStorage.getItem("connector"));
+            $("#name").val(connector.name);
+            $("#clientId").val(connector.clientId);
+            $("#username").val(connector.username);
+        });
+
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $('#editConnectorModal').on('shown.bs.modal', function() {
+            var name = $("#name").val();
+            $("#name").focus().val('').val(name);
+        });
+
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $(document).on('click', 'button#saveConnector', function() {
+
+            $('#edit-spinner').toggle();
+
+            $('#saveConnector').prop("disabled", true);
+            $('#cancel').prop("disabled", true);
+            $('#name').prop("readonly", true);
+            $('#clientId').prop("readonly", true);
+            $('#clientSecret').prop("readonly", true);
+            $('#username').prop("readonly", true);
+            $('#password').prop("readonly", true);
+            $('#success').hide();
+            $('#error').hide();
+
+            $form = $("#connectorForm");
+
+            $.ajax({
+                method: $form.attr('method'),
+                url: $form.attr('action'),
+                dataType: "html",
+                data: $form.serialize(),
+                complete: function(response) {
+                    $('#edit-spinner').toggle();
+                    $('#saveConnector').prop("disabled", false);
+                    $('#cancel').prop("disabled", false);
+                    $('#name').prop("readonly", false);
+                    $('#clientId').prop("readonly", false);
+                    $('#clientSecret').prop("readonly", false);
+                    $('#username').prop("readonly", false);
+                    $('#password').prop("readonly", false);
+                    if (response.status == 200) {
+                        $('#editConnectorModal').modal().hide();
+                        $('.modal-backdrop').remove();
+                        $('#detail').html(response.responseText);
+                        $('#success').show().delay(1500).fadeOut('slow');
+                    } else {
+                        $form.prepend(response.responseText);
+                    }
+                }
+            });
+
+            return false;
+        });
+
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $(document).on('click', 'a#refreshConnector', function(e) {
+            e.preventDefault();
+
+            $('#overlay').toggle();
+
+            var href = $(this).data('href');
+
+            $.ajax({
+                method: 'post',
+                url: href,
+                complete: function(response) {
+                    $('#overlay').toggle();
+                    if (response.status == 200) {
+                        $('#detail').html(response.responseText);
+                        $('#success').show().delay(1500).fadeOut('slow');
+                    } else {
+                        $('#error').html(response.responseText);
+                    }
+                }
+            });
+
+            return true;
+        });
+
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $(document).on('click', 'a#disconnectConnector', function(e) {
+            e.preventDefault();
+
+            $('#overlay').toggle();
+
+            var href = $(this).data('href');
+
+            $.ajax({
+                method: 'post',
+                url: href,
+                complete: function(response) {
+                    $('#overlay').toggle();
+                    if (response.status == 200) {
+                        $('#detail').html(response.responseText);
+                        $('#success').show().delay(1500).fadeOut('slow');
+                    } else {
+                        $('#error').html(response.responseText);
+                    }
+                }
+            });
+
+            return true;
+        });
+
+        /*-----------------------------------------------------------
+         *
+         *
+         */
+
+        $(document).on('click', 'button#deleteConnector', function() {
+
+            $('#delete-spinner').toggle();
+            $('#deleteConnector').prop("disabled", true);
+            $('#cancel').prop("disabled", true);
+
+            var href = $(this).data('href');
+            var redirect = $(this).data('redirect');
+
+            $.ajax({
+                method: 'delete',
+                url: href,
+                complete: function(response) {
+                    $('#delete-spinner').toggle();
+                    $('#deleteConnector').prop("disabled", false);
+                    $('#cancel').prop("disabled", false);
+                    if (response.status == 200) {
+                        $('#confirmDelete').modal('hide');
+                        $(location).attr('href', redirect);
+                    } else {
+                        $form.prepend(response.responseText);
+                    }
+                }
+            });
+
+            return false;
+        });
+    </script>

@@ -14,16 +14,8 @@ public class Error {
 		return code;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	public String[] getMessages() {
 		return messages;
-	}
-
-	public void setMessages(String[] messages) {
-		this.messages = messages;
 	}
 	
 	public String getErrorMessage() {

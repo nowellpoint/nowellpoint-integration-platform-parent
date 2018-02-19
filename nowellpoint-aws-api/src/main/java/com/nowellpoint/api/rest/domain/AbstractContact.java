@@ -28,6 +28,19 @@ public abstract class AbstractContact {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
+	public static Contact of(com.nowellpoint.api.model.document.Contact source) {
+		Contact contact = ModifiableContact.create()
+				.setAddedOn(source.getAddedOn())
+				.setEmail(source.getEmail())
+				.setFirstName(source.getFirstName())
+				.setLastName(source.getLastName())
+				.setPhone(source.getPhone())
+				.setUpdatedOn(source.getUpdatedOn())
+				.toImmutable();
+		
+		return contact;
+	}
+	
 	public static Contact of(com.braintreegateway.Customer source) {
 		Contact instance = Contact.builder()
 				.email(source.getEmail())

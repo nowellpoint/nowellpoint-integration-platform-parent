@@ -17,7 +17,7 @@
       
     </title>
 
-    <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
     
       <link href="../assets/css/toolkit-inverse.css" rel="stylesheet">
     
@@ -40,9 +40,14 @@
 
 <body class="with-top-navbar">
 
-  <nav class="navbar navbar-toggleable-sm fixed-top navbar-inverse bg-inverse app-navbar">
+  <nav class="navbar navbar-expand-sm fixed-top navbar-dark bg-dark app-navbar">
+    <a class="navbar-brand" href="../index.html">
+      <span class="icon icon-leaf navbar-brand-icon"></span>
+      Dashboard
+    </a>
+
     <button
-      class="navbar-toggler navbar-toggler-right hidden-md-up"
+      class="navbar-toggler navbar-toggler-right d-md-none"
       type="button"
       data-toggle="collapse"
       data-target="#navbarResponsive"
@@ -52,13 +57,8 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <a class="navbar-brand" href="../index.html">
-      <span class="icon icon-leaf navbar-brand-icon"></span>
-      Dashboard
-    </a>
-
-    <div class="collapse navbar-collapse mr-auto" id="navbarResponsive">
-      <ul class="nav navbar-nav">
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="nav navbar-nav mr-auto">
         <li class="nav-item">
           <a class="nav-link" href="../order-history/index.html">Order History</a>
         </li>
@@ -72,10 +72,6 @@
           <a class="nav-link" href="../docs/index.html">Docs</a>
         </li>
       </ul>
-
-      <form class="form-inline hidden-sm-down ml-auto">
-        <input class="form-control" type="text" data-action="grow" placeholder="Search">
-      </form>
     </div>
   </nav>
 
@@ -204,7 +200,7 @@
 <p>The <code class="highlighter-rouge">scss/</code>, <code class="highlighter-rouge">js/</code>, and <code class="highlighter-rouge">fonts/</code> directories contain the source code for our CSS, JS, and icon fonts (respectively). Within the <code class="highlighter-rouge">scss/</code> and <code class="highlighter-rouge">js/</code> directories you’ll find two subdirectories:</p>
 
 <ul>
-  <li><code class="highlighter-rouge">bootstrap/</code>, which contains the most recently released version of Bootstrap (v4.0.0-alpha.6).</li>
+  <li><code class="highlighter-rouge">bootstrap/</code>, which contains the most recently released version of Bootstrap (v4.0.0).</li>
   <li><code class="highlighter-rouge">custom/</code>, which contains all of the custom components and overrides authored specifically for this theme.</li>
 </ul>
 
@@ -706,8 +702,8 @@
 
 <div class="docs-example" data-example-id="">
 <ul class="nav nav-pills">
-  <li class="nav-item active">
-    <a class="nav-link" href="#">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">
       <span class="icon icon-chat"></span>
       Discussions
     </a>
@@ -727,8 +723,8 @@
 </ul>
 </div>
 <div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"nav nav-pills"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item active"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link active"</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>
       <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-chat"</span><span class="nt">&gt;&lt;/span&gt;</span>
       Discussions
     <span class="nt">&lt;/a&gt;</span>
@@ -1141,7 +1137,7 @@
 <p>Bordered nav links can also be stacked:</p>
 
 <div class="docs-example" data-example-id="">
-<ul class="nav nav-bordered nav-stacked flex-column">
+<ul class="nav nav-bordered nav-stacked flex-md-column">
   <li class="nav-header">Examples</li>
   <li class="nav-item">
     <a class="nav-link active" href="#">Bold</a>
@@ -1149,7 +1145,7 @@
   <li class="nav-item">
     <a class="nav-link" href="#">Minimal</a>
   </li>
-  
+
   <li class="nav-header">Sections</li>
 
   <li class="nav-item">
@@ -1163,7 +1159,7 @@
   </li>
 </ul>
 </div>
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"nav nav-bordered nav-stacked flex-column"</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"nav nav-bordered nav-stacked flex-md-column"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-header"</span><span class="nt">&gt;</span>Examples<span class="nt">&lt;/li&gt;</span>
   <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link active"</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>Bold<span class="nt">&lt;/a&gt;</span>
@@ -1171,7 +1167,7 @@
   <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>Minimal<span class="nt">&lt;/a&gt;</span>
   <span class="nt">&lt;/li&gt;</span>
-  
+
   <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-header"</span><span class="nt">&gt;</span>Sections<span class="nt">&lt;/li&gt;</span>
 
   <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
@@ -1195,47 +1191,47 @@
       <span class="icon icon-leaf iconav-brand-icon"></span>
     </a>
     <div class="iconav-slider">
-      <ul class="nav nav-pills iconav-nav flex-column">
+      <ul class="nav nav-pills iconav-nav flex-md-column">
         <li class="nav-item">
           <a class="nav-link" href="#" title="Overview" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-home"></span>
-            <small class="iconav-nav-label hidden-md-up">Overview</small>
+            <small class="iconav-nav-label d-md-none">Overview</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" title="Order history" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-text-document"></span>
-            <small class="iconav-nav-label hidden-md-up">History</small>
+            <small class="iconav-nav-label d-md-none">History</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" title="Fluid layout" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-globe"></span>
-            <small class="iconav-nav-label hidden-md-up">Fluid layout</small>
+            <small class="iconav-nav-label d-md-none">Fluid layout</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" title="Icon-nav layout" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-area-graph"></span>
-            <small class="iconav-nav-label hidden-md-up">Icon nav</small>
+            <small class="iconav-nav-label d-md-none">Icon nav</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" href="#" title="Docs" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-list"></span>
-            <small class="iconav-nav-label hidden-md-up">Docs</small>
+            <small class="iconav-nav-label d-md-none">Docs</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" title="Light UI" data-toggle="tooltip" data-placement="right" data-container="body">
             <span class="icon icon-flash"></span>
-            <small class="iconav-nav-label hidden-md-up">Light UI</small>
+            <small class="iconav-nav-label d-md-none">Light UI</small>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#" title="Signed in as mdo" data-toggle="tooltip" data-placement="right" data-container="body">
-            <img src="../assets/img/avatar-mdo.png" alt="" class="img-circle img-responsive" />
-            <small class="iconav-nav-label hidden-md-up">@mdo</small>
+            <img src="../assets/img/avatar-mdo.png" alt="" class="rounded-circle img-fluid" />
+            <small class="iconav-nav-label d-md-none">@mdo</small>
           </a>
         </li>
       </ul>
@@ -1247,47 +1243,47 @@
       <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-leaf iconav-brand-icon"</span><span class="nt">&gt;&lt;/span&gt;</span>
     <span class="nt">&lt;/a&gt;</span>
     <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"iconav-slider"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"nav nav-pills iconav-nav flex-column"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"nav nav-pills iconav-nav flex-md-column"</span><span class="nt">&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Overview"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-home"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>Overview<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>Overview<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Order history"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-text-document"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>History<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>History<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Fluid layout"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-globe"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>Fluid layout<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>Fluid layout<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Icon-nav layout"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-area-graph"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>Icon nav<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>Icon nav<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link active"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Docs"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-list"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>Docs<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>Docs<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Light UI"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
             <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"icon icon-flash"</span><span class="nt">&gt;&lt;/span&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>Light UI<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>Light UI<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
         <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"nav-item"</span><span class="nt">&gt;</span>
           <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">"nav-link"</span> <span class="na">href=</span><span class="s">"#"</span> <span class="na">title=</span><span class="s">"Signed in as mdo"</span> <span class="na">data-toggle=</span><span class="s">"tooltip"</span> <span class="na">data-placement=</span><span class="s">"right"</span> <span class="na">data-container=</span><span class="s">"body"</span><span class="nt">&gt;</span>
-            <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"../assets/img/avatar-mdo.png"</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">class=</span><span class="s">"img-circle img-responsive"</span><span class="nt">&gt;</span>
-            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label hidden-md-up"</span><span class="nt">&gt;</span>@mdo<span class="nt">&lt;/small&gt;</span>
+            <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"../assets/img/avatar-mdo.png"</span> <span class="na">alt=</span><span class="s">""</span> <span class="na">class=</span><span class="s">"rounded-circle img-fluid"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;small</span> <span class="na">class=</span><span class="s">"iconav-nav-label d-md-none"</span><span class="nt">&gt;</span>@mdo<span class="nt">&lt;/small&gt;</span>
           <span class="nt">&lt;/a&gt;</span>
         <span class="nt">&lt;/li&gt;</span>
       <span class="nt">&lt;/ul&gt;</span>
@@ -1620,7 +1616,7 @@
   
 
     <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/tether.min.js"></script>
+    <script src="../assets/js/popper.min.js"></script>
     <script src="../assets/js/chart.js"></script>
     <script src="../assets/js/tablesorter.min.js"></script>
     <script src="../assets/js/toolkit.js"></script>

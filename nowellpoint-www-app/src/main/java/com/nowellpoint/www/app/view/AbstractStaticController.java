@@ -5,6 +5,8 @@ import static j2html.TagCreator.div;
 import static j2html.TagCreator.strong;
 import static spark.Spark.halt;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import freemarker.log.Logger;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import j2html.tags.UnescapedText;
 import spark.ModelAndView;
 import spark.Request;
@@ -35,6 +38,7 @@ public class AbstractStaticController {
 	
 	protected static final ObjectMapper objectMapper = new ObjectMapper();
 	protected static final String APPLICATION_CONTEXT = "/app/%s";
+	protected static final String CONSOLE = String.format(APPLICATION_CONTEXT, "main.html");
 	protected static final String TOKEN = "com.nowellpoint.auth.token";
 	protected static final String IDENTITY = "com.nowellpoint.auth.identity";
 	protected static final String LOCALE = "com.nowellpoint.default.locale";
@@ -96,9 +100,22 @@ public class AbstractStaticController {
 			model.put("links", new ResourceBundleModel(ResourceBundle.getBundle("links"), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
+			return showError(e.getMessage());
 		}
         return buildTemplate(configuration, locale, timeZone, new ModelAndView(model, templateName));
     }
+	
+	protected static String responseBody(Class<?> controllerClass, Configuration configuration, Request request, Response response, Map<String,Object> model, String html) {
+		model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		try {
+			Template template = new Template("templateName", new StringReader(html), configuration);
+			Writer out = new StringWriter();
+			template.process(model, out);
+			return out.toString();
+		} catch (IOException | TemplateException e) {
+			return showError(e.getMessage());
+		}
+	}
 	
 	protected static String responseBody(Result result) {
 		if (result.isSuccess()) {
@@ -107,12 +124,19 @@ public class AbstractStaticController {
 		return showError(result.getErrorMessage());
 	}
 	
+	protected static String showErrorMessage(Class<?> controllerClass, Configuration configuration, Request request, Response response, String errorMessage) {
+		Map<String, Object> model = getModel();
+		model.put("errorMessage", errorMessage);
+		model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", getLocale(request)), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+		response.status(400);
+		return buildTemplate(configuration, getLocale(request), getTimeZone(request), new ModelAndView(model, String.format(APPLICATION_CONTEXT,"error.html")));
+	}
+	
 	protected static String showError(String errorMessage) {
 		return div().withId("error").withClass("alert alert-danger")
 				.with(a().withClass("close").withData("dismiss", "alert")
 						.with(new UnescapedText("&times;")))
-				.with(div().withClass("text-center")
-						.with(strong().withText(errorMessage)))
+				.with(div().with(strong().withText(errorMessage)))
 				.render();
 	}
 }

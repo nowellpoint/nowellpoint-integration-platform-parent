@@ -24,7 +24,7 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 		MongoDocument document = userProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.insertOne( document );
-		userProfile.fromDocument( document );
+		userProfile.replace( document );
 		set( userProfile.getId(), document );
 	}
 	
@@ -32,7 +32,7 @@ abstract class AbstractUserProfileService extends AbstractCacheService {
 		MongoDocument document = userProfile.toDocument();
 		DocumentManager documentManager = documentManagerFactory.createDocumentManager();
 		documentManager.replaceOne( document );
-		userProfile.fromDocument(document);
+		userProfile.replace(document);
 		set( userProfile.getId(), document );
 	}
 	

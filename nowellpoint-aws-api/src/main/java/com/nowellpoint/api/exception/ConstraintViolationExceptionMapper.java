@@ -18,6 +18,8 @@
 
 package com.nowellpoint.api.exception;
 
+import java.util.stream.Collectors;
+
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -34,9 +36,17 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 
 	@Override
 	public Response toResponse(ConstraintViolationException exception) {		
-		Error error = new Error(3000, exception.getConstraintViolations().stream().findFirst().get().getMessage());
-		return Response.status(Status.BAD_REQUEST)
+		Error error = Error.builder()
+				.code("CONSTRAINT_ERROR")
+				.messages(exception.getConstraintViolations().stream()
+						.map(violation -> violation.getMessage())
+						.collect(Collectors.toSet()))
+				.build();
+				
+		Response response = Response.status(Status.BAD_REQUEST)
 				.entity(error)
 				.build();
+		
+		return response;
 	}
 }
