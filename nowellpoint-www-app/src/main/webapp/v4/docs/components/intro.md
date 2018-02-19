@@ -79,7 +79,7 @@ Now, modify your source files and run `gulp` to generate new local `dist/` files
 
 The `scss/`, `js/`, and `fonts/` directories contain the source code for our CSS, JS, and icon fonts (respectively). Within the `scss/` and `js/` directories you'll find two subdirectories:
 
-- `bootstrap/`, which contains the most recently released version of Bootstrap (v4.0.0-alpha.6).
+- `bootstrap/`, which contains the most recently released version of Bootstrap (v4.0.0).
 - `custom/`, which contains all of the custom components and overrides authored specifically for this theme.
 
 The `dist/` folder includes everything above, built into single CSS and JS files that can easily be integrated into your project.

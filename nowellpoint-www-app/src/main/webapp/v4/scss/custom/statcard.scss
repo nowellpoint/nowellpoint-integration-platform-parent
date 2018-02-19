@@ -11,7 +11,7 @@
 .statcard-desc {
   font-size: 85%;
   letter-spacing: .15em;
-  color: lighten($gray, 20%);
+  color: lighten($gray-700, 20%);
   text-transform: uppercase;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .delta-positive {
-  color: $brand-success;
+  color: theme-color("success");
 
   &:after {
     border-top: 0;
@@ -46,7 +46,7 @@
 }
 
 .delta-negative {
-  color: $brand-danger;
+  color: theme-color("danger");
 
   &:after {
     border-bottom: 0;
@@ -81,8 +81,8 @@
   }
 }
 
-.statcard-primary { background-color: $brand-primary; }
-.statcard-success { background-color: $brand-success; }
-.statcard-info    { background-color: $brand-info; }
-.statcard-warning { background-color: $brand-warning; }
-.statcard-danger  { background-color: $brand-danger; }
+.statcard-primary { background-color: theme-color("primary"); }
+.statcard-success { background-color: theme-color("success"); }
+.statcard-info    { background-color: theme-color("info"); }
+.statcard-warning { background-color: theme-color("warning"); }
+.statcard-danger  { background-color: theme-color("danger"); }

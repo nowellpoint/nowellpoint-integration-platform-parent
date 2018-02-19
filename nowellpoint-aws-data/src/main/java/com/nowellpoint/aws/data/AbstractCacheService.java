@@ -6,12 +6,11 @@ import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 
 import java.nio.charset.Charset;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 
 import com.nowellpoint.mongodb.document.MongoDocument;
-
-import java.util.Optional;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;

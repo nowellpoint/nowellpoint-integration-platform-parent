@@ -24,6 +24,7 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.resource.UserProfileResource;
+import com.nowellpoint.client.resource.ConnectorService;
 import com.nowellpoint.client.resource.DashboardResource;
 import com.nowellpoint.client.resource.IdentityResource;
 import com.nowellpoint.client.resource.JobResource;
@@ -31,7 +32,6 @@ import com.nowellpoint.client.resource.JobTypeResource;
 import com.nowellpoint.client.resource.OrganizationResource;
 import com.nowellpoint.client.resource.PlanResource;
 import com.nowellpoint.client.resource.RegistrationResource;
-import com.nowellpoint.client.resource.SalesforceConnectorResource;
 import com.nowellpoint.client.resource.SalesforceResource;
 
 @Value.Immutable
@@ -76,10 +76,6 @@ public abstract class NowellpointClient  {
 		return new JobResource(token());
 	}
 	
-	public SalesforceConnectorResource salesforceConnector() {
-		return new SalesforceConnectorResource(token());
-	}
-	
 	public JobTypeResource scheduledJobType() {
 		return new JobTypeResource(token());
 	}
@@ -94,5 +90,9 @@ public abstract class NowellpointClient  {
 	
 	public OrganizationResource organization() {
 		return new OrganizationResource(token());
+	}
+	
+	public ConnectorService connector() {
+		return new ConnectorService(token());
 	}
 }

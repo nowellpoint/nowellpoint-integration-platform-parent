@@ -60,15 +60,20 @@ public class AuthenticationController extends AbstractStaticController {
 
 			request.attribute(AUTH_TOKEN, token);
 
-			Identity identity = NowellpointClient.defaultClient(token).identity().get(token.getId());
+			Identity identity = NowellpointClient.defaultClient(token)
+					.identity()
+					.get(token.getId());
 
 			request.attribute("com.nowellpoint.auth.identity", identity);
 			request.attribute("com.nowellpoint.default.locale", getDefaultLocale(identity));
 			request.attribute("com.nowellpoint.default.timezone", getDefaultTimeZone(identity));
 
 		} else {
-			response.redirect(Path.Route.LOGIN.concat("?").concat(REDIRECT_URI).concat("=")
+			
+			response.redirect(Path.Route.LOGIN.concat("?")
+					.concat(REDIRECT_URI).concat("=")
 					.concat(URLEncoder.encode(request.pathInfo(), "UTF-8")));
+			
 			halt();
 		}
 	}

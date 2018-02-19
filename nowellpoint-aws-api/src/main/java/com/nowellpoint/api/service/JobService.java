@@ -3,7 +3,7 @@ package com.nowellpoint.api.service;
 import java.io.IOException;
 
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.UpdateJobRequest;
@@ -14,23 +14,23 @@ public interface JobService {
 	
 	public JobList findAllScheduled();
 	
-	public Job findById(String id);
+	public JobOrig findById(String id);
 	
 	public JobList queryBySource(String sourceId);
 	
-	public Job createJob(CreateJobRequest jobRequest);
+	public JobOrig createJob(CreateJobRequest jobRequest);
 	
-	public Job updateJob(UpdateJobRequest jobRequest);
+	public JobOrig updateJob(UpdateJobRequest jobRequest);
 	
-	public void updateJob(Job job);
+	public void updateJob(JobOrig jobOrig);
 	
-	public void runJob(Job job);
+	public void runJob(JobOrig jobOrig);
 	
-	public void submitJob(Job job);
+	public void submitJob(JobOrig jobOrig);
 	
-	public void stopJob(Job job);
+	public void stopJob(JobOrig jobOrig);
 	
-	public void terminateJob(Job job);
+	public void terminateJob(JobOrig jobOrig);
 	
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId);
 	
@@ -38,5 +38,5 @@ public interface JobService {
 	
 	public void loadScheduledJobs();
 	
-	public void sendSlackTestMessage(Job job);
+	public void sendSlackTestMessage(JobOrig jobOrig);
 }

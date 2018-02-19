@@ -44,7 +44,7 @@ import com.nowellpoint.api.annotation.Stop;
 import com.nowellpoint.api.annotation.Submit;
 import com.nowellpoint.api.annotation.Terminate;
 import com.nowellpoint.api.rest.domain.CreateJobRequest;
-import com.nowellpoint.api.rest.domain.Job;
+import com.nowellpoint.api.rest.domain.JobOrig;
 import com.nowellpoint.api.rest.domain.JobExecution;
 import com.nowellpoint.api.rest.domain.JobList;
 import com.nowellpoint.api.rest.domain.JobOutput;
@@ -67,15 +67,15 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	
 	@Inject
 	@Submit
-	private Event<Job> submitJob;
+	private Event<JobOrig> submitJob;
 	
 	@Inject
 	@Stop
-	private Event<Job> stopJob;
+	private Event<JobOrig> stopJob;
 	
 	@Inject
 	@Terminate
-	private Event<Job> terminateJob;
+	private Event<JobOrig> terminateJob;
 	
 	@Inject
 	private CommunicationService communicationService;
@@ -91,14 +91,14 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 
 	@Override
-	public Job findById(String id) {
+	public JobOrig findById(String id) {
 		return super.findById(id);
 	}
 	
 	@Override
 	public JobExecution findByFireInstanceId(String id, String fireInstanceId) {
-		Job job = findById(id);
-		return job.getJobExecution(fireInstanceId);
+		JobOrig jobOrig = findById(id);
+		return jobOrig.getJobExecution(fireInstanceId);
 	}
 	
 	@Override
@@ -109,46 +109,46 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
-	public void submitJob(Job job) {
-		if (job.getStatus().equals(JobStatus.TERMINATED) || job.getStatus().equals(JobStatus.SCHEDULED)) {
+	public void submitJob(JobOrig jobOrig) {
+		if (jobOrig.getStatus().equals(JobStatus.TERMINATED) || jobOrig.getStatus().equals(JobStatus.SCHEDULED)) {
 			throw new ValidationException(MessageProvider.getMessage(Locale.US, MessageConstants.JOB_UNABLE_TO_SUBMIT));
 		}
 		
-		fireSubmitJobEvent(job);
+		fireSubmitJobEvent(jobOrig);
 		
-		if (job.getSchedule().getRunAt().after(Date.from(Instant.now()))) {
-			job.setStatus(JobStatus.SCHEDULED);
+		if (jobOrig.getSchedule().getRunAt().after(Date.from(Instant.now()))) {
+			jobOrig.setStatus(JobStatus.SCHEDULED);
 		} else {
-			job.setStatus(JobStatus.SUBMITTED);
+			jobOrig.setStatus(JobStatus.SUBMITTED);
 		}
 		
-		updateJob(job);
+		updateJob(jobOrig);
 	}
 	
 	@Override
-	public void runJob(Job job) {
-		job.setScheduleOption(JobScheduleOptions.RUN_WHEN_SUBMITTED);
-		fireSubmitJobEvent(job);
+	public void runJob(JobOrig jobOrig) {
+		jobOrig.setScheduleOption(JobScheduleOptions.RUN_WHEN_SUBMITTED);
+		fireSubmitJobEvent(jobOrig);
 	}
 	
 	@Override
-	public void stopJob(Job job) {
-		stopJob.fire(job);
-		job.setStatus(JobStatus.STOPPED);
-		updateJob(job);
+	public void stopJob(JobOrig jobOrig) {
+		stopJob.fire(jobOrig);
+		jobOrig.setStatus(JobStatus.STOPPED);
+		updateJob(jobOrig);
 	}
 	
 	@Override
-	public void terminateJob(Job job) {
-		terminateJob.fire(job);
-		job.setStatus(JobStatus.TERMINATED);
-		updateJob(job);
+	public void terminateJob(JobOrig jobOrig) {
+		terminateJob.fire(jobOrig);
+		jobOrig.setStatus(JobStatus.TERMINATED);
+		updateJob(jobOrig);
 	}
 	
 	@Override
 	public String getOutputFile(String id, String filename) throws IOException {
-		Job job = findById(id);
-		JobOutput jobOutput = job.getJobOutput(filename);
+		JobOrig jobOrig = findById(id);
+		JobOutput jobOutput = jobOrig.getJobOutput(filename);
 		
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
@@ -160,7 +160,7 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
-	public Job createJob(@Observes CreateJobRequest jobRequest) {
+	public JobOrig createJob(@Observes CreateJobRequest jobRequest) {
 		
 		List<String> errors = new ArrayList<>();
 		
@@ -183,40 +183,40 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 		
 		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 
-		Job job = Job.of(jobRequest, abstractUserInfo);
+		JobOrig jobOrig = JobOrig.of(jobRequest, abstractUserInfo);
 		
-		createJob(job);
+		createJob(jobOrig);
 		
-		fireSubmitJobEvent(job);
+		fireSubmitJobEvent(jobOrig);
 		
-		return job;
+		return jobOrig;
 	}
 
 	@Override
-	public Job updateJob(@Observes UpdateJobRequest jobRequest) {
+	public JobOrig updateJob(@Observes UpdateJobRequest jobRequest) {
 		
-		Job job = findById(jobRequest.getId());
+		JobOrig jobOrig = findById(jobRequest.getId());
 		
 		AbstractUserInfo abstractUserInfo = AbstractUserInfo.of(UserContext.getPrincipal().getName());
 		
-		job.setLastUpdatedBy(abstractUserInfo);
-		job.setLastUpdatedOn(Date.from(Instant.now()));
-		job.setDescription(jobRequest.getDescription().orElse(null));
-		job.setNotificationEmail(jobRequest.getNotificationEmail().orElse(null));
-		job.setSlackWebhookUrl(jobRequest.getSlackWebhookUrl().orElse(null));
+		jobOrig.setLastUpdatedBy(abstractUserInfo);
+		jobOrig.setLastUpdatedOn(Date.from(Instant.now()));
+		jobOrig.setDescription(jobRequest.getDescription().orElse(null));
+		jobOrig.setNotificationEmail(jobRequest.getNotificationEmail().orElse(null));
+		jobOrig.setSlackWebhookUrl(jobRequest.getSlackWebhookUrl().orElse(null));
 		
-		updateJob(job);
+		updateJob(jobOrig);
 		
-		return job;
+		return jobOrig;
 	}
 	
-	private void createJob(Job job) {
-		super.create(job);
+	private void createJob(JobOrig jobOrig) {
+		super.create(jobOrig);
 	}
 	
 	@Override
-	public void updateJob(Job job) {
-		super.update(job);
+	public void updateJob(JobOrig jobOrig) {
+		super.update(jobOrig);
 	}
 	
 	@Override
@@ -229,14 +229,14 @@ public class JobServiceImpl extends AbstractJobService implements JobService {
 	}
 	
 	@Override
-	public void sendSlackTestMessage(Job job) {
+	public void sendSlackTestMessage(JobOrig jobOrig) {
 		String subject = MessageProvider.getMessage(Locale.US, MessageConstants.SLACK_MESSAGE_SUBJECT);
 		String testMessage = MessageProvider.getMessage(Locale.US, MessageConstants.SLACK_TEST_MESSAGE);
-		communicationService.sendMessage(job.getSlackWebhookUrl(), subject, testMessage);
+		communicationService.sendMessage(jobOrig.getSlackWebhookUrl(), subject, testMessage);
 	}
 	
-	private void fireSubmitJobEvent(Job job) {
-		LOGGER.info(String.format("Submitting Job: %s", job.getId()));
-		submitJob.fire(job);
+	private void fireSubmitJobEvent(JobOrig jobOrig) {
+		LOGGER.info(String.format("Submitting Job: %s", jobOrig.getId()));
+		submitJob.fire(jobOrig);
 	}
 }

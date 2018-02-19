@@ -19,7 +19,6 @@
 package com.nowellpoint.api.exception;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -31,9 +30,15 @@ public class AuthenticationExceptionMapper implements ExceptionMapper<Authentica
 
 	@Override
 	public Response toResponse(AuthenticationException exception) {
-		Error error = new Error(exception.getError(), exception.getErrorDescription());
-		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code(exception.getError())
+				.addMessage(exception.getErrorDescription())
+				.build();
+		
+		Response response = Response.status(Response.Status.UNAUTHORIZED)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

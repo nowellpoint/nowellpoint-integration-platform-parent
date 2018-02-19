@@ -20,6 +20,10 @@ public interface OrganizationResource {
 	public Response getOrganization(
 			@PathParam("id") String id);
 	
+	@DELETE
+	@Path("{id}")
+	public Response deleteOrganization(@PathParam("id") String id);
+	
 	@POST
 	@Path("{id}/subscription")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -45,6 +49,11 @@ public interface OrganizationResource {
 			@FormParam("number") String number,
 			@FormParam("cvv") String cvv);
 	
+	@DELETE
+	@Path("{id}/subscription/credit-card")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeCreditCard(@PathParam("id") String id);
+	
 	@POST
 	@Path("{id}/subscription/billing-address")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -53,7 +62,7 @@ public interface OrganizationResource {
 			@PathParam("id") String id, 
 			@FormParam("street") String street,
 			@FormParam("city") String city,
-			@FormParam("stateCode") String stateCode,
+			@FormParam("state") String state,
 			@FormParam("postalCode") String postalCode,
 			@FormParam("countryCode") String countryCode);
 	
@@ -68,8 +77,8 @@ public interface OrganizationResource {
 			@FormParam("email") String email,
 			@FormParam("phone") String phone);
 	
-	@DELETE
-	@Path("{id}")
-	public Response deleteOrganization(@PathParam("id") String id);
-	
+	@GET
+	@Path("{id}/invoice/{invoiceNumber}")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response getInvoice(@PathParam("id") String id, @PathParam("invoiceNumber") String invoiceNumber);
 }

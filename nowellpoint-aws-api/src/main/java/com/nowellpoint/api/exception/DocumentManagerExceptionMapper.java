@@ -19,7 +19,6 @@
 package com.nowellpoint.api.exception;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -31,9 +30,15 @@ public class DocumentManagerExceptionMapper implements ExceptionMapper<DocumentM
 
 	@Override
 	public Response toResponse(DocumentManagerException exception) {
-		Error error = new Error(3000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Response.Status.CONFLICT);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("UNABLE_TO_SAVE")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.CONFLICT)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

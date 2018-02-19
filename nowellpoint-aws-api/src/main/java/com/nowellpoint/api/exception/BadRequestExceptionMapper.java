@@ -20,7 +20,6 @@ package com.nowellpoint.api.exception;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -31,9 +30,15 @@ public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestExce
 
 	@Override
 	public Response toResponse(BadRequestException exception) {
-		Error error = new Error(3000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("INVALID_REQUEST")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.BAD_REQUEST)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

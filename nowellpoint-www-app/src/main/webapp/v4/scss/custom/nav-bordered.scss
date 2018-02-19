@@ -16,7 +16,7 @@
 
       &:hover,
       &:focus {
-        color: $brand-primary;
+        color: theme-color("primary");
         background-color: transparent;
       }
 
@@ -27,7 +27,7 @@
         &:focus {
           font-weight: $nav-bordered-font-weight-active;
           color: $nav-bordered-color-active;
-          border-bottom-color: $brand-primary;
+          border-bottom-color: theme-color("primary");
         }
       }
 
@@ -73,7 +73,7 @@
         &,
         &:hover,
         &:focus {
-          border-left-color: $brand-primary;
+          border-left-color: theme-color("primary");
         }
       }
 

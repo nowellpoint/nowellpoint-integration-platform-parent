@@ -1,7 +1,7 @@
 .datepicker {
 	padding: 4px;
 	border-radius: 4px;
-	color: $gray-dark;
+	color: $gray-800;
 	&-inline {
 		width: 220px;
 	}
@@ -91,7 +91,7 @@
 	}
 	table tr td {
 		&.day:hover, &.day.focused {
-			background: $gray-lighter;
+			background: $gray-100;
 			cursor: pointer;
 		}
 		&.old,
@@ -121,14 +121,14 @@
 		&.range:hover,
 		&.range.disabled,
 		&.range.disabled:hover {
-			background:$gray-lighter;
+			background:$gray-100;
 			border-radius: 0;
 		}
 		&.range.today,
 		&.range.today:hover,
 		&.range.today.disabled,
 		&.range.today.disabled:hover {
-			$today-bg: mix(orange, $gray-lighter, 50%);
+			$today-bg: mix(orange, $gray-100, 50%);
 			@include button-variant(#000, $today-bg, darken($today-bg, 20%));
 			border-radius: 0;
 		}
@@ -136,14 +136,14 @@
 		&.selected:hover,
 		&.selected.disabled,
 		&.selected.disabled:hover {
-			@include button-variant(#fff, $gray-light, $gray);
+			@include button-variant(#fff, $gray-300, $gray-500);
 			text-shadow: 0 -1px 0 rgba(0,0,0,.25);
 		}
 		&.active,
 		&.active:hover,
 		&.active.disabled,
 		&.active.disabled:hover {
-			@include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+			@include button-variant(theme-color($key: "primary"), theme-color($key: "primary"));
 			text-shadow: 0 -1px 0 rgba(0,0,0,.25);
 		}
 		span {
@@ -156,7 +156,7 @@
 			cursor: pointer;
 			border-radius: 4px;
 			&:hover {
-				background: $gray-lighter;
+				background: $gray-100;
 			}
 			&.disabled,
 			&.disabled:hover {
@@ -168,7 +168,7 @@
 			&.active:hover,
 			&.active.disabled,
 			&.active.disabled:hover {
-				@include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+				@include button-variant(theme-color($key: "primary"), theme-color($key: "primary"));
 				text-shadow: 0 -1px 0 rgba(0,0,0,.25);
 			}
 			&.old,
@@ -186,7 +186,7 @@
 	tfoot tr th {
 		cursor: pointer;
 		&:hover {
-			background: $gray-lighter;
+			background: $gray-100;
 		}
 	}
 

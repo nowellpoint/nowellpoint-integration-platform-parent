@@ -4,14 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.CreateResult;
 import com.nowellpoint.client.model.DeleteResult;
 import com.nowellpoint.client.model.Error;
 import com.nowellpoint.client.model.Result;
-
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.util.Assert;
 
 public abstract class AbstractResource {
@@ -21,6 +22,11 @@ public abstract class AbstractResource {
 	
 	protected Token token;
 	protected Environment environment;
+	protected static ObjectMapper objectMapper;
+	
+	static {
+		objectMapper = new ObjectMapper();
+	}
 	
 	public AbstractResource(Token token) {
 		this.token = token;
@@ -38,24 +44,57 @@ public abstract class AbstractResource {
 		return Assert.isNotNull(value) ? dateTimeFormat.format(value) : null;
 	}
 	
-	class DeleteResultImpl extends ResultImpl implements DeleteResult {
+	class DeleteResultImpl implements DeleteResult {
+		
+		protected Boolean isSuccess;
+		
+		protected String error;
+		
+		protected String errorMessage;
 		
 		public DeleteResultImpl() {
 			super();
 		}
 		
-		public DeleteResultImpl(Error error) {
-			super(error);
+		public DeleteResultImpl(HttpResponse httpResponse) {
+			if (httpResponse.getStatusCode() < 300) {
+				this.isSuccess = Boolean.TRUE;
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				this.isSuccess = Boolean.FALSE;
+				this.error = error.getCode();
+				this.errorMessage = error.getErrorMessage();
+			}
+		}
+
+		@Override
+		public Boolean isSuccess() {
+			return isSuccess;
+		}
+
+		@Override
+		public String getError() {
+			return error;
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return errorMessage;
 		}
 	}
 	
-	class CreateResultImpl<T> extends ResultImpl implements CreateResult<T> {
+	class CreateResultImpl<T> extends ResultImpl<T> implements CreateResult<T> {
 		
 		private T target;
 		
 		public CreateResultImpl(T target) {
 			super();
 			this.target = target;
+		}
+		
+		public CreateResultImpl(Class<T> type, HttpResponse httpResponse) {
+			super(type, httpResponse);
+			this.target = (T) super.getTarget();
 		}
 		
 		public CreateResultImpl(Error error) {
@@ -68,13 +107,18 @@ public abstract class AbstractResource {
 		}
 	}
 	
-	class UpdateResultImpl<T> extends ResultImpl implements UpdateResult<T> {
+	class UpdateResultImpl<T> extends ResultImpl<T> implements UpdateResult<T> {
 		
 		private T target;
 		
 		public UpdateResultImpl(T target) {
 			super();
 			this.target = target;
+		}
+		
+		public UpdateResultImpl(Class<T> type, HttpResponse httpResponse) {
+			super(type, httpResponse);
+			this.target = (T) super.getTarget();
 		}
 		
 		public UpdateResultImpl(Error error) {
@@ -87,7 +131,9 @@ public abstract class AbstractResource {
 		}
 	}	
 	
-	private class ResultImpl implements Result {
+	private class ResultImpl<T> implements Result {
+		
+		private T target;
 		
 		protected Boolean isSuccess;
 		
@@ -103,6 +149,22 @@ public abstract class AbstractResource {
 			this.isSuccess = Boolean.FALSE;
 			this.error = error.getCode();
 			this.errorMessage = error.getErrorMessage();
+		}
+		
+		public ResultImpl(Class<T> type, HttpResponse httpResponse) {
+			if (httpResponse.getStatusCode() < 300) {
+				this.isSuccess = Boolean.TRUE;
+				this.target = (T) httpResponse.getEntity(type);
+			} else {
+				Error error = httpResponse.getEntity(Error.class);
+				this.isSuccess = Boolean.FALSE;
+				this.error = error.getCode();
+				this.errorMessage = error.getErrorMessage();
+			}
+		}
+		
+		public T getTarget() {
+			return target;
 		}
 
 		@Override

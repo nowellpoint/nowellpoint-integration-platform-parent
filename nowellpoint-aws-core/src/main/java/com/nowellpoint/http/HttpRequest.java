@@ -34,7 +34,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -295,15 +295,19 @@ public abstract class HttpRequest {
 			
 			if (Optional.ofNullable(body).isPresent()) {
 				
-				byte[] bytes = null;
+				String payload = null;
 				
 				if (contentType.equals(MediaType.APPLICATION_JSON)) {
-					bytes = objectMapper.writeValueAsString(body).getBytes();
+					if (body instanceof String) {
+						payload = objectMapper.readTree(String.valueOf(body)).toString();
+					} else {
+						payload = objectMapper.writeValueAsString(body);
+					}
 				} else {
-					bytes = String.valueOf(body).getBytes();
+					payload = String.valueOf(body);
 				}
 				
-				httpEntity = new ByteArrayEntity(bytes);
+				httpEntity = new StringEntity(payload);
 			}
 			
 			return httpEntity;

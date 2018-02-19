@@ -20,7 +20,6 @@ package com.nowellpoint.api.exception;
 
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -31,9 +30,15 @@ public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthoriz
 
 	@Override
 	public Response toResponse(NotAuthorizedException exception) {
-		Error error = new Error(4000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("NOT_AUTHORIZED")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.UNAUTHORIZED)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

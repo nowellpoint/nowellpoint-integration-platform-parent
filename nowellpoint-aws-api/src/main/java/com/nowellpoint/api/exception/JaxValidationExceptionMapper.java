@@ -20,8 +20,6 @@ package com.nowellpoint.api.exception;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -32,9 +30,15 @@ public class JaxValidationExceptionMapper implements ExceptionMapper<ValidationE
 
 	@Override
 	public Response toResponse(ValidationException exception) {
-		Error error = new Error("VALIDATION", exception.getMessage());
-		ResponseBuilder builder = Response.status(Status.BAD_REQUEST);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("VALIDATION_EXCEPTION")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.BAD_REQUEST)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

@@ -20,7 +20,6 @@ package com.nowellpoint.api.exception;
 
 import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -31,9 +30,15 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
 
 	@Override
 	public Response toResponse(ForbiddenException exception) {
-		Error error = new Error(3000, exception.getMessage());
-		ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
-		builder.entity(error);
-		return builder.build();
+		Error error = Error.builder()
+				.code("FORBIDDEN")
+				.addMessage(exception.getMessage())
+				.build();
+		
+		Response response = Response.status(Response.Status.FORBIDDEN)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

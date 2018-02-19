@@ -18,14 +18,29 @@
 
 package com.nowellpoint.api.model.document;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class ConnectorType {
 	
 	private String name;
 	
-	private String code;
+	private String scheme;
+	
+	private String grantType;
+	
+	private String displayName;
+	
+	private String authEndpoint;
+	
+	private String iconHref;
+	
+	private Boolean isSandbox;
+	
+	private Set<Service> services;
 	
 	public ConnectorType() {
-		
+		services = new LinkedHashSet<Service>();
 	}
 
 	public String getName() {
@@ -36,11 +51,59 @@ public class ConnectorType {
 		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public String getScheme() {
+		return scheme;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setScheme(String scheme) {
+		this.scheme = scheme;
+	}
+
+	public String getGrantType() {
+		return grantType;
+	}
+
+	public void setGrantType(String grantType) {
+		this.grantType = grantType;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getAuthEndpoint() {
+		return authEndpoint;
+	}
+
+	public void setAuthEndpoint(String authEndpoint) {
+		this.authEndpoint = authEndpoint;
+	}
+
+	public String getIconHref() {
+		return iconHref;
+	}
+
+	public void setIconHref(String iconHref) {
+		this.iconHref = iconHref;
+	}
+
+	public Boolean getIsSandbox() {
+		return isSandbox;
+	}
+
+	public void setIsSandbox(Boolean isSandbox) {
+		this.isSandbox = isSandbox;
+	}
+
+	public Set<Service> getServices() {
+		return services;
+	}
+
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 }

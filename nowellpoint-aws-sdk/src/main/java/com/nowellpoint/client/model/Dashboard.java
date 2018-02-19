@@ -25,47 +25,23 @@ public class Dashboard extends AbstractResource {
 		return connectors;
 	}
 
-	public void setConnectors(Integer connectors) {
-		this.connectors = connectors;
-	}
-
 	public Integer getJobs() {
 		return jobs;
-	}
-
-	public void setJobs(Integer jobs) {
-		this.jobs = jobs;
 	}
 
 	public List<JobStatusAggregation> getJobStatusSummary() {
 		return jobStatusSummary;
 	}
 
-	public void setJobStatusSummary(List<JobStatusAggregation> jobStatusSummary) {
-		this.jobStatusSummary = jobStatusSummary;
-	}
-
 	public List<JobExecution> getRecentJobExecutions() {
 		return recentJobExecutions;
-	}
-
-	public void setRecentJobExecutions(List<JobExecution> recentJobExecutions) {
-		this.recentJobExecutions = recentJobExecutions;
 	}
 
 	public String getData() {
 		return data;
 	}
 
-	public void setData(String data) {
-		this.data = data;
-	}
-
 	public Date getLastRefreshedOn() {
 		return lastRefreshedOn;
-	}
-
-	public void setLastRefreshedOn(Date lastRefreshedOn) {
-		this.lastRefreshedOn = lastRefreshedOn;
 	}
 }

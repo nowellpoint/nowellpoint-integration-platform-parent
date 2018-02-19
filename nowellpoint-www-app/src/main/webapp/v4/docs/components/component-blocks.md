@@ -27,7 +27,7 @@ We've also made it easy to integrate embeded content for more interactive block 
   <div class="block-foreground">
     <h1 class="block-title">An embed block</h1>
     <h4 class="text-muted">Use block-background to integrate interactive backgrounds.</h4>
-    <button class="btn btn-secondary btn-outline-secondary mt-1">With a simple button</button>
+    <button class="btn btn-outline-secondary mt-1">With a simple button</button>
   </div>
   <div class="block-background">
     <iframe frameBorder="0" src="https://a.tiles.mapbox.com/v4/jacobthornton.6681fb42/attribution.html?access_token=pk.eyJ1IjoiamFjb2J0aG9ybnRvbiIsImEiOiJlMGRmZmJlNDZkNDhlN2EzMTQ0YWFiNjhlN2RiZWY1ZCJ9.hO-UNIIplnebJYkya-8TEQ"></iframe>

@@ -55,7 +55,7 @@ import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.OrganizationController;
-import com.nowellpoint.www.app.view.SalesforceConnectorController;
+import com.nowellpoint.www.app.view.ConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
@@ -147,18 +147,12 @@ public class Application implements SparkApplication {
 		// user profile routes
 		//
 
-		get(Path.Route.USER_PROFILE,
+		get(Path.Route.USER_PROFILE_VIEW,
 				(request, response) -> UserProfileController.viewUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_INVOICE_DOWNLOAD,
-				(request, response) -> UserProfileController.downloadInvoice(configuration, request, response));
-		post(Path.Route.USER_PROFILE,
+		
+		post(Path.Route.USER_PROFILE_VIEW,
 				(request, response) -> UserProfileController.updateUserProfile(configuration, request, response));
-		get(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController
-				.confirmDeactivateAccountProfile(configuration, request, response));
-		post(Path.Route.USER_PROFILE_DEACTIVATE, (request, response) -> UserProfileController
-				.deactivateAccountProfile(configuration, request, response));
-		delete(Path.Route.USER_PROFILE_PICTURE,
-				(request, response) -> UserProfileController.removeProfilePicture(configuration, request, response));
+		
 		post(Path.Route.USER_PROFILE_ADDRESS,
 				(request, response) -> UserProfileController.updateAddress(configuration, request, response));
 
@@ -166,24 +160,45 @@ public class Application implements SparkApplication {
 		// organization routes
 		//
 
-		get(Path.Route.ORGANIZATION_VIEW,
-				(request, response) -> OrganizationController.viewOrganization(configuration, request, response));
-		get(Path.Route.ORGANIZATION_LIST_PLANS,
-				(request, response) -> OrganizationController.listPlans(configuration, request, response));
-		get(Path.Route.ORGANIZATION_REVIEW_PLAN,
-				(request, response) -> OrganizationController.reviewPlan(configuration, request, response));
-		post(Path.Route.ORGANIZATION_CHANGE_PLAN,
-				(request, response) -> OrganizationController.changePlan(configuration, request, response));
+		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
+				-> OrganizationController.viewOrganization(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
+				-> OrganizationController.listPlans(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
+				-> OrganizationController.reviewPlan(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
+				-> OrganizationController.changePlan(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+				-> OrganizationController.updatePaymentMethod(configuration, request, response));
+		
+		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+				-> OrganizationController.removeCreditCard(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response) 
+				-> OrganizationController.updateBillingAddress(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
+				-> OrganizationController.updateBillingContact(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
+				-> OrganizationController.getInvoice(configuration, request, response));
 
 		//
 		// authentication routes
 		//
 
-		get(Path.Route.LOGIN,
-				(request, response) -> AuthenticationController.serveLoginPage(configuration, request, response));
-		post(Path.Route.LOGIN, (request, response) -> AuthenticationController.login(configuration, request, response));
-		get(Path.Route.LOGOUT,
-				(request, response) -> AuthenticationController.logout(configuration, request, response));
+		get(Path.Route.LOGIN, (request, response) 
+				-> AuthenticationController.serveLoginPage(configuration, request, response));
+		
+		post(Path.Route.LOGIN, (request, response) 
+				-> AuthenticationController.login(configuration, request, response));
+		
+		get(Path.Route.LOGOUT, (request, response) 
+				-> AuthenticationController.logout(configuration, request, response));
 
 		//
 		// start routes
@@ -210,50 +225,62 @@ public class Application implements SparkApplication {
 				(request, response) -> SalesforceOauthController.oauth(configuration, request, response));
 		get(Path.Route.SALESFORCE_OAUTH.concat("/callback"),
 				(request, response) -> SalesforceOauthController.callback(configuration, request, response));
-		get(Path.Route.SALESFORCE_OAUTH.concat("/token"),
-				(request, response) -> SalesforceOauthController.getSalesforceToken(configuration, request, response));
 
 		//
 		// signup routes
 		//
 
-		get(Path.Route.PLANS, (request, response) -> SignUpController.plans(configuration, request, response));
-		get(Path.Route.FREE_ACCOUNT,
-				(request, response) -> SignUpController.freeAccount(configuration, request, response));
-		get(Path.Route.SIGN_UP, (request, response) -> SignUpController.paidAccount(configuration, request, response));
-		post(Path.Route.SIGN_UP, (request, response) -> SignUpController.signUp(configuration, request, response));
-		get(Path.Route.VERIFY_EMAIL,
-				(request, response) -> SignUpController.verifyEmail(configuration, request, response));
-		post(Path.Route.PROVISION, (request, response) -> SignUpController.provision(configuration, request, response));
+		get(Path.Route.PLANS, (request, response) 
+				-> SignUpController.plans(configuration, request, response));
+		
+		get(Path.Route.FREE_ACCOUNT, (request, response) 
+				-> SignUpController.freeAccount(configuration, request, response));
+		
+		get(Path.Route.SIGN_UP, (request, response) 
+				-> SignUpController.paidAccount(configuration, request, response));
+		
+		post(Path.Route.SIGN_UP, (request, response) 
+				-> SignUpController.signUp(configuration, request, response));
+		
+		get(Path.Route.VERIFY_EMAIL, (request, response) 
+				-> SignUpController.verifyEmail(configuration, request, response));
+		
+		post(Path.Route.PROVISION, (request, response) 
+				-> SignUpController.provision(configuration, request, response));
 
 		//
-		// salesforce connector routes
+		// connector routes
 		//
 
-		get(Path.Route.CONNECTORS_SALESFORCE_LIST, (request, response) -> SalesforceConnectorController
-				.listSalesforceConnectors(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_NEW, (request, response) -> SalesforceConnectorController
-				.newSalesforceConnector(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_VIEW, (request, response) -> SalesforceConnectorController
-				.viewSalesforceConnector(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_FLOW_NEW,
-				(request, response) -> SalesforceConnectorController.newFlow(configuration, request, response));
-		post(Path.Route.CONNECTORS_SALESFORCE_UPDATE, (request, response) -> SalesforceConnectorController
-				.updateSalesforceConnector(configuration, request, response));
-		delete(Path.Route.CONNECTORS_SALESFORCE_DELETE, (request, response) -> SalesforceConnectorController
-				.deleteSalesforceConnector(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_EDIT, (request, response) -> SalesforceConnectorController
-				.editSalesforceConnector(configuration, request, response));
-		post(Path.Route.CONNECTORS_SALESFORCE_TEST, (request, response) -> SalesforceConnectorController
-				.testSalesforceConnector(configuration, request, response));
-		post(Path.Route.CONNECTORS_SALESFORCE_BUILD, (request, response) -> SalesforceConnectorController
-				.buildSalesforceConnector(configuration, request, response));
-		post(Path.Route.CONNECTORS_SALESFORCE_METADATA_BACKUP,
-				(request, response) -> SalesforceConnectorController.metadataBackup(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_LIST,
-				(request, response) -> SalesforceConnectorController.listSObjects(configuration, request, response));
-		get(Path.Route.CONNECTORS_SALESFORCE_SOBJECT_VIEW,
-				(request, response) -> SalesforceConnectorController.viewSObject(configuration, request, response));
+		get(Path.Route.CONNECTORS_LIST, (request, response) 
+				-> ConnectorController.listConnectors(configuration, request, response));
+		
+		get(Path.Route.CONNECTORS_SHOW, (request, response) 
+				-> ConnectorController.showConnectors(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_ADD, (request, response) 
+				-> ConnectorController.addConnector(configuration, request, response));
+		
+		get(Path.Route.CONNECTORS_EDIT, (request, response) 
+				-> ConnectorController.editConnector(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_CONNECT, (request, response) 
+				-> ConnectorController.connectConnector(configuration, request, response));
+		
+		get(Path.Route.CONNECTORS_VIEW, (request, response) 
+				-> ConnectorController.viewConnector(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_UPDATE, (request, response) 
+				-> ConnectorController.updateConnector(configuration, request, response));
+		
+		delete(Path.Route.CONNECTORS_DELETE, (request, response) 
+				-> ConnectorController.deleteConnector(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
+				-> ConnectorController.disconnectConnector(configuration, request, response));
+		
+		post(Path.Route.CONNECTORS_REFRESH, (request, response) 
+				-> ConnectorController.refreshConnector(configuration, request, response));
 
 		//
 		// jobs routes

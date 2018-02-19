@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.ValidationException;
+
 import org.jboss.logging.Logger;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -33,7 +35,10 @@ import com.nowellpoint.api.rest.domain.Subscription;
 import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
+import com.nowellpoint.api.util.ClaimsContext;
+import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.Properties;
 
 public class OrganizationServiceImpl extends AbstractOrganizationService implements OrganizationService {
@@ -59,6 +64,34 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	@Override
 	public Organization findByDomain(String domain) {
 		return super.query( Filters.eq( "domain", domain ));
+	}
+	
+	@Override
+	public Organization removeCreditCard(String id) {
+		
+		Organization organization = findById(id);
+		
+		if ("FREE".equalsIgnoreCase(organization.getSubscription().getPlanCode())) {
+			
+			deleteCreditCard(organization.getSubscription().getCreditCard().getToken());
+			
+			Subscription subscription = Subscription.builder()
+					.from(organization.getSubscription())
+					.creditCard(null)
+					.build();
+			
+			Organization newInstance = Organization.builder()
+					.from(organization)
+					.subscription(subscription)
+					.build();
+			
+			super.update(newInstance);
+			
+			return newInstance;
+			
+		} else {
+			throw new ValidationException(String.format(MessageConstants.UNABLE_TO_REMOVE_CREDIT_CARD, organization.getSubscription().getPlanName()));
+		}
 	}
 
 	@Override
@@ -97,6 +130,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -169,6 +203,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -203,7 +238,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.cardholderName(cardholderName)
 				.expirationMonth(expirationMonth)
 				.expirationYear(expirationYear)
-				.number(number)
+				.number(Assert.isEmpty(number) ? null : number)
 				.cvv(cvv)
 				.customerId(organization.getNumber())
 				.billingAddressId(organization.getSubscription().getBillingAddress().getId());
@@ -229,14 +264,14 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	}
 	
 	@Override
-	public Organization updateBillingAddress(String id, String street, String city, String stateCode, String postalCode, String countryCode) {
+	public Organization updateBillingAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
 		
 		Organization organization = findById(id);
 		
 		AddressRequest addressRequest = new AddressRequest()
 				.postalCode(postalCode)
 				.streetAddress(street)
-				.region(stateCode)
+				.region(state)
 				.locality(city)
 				.countryCodeAlpha2(countryCode);
 		
@@ -330,6 +365,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -418,6 +454,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 				.planId(plan.getId())
 				.planCode(plan.getPlanCode())
 				.planName(plan.getPlanName())
+				.features(plan.getFeatures())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -457,7 +494,7 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	@Override
 	public byte[] getInvoice(String id, String invoiceNumber) {
-		if (UserContext.getPrincipal().getName().equals(id)) {
+		if (ClaimsContext.getClaims().getBody().getAudience().equals(id)) {
 			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
 			builder.setBucket("nowellpoint-invoices");
 			builder.setKey(invoiceNumber);
@@ -475,19 +512,12 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 			} catch (IOException e) {
 				LOGGER.error(e);
 			}
+		} else {
+			throw new IllegalArgumentException("Unauthorized: The orgaization assoicated with your profile does not match the organization for the requested invoice.");
 		}
 		
 		return null;
 	}
-	
-//	private com.braintreegateway.Plan getPlan(String planId) {
-//		List<com.braintreegateway.Plan> plans = gateway.plan().all();
-//		Optional<com.braintreegateway.Plan> optional = plans.stream().filter(p -> p.getId().equals(planId)).findFirst();
-//		if (optional.isPresent()) {
-//			return optional.get();
-//		}
-//		return null;
-//	}
 	
 	private Result<com.braintreegateway.Subscription> createSubscription(SubscriptionRequest subscriptionRequest) {
 		return gateway.subscription().create(subscriptionRequest);
@@ -508,12 +538,22 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 	
 	private Result<com.braintreegateway.CreditCard> createCreditCard(CreditCardRequest creditCardRequest) {
 		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().create(creditCardRequest);
+		if (Assert.isNotNull(result.getMessage())) {
+			throw new ValidationException(result.getMessage());
+		}
 		return result;
 	}
 	
 	private Result<com.braintreegateway.CreditCard> updateCreditCard(String token, CreditCardRequest creditCardRequest) {
 		Result<com.braintreegateway.CreditCard> result = gateway.creditCard().update(token, creditCardRequest);
+		if (Assert.isNotNull(result.getMessage())) {
+			throw new ValidationException(result.getMessage());
+		}
 		return result;
+	}
+	
+	private void deleteCreditCard(String token) {
+		gateway.creditCard().delete(token);
 	}
 	
 	private Result<com.braintreegateway.Customer> createCustomer(CustomerRequest customerRequest) {

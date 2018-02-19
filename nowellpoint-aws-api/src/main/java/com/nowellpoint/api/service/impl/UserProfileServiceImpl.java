@@ -22,14 +22,17 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.nowellpoint.api.rest.domain.Address;
+import com.nowellpoint.api.rest.domain.AddressRequest;
 import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.OrganizationInfo;
 import com.nowellpoint.api.rest.domain.Photos;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.rest.domain.UserProfile;
+import com.nowellpoint.api.rest.domain.UserProfileRequest;
 import com.nowellpoint.api.service.EmailService;
 import com.nowellpoint.api.service.IdentityProviderService;
 import com.nowellpoint.api.service.UserProfileService;
+import com.nowellpoint.api.util.ClaimsContext;
 import com.nowellpoint.api.util.UserContext;
 import com.okta.sdk.resource.user.User;
 
@@ -97,7 +100,6 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 				.firstName(firstName)
 				.lastName(lastName)
 				.email(email)
-				.username(email)
 				.address(address)
 				.locale(Locale.getDefault())
 				.timeZone(TimeZone.getDefault())
@@ -119,15 +121,48 @@ public class UserProfileServiceImpl extends AbstractUserProfileService implement
 	}
 	
 	@Override
-	public UserProfile updateAddress(String id, String street, String city, String state, String postalCode, String countryCode) {
+	public UserProfile updateUserProfile(String id, UserProfileRequest request) {
+		UserProfile original = findById(id);
+		
+		UserInfo userInfo = UserInfo.of(ClaimsContext.getClaims().getBody().getSubject());
+		
+		Date now = Date.from(Instant.now());
+		
+		identityProviderService.updateUser(
+				original.getReferenceId(), 
+				request.getEmail(), 
+				request.getFirstName(), 
+				request.getLastName());
+		
+		UserProfile userProfile = UserProfile.builder()
+				.from(original)
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.lastUpdatedBy(userInfo)
+				.lastUpdatedOn(now)
+				.locale(new Locale(request.getLocale()))
+				.phone(request.getPhone())
+				.timeZone(TimeZone.getTimeZone(request.getTimeZone()))
+				.title(request.getTitle())
+				.build();
+		
+		update(userProfile);
+		
+		return userProfile;
+	}
+	
+	@Override
+	public UserProfile updateAddress(String id, AddressRequest request) {
 		UserProfile original = findById(id);
 		
 		Address address = Address.builder()
 				.from(original.getAddress())
-				.city(city)
-				.countryCode(countryCode)
-				.stateCode(state)
-				.street(street)
+				.city(request.getCity())
+				.countryCode(request.getCountryCode())
+				.postalCode(request.getPostalCode())
+				.state(request.getState())
+				.street(request.getStreet())
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		

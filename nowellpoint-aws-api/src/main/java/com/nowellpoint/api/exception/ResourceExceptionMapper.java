@@ -19,7 +19,6 @@
 package com.nowellpoint.api.exception;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -32,14 +31,17 @@ public class ResourceExceptionMapper implements ExceptionMapper<ResourceExceptio
 
 	@Override
 	public Response toResponse(ResourceException exception) {		
-		Error error = new Error(
-				exception.getCode(),
-				exception.getCauses() != null ?
-				exception.getCauses().get(0).getSummary() :
-					exception.getMessage());
+		Error error = Error.builder()
+				.code(exception.getCode())
+				.addMessage(exception.getCauses() != null ?
+						exception.getCauses().get(0).getSummary() :
+							exception.getMessage())
+				.build();
 		
-		ResponseBuilder builder = Response.status(Response.Status.BAD_REQUEST);
-		builder.entity(error);
-		return builder.build();
+		Response response = Response.status(Response.Status.BAD_REQUEST)
+				.entity(error)
+				.build();
+		
+		return response;
 	}
 }

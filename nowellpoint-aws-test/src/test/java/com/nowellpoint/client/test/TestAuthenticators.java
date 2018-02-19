@@ -1,10 +1,6 @@
 package com.nowellpoint.client.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,11 +17,7 @@ import com.nowellpoint.client.auth.PasswordGrantRequest;
 import com.nowellpoint.client.auth.RevokeTokenRequest;
 import com.nowellpoint.client.auth.impl.OauthException;
 import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.SalesforceConnector;
-import com.nowellpoint.client.model.SalesforceConnectorList;
-import com.nowellpoint.client.model.SalesforceConnectorRequest;
 import com.nowellpoint.client.model.Token;
-import com.nowellpoint.client.model.UpdateResult;
 
 public class TestAuthenticators {
 	
@@ -74,35 +66,6 @@ public class TestAuthenticators {
 	}
 	
 	@Test
-	@Ignore
-	public void testUpdateSalesforceConnector() {
-		String name = UUID.randomUUID().toString();
-		
-		SalesforceConnectorRequest salesforceConnectorRequest = new SalesforceConnectorRequest()
-				.withName(name);
-		
-		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.getSalesforceConnectors();
-		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
-		
-		UpdateResult<SalesforceConnector> updateResult = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.update(salesforceConnector.getId(), salesforceConnectorRequest);
-		
-		assertTrue(updateResult.isSuccess());
-		
-		salesforceConnector = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.get(salesforceConnector.getId());
-		
-		assertEquals(salesforceConnector.getName(), name);
-		
-		System.out.println(salesforceConnector.getName());
-	}
-	
-	@Test
 	public void testGetIdentity() {
 		
 		long start = System.currentTimeMillis();
@@ -116,19 +79,6 @@ public class TestAuthenticators {
 		System.out.println("testGetAccountProfile : " + (System.currentTimeMillis() - start));
 		
 		System.out.println(identity.getName());
-	}
-	
-	
-	@Test
-	@Ignore
-	public void testConnection() {
-		long start = System.currentTimeMillis();
-		
-		SalesforceConnectorList salesforceConnectors = NowellpointClient.defaultClient(token)
-				.salesforceConnector()
-				.getSalesforceConnectors();
-		
-		SalesforceConnector salesforceConnector = salesforceConnectors.getItems().get(0);
 	}
 	
 	@Test

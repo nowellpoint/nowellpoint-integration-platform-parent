@@ -43,12 +43,11 @@
         <h2>${labels["setting.up.connector"]}</h2>
     </div>
 
-
     <script>
-        $(document).ready(function(e) {
+       console.log(1);
             var params = location.search.substr(1);
+            console.log(params);
             window.location.replace("${links['salesforce.oauth']}/token?" + params);
-        });
     </script>
 
 </body>

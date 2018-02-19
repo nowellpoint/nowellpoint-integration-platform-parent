@@ -1,25 +1,21 @@
-<div id="sidebar-wrapper" class="menu">
+<div class="col-md-3 col-xs-1 p-l-0 p-r-0 collapse in" id="sidebar">
+            <div class="list-group panel">
+
     <ul class="nav flex-column sidebar-nav">
-        <li class="nav-item sidebar-brand">
-                ${messages["application.title"]}
-        </li>
         <li class="nav-item">
             &nbsp;
         </li>    
         <li class="nav-item">
-            <a class="nav-link" href="/app/dashboard">
+            <a class="nav-link" href="${links['dashboard']}">
                ${messages["dashboard"]}
             </a>
         </li>
         <li class="nav-item">
             &nbsp;
         </li> 
-        <li class="nav-item menu-title text-muted">
-            ${messages["connectors"]}
-        </li> 
         <li class="nav-item">
-            <a class="nav-link" href="${links['salesforce.connector']}">
-               ${messages["salesforce"]}
+            <a class="nav-link" href="${links['connectors']}">
+               ${messages["connectors"]}
             </a>
         </li>
         <li class="nav-item">
@@ -43,3 +39,4 @@
         </li>
     </ul>
 </div>
+</div>    

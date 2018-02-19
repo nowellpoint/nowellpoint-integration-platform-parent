@@ -442,8 +442,8 @@ Entypo icons can be placed in just about any other element, so long as they are 
 
 {% example html %}
 <ul class="nav nav-pills">
-  <li class="nav-item active">
-    <a class="nav-link" href="#">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">
       <span class="icon icon-chat"></span>
       Discussions
     </a>

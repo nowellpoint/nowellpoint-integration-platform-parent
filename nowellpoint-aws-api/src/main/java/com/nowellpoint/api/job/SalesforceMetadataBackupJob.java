@@ -32,10 +32,7 @@ import com.nowellpoint.api.model.document.JobExecution;
 import com.nowellpoint.api.model.document.JobOutput;
 import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.JobScheduleOptions;
-import com.nowellpoint.api.rest.domain.SalesforceConnectionString;
-import com.nowellpoint.api.service.SalesforceService;
 import com.nowellpoint.api.service.VaultEntryService;
-import com.nowellpoint.api.service.impl.SalesforceServiceImpl;
 import com.nowellpoint.api.service.impl.VaultEntryServiceImpl;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.client.sforce.Client;
@@ -66,7 +63,6 @@ import com.sendgrid.Method;
 import com.sendgrid.Personalization;
 import com.sendgrid.Request;
 import com.sendgrid.SendGrid;
-import com.sforce.ws.ConnectionException;
 
 public class SalesforceMetadataBackupJob extends AbstractCacheService implements org.quartz.Job {
 	
@@ -106,17 +102,13 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		VaultEntry vaultEntry = vaultEntryService.retrive(job.getSource().getConnectionString());
 		
-		SalesforceConnectionString salesforceConnectionString = SalesforceConnectionString.of(vaultEntry.getValue());
-		
-		SalesforceService salesforceService = new SalesforceServiceImpl();
-		
 		try {
 			
 			// 
 			// Authenticate
 			//
 			
-			Token token = salesforceService.login(salesforceConnectionString);
+			Token token = null;
 			
 			//
 			// Get Identity
@@ -184,7 +176,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		} catch (OauthException e) {
 			job.setStatus("FAILED");
 			job.setFailureMessage(e.getError());
-		} catch (ConnectionException | JsonProcessingException | InterruptedException | ExecutionException e) {
+		} catch (JsonProcessingException | InterruptedException | ExecutionException e) {
 			job.setStatus("FAILED");
 			job.setFailureMessage(e.getMessage());
 			try {
@@ -231,7 +223,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		
 		if (Assert.isNotNull(job.getNotificationEmail())) {
     		
-    		String subject = String.format("[%s] Scheduled Job Request Complete", salesforceConnectionString.getOrganizationId());
+    		String subject = String.format("[%s] Scheduled Job Request Complete", "");
     		
     		try {
 				sendNotification(job.getNotificationEmail(), subject, message);
@@ -313,9 +305,9 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    
 	    Request request = new Request();
 	    request.method = Method.POST;
-    	request.endpoint = "mail/send";
-    	request.body = mail.build();
-    	sendgrid.api(request);
+	    request.endpoint = "mail/send";
+	    request.body = mail.build();
+	    sendgrid.api(request);
 	}
 	
 	/**

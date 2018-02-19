@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.api.rest.OrganizationResource;
 import com.nowellpoint.mongodb.document.MongoDocument;
+import com.nowellpoint.util.Assert;
 
 @Value.Immutable
 @Value.Modifiable
@@ -29,27 +31,40 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 	public abstract @Nullable String getName();
 	public abstract @Nullable Subscription getSubscription();
 	public abstract @Nullable Set<Transaction> getTransactions();
-	public abstract @Nullable Set<UserProfile> getUsers();
+	public abstract @Nullable Set<UserInfo> getUsers();
 	
 	@Override
 	public Meta getMeta() {
-		return getMetaAs(OrganizationResource.class);
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(OrganizationResource.class)
+				.build();
+	}
+	
+	@Override
+	public void replace(MongoDocument document) {
+		modelMapper.map(document, this);
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(Organization.class);
+	}
+	
+	@Override
+	public MongoDocument toDocument() {
+		return modelMapper.map(this, com.nowellpoint.api.model.document.Organization.class);
 	}
 	
 	public static Organization of(com.nowellpoint.api.model.document.Organization source) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
+		ModifiableOrganization organization = sourceToModifiableOrganization(source);
 		return organization.toImmutable();
 	}
 	
-	public static Organization of(com.nowellpoint.api.model.document.Organization source, Set<UserProfile> users) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
-		organization.setUsers(users);
-		return organization.toImmutable();
-	}
-	
-	public static Organization updateSubscription(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
-		ModifiableOrganization organization = modelMapper.map(source, ModifiableOrganization.class);
+	public static Organization of(com.nowellpoint.api.model.document.Organization source, JsonNode subscriptionEvent) {
 		
+		ModifiableOrganization organization = sourceToModifiableOrganization(source);
+				
 		ModifiableSubscription subscription = ModifiableSubscription.create()
 				.from(organization.getSubscription())
 				.setStatus(subscriptionEvent.get("status").asText())
@@ -96,18 +111,27 @@ public abstract class AbstractOrganization extends AbstractImmutableResource {
 		return organization.toImmutable();
 	}
 	
-	@Override
-	public void fromDocument(MongoDocument document) {
-		modelMapper.map(document, this);
-	}
-	
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(AbstractOrganization.class);
-	}
-	
-	@Override
-	public MongoDocument toDocument() {
-		return modelMapper.map(this, com.nowellpoint.api.model.document.Organization.class);
+	private static ModifiableOrganization sourceToModifiableOrganization(com.nowellpoint.api.model.document.Organization source) {
+		if (Assert.isNull(source)) {
+			return null;
+		}
+		
+		Set<Transaction> transactions = source.getTransactions().stream()
+				.map(t -> Transaction.of(t))
+				.collect(Collectors.toSet());
+		
+		ModifiableOrganization organization = new ModifiableOrganization()
+				.setCreatedBy(UserInfo.of(source.getCreatedBy()))
+				.setCreatedOn(source.getCreatedOn())
+				.setDomain(source.getDomain())
+				.setId(source.getId().toString())
+				.setLastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
+				.setLastUpdatedOn(source.getLastUpdatedOn())
+				.setName(source.getName())
+				.setNumber(source.getNumber())
+				.setSubscription(Subscription.of(source.getSubscription()))
+				.setTransactions(transactions);
+		
+		return organization;
 	}
 }

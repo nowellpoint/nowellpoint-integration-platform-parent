@@ -51,18 +51,17 @@ public class JobResource extends AbstractResource {
 		HttpResponse httpResponse = RestResource.get(token.getEnvironmentUrl())
 				.bearerAuthorization(token.getAccessToken())
 				.header("Content-Type", MediaType.APPLICATION_JSON)
-				.path(RESOURCE_CONTEXT)
-    			.execute();
-		
+				.path(RESOURCE_CONTEXT).execute();
+
 		JobList resources = null;
-		
+
 		if (httpResponse.getStatusCode() == Status.OK) {
 			resources = httpResponse.getEntity(JobList.class);
-    	} else {
-    		throw new ServiceUnavailableException(httpResponse.getAsString());
-    	}
-    	
-    	return resources;
+		} else {
+			throw new ServiceUnavailableException(httpResponse.getAsString());
+		}
+
+		return resources;
 	}
 
 	public Job get(String id) {

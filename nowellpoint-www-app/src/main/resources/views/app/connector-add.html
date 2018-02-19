@@ -1,0 +1,68 @@
+<#import "template.html" as t>
+    <@t.page>
+        <div class="container-fluid">
+            <div class="container mt-3">
+                <div id="success" class="alert alert-success hidden">
+                    <span class="icon icon-check"></span> ${labels["success.message"]}
+                </div>
+                <div id="error"></div>
+                <div id="overlay"></div>
+                <div class="row">
+                    <div class="col-12">
+                        <a href="${links['connectors']}" id="back" class="btn btn-outline-primary btn-sm" role="button"><span class="icon icon-back"></span></a>&emsp;${labels["back.to.connectors"]}
+                    </div>
+                </div>
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h4 class="dashhead-subtitle">&nbsp;</h4>
+                        <h2 class="dashhead-title">${labels["available.connectors"]}</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-9 col-xs-12">
+                        <form name="connectorForm" id="connectorForm" role="form" method="post" action="${links['connectors']}/add">
+                            <input type="hidden" name="type" value="SALESFORCE_PRODUCTION">
+                            <button id="addConnector" class="btn btn-link" class="d-block mb-4" style="height:75px; width: 75px; cursor: pointer">
+                                <img src="https://d3iep6okqojnln.cloudfront.net/salesforce-logo.png" alt="icon" class="rounded">
+                                <br>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            /*-----------------------------------------------------------
+             *
+             *
+             */
+
+            $(document).on('click', 'button#addConnector', function() {
+
+                $('#overlay').toggle();
+
+                $('#error').hide();
+
+                $form = $("#connectorForm");
+
+                $.ajax({
+                    method: $form.attr('method'),
+                    url: $form.attr('action'),
+                    dataType: "html",
+                    data: $form.serialize(),
+                    complete: function(response) {
+                        $('#overlay').toggle();
+                        if (response.status == 200) {
+                            $(location).attr('href', response.getResponseHeader('Location'));
+                        } else {
+                            $('#error').html(response.responseText);
+                        }
+                    }
+                });
+
+                return false;
+            });
+        </script>
+        
+    </@t.page>
