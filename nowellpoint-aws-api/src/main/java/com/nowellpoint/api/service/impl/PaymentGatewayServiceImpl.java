@@ -14,15 +14,16 @@ import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.exceptions.NotFoundException;
 import com.nowellpoint.api.service.PaymentGatewayService;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 
 public class PaymentGatewayServiceImpl implements PaymentGatewayService {
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
-			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
-			System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
-			System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
-			System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+			Environment.parseEnvironment(EnvUtil.getValue(Variable.BRAINTREE_ENVIRONMENT)),
+			EnvUtil.getValue(Variable.BRAINTREE_MERCHANT_ID),
+			EnvUtil.getValue(Variable.BRAINTREE_PUBLIC_KEY),
+			EnvUtil.getValue(Variable.BRAINTREE_PRIVATE_KEY)
 	);
 	
 	static {

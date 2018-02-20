@@ -14,6 +14,8 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.api.rest.domain.Organization;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.aws.data.CacheManager;
 import com.nowellpoint.aws.data.QueueListener;
 import com.nowellpoint.mongodb.Datastore;
@@ -21,7 +23,6 @@ import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.mongodb.document.MongoDocument;
-import com.nowellpoint.util.Properties;
 
 @QueueListener(queueName="PAYMENT_GATEWAY_INBOUND")
 public class SubscriptionEventListener implements MessageListener {
@@ -37,7 +38,7 @@ public class SubscriptionEventListener implements MessageListener {
 		
 		try {
 			
-			if (textMessage.getStringProperty("WEBHOOK_NOTIFICATION_INSTANCE").equals(System.getProperty(Properties.BRAINTREE_ENVIRONMENT))) {
+			if (textMessage.getStringProperty("WEBHOOK_NOTIFICATION_INSTANCE").equals(EnvUtil.getValue(Variable.BRAINTREE_ENVIRONMENT))) {
 				JsonNode subscriptionEvent = new ObjectMapper().readValue(textMessage.getText(), JsonNode.class);
 				
 				String id = subscriptionEvent.get("id").asText();

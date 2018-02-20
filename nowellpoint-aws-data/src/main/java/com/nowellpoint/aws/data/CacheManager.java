@@ -26,7 +26,6 @@ import javax.servlet.annotation.WebListener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.util.Properties;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -50,7 +49,7 @@ public class CacheManager implements ServletContextListener {
 		try {
 			jedisPool.destroy();
         } catch (Exception e) {
-        	LOGGER.warning(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
+        		LOGGER.warning(String.format("Cannot properly close Jedis pool %s", e.getMessage()));
         }
 		
 		LOGGER.info("disconnecting from cache...is connected: " + ! jedisPool.isClosed());
@@ -66,12 +65,12 @@ public class CacheManager implements ServletContextListener {
 		
 		jedisPool = new JedisPool(
 				poolConfig, 
-				System.getProperty(Properties.REDIS_HOST), 
-				Integer.valueOf(System.getProperty(Properties.REDIS_PORT)), 
+				System.getenv("REDIS_HOST"), 
+				Integer.valueOf(System.getenv("REDIS_PORT")), 
 				Protocol.DEFAULT_TIMEOUT, 
-				System.getProperty(Properties.REDIS_PASSWORD));
+				System.getenv("REDIS_PASSWORD"));
 		
-		String keyString = System.getProperty(Properties.CACHE_DATA_ENCRYPTION_KEY);
+		String keyString = System.getenv("CACHE_DATA_ENCRYPTION_KEY");
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");

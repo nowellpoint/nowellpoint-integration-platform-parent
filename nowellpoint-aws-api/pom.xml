@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.9-SNAPSHOT</version>
+		<version>1.0.10-SNAPSHOT</version>
 	</parent>
 
 	<repositories>
@@ -29,7 +29,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<version.wildfly.swarm>2017.11.0</version.wildfly.swarm>
+		<version.wildfly.swarm>2018.2.0.Final</version.wildfly.swarm>
 	</properties>
 
 	<dependencyManagement>
@@ -55,10 +55,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>jaxrs-cdi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>ejb</artifactId>
 		</dependency>
 		<dependency>
@@ -71,8 +67,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.wildfly.swarm</groupId>
+			<artifactId>monitor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.swarm</groupId>
 			<artifactId>swagger</artifactId>
-			<version>2017.11.0</version>
+			<version>2018.2.0.Final</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.wildfly.swarm</groupId> <artifactId>jaxrs-multipart</artifactId> 
 			</dependency> -->

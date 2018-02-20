@@ -16,9 +16,10 @@ import org.bson.types.ObjectId;
 import com.nowellpoint.api.model.document.Lead;
 import com.nowellpoint.api.model.document.UserRef;
 import com.nowellpoint.api.rest.LeadResource;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
-import com.nowellpoint.util.Properties;
 
 public class LeadResourceImpl implements LeadResource {
 
@@ -47,7 +48,7 @@ public class LeadResourceImpl implements LeadResource {
     		String company,
     		String message) {
 		
-		UserRef userRef = new UserRef(new ObjectId(System.getProperty(Properties.DEFAULT_SUBJECT)));
+		UserRef userRef = new UserRef(new ObjectId(EnvUtil.getValue(Variable.DEFAULT_SUBJECT)));
 		
 		Date now = Date.from(Instant.now());
 		

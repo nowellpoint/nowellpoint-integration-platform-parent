@@ -1,7 +1,8 @@
 package com.nowellpoint.api.idp;
 
 import com.nowellpoint.api.service.IdentityProviderService;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
@@ -19,8 +20,8 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 	static {
 		
 		client = Clients.builder()
-				.setClientCredentials(new TokenClientCredentials(System.getProperty(Properties.OKTA_API_KEY)))
-				.setOrgUrl(System.getProperty(Properties.OKTA_ORG_URL))
+				.setClientCredentials(new TokenClientCredentials(EnvUtil.getValue(Variable.OKTA_API_KEY)))
+				.setOrgUrl(EnvUtil.getValue(Variable.OKTA_ORG_URL))
 				.build();
 	}	
 	
@@ -52,7 +53,7 @@ public class OktaIdentityProviderService implements IdentityProviderService {
 				.setFirstName(firstName)
 				.setLastName(lastName)
 				.setActive(Boolean.TRUE)
-				.addGroup(System.getProperty(Properties.OKTA_GROUP_ID))
+				.addGroup(EnvUtil.getValue(Variable.OKTA_GROUP_ID))
 				.buildAndCreate(client);
 		
 		return user;

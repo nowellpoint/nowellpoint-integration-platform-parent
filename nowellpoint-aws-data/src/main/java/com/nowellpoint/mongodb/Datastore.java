@@ -7,7 +7,6 @@ import org.bson.codecs.Codec;
 
 import com.mongodb.ConnectionString;
 import com.nowellpoint.mongodb.document.DocumentManagerFactoryImpl;
-import com.nowellpoint.util.Properties;
 
 public class Datastore implements Serializable {
 	
@@ -20,7 +19,7 @@ public class Datastore implements Serializable {
 	}
 	
 	public static DocumentManagerFactory createDocumentManagerFactory() {
-		ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
+		ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getenv("MONGO_CLIENT_URI")));
 		documentManagerFactory = new DocumentManagerFactoryImpl(connectionString);
 		return documentManagerFactory;
 	}
@@ -32,7 +31,7 @@ public class Datastore implements Serializable {
 	}
 	
 	public static DocumentManagerFactory createDocumentManagerFactory(List<Codec<?>> codecs) {
-		ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getProperty(Properties.MONGO_CLIENT_URI)));
+		ConnectionString connectionString = new ConnectionString("mongodb://".concat(System.getenv("MONGO_CLIENT_URI")));
 		documentManagerFactory = new DocumentManagerFactoryImpl(connectionString, codecs);
 		return documentManagerFactory;
 	}

@@ -34,6 +34,8 @@ import com.nowellpoint.api.model.dynamodb.VaultEntry;
 import com.nowellpoint.api.rest.domain.JobScheduleOptions;
 import com.nowellpoint.api.service.VaultEntryService;
 import com.nowellpoint.api.service.impl.VaultEntryServiceImpl;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.aws.data.AbstractCacheService;
 import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.DescribeGlobalSobjectsRequest;
@@ -55,7 +57,6 @@ import com.nowellpoint.mongodb.Datastore;
 import com.nowellpoint.mongodb.DocumentManager;
 import com.nowellpoint.mongodb.DocumentManagerFactory;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -292,7 +293,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    content.setType("text/plain");
 	    content.setValue(body);
 	    
-	    SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
+	    SendGrid sendgrid = new SendGrid(EnvUtil.getValue(Variable.SENDGRID_API_KEY));
 	    
 	    Personalization personalization = new Personalization();
 	    personalization.addTo(to);

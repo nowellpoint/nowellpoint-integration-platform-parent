@@ -27,7 +27,8 @@ import com.nowellpoint.api.rest.domain.UserProfile;
 import com.nowellpoint.api.service.AuthenticationService;
 import com.nowellpoint.api.service.TokenService;
 import com.nowellpoint.api.service.UserProfileService;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -73,7 +74,7 @@ public class TokenServiceImpl implements TokenService {
 		String userId = userProfile.getId();
 		String organizationId = userProfile.getOrganization().getId();
 		
-		URI href = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		URI href = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(IdentityResource.class)
 				.path("{organizationId}")
 				.path("{userId}")
@@ -94,7 +95,7 @@ public class TokenServiceImpl implements TokenService {
 				.compact();
 
 		Token token = Token.builder()
-				.environmentUrl(System.getProperty(Properties.API_HOSTNAME))
+				.environmentUrl(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.id(href.toString())
 				.accessToken(jws)
 				.expiresIn(tokenResponse.getExpiresIn())

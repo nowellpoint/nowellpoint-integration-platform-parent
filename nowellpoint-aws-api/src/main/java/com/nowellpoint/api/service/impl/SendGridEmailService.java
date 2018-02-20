@@ -11,7 +11,8 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.logging.Logger;
 
 import com.nowellpoint.api.service.EmailService;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.sendgrid.Attachments;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
@@ -25,7 +26,7 @@ public class SendGridEmailService implements EmailService {
 	
 	private static final Logger LOGGER = Logger.getLogger(SendGridEmailService.class);
 	
-	private static final SendGrid sendgrid = new SendGrid(System.getProperty(Properties.SENDGRID_API_KEY));
+	private static final SendGrid sendgrid = new SendGrid(EnvUtil.getValue(Variable.SENDGRID_API_KEY));
 	
 	@Override
 	public void sendEmailVerificationMessage(String email, String name, String emailVerificationToken) {
@@ -163,7 +164,7 @@ public class SendGridEmailService implements EmailService {
 	}
 	
 	private URI buildEmailVerificationHref(String emailVerificationToken) {
-		return UriBuilder.fromUri(System.getProperty(Properties.VERIFY_EMAIL_REDIRECT))
+		return UriBuilder.fromUri(EnvUtil.getValue(Variable.VERIFY_EMAIL_REDIRECT))
 				.queryParam("emailVerificationToken", "{emailVerificationToken}")
 				.build(emailVerificationToken);
 	}

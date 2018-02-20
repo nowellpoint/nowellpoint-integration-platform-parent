@@ -27,8 +27,6 @@ import org.wildfly.swarm.Swarm;
 import org.wildfly.swarm.jaxrs.JAXRSArchive;
 import org.wildfly.swarm.swagger.SwaggerArchive;
 
-import com.nowellpoint.util.Properties;
-
 public class Main {
 	
 	public static void main(String[] args) throws Exception {
@@ -38,15 +36,7 @@ public class Main {
 		//
 		
         Swarm container = new Swarm(args);
-        
-		//
-        // dynamically set secure system properties based configuration
-        //
-
-        Properties.loadProperties(container.configView()
-                .resolve("propertyStore.name")
-                .getValue());
-        
+                
         //
         // set default time zone to UTC
         //

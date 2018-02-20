@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import org.jboss.logging.Logger;
 
 import com.amazonaws.util.IOUtils;
-import com.nowellpoint.util.Properties;
 
 public class LogManager {
 	
@@ -22,9 +21,9 @@ public class LogManager {
 			public void run() {
 				try {
 					
-					HttpURLConnection connection = (HttpURLConnection) new URL(System.getProperty(Properties.LOGGLY_API_ENDPOINT)
+					HttpURLConnection connection = (HttpURLConnection) new URL(System.getenv("LOGGLY_API_ENDPOINT")
 							.concat("/")
-							.concat(System.getProperty(Properties.LOGGLY_API_KEY))
+							.concat(System.getenv("LOGGLY_API_KEY"))
 							.concat("/")
 							.concat(tag)
 							.concat("/api")

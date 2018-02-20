@@ -32,12 +32,13 @@ import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.PlanService;
 import com.nowellpoint.api.service.RegistrationService;
 import com.nowellpoint.api.service.UserProfileService;
+import com.nowellpoint.api.util.EnvUtil;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.MessageProvider;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.mongodb.document.DocumentNotFoundException;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 public class RegistrationServiceImpl extends AbstractRegistrationService implements RegistrationService {
 	
@@ -140,7 +141,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 		
 		isExpired(registration.getExpiresAt());
 		
-		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		URI emailVerificationTokenUri = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(SignUpService.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
@@ -246,7 +247,7 @@ public class RegistrationServiceImpl extends AbstractRegistrationService impleme
 				registration.getCountryCode(),
 				organization);
 		
-		URI uri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		URI uri = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(IdentityResource.class)
 				.path("/{organizationId}/{userId}")
 				.build(organization.getId(), userProfile.getId());

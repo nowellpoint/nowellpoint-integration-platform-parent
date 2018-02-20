@@ -36,20 +36,21 @@ import com.nowellpoint.api.rest.domain.Transaction;
 import com.nowellpoint.api.rest.domain.UserInfo;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.util.ClaimsContext;
+import com.nowellpoint.api.util.EnvUtil;
 import com.nowellpoint.api.util.MessageConstants;
 import com.nowellpoint.api.util.UserContext;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 public class OrganizationServiceImpl extends AbstractOrganizationService implements OrganizationService {
 	
 	private static final Logger LOGGER = Logger.getLogger(OrganizationServiceImpl.class);
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
-			Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
-			System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
-			System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
-			System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+			Environment.parseEnvironment(EnvUtil.getValue(Variable.BRAINTREE_ENVIRONMENT)),
+			EnvUtil.getValue(Variable.BRAINTREE_MERCHANT_ID),
+			EnvUtil.getValue(Variable.BRAINTREE_PUBLIC_KEY),
+			EnvUtil.getValue(Variable.BRAINTREE_PRIVATE_KEY)
 	);
 	
 	static {

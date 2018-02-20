@@ -10,12 +10,13 @@ import com.nowellpoint.api.idp.model.Keys;
 import com.nowellpoint.api.idp.model.TokenResponse;
 import com.nowellpoint.api.idp.model.TokenVerificationResponse;
 import com.nowellpoint.api.service.AuthenticationService;
+import com.nowellpoint.api.util.EnvUtil;
 import com.nowellpoint.api.util.MessageProvider;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
-import com.nowellpoint.util.Properties;
 
 public class OktaAuthenticationService implements AuthenticationService {
 	
@@ -60,8 +61,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 	
 	@Override
 	public TokenResponse authenticate(String username, String password) {	
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+		HttpResponse httpResponse = RestResource.post(EnvUtil.getValue(Variable.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(EnvUtil.getValue(Variable.OKTA_CLIENT_ID), EnvUtil.getValue(Variable.OKTA_CLIENT_SECRET))
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path(VERSION)
@@ -88,8 +89,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 	
 	@Override
 	public Keys getKeys() {
-		HttpResponse httpResponse = RestResource.get(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+		HttpResponse httpResponse = RestResource.get(EnvUtil.getValue(Variable.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(EnvUtil.getValue(Variable.OKTA_CLIENT_ID), EnvUtil.getValue(Variable.OKTA_CLIENT_SECRET))
 				.accept(MediaType.APPLICATION_JSON)
 				.path(VERSION)
 				.path(KEYS)
@@ -166,8 +167,8 @@ public class OktaAuthenticationService implements AuthenticationService {
 	
 	@Override
 	public void revokeToken(String accessToken) {
-		HttpResponse httpResponse = RestResource.post(System.getProperty(Properties.OKTA_AUTHORIZATION_SERVER))
-				.basicAuthorization(System.getProperty(Properties.OKTA_CLIENT_ID), System.getProperty(Properties.OKTA_CLIENT_SECRET))
+		HttpResponse httpResponse = RestResource.post(EnvUtil.getValue(Variable.OKTA_AUTHORIZATION_SERVER))
+				.basicAuthorization(EnvUtil.getValue(Variable.OKTA_CLIENT_ID), EnvUtil.getValue(Variable.OKTA_CLIENT_SECRET))
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.path(VERSION)

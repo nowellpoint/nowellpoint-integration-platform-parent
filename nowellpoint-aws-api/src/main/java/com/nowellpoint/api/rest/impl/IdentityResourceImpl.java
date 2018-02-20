@@ -17,8 +17,9 @@ import com.nowellpoint.api.rest.domain.Organization;
 import com.nowellpoint.api.rest.domain.Resources;
 import com.nowellpoint.api.service.OrganizationService;
 import com.nowellpoint.api.service.UserProfileService;
+import com.nowellpoint.api.util.EnvUtil;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.Properties;
 
 public class IdentityResourceImpl implements IdentityResource {
 	
@@ -44,17 +45,17 @@ public class IdentityResourceImpl implements IdentityResource {
 		
 		Organization organization = findOrganization(organizationId);
 		
-		String organizationHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		String organizationHref = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(OrganizationResource.class)
 				.build()
 				.toString();
 		
-		String jobsHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		String jobsHref = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(JobResource.class)
 				.build()
 				.toString();
 		
-		String connectorsHref = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME))
+		String connectorsHref = UriBuilder.fromUri(EnvUtil.getValue(Variable.API_HOSTNAME))
 				.path(ConnectorResource.class)
 				.build()
 				.toString();

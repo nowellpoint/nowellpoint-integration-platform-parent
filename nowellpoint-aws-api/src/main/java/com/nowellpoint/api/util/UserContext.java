@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.core.SecurityContext;
 
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.api.util.EnvUtil.Variable;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -16,7 +16,7 @@ public class UserContext {
 	private static ThreadLocal<SecurityContext> threadLocal = new ThreadLocal<SecurityContext>() {
 	    @Override 
 	    protected SecurityContext initialValue() {
-	        return new UserPrincipalSecurityContext(System.getProperty(Properties.DEFAULT_SUBJECT), new ArrayList<String>());
+	        return new UserPrincipalSecurityContext(EnvUtil.getValue(Variable.DEFAULT_SUBJECT), new ArrayList<String>());
 	    }
 	};
 	
