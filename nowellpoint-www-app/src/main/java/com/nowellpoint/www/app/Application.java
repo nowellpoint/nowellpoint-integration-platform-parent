@@ -27,38 +27,32 @@ import static spark.Spark.post;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.model.IsoCountry;
-import com.nowellpoint.client.model.IsoCountryList;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.RestResource;
-import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.Path;
-import com.nowellpoint.www.app.view.UserProfileController;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
+import com.nowellpoint.www.app.view.ConnectorController;
 import com.nowellpoint.www.app.view.DashboardController;
 import com.nowellpoint.www.app.view.IndexController;
 import com.nowellpoint.www.app.view.JobController;
 import com.nowellpoint.www.app.view.NotificationController;
 import com.nowellpoint.www.app.view.OrganizationController;
-import com.nowellpoint.www.app.view.ConnectorController;
 import com.nowellpoint.www.app.view.SalesforceOauthController;
 import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
+import com.nowellpoint.www.app.view.UserProfileController;
 
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.log.Logger;
@@ -417,23 +411,14 @@ public class Application implements SparkApplication {
 	 * @return
 	 */
 
-	private static List<IsoCountry> loadCountries(Locale locale) {
-		HttpResponse httpResponse = RestResource
-				.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-				.path("iso-countries")
-				.execute();
-
-		List<IsoCountry> countries = Collections.emptyList();
-
-		if (httpResponse.getStatusCode() == Status.OK) {
-
-			IsoCountryList isoCountryList = httpResponse.getEntity(IsoCountryList.class);
-
-			countries = isoCountryList.getItems()
-					.stream()
-					.sorted((p1, p2) -> p1.getName().compareTo(p2.getName()))
-					.collect(Collectors.toList());
-		}
+	private static List<IsoCountry> loadCountries(Locale locale) {		
+		final List<IsoCountry> countries = new ArrayList<>();
+		
+		ResourceBundle bundle = ResourceBundle.getBundle("countries", Locale.getDefault());
+		bundle.keySet().stream().forEach(key -> {
+			IsoCountry country = IsoCountry.builder().iso2Code(key).name(bundle.getString(key)).build();
+			countries.add(country);
+		});
 
 		return countries;
 	}

@@ -30,7 +30,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging/3.3.0.Final/jboss-logging-3.3.0.Final.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.281/aws-java-sdk-sns-1.11.281.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.281/aws-java-sdk-sqs-1.11.281.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.1/amazon-sqs-java-messaging-lib-1.0.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.4/amazon-sqs-java-messaging-lib-1.0.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver/3.4.1/mongodb-driver-3.4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mongodb/mongodb-driver-core/3.4.1/mongodb-driver-core-3.4.1.jar"/>

@@ -20,6 +20,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-dynamodb-encryption-java</artifactId>
 			<version>${aws.dynamodb.encryption.version}</version>
 		</dependency>
