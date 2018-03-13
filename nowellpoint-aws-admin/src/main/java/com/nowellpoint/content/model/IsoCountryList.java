@@ -1,16 +1,13 @@
 package com.nowellpoint.content.model;
 
-import java.util.Collections;
 import java.util.List;
 
-import com.amazonaws.services.s3.model.S3Object;
-
-public class IsoCountryList extends S3Entity<IsoCountry> {
+public class IsoCountryList {
 	
-	private List<IsoCountry> items = Collections.emptyList();
+	private List<IsoCountry> items = null;
 	
-	public IsoCountryList(S3Object object) {
-		items = getCollection(IsoCountry.class, object);
+	public IsoCountryList(List<IsoCountry> items) {
+		this.items = items;
 	}
 
 	public List<IsoCountry> getItems() {

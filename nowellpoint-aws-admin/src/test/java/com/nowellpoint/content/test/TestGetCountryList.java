@@ -1,9 +1,13 @@
 package com.nowellpoint.content.test;
 
+import java.util.Optional;
+
 import org.junit.Test;
 
+import com.nowellpoint.content.model.Config;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.PlanList;
+import com.nowellpoint.content.service.ConfigService;
 import com.nowellpoint.content.service.IsoCountryService;
 import com.nowellpoint.content.service.PlanService;
 
@@ -27,5 +31,13 @@ public class TestGetCountryList {
 		planList.getItems().stream().forEach(p -> {
 			System.out.println(p.getPlanCode() + " " + p.getPlanName());
 		});
+	}
+	
+	@Test
+	public void testGetConfig() {
+		ConfigService service = new ConfigService();
+		Optional<Config> config = service.getConfig("sandbox-config.json");
+		
+		System.out.println(config.get().getMongo().getClientUri());
 	}
 }

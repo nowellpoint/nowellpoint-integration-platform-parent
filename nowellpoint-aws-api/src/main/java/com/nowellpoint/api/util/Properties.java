@@ -1,6 +1,6 @@
 package com.nowellpoint.api.util;
 
-public class EnvUtil {
+public class Properties {
 	
 	public static enum Variable {
 		LOGGLY_API_KEY,
@@ -12,8 +12,6 @@ public class EnvUtil {
 		SALESFORCE_TOKEN_URI,
 		SALESFORCE_REFRESH_URI,
 		SALESFORCE_REVOKE_URI,
-		SALESFORCE_USERNAME,
-		SALESFORCE_PASSWORD,
 		SALESFORCE_SECURITY_TOKEN,
 		SALESFORCE_REDIRECT_URI,
 		SALESFORCE_API_VERSION,

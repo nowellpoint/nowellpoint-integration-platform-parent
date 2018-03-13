@@ -4,11 +4,10 @@ swarm:
     https:
         certificate:
             generate: true
-propertyStore: 
-    name: sandbox
-okta:
-    group:
-        id: 00gax53y4htYrgYWB0h7    
+config: 
+    file: sandbox-config.json
+default:
+    subject: 597807977cbef9016a7aecd5   
 registration:
     send:
       notification: false
@@ -16,4 +15,8 @@ api:
     hostname: https://nowellpoint-api-docker-test-1.192.168.99.100.nip.io/rest
 verify:
     email:
-      redirect: https://nowellpoint-console-docker-test-1.192.168.99.100.nip.io/verify-email     
+      redirect: https://nowellpoint-console-docker-test-1.192.168.99.100.nip.io/verify-email    
+cloudfront:
+    hostname: https://dt8ogbgi49g9d.cloudfront.net
+application:
+    hostname: https://localhost:8443

@@ -1,16 +1,13 @@
 package com.nowellpoint.content.model;
 
-import java.util.Collections;
 import java.util.List;
 
-import com.amazonaws.services.s3.model.S3Object;
-
-public class PlanList extends S3Entity<Plan> {
+public class PlanList {
 	
-	private List<Plan> items = Collections.emptyList();
+	private List<Plan> items = null;
 	
-	public PlanList(S3Object object) {
-		items = getCollection(Plan.class, object);
+	public PlanList(List<Plan> items) {
+		this.items = items;
 	}
 
 	public List<Plan> getItems() {
