@@ -42,8 +42,7 @@ import com.nowellpoint.content.model.IsoCountry;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.Plan;
 import com.nowellpoint.content.model.PlanList;
-import com.nowellpoint.content.service.IsoCountryService;
-import com.nowellpoint.content.service.PlanService;
+import com.nowellpoint.content.service.ContentService;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
@@ -417,13 +416,13 @@ public class Application implements SparkApplication {
 	 */
 
 	private static List<IsoCountry> loadCountries(Locale locale) {				
-		IsoCountryService service = new IsoCountryService();
+		ContentService service = new ContentService();
 		IsoCountryList countryList = service.getCountries();
 		return countryList.getItems();
 	}
 	
 	private static List<Plan> loadPlans() {				
-		PlanService service = new PlanService();
+		ContentService service = new ContentService();
 		PlanList planList = service.getPlans();
 		return planList.getItems();
 	}

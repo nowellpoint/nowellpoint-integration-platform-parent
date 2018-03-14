@@ -12,13 +12,13 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class S3ObjectService<T> {
+public abstract class S3ObjectService {
 	
 	protected static final ObjectMapper mapper = new ObjectMapper();
 	
 	protected static final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
-	protected List<T> readCollection(Class<T> type, S3Object object) {
+	protected <T> List<T> readCollection(Class<T> type, S3Object object) {
 		List<T> items = Collections.emptyList();
 		
 		InputStream inputStream = object.getObjectContent();
@@ -34,7 +34,7 @@ public abstract class S3ObjectService<T> {
 		return items;
 	}
 	
-	protected Optional<T> readItem(Class<T> type, S3Object object) {
+	protected <T> Optional<T> readItem(Class<T> type, S3Object object) {
 		Optional<T> item = Optional.empty();
 		
 		InputStream inputStream = object.getObjectContent();

@@ -14,7 +14,7 @@ import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.content.model.Plan;
 import com.nowellpoint.content.model.PlanList;
-import com.nowellpoint.content.service.PlanService;
+import com.nowellpoint.content.service.ContentService;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -64,7 +64,7 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String freeAccount(Configuration configuration, Request request, Response response) {
 		
-		PlanService service = new PlanService();
+		ContentService service = new ContentService();
 		PlanList planList = service.getPlans();
 		
 		Optional<Plan> optional = planList.getItems()
@@ -103,7 +103,7 @@ public class SignUpController extends AbstractStaticController {
 		
 		if (planId != null) {
 			
-			PlanService service = new PlanService();
+			ContentService service = new ContentService();
 			PlanList planList = service.getPlans();
 			
 			Optional<Plan> optional = planList.getItems()
@@ -168,7 +168,7 @@ public class SignUpController extends AbstractStaticController {
 
 		if ("XX".equalsIgnoreCase(countryCode)) {
 
-			PlanService service = new PlanService();
+			ContentService service = new ContentService();
 			PlanList planList = service.getPlans();
 
 			Optional<Plan> optional = planList.getItems().stream().filter(plan -> plan.getId().equals(planId))
@@ -204,7 +204,7 @@ public class SignUpController extends AbstractStaticController {
 					.templateName(Template.SIGN_UP_CONFIRM).timeZone(getTimeZone(request)).build();
 		} else {
 
-			PlanService service = new PlanService();
+			ContentService service = new ContentService();
 			PlanList planList = service.getPlans();
 
 			Optional<Plan> optional = planList.getItems().stream().filter(plan -> plan.getId().equals(planId))
@@ -321,7 +321,7 @@ public class SignUpController extends AbstractStaticController {
 
 		if (verificationResult.isSuccess()) {
 
-			PlanService service = new PlanService();
+			ContentService service = new ContentService();
 			PlanList planList = service.getPlans();
 
 			Optional<Plan> optional = planList.getItems().stream()
