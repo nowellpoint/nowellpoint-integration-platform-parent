@@ -2,8 +2,6 @@ package com.nowellpoint.content.service;
 
 import java.util.List;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
@@ -18,7 +16,6 @@ public class IsoCountryService extends S3ObjectService<IsoCountry> {
 		builder.setKey("countries.json");
 		
 		GetObjectRequest request = new GetObjectRequest(builder.build());
-		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
 		S3Object object = s3client.getObject(request);	
 		

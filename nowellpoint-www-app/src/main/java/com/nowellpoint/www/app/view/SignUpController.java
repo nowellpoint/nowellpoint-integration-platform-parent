@@ -1,22 +1,20 @@
 package com.nowellpoint.www.app.view;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.nowellpoint.client.Environment;
 import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.CreateResult;
-import com.nowellpoint.client.model.GetPlansRequest;
-import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.PlanList;
 import com.nowellpoint.client.model.ProvisionRequesst;
 import com.nowellpoint.client.model.Registration;
 import com.nowellpoint.client.model.SignUpRequest;
 import com.nowellpoint.client.model.UpdateResult;
+import com.nowellpoint.content.model.Plan;
+import com.nowellpoint.content.model.PlanList;
+import com.nowellpoint.content.service.PlanService;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -45,27 +43,12 @@ public class SignUpController extends AbstractStaticController {
 	 */
 	
 	public static String plans(Configuration configuration, Request request, Response response) {
-		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguage("en_US")
-				.withLocale(new Locale("en_US"));
-		
-		PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT)
-				.plan()
-				.getPlans(getPlansRequest);
-		
-		List<Plan> plans = planList.getItems()
-				.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
-		
 		return TemplateBuilder.template()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
 				.identity(getIdentity(request))
 				.locale(getLocale(request))
 				.addToModel("countryCode", Locale.getDefault().getCountry())
-				.addToModel("planList", plans)
 				.templateName(Template.PLANS)
 				.timeZone(getTimeZone(request))
 				.build();
@@ -81,9 +64,8 @@ public class SignUpController extends AbstractStaticController {
 	
 	public static String freeAccount(Configuration configuration, Request request, Response response) {
 		
-		GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale(new Locale("en_US"));
-		
-		PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT).plan().getPlans(getPlansRequest);
+		PlanService service = new PlanService();
+		PlanList planList = service.getPlans();
 		
 		Optional<Plan> optional = planList.getItems()
 				.stream()
@@ -121,13 +103,17 @@ public class SignUpController extends AbstractStaticController {
 		
 		if (planId != null) {
 			
-			Plan plan = NowellpointClient.defaultClient(ENVIRONMENT)
-					.plan()
-					.get(planId);
+			PlanService service = new PlanService();
+			PlanList planList = service.getPlans();
+			
+			Optional<Plan> optional = planList.getItems()
+					.stream()
+					.filter(plan -> plan.getId().equals(planId))
+					.findFirst();
 			
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("planId", planId);
-			model.put("plan", plan);
+			model.put("plan", optional.get());
 			model.put("countryCode", Locale.getDefault().getCountry());
 			model.put("action", "createAccount");
 			
@@ -143,14 +129,7 @@ public class SignUpController extends AbstractStaticController {
 			
 		} else {
 			
-			GetPlansRequest getPlansRequest = new GetPlansRequest().withLanguage("en_US").withLocale(new Locale("en_US"));
-			
-			PlanList planList = NowellpointClient.defaultClient(ENVIRONMENT)
-					.plan()
-					.getPlans(getPlansRequest);
-			
 			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("planList", planList.getItems());
 			model.put("action", "listPlans");
 			
 			return TemplateBuilder.template()
@@ -174,99 +153,83 @@ public class SignUpController extends AbstractStaticController {
 	 */
 	
 	public static String signUp(Configuration configuration, Request request, Response response) {
-		
+
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
 		String email = request.queryParams("email");
-//		String password = request.queryParams("password");
+		// String password = request.queryParams("password");
 		String phone = request.queryParams("phone");
-//		String confirmPassword = request.queryParams("confirmPassword");
+		// String confirmPassword = request.queryParams("confirmPassword");
 		String countryCode = request.queryParams("countryCode");
 		String planId = request.queryParams("planId");
 		String domain = request.queryParams("domain");
-		
+
 		Map<String, Object> model = getModel();
-		
+
 		if ("XX".equalsIgnoreCase(countryCode)) {
-			
-			Plan plan = NowellpointClient.defaultClient(ENVIRONMENT)
-					.plan()
-					.get(planId);
-    		
-    		model.put("action", "createAccount");
-    		model.put("firstName", firstName);
-    		model.put("lastName", lastName);
-    		model.put("email", email);
-    		model.put("countryCode", countryCode);
-    		model.put("planId", planId);
-    		model.put("plan", plan);
-    		model.put("phone", phone);
-    		model.put("domain", domain);
-    		model.put("errorMessage", "Please select a country from the list");
-    		
-    		return TemplateBuilder.template()
-    				.configuration(configuration)
-    				.controllerClass(SignUpController.class)
-    				.identity(getIdentity(request))
-    				.locale(getLocale(request))
-    				.model(model)
-    				.templateName(Template.SIGN_UP)
-    				.timeZone(getTimeZone(request))
-    				.build();
+
+			PlanService service = new PlanService();
+			PlanList planList = service.getPlans();
+
+			Optional<Plan> optional = planList.getItems().stream().filter(plan -> plan.getId().equals(planId))
+					.findFirst();
+
+			model.put("action", "createAccount");
+			model.put("firstName", firstName);
+			model.put("lastName", lastName);
+			model.put("email", email);
+			model.put("countryCode", countryCode);
+			model.put("planId", planId);
+			model.put("plan", optional.get());
+			model.put("phone", phone);
+			model.put("domain", domain);
+			model.put("errorMessage", "Please select a country from the list");
+
+			return TemplateBuilder.template().configuration(configuration).controllerClass(SignUpController.class)
+					.identity(getIdentity(request)).locale(getLocale(request)).model(model)
+					.templateName(Template.SIGN_UP).timeZone(getTimeZone(request)).build();
 		}
-		
-		SignUpRequest signUpRequest = SignUpRequest.builder()
-				.countryCode(countryCode)
-				.email(email)
-				.firstName(firstName)
-				.lastName(lastName)
-				.planId(planId)
-				.phone(phone)
-				.domain(domain)
-				.build();
-		
-		CreateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT)
-				.registration()
+
+		SignUpRequest signUpRequest = SignUpRequest.builder().countryCode(countryCode).email(email).firstName(firstName)
+				.lastName(lastName).planId(planId).phone(phone).domain(domain).build();
+
+		CreateResult<Registration> result = NowellpointClient.defaultClient(ENVIRONMENT).registration()
 				.signUp(signUpRequest);
-		
+
 		if (result.isSuccess()) {
 			model.put("email", email);
-        	
-        	return TemplateBuilder.template()
-    				.configuration(configuration)
-    				.controllerClass(SignUpController.class)
-    				.identity(getIdentity(request))
-    				.locale(getLocale(request))
-    				.model(model)
-    				.templateName(Template.SIGN_UP_CONFIRM)
-    				.timeZone(getTimeZone(request))
-    				.build();
+
+			return TemplateBuilder.template().configuration(configuration).controllerClass(SignUpController.class)
+					.identity(getIdentity(request)).locale(getLocale(request)).model(model)
+					.templateName(Template.SIGN_UP_CONFIRM).timeZone(getTimeZone(request)).build();
 		} else {
-			
-			Plan plan = NowellpointClient.defaultClient(ENVIRONMENT)
-					.plan()
-					.get(planId);
-    		
-    		model.put("action", "createAccount");
-    		model.put("firstName", firstName);
-    		model.put("lastName", lastName);
-    		model.put("email", email);
-    		model.put("countryCode", countryCode);
-    		model.put("planId", planId);
-    		model.put("plan", plan);
-    		model.put("phone", phone);
-    		model.put("domain", domain);
-    		model.put("errorMessage", result.getErrorMessage());
-    		
-    		return TemplateBuilder.template()
-    				.configuration(configuration)
-    				.controllerClass(SignUpController.class)
-    				.identity(getIdentity(request))
-    				.locale(getLocale(request))
-    				.model(model)
-    				.templateName(Template.SIGN_UP)
-    				.timeZone(getTimeZone(request))
-    				.build();
+
+			PlanService service = new PlanService();
+			PlanList planList = service.getPlans();
+
+			Optional<Plan> optional = planList.getItems().stream().filter(plan -> plan.getId().equals(planId))
+					.findFirst();
+
+			model.put("action", "createAccount");
+			model.put("firstName", firstName);
+			model.put("lastName", lastName);
+			model.put("email", email);
+			model.put("countryCode", countryCode);
+			model.put("planId", planId);
+			model.put("plan", optional.get());
+			model.put("phone", phone);
+			model.put("domain", domain);
+			model.put("errorMessage", result.getErrorMessage());
+
+			return TemplateBuilder.template()
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.identity(getIdentity(request))
+					.locale(getLocale(request))
+					.model(model)
+					.templateName(Template.SIGN_UP)
+					.timeZone(getTimeZone(request))
+					.build();
 		}
 	}
 	
@@ -286,7 +249,9 @@ public class SignUpController extends AbstractStaticController {
 		UpdateResult<Registration> result = null;
 		
 		if ("FREE".equalsIgnoreCase(planCode)) {
-			result = NowellpointClient.defaultClient(ENVIRONMENT).registration().provisionFreePlan(registrationId);
+			result = NowellpointClient.defaultClient(ENVIRONMENT)
+					.registration()
+					.provisionFreePlan(registrationId);
 		} else {
 			
 			String cardholderName = request.queryParams("cardholderName");
@@ -346,30 +311,31 @@ public class SignUpController extends AbstractStaticController {
 	 */
 	
 	public static String verifyEmail(Configuration configuration, Request request, Response response) {
-		
+
 		String emailVerificationToken = request.queryParams("emailVerificationToken");
-		
-		UpdateResult<Registration> verificationResult = NowellpointClient.defaultClient(ENVIRONMENT)
-				.registration()
+
+		UpdateResult<Registration> verificationResult = NowellpointClient.defaultClient(ENVIRONMENT).registration()
 				.verifyRegistration(emailVerificationToken);
+
+		Map<String, Object> model = getModel();
+
+		if (verificationResult.isSuccess()) {
+
+			PlanService service = new PlanService();
+			PlanList planList = service.getPlans();
+
+			Optional<Plan> optional = planList.getItems().stream()
+					.filter(plan -> plan.getId().equals(verificationResult.getTarget().getPlanId())).findFirst();
+
+			model.put("registration", verificationResult.getTarget());
+			model.put("plan", optional.get());
+			model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
+
+		} else {
+			model.put("errorMessage", verificationResult.getErrorMessage());
+		}
 		
-		Map<String,Object> model = getModel();
-    	
-    	if (verificationResult.isSuccess()) {
-    		
-    		Plan plan = NowellpointClient.defaultClient(ENVIRONMENT)
-    				.plan()
-    				.get(verificationResult.getTarget().getPlanId());
-    		
-    		model.put("registration", verificationResult.getTarget());
-    		model.put("plan", plan);
-    		model.put("successMessage", MessageProvider.getMessage(Locale.US, "email.verification.success"));
-    		
-    	} else {
-    		model.put("errorMessage", verificationResult.getErrorMessage());
-    	}
-    	
-    	return TemplateBuilder.template()
+		return TemplateBuilder.template()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
 				.identity(getIdentity(request))

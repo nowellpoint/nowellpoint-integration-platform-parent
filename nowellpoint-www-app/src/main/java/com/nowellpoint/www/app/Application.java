@@ -27,7 +27,6 @@ import static spark.Spark.post;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,8 +37,13 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.client.model.IsoCountry;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
+import com.nowellpoint.content.model.IsoCountry;
+import com.nowellpoint.content.model.IsoCountryList;
+import com.nowellpoint.content.model.Plan;
+import com.nowellpoint.content.model.PlanList;
+import com.nowellpoint.content.service.IsoCountryService;
+import com.nowellpoint.content.service.PlanService;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AdministrationController;
 import com.nowellpoint.www.app.view.AuthenticationController;
@@ -96,6 +100,7 @@ public class Application implements SparkApplication {
 
 		try {
 			configuration.setSharedVariable("countryList", isoCountries);
+			configuration.setSharedVariable("planList", loadPlans());
 		} catch (TemplateModelException e) {
 			e.printStackTrace();
 			halt();
@@ -411,16 +416,16 @@ public class Application implements SparkApplication {
 	 * @return
 	 */
 
-	private static List<IsoCountry> loadCountries(Locale locale) {		
-		final List<IsoCountry> countries = new ArrayList<>();
-		
-		ResourceBundle bundle = ResourceBundle.getBundle("countries", Locale.getDefault());
-		bundle.keySet().stream().forEach(key -> {
-			IsoCountry country = IsoCountry.builder().iso2Code(key).name(bundle.getString(key)).build();
-			countries.add(country);
-		});
-
-		return countries;
+	private static List<IsoCountry> loadCountries(Locale locale) {				
+		IsoCountryService service = new IsoCountryService();
+		IsoCountryList countryList = service.getCountries();
+		return countryList.getItems();
+	}
+	
+	private static List<Plan> loadPlans() {				
+		PlanService service = new PlanService();
+		PlanList planList = service.getPlans();
+		return planList.getItems();
 	}
 
 	/**

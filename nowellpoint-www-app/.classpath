@@ -45,6 +45,9 @@
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.281/jmespath-java-1.11.281.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
+	<classpathentry kind="src" path="/nowellpoint-aws-admin"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.281/aws-java-sdk-s3-1.11.281.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.281/aws-java-sdk-kms-1.11.281.jar"/>
 	<classpathentry kind="src" path="target/generated-sources/annotations">
 		<attributes>
 			<attribute name="optional" value="true"/>

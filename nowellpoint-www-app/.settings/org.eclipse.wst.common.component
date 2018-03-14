@@ -17,6 +17,9 @@
         <dependent-module archiveName="nowellpoint-aws-sforce-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="nowellpoint-aws-admin-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-admin/nowellpoint-aws-admin">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/nowellpoint-www-app/target/classes"/>
         <property name="context-root" value="nowellpoint-www-app"/>
     </wb-module>

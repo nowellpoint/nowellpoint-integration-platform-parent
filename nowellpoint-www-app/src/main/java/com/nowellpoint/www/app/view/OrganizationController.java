@@ -1,9 +1,7 @@
 package com.nowellpoint.www.app.view;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,8 +9,6 @@ import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.ContactRequest;
 import com.nowellpoint.client.model.CreditCardRequest;
-import com.nowellpoint.client.model.GetPlansRequest;
-import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.Plan;
 import com.nowellpoint.client.model.SubscriptionRequest;
@@ -41,30 +37,17 @@ public class OrganizationController extends AbstractStaticController {
 	public static String listPlans(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
-		Identity identity = getIdentity(request);
+		//Identity identity = getIdentity(request);
 		
 		String id = request.params(":id");
 		
 		Organization organization = NowellpointClient.defaultClient(token)
 				.organization()
 				.get(id);
-		
-		GetPlansRequest getPlansRequest = new GetPlansRequest()
-				.withLanguage("en_US")
-				.withLocale(identity.getLocale());
-		
-		List<Plan> plans = NowellpointClient.defaultClient(token)
-				.plan()
-				.getPlans(getPlansRequest)
-				.getItems()
-				.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
 
 		Map<String, Object> model = getModel();
 		model.put("organization", organization);
 		model.put("action", "listPlans");
-		model.put("plans", plans);
 
 		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
 	}

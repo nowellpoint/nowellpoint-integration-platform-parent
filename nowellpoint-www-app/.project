@@ -6,6 +6,7 @@
     <project>nowellpoint-aws-sdk</project>
     <project>nowellpoint-aws-core</project>
     <project>nowellpoint-aws-sforce</project>
+    <project>nowellpoint-aws-admin</project>
   </projects>
   <buildSpec>
     <buildCommand>

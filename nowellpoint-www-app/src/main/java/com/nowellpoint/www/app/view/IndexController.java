@@ -1,17 +1,11 @@
 package com.nowellpoint.www.app.view;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import com.nowellpoint.client.Environment;
-import com.nowellpoint.client.model.Plan;
-import com.nowellpoint.client.model.PlanList;
-import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
-import com.nowellpoint.http.Status;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.TemplateBuilder;
 
@@ -37,26 +31,6 @@ public class IndexController extends AbstractStaticController {
 	 */
 	
 	public static String serveIndexPage(Configuration configuration, Request request, Response response) {
-		
-		HttpResponse httpResponse = RestResource.get(Environment.parseEnvironment(System.getenv("NOWELLPOINT_ENVIRONMENT")).getEnvironmentUrl())
-				.path("plans")
-				.queryParameter("locale", "en_US")
-				.queryParameter("language", "en_US")
-				.execute();
-		
-		PlanList planList = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			planList = httpResponse.getEntity(PlanList.class);
-		} else {
-			throw new ServiceUnavailableException(httpResponse.getAsString());
-		}
-		
-		List<Plan> plans = planList.getItems()
-				.stream()
-				.sorted((p1, p2) -> p1.getPrice().getUnitPrice().compareTo(p2.getPrice().getUnitPrice()))
-				.collect(Collectors.toList());
-		
 		return TemplateBuilder.template()
 				.configuration(configuration)
 				.controllerClass(IndexController.class)
@@ -64,7 +38,6 @@ public class IndexController extends AbstractStaticController {
 				.locale(getLocale(request))
 				.templateName(Template.INDEX)
 				.timeZone(getTimeZone(request))
-				.addToModel("planList", plans)
 				.build();
 	}
 	
