@@ -1,33 +1,61 @@
 package com.nowellpoint.signup.service.impl;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
+import java.util.concurrent.Executors;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.modelmapper.ModelMapper;
+import org.mongodb.morphia.query.Query;
 
 import com.nowellpoint.signup.entity.RegistrationDAO;
 import com.nowellpoint.signup.entity.RegistrationDocument;
+import com.nowellpoint.signup.entity.UserProfile;
 import com.nowellpoint.signup.model.ModifiableRegistration;
+import com.nowellpoint.signup.model.ModifiableUserInfo;
 import com.nowellpoint.signup.model.Registration;
 import com.nowellpoint.signup.model.SignUpRequest;
+import com.nowellpoint.signup.model.UserInfo;
 import com.nowellpoint.signup.provider.DatastoreProvider;
 import com.nowellpoint.signup.rest.RegistrationResource;
 import com.nowellpoint.signup.service.RegistrationService;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.EnvironmentVariables;
+import com.sendgrid.Content;
+import com.sendgrid.Email;
+import com.sendgrid.Mail;
+import com.sendgrid.Method;
+import com.sendgrid.Personalization;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 
-public class RegistrationServiceImpl implements RegistrationService {
+public class RegistrationServiceImpl extends AbstractService implements RegistrationService {
 	
 	@Inject
 	private Logger logger;
 	
 	@Inject
 	private DatastoreProvider datastoreProvider;
+	
+	private RegistrationDAO dao;
+	
+	@Inject
+	private Event<Registration> registrationEvent; 
+	
+	@PostConstruct
+	public void init() {
+		dao = new RegistrationDAO(RegistrationDocument.class, datastoreProvider.getDatastore());
+	}
 	
 	@Override
 	public Registration findById(String id) {
@@ -64,9 +92,24 @@ public class RegistrationServiceImpl implements RegistrationService {
 //		Plan plan = findPlanById(planId);
 
 		//isRegistred(request.getEmail(), request.getDomain());
+		
+		/**
+		 * 
+		 */
+		
+		Query<UserProfile> query = datastoreProvider.getDatastore()
+				.createQuery(UserProfile.class)
+				.field("username")
+				.equal("system.administrator@nowellpoint.com");
+				 
+		UserProfile userProfile = query.get();
 
-//		UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName());
-
+		/**
+		 * 
+		 */
+		
+		UserInfo userInfo = modelMapper.map(userProfile, ModifiableUserInfo.class).toImmutable();
+		
 		Date now = Date.from(Instant.now());
 
 		String emailVerificationToken = RandomStringUtils.random(32, 0, 20, true, true, "qw32rfHIJk9iQ8Ud7h0X".toCharArray());
@@ -80,32 +123,29 @@ public class RegistrationServiceImpl implements RegistrationService {
 				.lastName(request.getLastName())
 				.verified(Boolean.FALSE)
 				.planId(request.getPlanId())
-				//.createdBy(userInfo)
+				.createdBy(userInfo)
 				.createdOn(now)
-				//.lastUpdatedBy(userInfo)
+				.lastUpdatedBy(userInfo)
 				.lastUpdatedOn(now)
 				.domain(Assert.isNotNullOrEmpty(request.getDomain()) ? request.getDomain() : emailVerificationToken)
 				.expiresAt(Instant.now().plusSeconds(1209600).toEpochMilli())
 				.build();
+
+		/**
+		 * 
+		 */
 		
-		RegistrationDAO dao = new RegistrationDAO(RegistrationDocument.class, datastoreProvider.getDatastore());
-
-		ModelMapper mapper = new ModelMapper();
-
-		RegistrationDocument entity = mapper.map(registration, RegistrationDocument.class);
-
+		RegistrationDocument entity = modelMapper.map(registration, RegistrationDocument.class);
+		
 		dao.save(entity);
 		
-		ModifiableRegistration mr = mapper.map(entity, ModifiableRegistration.class);
+		registration = modelMapper.map(entity, ModifiableRegistration.class).toImmutable();
 
-		//if (Assert.isNotNullOrEmpty(domain)) {
-		//	sendVerificationEmail(registration.getEmail(), registration.getName(),
-		//			registration.getEmailVerificationToken());
-		//}
-		
-		logger.info(mr.getId());
+		if (Assert.isNotNullOrEmpty(registration.getDomain())) {
+			registrationEvent.fire(registration);
+		}
 
-		return mr.toImmutable();
+		return registration;
 	}
 	
 	@Override
@@ -144,10 +184,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 		
 		//update(instance);
 		
-		sendVerificationEmail(
-				instance.getEmail(), 
-				instance.getName(), 
-				instance.getEmailVerificationToken());
+		registrationEvent.fire(registration);
 		
 		return instance;
 	}
@@ -171,10 +208,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	public void resentVerificationEmail(String id) {
 		Registration registration = findById(id);
 		
-		sendVerificationEmail(
-				registration.getEmail(), 
-				registration.getName(), 
-				registration.getEmailVerificationToken());
+		registrationEvent.fire(registration);
 	}
 	
 	@Override
@@ -268,10 +302,6 @@ public class RegistrationServiceImpl implements RegistrationService {
 //			
 //			snsClient.publish(publishRequest);
 //		}
-	}
-	
-	private void sendVerificationEmail(String email, String name, String emailVerificationToken) {		
-		//emailService.sendEmailVerificationMessage(email, name, emailVerificationToken);
 	}
 	
 	private void isExpired(Long expiresAt) {

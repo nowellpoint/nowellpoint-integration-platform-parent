@@ -21,6 +21,14 @@ abstract class BaseEntity {
 	public BaseEntity() {
 		
 	}
+	
+	public BaseEntity(String id) {
+		setId(new ObjectId(id));
+	}
+	
+	public BaseEntity(ObjectId id) {
+		setId(id);
+	}
 
 	public ObjectId getId() {
 		return id;

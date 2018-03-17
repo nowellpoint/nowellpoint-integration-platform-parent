@@ -20,7 +20,7 @@ import com.nowellpoint.util.Assert;
 @JsonSerialize(as = Registration.class)
 @JsonDeserialize(as = Registration.class)
 public abstract class AbstractRegistration {
-	public abstract @Nullable ObjectId getId();
+	public abstract @Nullable String getId();
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();
@@ -32,8 +32,8 @@ public abstract class AbstractRegistration {
 	public abstract Long getExpiresAt();
 	public abstract String getPlanId();
 	public abstract @Nullable String getIdentityHref(); 
-	//public abstract UserInfo getCreatedBy();
-	//public abstract UserInfo getLastUpdatedBy();
+	public abstract UserInfo getCreatedBy();
+	public abstract UserInfo getLastUpdatedBy();
 	public abstract Boolean getVerified();
 	public abstract Date getCreatedOn();
 	public abstract Date getLastUpdatedOn();

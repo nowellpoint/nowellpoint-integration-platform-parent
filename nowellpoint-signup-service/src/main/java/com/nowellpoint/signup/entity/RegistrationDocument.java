@@ -3,23 +3,39 @@ package com.nowellpoint.signup.entity;
 import java.net.URI;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
 
 @Entity(value = "registrations", noClassnameStored = true)
 public class RegistrationDocument extends BaseEntity {
 	
 	private String firstName;
+	
 	private String lastName;
+	
 	private String email;
+	
 	private String phone;
+	
 	private String countryCode;
+	
 	private String emailVerificationToken;
+	
 	private String domain;
+	
 	private URI emailVerificationHref;
+	
 	private Long expiresAt;
+	
 	private String planId;
-	private String identityHref; 
-	//public abstract UserInfo getCreatedBy();
-	//public abstract UserInfo getLastUpdatedBy();
+	
+	private String identityHref;
+	
+	@Reference
+	private UserProfile createdBy;
+	
+	@Reference
+	private UserProfile lastUpdatedBy;
+	
 	private Boolean verified;
 	
 	public RegistrationDocument() {
@@ -120,5 +136,21 @@ public class RegistrationDocument extends BaseEntity {
 
 	public void setVerified(Boolean verified) {
 		this.verified = verified;
+	}
+
+	public UserProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserProfile getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserProfile lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 }
