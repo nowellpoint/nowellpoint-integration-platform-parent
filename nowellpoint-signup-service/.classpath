@@ -80,7 +80,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/health-api/2018.2.0.Final/health-api-2018.2.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/wildfly/swarm/swagger/2018.2.0.Final/swagger-2018.2.0.Final.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/swagger/swagger-annotations/1.5.16/swagger-annotations-1.5.16.jar"/>
-	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.9.9/joda-time-2.9.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value/2.5.6/value-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.5.6/builder-2.5.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.5.6/value-fixture-2.5.6.jar"/>
@@ -103,6 +102,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-impl/0.10.0/okta-sdk-impl-0.10.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.6.0/jjwt-0.6.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.7/joda-time-2.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/okta/sdk/okta-sdk-httpclient/0.10.0/okta-sdk-httpclient-0.10.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5.5/httpclient-4.5.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.9/httpcore-4.4.9.jar"/>

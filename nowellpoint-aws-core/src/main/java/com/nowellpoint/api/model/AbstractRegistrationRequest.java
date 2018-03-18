@@ -1,4 +1,4 @@
-package com.nowellpoint.signup.model;
+package com.nowellpoint.api.model;
 
 import javax.annotation.Nullable;
 
@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-@JsonSerialize(as = SignUpRequest.class)
-@JsonDeserialize(as = SignUpRequest.class)
-public abstract class AbstractSignUpRequest {
+@JsonSerialize(as = RegistrationRequest.class)
+@JsonDeserialize(as = RegistrationRequest.class)
+public abstract class AbstractRegistrationRequest {
 	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getEmail();

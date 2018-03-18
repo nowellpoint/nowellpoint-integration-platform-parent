@@ -29,4 +29,11 @@ public abstract class AbstractUserInfo {
 	public String getName() {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
+	
+	public Meta getMeta() {
+		return Meta.builder()
+				.id(getId().toString())
+				//.resourceClass(UserProfile.class)
+				.build();
+	}
 }

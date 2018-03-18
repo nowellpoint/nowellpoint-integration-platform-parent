@@ -16,19 +16,20 @@ import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.mongodb.morphia.query.Query;
 
+import com.nowellpoint.api.RegistrationResource;
+import com.nowellpoint.api.model.RegistrationRequest;
 import com.nowellpoint.signup.entity.RegistrationDAO;
 import com.nowellpoint.signup.entity.RegistrationDocument;
 import com.nowellpoint.signup.entity.UserProfile;
 import com.nowellpoint.signup.model.ModifiableRegistration;
 import com.nowellpoint.signup.model.ModifiableUserInfo;
 import com.nowellpoint.signup.model.Registration;
-import com.nowellpoint.signup.model.SignUpRequest;
 import com.nowellpoint.signup.model.UserInfo;
 import com.nowellpoint.signup.provider.DatastoreProvider;
-import com.nowellpoint.signup.rest.RegistrationResource;
 import com.nowellpoint.signup.service.RegistrationService;
 import com.nowellpoint.signup.util.MessageProvider;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 
 public class RegistrationServiceImpl extends AbstractService implements RegistrationService {
 	
@@ -52,7 +53,11 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 	public Registration findById(String id) {
 		RegistrationDocument entity = get(RegistrationDocument.class, id);
 		if (Assert.isNull(entity)) {
-			entity = dao.get(new ObjectId(id));
+			try {
+				entity = dao.get(new ObjectId(id));
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageProvider.INVALID_VALUE_FOR_ID), id));
+			}
 		}
 		if (Assert.isNull(entity)) {
 			throw new NotFoundException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageProvider.REGISTRATION_ID_NOT_FOUND), id));
@@ -61,7 +66,7 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 	}
 
 	@Override
-	public Registration register(SignUpRequest request) {
+	public Registration register(RegistrationRequest request) {
 
 //		List<String> errors = new ArrayList<>();
 //
@@ -87,27 +92,21 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 //		}
 //
 //		Plan plan = findPlanById(planId);
+		
+//		Query<Plan> query = datastoreProvider.getDatastore()
+//				.createQuery(UserProfile.class)
+//				.field("username")
+//				.equal("system.administrator@nowellpoint.com");
 
 		//isRegistred(request.getEmail(), request.getDomain());
-		
-		/**
-		 * 
-		 */
-		
-		Query<UserProfile> query = datastoreProvider.getDatastore()
-				.createQuery(UserProfile.class)
-				.field("username")
-				.equal("system.administrator@nowellpoint.com");
-				 
-		UserProfile userProfile = query.get();
 
 		/**
 		 * 
 		 */
 		
-		UserInfo userInfo = modelMapper.map(userProfile, ModifiableUserInfo.class).toImmutable();
+		UserInfo userInfo = getSystemAdmin();
 		
-		Date now = Date.from(Instant.now());
+		Date now = getCurrentDate();
 
 		String emailVerificationToken = RandomStringUtils.random(32, 0, 20, true, true, "qw32rfHIJk9iQ8Ud7h0X".toCharArray());
 
@@ -158,7 +157,7 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 		
 		isExpired(registration.getExpiresAt());
 		
-		URI emailVerificationTokenUri = UriBuilder.fromUri("") //EnvUtil.getValue(Variable.API_HOSTNAME))
+		URI emailVerificationTokenUri = UriBuilder.fromUri(System.getProperty(Properties.API_HOSTNAME)) 
 				.path(RegistrationResource.class)
 				.path("verify-email")
 				.path("{emailVerificationToken}")
@@ -166,9 +165,9 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 		
 		logger.info(emailVerificationTokenUri);
 		
-		//UserInfo userInfo = UserInfo.of(UserContext.getPrincipal().getName()); 
+		UserInfo userInfo = getSystemAdmin();
 		
-		Date now = Date.from(Instant.now());
+		Date now = getCurrentDate();
 		
 		//Plan plan = findPlanById(Assert.isNotNullOrEmpty(planId) ? planId : registration.getPlanId());
 		
@@ -177,11 +176,17 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
 				.lastUpdatedOn(now)
-				//.lastUpdatedBy(userInfo)
+				.lastUpdatedBy(userInfo)
 				//.planId(plan.getId())
 				.build();
 		
-		//update(instance);
+		/**
+		 * 
+		 */
+		
+		RegistrationDocument entity = modelMapper.map(registration, RegistrationDocument.class);
+		
+		dao.save(entity);
 		
 		registrationEvent.fire(registration);
 		
@@ -360,5 +365,16 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 //				publish(username);
 //			}
 //		}
+	}
+	
+	private UserInfo getSystemAdmin() {
+		Query<UserProfile> query = datastoreProvider.getDatastore()
+				.createQuery(UserProfile.class)
+				.field("username")
+				.equal("system.administrator@nowellpoint.com");
+				 
+		UserProfile userProfile = query.get();
+		
+		return modelMapper.map(userProfile, ModifiableUserInfo.class).toImmutable();
 	}
 }

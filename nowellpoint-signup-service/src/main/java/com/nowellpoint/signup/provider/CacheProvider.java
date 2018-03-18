@@ -8,6 +8,8 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.util.EnvironmentVariables;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -31,10 +33,10 @@ public class CacheProvider {
 		
 		jedisPool = new JedisPool(
 				poolConfig, 
-				System.getenv("REDIS_HOST"), 
-				Integer.valueOf(System.getenv("REDIS_PORT")), 
+				System.getenv(EnvironmentVariables.REDIS_HOST), 
+				Integer.valueOf(System.getenv(EnvironmentVariables.REDIS_PORT)), 
 				Protocol.DEFAULT_TIMEOUT, 
-				System.getenv("REDIS_PASSWORD"));
+				System.getenv(EnvironmentVariables.REDIS_PASSWORD));
 		
 		logger.info("connecting to cache...is connected: " + ! jedisPool.isClosed());
 	}

@@ -1,4 +1,4 @@
-package com.nowellpoint.signup.rest;
+package com.nowellpoint.api;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.signup.model.SignUpRequest;
+import com.nowellpoint.api.model.RegistrationRequest;
 
 @Path("/registrations")
 public interface RegistrationResource {
@@ -38,7 +38,7 @@ public interface RegistrationResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response createRegistration(SignUpRequest request);
+    public Response createRegistration(RegistrationRequest request);
 	
 	@PermitAll
 	@POST

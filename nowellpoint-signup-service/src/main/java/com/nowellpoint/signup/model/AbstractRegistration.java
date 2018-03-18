@@ -5,13 +5,11 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
-import org.bson.types.ObjectId;
-
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.signup.rest.RegistrationResource;
+import com.nowellpoint.api.RegistrationResource;
 import com.nowellpoint.util.Assert;
 
 @Value.Immutable

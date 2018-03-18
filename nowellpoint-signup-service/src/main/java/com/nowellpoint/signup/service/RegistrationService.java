@@ -1,13 +1,13 @@
 package com.nowellpoint.signup.service;
 
+import com.nowellpoint.api.model.RegistrationRequest;
 import com.nowellpoint.signup.model.Registration;
-import com.nowellpoint.signup.model.SignUpRequest;
 
 public interface RegistrationService {
 	
 	public Registration findById(String id);
 	
-	public Registration register(SignUpRequest request);
+	public Registration register(RegistrationRequest request);
 	
 	public Registration updateRegistration(
 			String id, 

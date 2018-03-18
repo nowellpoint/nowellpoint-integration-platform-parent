@@ -5,9 +5,9 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 
+import com.nowellpoint.api.RegistrationResource;
+import com.nowellpoint.api.model.RegistrationRequest;
 import com.nowellpoint.signup.model.Registration;
-import com.nowellpoint.signup.model.SignUpRequest;
-import com.nowellpoint.signup.rest.RegistrationResource;
 import com.nowellpoint.signup.service.RegistrationService;
 
 public class RegistrationResourceImpl implements RegistrationResource {
@@ -28,7 +28,7 @@ public class RegistrationResourceImpl implements RegistrationResource {
 	}
     
 	@Override
-    public Response createRegistration(SignUpRequest request) {
+    public Response createRegistration(RegistrationRequest request) {
     	
 		Registration registration = registrationService.register(request);
 		

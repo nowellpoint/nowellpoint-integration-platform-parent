@@ -6,8 +6,10 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +23,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 
 import org.bson.types.ObjectId;
-import org.jboss.logging.Logger;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
@@ -34,9 +35,9 @@ import com.nowellpoint.signup.entity.UserProfile;
 import com.nowellpoint.signup.model.ModifiableUserInfo;
 import com.nowellpoint.signup.model.UserInfo;
 import com.nowellpoint.signup.provider.CacheProvider;
+import com.nowellpoint.util.EnvironmentVariables;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 
 public abstract class AbstractService {
@@ -80,7 +81,7 @@ public abstract class AbstractService {
 	private static IvParameterSpec iv;
 	
 	public AbstractService() {
-		String keyString = System.getenv("CACHE_DATA_ENCRYPTION_KEY");
+		String keyString = System.getenv(EnvironmentVariables.CACHE_DATA_ENCRYPTION_KEY);
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");
@@ -99,6 +100,10 @@ public abstract class AbstractService {
 		} catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected Date getCurrentDate() {
+		return Date.from(Instant.now());
 	}
 	
 	private Jedis getCache() {
