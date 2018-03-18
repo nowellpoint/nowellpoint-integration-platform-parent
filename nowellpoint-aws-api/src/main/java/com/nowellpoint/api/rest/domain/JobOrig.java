@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nowellpoint.mongodb.document.MongoDocument;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.DateUtil;
+import com.nowellpoint.util.DateFormatter;
 
 public class JobOrig extends AbstractResource {
 	
@@ -144,11 +144,11 @@ public class JobOrig extends AbstractResource {
 				if (JobScheduleOptions.RUN_WHEN_SUBMITTED.equals(scheduleOption)) {
 					schedule = Schedule.of(RunWhenSubmitted.builder().build());
 				} else if (JobScheduleOptions.RUN_ONCE.equals(scheduleOption)) {
-					schedule = Schedule.of(RunOnce.builder().runDate(DateUtil.iso8601(jobRequest.getRunAt().get())).build());
+					schedule = Schedule.of(RunOnce.builder().runDate(DateFormatter.iso8601(jobRequest.getRunAt().get())).build());
 				} else if (JobScheduleOptions.RUN_ON_SCHEDULE.equals(scheduleOption)) {
 					schedule = Schedule.of(RunOnSchedule.builder()
-							.endAt(DateUtil.iso8601(jobRequest.getEndAt().get()))
-							.startAt(DateUtil.iso8601(jobRequest.getStartAt().get()))
+							.endAt(DateFormatter.iso8601(jobRequest.getEndAt().get()))
+							.startAt(DateFormatter.iso8601(jobRequest.getStartAt().get()))
 							.timeInterval(Integer.valueOf(jobRequest.getTimeInterval().get()))
 							.timeUnit(TimeUnit.valueOf(jobRequest.getTimeUnit().get()))
 							.timeZone(TimeZone.getTimeZone(jobRequest.getTimeZone().get()))

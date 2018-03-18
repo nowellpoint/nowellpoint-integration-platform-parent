@@ -1,6 +1,5 @@
 package com.nowellpoint.signup.provider;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
 import javax.enterprise.context.Initialized;
@@ -40,11 +39,5 @@ public class DatastoreProvider {
 	
 	public void destroy(@Observes @Destroyed(ApplicationScoped.class) Object destroy) {
 		mongoClient.close();
-	}
-	
-	@PostConstruct
-	public void init() {
-		
-        
 	}
 }

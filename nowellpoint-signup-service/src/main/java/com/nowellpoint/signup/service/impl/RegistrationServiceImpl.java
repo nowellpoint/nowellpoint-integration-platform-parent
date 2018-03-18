@@ -1,11 +1,9 @@
 package com.nowellpoint.signup.service.impl;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -16,7 +14,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
-import org.modelmapper.ModelMapper;
 import org.mongodb.morphia.query.Query;
 
 import com.nowellpoint.signup.entity.RegistrationDAO;
@@ -32,15 +29,6 @@ import com.nowellpoint.signup.rest.RegistrationResource;
 import com.nowellpoint.signup.service.RegistrationService;
 import com.nowellpoint.signup.util.MessageProvider;
 import com.nowellpoint.util.Assert;
-import com.nowellpoint.util.EnvironmentVariables;
-import com.sendgrid.Content;
-import com.sendgrid.Email;
-import com.sendgrid.Mail;
-import com.sendgrid.Method;
-import com.sendgrid.Personalization;
-import com.sendgrid.Request;
-import com.sendgrid.Response;
-import com.sendgrid.SendGrid;
 
 public class RegistrationServiceImpl extends AbstractService implements RegistrationService {
 	
@@ -62,7 +50,10 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 	
 	@Override
 	public Registration findById(String id) {
-		RegistrationDocument entity = dao.get(new ObjectId(id));
+		RegistrationDocument entity = get(RegistrationDocument.class, id);
+		if (Assert.isNull(entity)) {
+			entity = dao.get(new ObjectId(id));
+		}
 		if (Assert.isNull(entity)) {
 			throw new NotFoundException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageProvider.REGISTRATION_ID_NOT_FOUND), id));
 		}
@@ -144,6 +135,8 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 		RegistrationDocument entity = modelMapper.map(registration, RegistrationDocument.class);
 		
 		dao.save(entity);
+		
+		set(entity.getId().toString(), entity);
 		
 		registration = modelMapper.map(entity, ModifiableRegistration.class).toImmutable();
 
