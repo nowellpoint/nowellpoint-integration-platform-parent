@@ -30,10 +30,10 @@ public abstract class AbstractUserInfo {
 		return Assert.isNotNullOrEmpty(getFirstName()) ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	public Meta getMeta() {
-		return Meta.builder()
-				.id(getId().toString())
-				//.resourceClass(UserProfile.class)
-				.build();
-	}
+//	public Meta getMeta() {
+//		return Meta.builder()
+//				.id(getId().toString())
+//				//.resourceClass(UserProfile.class)
+//				.build();
+//	}
 }
