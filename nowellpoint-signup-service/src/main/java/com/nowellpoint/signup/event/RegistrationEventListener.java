@@ -34,8 +34,8 @@ public class RegistrationEventListener {
 			@Override
 			public void run() {
 				Email from = new Email();
-				from.setEmail(System.getProperty(Properties.REGISTRATION_FROM_EMAIL));
-				from.setName(System.getProperty(Properties.REGISTRATION_FROM_NAME));
+				from.setEmail(registration.getCreatedBy().getEmail());
+				from.setName(registration.getCreatedBy().getName());
 			    
 			    Email to = new Email();
 			    to.setEmail(registration.getEmail());

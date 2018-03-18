@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -28,6 +30,7 @@ import com.nowellpoint.signup.model.UserInfo;
 import com.nowellpoint.signup.provider.DatastoreProvider;
 import com.nowellpoint.signup.rest.RegistrationResource;
 import com.nowellpoint.signup.service.RegistrationService;
+import com.nowellpoint.signup.util.MessageProvider;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.EnvironmentVariables;
 import com.sendgrid.Content;
@@ -59,8 +62,11 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 	
 	@Override
 	public Registration findById(String id) {
-		//return super.findById(id);
-		return null;
+		RegistrationDocument entity = dao.get(new ObjectId(id));
+		if (Assert.isNull(entity)) {
+			throw new NotFoundException(String.format(MessageProvider.getMessage(Locale.getDefault(), MessageProvider.REGISTRATION_ID_NOT_FOUND), id));
+		}
+		return modelMapper.map(entity, ModifiableRegistration.class).toImmutable();
 	}
 
 	@Override
@@ -177,7 +183,7 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 				.from(registration)
 				.domain(domain)
 				.emailVerificationHref(emailVerificationTokenUri)
-				//.lastUpdatedOn(now)
+				.lastUpdatedOn(now)
 				//.lastUpdatedBy(userInfo)
 				//.planId(plan.getId())
 				.build();

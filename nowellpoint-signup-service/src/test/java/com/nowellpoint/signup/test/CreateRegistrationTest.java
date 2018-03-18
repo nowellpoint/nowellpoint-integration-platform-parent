@@ -100,5 +100,10 @@ public class CreateRegistrationTest {
 		System.out.println(registration.getCreatedBy().getName());
 		System.out.println(registration.getLastUpdatedBy().getId());
 		System.out.println(registration.getLastUpdatedBy().getName());
+		
+		RegistrationDocument entity = dao.get(new ObjectId(registration.getId()));
+		
+		System.out.println(entity.getDomain());
+		
 	}
 }

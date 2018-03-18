@@ -28,7 +28,4 @@ verify:
 registration:
   email:
       template:
-        id: 3e2b0449-2ff8-40cb-86eb-32cad32886de
-  from:
-    email: administrator@nowellpoint.com
-    name: Nowellpoint Support        
+        id: 3e2b0449-2ff8-40cb-86eb-32cad32886de       
