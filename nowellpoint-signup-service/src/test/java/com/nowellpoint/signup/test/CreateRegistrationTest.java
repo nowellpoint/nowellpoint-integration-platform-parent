@@ -20,6 +20,7 @@ import com.nowellpoint.signup.model.ModifiableRegistration;
 import com.nowellpoint.signup.model.ModifiableUserInfo;
 import com.nowellpoint.signup.model.Registration;
 import com.nowellpoint.signup.model.UserInfo;
+import com.okta.sdk.lang.Assert;
 
 public class CreateRegistrationTest {
 	
@@ -103,7 +104,8 @@ public class CreateRegistrationTest {
 		
 		RegistrationDocument entity = dao.get(new ObjectId(registration.getId()));
 		
-		System.out.println(entity.getDomain());
+		Assert.notNull(entity.getDomain());
 		
+		dao.deleteById(new ObjectId(registration.getId()));
 	}
 }

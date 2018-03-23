@@ -14,29 +14,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.wildfly.swarm</groupId>
-			<artifactId>jaxrs</artifactId>
-			<version>${version.wildfly.swarm}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value</artifactId>
-			<version>${version.immutables}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>builder</artifactId>
-			<version>${version.immutables}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value-fixture</artifactId>
-			<version>${version.immutables}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>

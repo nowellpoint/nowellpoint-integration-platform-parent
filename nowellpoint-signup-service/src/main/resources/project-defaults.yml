@@ -1,0 +1,20 @@
+logger:
+    level: INFO
+swarm:
+    http:
+        port: 8080
+    https:
+        certificate:
+            generate: true
+        port: 8443
+registration:
+    send:
+      notification: true    
+    email:
+      template:
+        id: 3e2b0449-2ff8-40cb-86eb-32cad32886de   
+api:
+    hostname: https://api.nowellpoint.com/rest
+verify:
+    email:
+      redirect: https://www.nowellpoint.com/verify-email         

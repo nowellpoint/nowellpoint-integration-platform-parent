@@ -18,8 +18,8 @@ import redis.clients.jedis.Protocol;
 @ApplicationScoped
 public class CacheProvider {
 	
-	@Inject
-	private Logger logger;
+	//@Inject
+	private Logger logger = Logger.getLogger(CacheProvider.class);
 	
 	private JedisPool jedisPool;
 	
@@ -28,6 +28,7 @@ public class CacheProvider {
 	}
 	
 	public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
+		System.out.println("init");
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
         poolConfig.setMaxTotal(1000);
 		

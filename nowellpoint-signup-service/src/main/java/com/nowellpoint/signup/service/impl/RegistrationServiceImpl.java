@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.jboss.logging.Logger;
 import org.mongodb.morphia.query.Query;
@@ -281,8 +281,7 @@ public class RegistrationServiceImpl extends AbstractService implements Registra
 	
 	@Override
 	public void deleteRegistration(String id) {
-		Registration registration = findById(id);
-		//super.delete(registration);
+		dao.deleteById(new ObjectId(id));
 	}
 	
 	private Registration findByEmailVerificationToken(String emailVerificationToken) {

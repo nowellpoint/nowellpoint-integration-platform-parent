@@ -81,7 +81,7 @@ public abstract class AbstractService {
 	private static IvParameterSpec iv;
 	
 	public AbstractService() {
-		String keyString = System.getenv(EnvironmentVariables.CACHE_DATA_ENCRYPTION_KEY);
+		String keyString = System.getenv(EnvironmentVariables.REDIS_ENCRYPTION_KEY);
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");

@@ -55,11 +55,11 @@
                         <select id="countryCode" name="countryCode" class="form-control" required>
                             <option value="XX" selected="selected">${labels['select.country']}</option>
                             <#list countryList as country>
-                                <#if country.iso2Code==countryCode>
-                                    <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                <#if country.code==countryCode>
+                                    <option value="${country.code}" selected="selected">${country.name}</option>
                                 </#if>
-                                <#if country.iso2Code !=countryCode>
-                                    <option value="${country.iso2Code}">${country.name}</option>
+                                <#if country.code !=countryCode>
+                                    <option value="${country.code}">${country.name}</option>
                                 </#if>
                             </#list>
                         </select>

@@ -25,7 +25,8 @@ public class DatastoreProvider {
 	}
 	
 	public void init(@Observes @Initialized(ApplicationScoped.class) Object init) {
-		final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", System.getenv(EnvironmentVariables.MONGO_CLIENT_URI)));
+		System.out.println("init: " + EnvironmentVariables.getMongoClientUri());
+		final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
         mongoClient = new MongoClient(mongoClientUri);
         
         final Morphia morphia = new Morphia();
