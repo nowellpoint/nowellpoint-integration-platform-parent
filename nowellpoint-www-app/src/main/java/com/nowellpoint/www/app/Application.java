@@ -37,14 +37,22 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.content.model.IsoCountry;
+import com.nowellpoint.console.service.AuthenticationService;
 import com.nowellpoint.content.model.IsoCountryList;
-import com.nowellpoint.content.model.Plan;
 import com.nowellpoint.content.model.PlanList;
 import com.nowellpoint.content.service.ContentService;
+import com.nowellpoint.content.model.IsoCountry;
+import com.nowellpoint.content.model.Plan;
+import com.nowellpoint.www.app.util.EnvironmentVariables;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AdministrationController;
+import com.nowellpoint.www.app.view.AuthController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ConnectorController;
 import com.nowellpoint.www.app.view.DashboardController;
@@ -90,6 +98,8 @@ public class Application implements SparkApplication {
 
 		configuration.setClassForTemplateLoading(this.getClass(), "/views");
 		configuration.setDefaultEncoding("UTF-8");
+		
+		Datastore datastore = getDatestore();
 
 		//
 		// load countries list
@@ -109,6 +119,8 @@ public class Application implements SparkApplication {
 			request.attribute("com.nowellpoint.default.locale", configuration.getLocale());
 			request.attribute("com.nowellpoint.default.timezone", configuration.getTimeZone());
 		});
+		
+		new AuthController(configuration, new AuthenticationService(datastore));
 
 		//
 		// verify secure requests
@@ -189,11 +201,11 @@ public class Application implements SparkApplication {
 		// authentication routes
 		//
 
-		get(Path.Route.LOGIN, (request, response) 
-				-> AuthenticationController.serveLoginPage(configuration, request, response));
-		
-		post(Path.Route.LOGIN, (request, response) 
-				-> AuthenticationController.login(configuration, request, response));
+//		get(Path.Route.LOGIN, (request, response) 
+//				-> AuthenticationController.serveLoginPage(configuration, request, response));
+//		
+//		post(Path.Route.LOGIN, (request, response) 
+//				-> AuthenticationController.login(configuration, request, response));
 		
 		get(Path.Route.LOGOUT, (request, response) 
 				-> AuthenticationController.logout(configuration, request, response));
@@ -437,5 +449,19 @@ public class Application implements SparkApplication {
 	private static String healthCheck(Request request, Response response) {
 		response.status(200);
 		return "";
+	}
+	
+	private static Datastore getDatestore() {
+		final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
+		MongoClient mongoClient = new MongoClient(mongoClientUri);
+        
+        final Morphia morphia = new Morphia();
+        
+        //morphia.map(UserProfileEntity.class);
+
+        Datastore datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
+        datastore.ensureIndexes();
+        
+        return datastore;
 	}
 }
