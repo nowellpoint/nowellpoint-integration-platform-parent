@@ -90,6 +90,11 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 
 		<dependency>

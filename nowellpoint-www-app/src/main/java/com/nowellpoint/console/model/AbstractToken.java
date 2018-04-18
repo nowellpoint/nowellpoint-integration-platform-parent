@@ -1,4 +1,4 @@
-package com.nowellpoint.console.service;
+package com.nowellpoint.console.model;
 
 import javax.annotation.Nullable;
 
@@ -11,14 +11,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
-@Value.Style(typeImmutable = "*")
+@Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonInclude(Include.NON_NULL)
-@JsonSerialize(as = TokenResponse.class)
-@JsonDeserialize(as = TokenResponse.class)
-public abstract class AbstractTokenResponse {
+@JsonSerialize(as = Token.class)
+@JsonDeserialize(as = Token.class)
+public abstract class AbstractToken {
+	@JsonProperty(value="id") public abstract String getId();
+	@JsonProperty(value="environment_url") public abstract String getEnvironmentUrl();
 	@JsonProperty(value="access_token") public abstract String getAccessToken();
+	@JsonProperty(value="refresh_token") @Nullable public abstract String getRefreshToken();
 	@JsonProperty(value="token_type") public abstract String getTokenType();
 	@JsonProperty(value="expires_in") public abstract Long getExpiresIn();
-	@JsonProperty(value="scope") public abstract String getScope();
-	@JsonProperty(value="refresh_token") @Nullable public abstract String getRefreshToken();
 }

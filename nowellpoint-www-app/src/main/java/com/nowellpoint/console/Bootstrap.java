@@ -16,7 +16,7 @@
  * 
  */
 
-package com.nowellpoint.www.app;
+package com.nowellpoint.console;
 
 import static spark.Spark.before;
 import static spark.Spark.delete;
@@ -75,16 +75,15 @@ import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
 
-public class Application implements SparkApplication {
+public class Bootstrap implements SparkApplication {
 
-	private static final Logger LOG = Logger.getLogger(Application.class.getName());
-
-	public static void main(String[] args) throws Exception {
-		new Application();
-	}
+	private static final Logger LOG = Logger.getLogger(Bootstrap.class.getName());
+	
+	
 
 	@Override
 	public void init() {
+		
 
 		//
 		// Configure FreeMarker

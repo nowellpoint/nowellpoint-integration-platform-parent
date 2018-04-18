@@ -25,6 +25,7 @@ import com.nowellpoint.oauth.model.Keys;
 import com.nowellpoint.oauth.model.OAuthProviderType;
 import com.nowellpoint.oauth.model.TokenResponse;
 import com.nowellpoint.oauth.model.TokenVerificationResponse;
+import com.nowellpoint.oauth.model.UserInfoResponse;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -53,6 +54,7 @@ public abstract class AbstractOAuthClient {
 	private static final String OFFLINE_ACCESS = "offline_access";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
+	private static final String USER_INFO = "userinfo";
 	
 	public abstract OAuthProviderType getProvider();
 	
@@ -133,7 +135,56 @@ public abstract class AbstractOAuthClient {
 				.parameter(TOKEN_TYPE_HINT, ACCESS_TOKEN)
 				.execute();
 		
-		return httpResponse.getEntity(TokenVerificationResponse.class);
+		TokenVerificationResponse response = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			response = httpResponse.getEntity(TokenVerificationResponse.class);
+		} else {
+			ErrorResponse error = httpResponse.getEntity(ErrorResponse.class);	
+			throw new OAuthClientException(error);
+		}
+		
+		return response;
+	}
+	
+	public UserInfoResponse userInfo(String accessToken) {
+		HttpResponse httpResponse = RestResource.get(getProvider().getAuthorizationServer())
+				.bearerAuthorization(accessToken)
+				.accept(MediaType.APPLICATION_JSON)
+				.path(VERSION)
+				.path(USER_INFO)
+				.execute();
+		
+		UserInfoResponse response = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			response = httpResponse.getEntity(UserInfoResponse.class);
+		} else {
+			ErrorResponse error = httpResponse.getEntity(ErrorResponse.class);	
+			throw new OAuthClientException(error);
+		}
+		
+		return response;
+	}
+	
+	public Keys getKeys() {
+		HttpResponse httpResponse = RestResource.get(getProvider().getAuthorizationServer())
+				.basicAuthorization(getProvider().getClientId(), getProvider().getClientSecret())
+				.accept(MediaType.APPLICATION_JSON)
+				.path(VERSION)
+				.path(KEYS)
+				.execute();
+		
+		Keys keys = null;
+		
+		if (httpResponse.getStatusCode() == Status.OK) {
+			keys = httpResponse.getEntity(Keys.class);
+		} else {
+			ErrorResponse error = httpResponse.getEntity(ErrorResponse.class);	
+			throw new OAuthClientException(error);
+		}
+		
+		return keys;
 	}
 	
 	public Jws<Claims> getClaims(String accessToken) {
@@ -171,25 +222,5 @@ public abstract class AbstractOAuthClient {
 		keys.getKeys().forEach(key -> {
 			KEY_CACHE.put(key.getKeyId(), key);
 		});
-	}
-	
-	private Keys getKeys() {
-		HttpResponse httpResponse = RestResource.get(getProvider().getAuthorizationServer())
-				.basicAuthorization(getProvider().getClientId(), getProvider().getClientSecret())
-				.accept(MediaType.APPLICATION_JSON)
-				.path(VERSION)
-				.path(KEYS)
-				.execute();
-		
-		Keys keys = null;
-		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			keys = httpResponse.getEntity(Keys.class);
-		} else {
-			ErrorResponse error = httpResponse.getEntity(ErrorResponse.class);	
-			throw new OAuthClientException(error);
-		}
-		
-		return keys;
 	}
 }

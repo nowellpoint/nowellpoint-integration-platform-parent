@@ -10,7 +10,7 @@ public class IdentityDocument {
 	@Id
 	private ObjectId id;
 	
-	private String providerId;
+	private String subject;
 	
 	private String userId;
 	
@@ -28,12 +28,12 @@ public class IdentityDocument {
 		this.id = id;
 	}
 
-	public String getProviderId() {
-		return providerId;
+	public String getSubject() {
+		return subject;
 	}
 
-	public void setProviderId(String providerId) {
-		this.providerId = providerId;
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 	public String getUserId() {

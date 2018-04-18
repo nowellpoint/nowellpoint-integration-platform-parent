@@ -8,6 +8,41 @@
 	<packaging>jar</packaging>
 	<name>Core Library Functions</name>
 	
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
+
+	<url>https://www.nowellpoint.com</url>
+
+	<issueManagement>
+		<url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent.git</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</connection>
+		<developerConnection>scm:git:git@github.com:nowellpoint/nowellpoint-integration-platform-parent</developerConnection>
+		<url>https://github.com/nowellpoint/nowellpoint-integration-platform-parent</url>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>jherson</id>
+			<name>John Herson</name>
+			<email>john.herson@nowellpoint.com</email>
+		</developer>
+	</developers>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
