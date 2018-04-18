@@ -11,6 +11,9 @@
         <dependent-module archiveName="nowellpoint-aws-sdk-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sdk/nowellpoint-aws-sdk">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="nowellpoint-aws-core-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="nowellpoint-aws-sforce-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
             <dependency-type>uses</dependency-type>
         </dependent-module>

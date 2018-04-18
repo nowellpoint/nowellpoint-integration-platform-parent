@@ -22,6 +22,10 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
+import com.nowellpoint.oauth.OAuthClient;
+import com.nowellpoint.oauth.model.AuthenticationRequest;
+import com.nowellpoint.oauth.model.OktaOAuthProvider;
+import com.nowellpoint.oauth.model.TokenResponse;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
 import com.nowellpoint.www.app.view.AuthenticationController;
 
@@ -42,19 +46,7 @@ public class AuthenticationService {
 	private static final String REDIRECT_URI = "redirect_uri";
 	
 	private static final String VERSION = "v1";
-	private static final String TOKEN = "token";
-	private static final String REVOKE = "revoke";
-	private static final String INTROSPECT = "introspect";
 	private static final String KEYS = "keys";
-	private static final String GRANT_TYPE = "grant_type";
-	//private static final String CLIENT_CREDENTIALS = "client_credentials";
-	private static final String TOKEN_TYPE_HINT = "token_type_hint";
-	private static final String ACCESS_TOKEN = "access_token";
-	private static final String REFRESH_TOKEN = "refresh_token";
-	private static final String SCOPE = "scope";
-	private static final String OFFLINE_ACCESS = "offline_access";
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "password";
 	
 	private IdentityDAO identityDAO;
 	
@@ -80,8 +72,6 @@ public class AuthenticationService {
 				.equal(claims.getBody().getSubject());
 		
 		IdentityDocument document = identityDAO.findOne(query);
-		
-		LOGGER.info("1: " + document.getId().toString());
 
 		Long expiresIn = tokenResponse.getExpiresIn();
 
@@ -94,30 +84,26 @@ public class AuthenticationService {
 		return "";
 		
 	}
+	
+	public void revoke(String accessToken) {		
+		OAuthClient client = OAuthClient.builder()
+				.provider(OktaOAuthProvider.builder().build())
+				.build();
+		
+		client.revoke(accessToken);
+	}
 
 	private TokenResponse authenticate(String username, String password) {	
-		HttpResponse httpResponse = RestResource.post(EnvironmentVariables.getOktaAuthorizationServer())
-				.basicAuthorization(EnvironmentVariables.getOktaClientId(), EnvironmentVariables.getOktaClientSecret())
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
-				.path(VERSION)
-				.path(TOKEN)
-				.parameter(GRANT_TYPE, PASSWORD)
-				.parameter(SCOPE, OFFLINE_ACCESS)
-				.parameter(USERNAME, username)
-				.parameter(PASSWORD, password)
-				.execute();
+		AuthenticationRequest request = AuthenticationRequest.builder()
+				.password(password)
+				.username(username)
+				.build();
 		
-		TokenResponse response = null;
+		OAuthClient client = OAuthClient.builder()
+				.provider(OktaOAuthProvider.builder().build())
+				.build();
 		
-		if (httpResponse.getStatusCode() == Status.OK) {
-			response = httpResponse.getEntity(TokenResponse.class);
-		} else {
-			Error error = httpResponse.getEntity(Error.class);
-			LOGGER.debug(error.getError());
-			LOGGER.debug(error.getErrorDescription());
-			throw new AuthenticationException(error.getError(), error.getErrorDescription());
-		}
+		TokenResponse response = client.authenticate(request);
 		
 		return response;
 	}
@@ -169,8 +155,6 @@ public class AuthenticationService {
 			throw new AuthenticationException(error.getError(), error.getErrorDescription());
 		}
 		
-		//return keys;
-//		Keys keys = authenticationService.getKeys();
 		keys.getKeys().forEach(key -> {
 			KEY_CACHE.put(key.getKeyId(), key);
 		});
