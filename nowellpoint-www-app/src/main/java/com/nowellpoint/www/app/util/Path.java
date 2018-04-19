@@ -26,19 +26,19 @@ public class Path {
 	 *
 	 */
 	
-	public static final String APPLICATION_CONTEXT = "/app/%s";
+	public static final String APPLICATION_CONTEXT = "/app/%s/";
 	
 	public static class Route {
 		public static final String INDEX = "/";
-		public static final String LOGIN = "/login";
-		public static final String LOGOUT = "/logout"; 
-		public static final String SIGN_UP = "/signup";
-		public static final String FREE_ACCOUNT = "/free";
-		public static final String PLANS = "/plans";
-		public static final String PROVISION = "/provision";
-		public static final String CONTACT = "/contact";
-		public static final String HEALTH_CHECK = "/healthcheck";
-		public static final String VERIFY_EMAIL = "/verify-email";
+		public static final String LOGIN = "/login/";
+		public static final String LOGOUT = "/logout/"; 
+		public static final String SIGN_UP = "/signup/";
+		public static final String FREE_ACCOUNT = "/free/";
+		public static final String PLANS = "/plans/";
+		public static final String PROVISION = "/provision/";
+		public static final String CONTACT = "/contact/";
+		public static final String HEALTH_CHECK = "/healthcheck/";
+		public static final String VERIFY_EMAIL = "/verify-email/";
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");

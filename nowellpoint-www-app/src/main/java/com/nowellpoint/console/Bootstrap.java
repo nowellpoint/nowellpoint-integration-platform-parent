@@ -44,6 +44,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.model.exception.ServiceUnavailableException;
 import com.nowellpoint.console.service.AuthenticationService;
+import com.nowellpoint.console.util.Exceptions;
+import com.nowellpoint.console.util.Filters;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.PlanList;
 import com.nowellpoint.content.service.ContentService;
@@ -74,6 +76,7 @@ import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
+import spark.template.freemarker.FreeMarkerEngine;
 
 public class Bootstrap implements SparkApplication {
 
@@ -98,7 +101,11 @@ public class Bootstrap implements SparkApplication {
 		configuration.setClassForTemplateLoading(this.getClass(), "/views");
 		configuration.setDefaultEncoding("UTF-8");
 		
-		Datastore datastore = getDatestore();
+		
+		before("/*",                            Filters.addTrailingSlashes);
+		before("/*",                            Filters.setDefaultAttributes);
+		
+		//exception(NotFoundException.class,      Exceptions.notFoundException);
 
 		//
 		// load countries list
@@ -114,13 +121,6 @@ public class Bootstrap implements SparkApplication {
 			halt();
 		}
 
-		before("/*", (request, response) -> {
-			request.attribute("com.nowellpoint.default.locale", configuration.getLocale());
-			request.attribute("com.nowellpoint.default.timezone", configuration.getTimeZone());
-		});
-		
-		new AuthController(configuration, new AuthenticationService(datastore));
-
 		//
 		// verify secure requests
 		//
@@ -131,6 +131,8 @@ public class Bootstrap implements SparkApplication {
 		//
 		// index routes
 		//
+		
+		AuthController.setupEndpoints(configuration);
 
 		get(Path.Route.INDEX, (request, response) 
 				-> IndexController.serveIndexPage(configuration, request, response));
@@ -334,70 +336,66 @@ public class Bootstrap implements SparkApplication {
 
 		get(Path.Route.HEALTH_CHECK, (request, response) 
 				-> healthCheck(request, response));
+		
+		//get("*",                                Exceptions.notFound, new FreeMarkerEngine());
 
 		//
 		// exception handlers
 		//
 
-		exception(ServiceUnavailableException.class, (exception, request, response) -> {
-			LOG.error(InternalServerErrorException.class.getName(), exception);
-
-			Map<String, Object> model = new HashMap<>();
-			model.put("errorMessage", exception.getMessage());
-			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-
-			Writer output = new StringWriter();
-			try {
-				Template template = configuration.getTemplate("error.html");
-				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-				environment.process();
-				response.status(500);
-				response.body(output.toString());
-				output.flush();
-			} catch (Exception e) {
-				e.printStackTrace();
-				halt();
-			}
-		});
-
-		exception(BadRequestException.class, (exception, request, response) -> {
-			LOG.error(BadRequestException.class.getName(), exception);
-			response.status(400);
-			response.body(exception.getMessage());
-		});
-
-		exception(NotFoundException.class, (exception, request, response) -> {
-			LOG.error(NotFoundException.class.getName(), exception);
-			response.status(404);
-			response.body(exception.getMessage());
-		});
-
-		exception(InternalServerErrorException.class, (exception, request, response) -> {
-			LOG.error(InternalServerErrorException.class.getName(), exception);
-
-			Map<String, Object> model = new HashMap<>();
-			model.put("errorMessage", exception.getMessage());
-			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-
-			Writer output = new StringWriter();
-			try {
-				Template template = configuration.getTemplate("error.html");
-				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-				environment.process();
-				response.status(500);
-				response.body(output.toString());
-				output.flush();
-			} catch (Exception e) {
-				e.printStackTrace();
-				halt();
-			}
-		});
-
-		exception(Exception.class, (exception, request, response) -> {
-			LOG.error(Exception.class.getName(), exception);
-			response.status(500);
-			response.body(generateExceptionPage(configuration, exception.getMessage()));
-		});
+//		exception(ServiceUnavailableException.class, (exception, request, response) -> {
+//			LOG.error(InternalServerErrorException.class.getName(), exception);
+//
+//			Map<String, Object> model = new HashMap<>();
+//			model.put("errorMessage", exception.getMessage());
+//			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+//
+//			Writer output = new StringWriter();
+//			try {
+//				Template template = configuration.getTemplate("error.html");
+//				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
+//				environment.process();
+//				response.status(500);
+//				response.body(output.toString());
+//				output.flush();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				halt();
+//			}
+//		});
+//
+//		exception(BadRequestException.class, (exception, request, response) -> {
+//			LOG.error(BadRequestException.class.getName(), exception);
+//			response.status(400);
+//			response.body(exception.getMessage());
+//		});
+//
+//		exception(InternalServerErrorException.class, (exception, request, response) -> {
+//			LOG.error(InternalServerErrorException.class.getName(), exception);
+//
+//			Map<String, Object> model = new HashMap<>();
+//			model.put("errorMessage", exception.getMessage());
+//			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
+//
+//			Writer output = new StringWriter();
+//			try {
+//				Template template = configuration.getTemplate("error.html");
+//				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
+//				environment.process();
+//				response.status(500);
+//				response.body(output.toString());
+//				output.flush();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				halt();
+//			}
+//		});
+//
+//		exception(Exception.class, (exception, request, response) -> {
+//			LOG.error(Exception.class.getName(), exception);
+//			response.status(500);
+//			response.body(generateExceptionPage(configuration, exception.getMessage()));
+//		});
 	}
 
 	private static String generateExceptionPage(Configuration configuration, String errorMessage) {
@@ -448,19 +446,5 @@ public class Bootstrap implements SparkApplication {
 	private static String healthCheck(Request request, Response response) {
 		response.status(200);
 		return "";
-	}
-	
-	private static Datastore getDatestore() {
-		final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
-		MongoClient mongoClient = new MongoClient(mongoClientUri);
-        
-        final Morphia morphia = new Morphia();
-        
-        //morphia.map(UserProfileEntity.class);
-
-        Datastore datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
-        datastore.ensureIndexes();
-        
-        return datastore;
 	}
 }
