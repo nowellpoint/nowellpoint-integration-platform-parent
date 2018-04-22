@@ -13,9 +13,9 @@
     <title>${messages["application.title"]}</title>
 
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/style.css" type="text/css" />
-    <link rel="stylesheet" href="css/media.css" type="text/css" />
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/style.css" type="text/css" />
+    <link rel="stylesheet" href="/css/media.css" type="text/css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css" />
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,600italic,400italic,800,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
@@ -42,9 +42,11 @@
                     <fieldset>
                         <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
                         <p class="form-group">
+                            <label for="username">${labels['email']}</label>
                             <input type="email" name="username" id="username" placeholder="${labels['email']}" autofocus class="field form-control">
                         </p>
                         <p class="form-group">
+                            <label for="password">${labels['password']}</label>
                             <input type="password" name="password" id="password" placeholder="${labels['password']}" autocomplete="off" class="field form-control">
                         </p>
                         <p class="form-group">

@@ -20,10 +20,10 @@ package com.nowellpoint.console;
 
 import static spark.Spark.before;
 import static spark.Spark.delete;
-import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.halt;
 import static spark.Spark.post;
+import static spark.Spark.staticFileLocation;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -31,30 +31,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
-
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.nowellpoint.client.model.exception.ServiceUnavailableException;
-import com.nowellpoint.console.service.AuthenticationService;
 import com.nowellpoint.console.util.Exceptions;
 import com.nowellpoint.console.util.Filters;
+import com.nowellpoint.content.model.IsoCountry;
 import com.nowellpoint.content.model.IsoCountryList;
+import com.nowellpoint.content.model.Plan;
 import com.nowellpoint.content.model.PlanList;
 import com.nowellpoint.content.service.ContentService;
-import com.nowellpoint.content.model.IsoCountry;
-import com.nowellpoint.content.model.Plan;
-import com.nowellpoint.www.app.util.EnvironmentVariables;
 import com.nowellpoint.www.app.util.Path;
 import com.nowellpoint.www.app.view.AdministrationController;
-import com.nowellpoint.www.app.view.AuthController;
 import com.nowellpoint.www.app.view.AuthenticationController;
 import com.nowellpoint.www.app.view.ConnectorController;
 import com.nowellpoint.www.app.view.DashboardController;
@@ -67,16 +53,13 @@ import com.nowellpoint.www.app.view.SignUpController;
 import com.nowellpoint.www.app.view.StartController;
 import com.nowellpoint.www.app.view.UserProfileController;
 
-import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
-import spark.template.freemarker.FreeMarkerEngine;
 
 public class Bootstrap implements SparkApplication {
 
@@ -87,23 +70,32 @@ public class Bootstrap implements SparkApplication {
 	@Override
 	public void init() {
 		
+		//
+		// add static file location
+		//
+		
+		staticFileLocation("public");
 
 		//
 		// Configure FreeMarker
 		//
 
-		Configuration configuration = new Configuration(Configuration.VERSION_2_3_23);
+		Configuration configuration = new Configuration(Configuration.VERSION_2_3_28);
 
 		//
 		// set configuration options
 		//
 
-		configuration.setClassForTemplateLoading(this.getClass(), "/views");
+		configuration.setClassForTemplateLoading(Bootstrap.class, "/views");
 		configuration.setDefaultEncoding("UTF-8");
 		
+		//
+		// setup routes
+		//
 		
 		before("/*",                            Filters.addTrailingSlashes);
 		before("/*",                            Filters.setDefaultAttributes);
+		before("/app/*",                        Filters.authenticatedUser);
 		
 		//exception(NotFoundException.class,      Exceptions.notFoundException);
 
@@ -122,17 +114,10 @@ public class Bootstrap implements SparkApplication {
 		}
 
 		//
-		// verify secure requests
-		//
-
-		before("/app/*", (request, response) 
-				-> AuthenticationController.verify(configuration, request, response));
-
-		//
 		// index routes
 		//
 		
-		AuthController.setupEndpoints(configuration);
+		AuthenticationController.setupEndpoints(configuration);
 
 		get(Path.Route.INDEX, (request, response) 
 				-> IndexController.serveIndexPage(configuration, request, response));
@@ -197,20 +182,7 @@ public class Bootstrap implements SparkApplication {
 		
 		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
 				-> OrganizationController.getInvoice(configuration, request, response));
-
-		//
-		// authentication routes
-		//
-
-//		get(Path.Route.LOGIN, (request, response) 
-//				-> AuthenticationController.serveLoginPage(configuration, request, response));
-//		
-//		post(Path.Route.LOGIN, (request, response) 
-//				-> AuthenticationController.login(configuration, request, response));
 		
-		get(Path.Route.LOGOUT, (request, response) 
-				-> AuthenticationController.logout(configuration, request, response));
-
 		//
 		// start routes
 		//
@@ -337,7 +309,9 @@ public class Bootstrap implements SparkApplication {
 		get(Path.Route.HEALTH_CHECK, (request, response) 
 				-> healthCheck(request, response));
 		
-		//get("*",                                Exceptions.notFound, new FreeMarkerEngine());
+		
+		
+		Exceptions.setupEndpoints(configuration);
 
 		//
 		// exception handlers

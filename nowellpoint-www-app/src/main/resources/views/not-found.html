@@ -13,7 +13,7 @@
     <title>${messages["application.title"]}</title>
 
     <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
 
     <!-- Include the CSS -->
     <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
@@ -31,7 +31,7 @@
                 <br>
                 <#if errorMessage??>
                     <div id="error" class="alert alert-danger">
-                        <div class="text-center">Whops something went wrong. The page you requested is not found.</div>
+                        <div class="text-center">${errorMessage}</div>
                     </div>
                 </#if>
             </div>

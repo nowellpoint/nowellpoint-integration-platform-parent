@@ -208,21 +208,19 @@
                                 <form role="form" id="contact-form" method="post" action="/contact">
                                     <fieldset>
                                         <p class="form-group">
+                                            <label for="firstName">${labels['first.name']}</label>
                                             <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" class="field">
                                         </p>
                                         <p class="form-group">
+                                            <label for="lastName">${labels['last.name']}</label>
                                             <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" required data-msg="${messages['last.name.required']}" class="field">
                                         </p>
                                         <p class="form-group">
+                                            <label for="email">${labels['email']}</label>
                                             <input type="email" name="email" id="email" placeholder="${labels['email']}" required data-msg="${messages['email.required']}" class="field">
                                         </p>
                                         <p class="form-group">
-                                            <input type="text" name="phone" id="phone" placeholder="${labels['phone']}" class="field">
-                                        </p>
-                                        <p class="form-group">
-                                            <input type="text" name="company" id="company" placeholder="${labels['company']}" class="field">
-                                        </p>
-                                        <p class="form-group">
+                                            <label for="message">${labels['enter.message']}</label>
                                             <textarea name="message" id="message" placeholder="${labels['enter.message']}" required data-msg="${messages['message.required']}"></textarea>
                                         </p>
                                         <p class="form-group">
