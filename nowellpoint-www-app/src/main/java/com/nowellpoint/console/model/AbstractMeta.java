@@ -24,8 +24,8 @@ public abstract class AbstractMeta {
 	public abstract @JsonIgnore @Nullable Class<?> getResourceClass();
 	public abstract @JsonIgnore @Nullable String getId();
 	
-	public String getHref() {
-		return UriBuilder.fromUri(System.getProperty("api.hostname"))
+	public String getHref() {		
+		return UriBuilder.fromUri("https://localhost:8443")
 				.path(getResourceClass())
 				.path("/{id}")
 				.build(getId())

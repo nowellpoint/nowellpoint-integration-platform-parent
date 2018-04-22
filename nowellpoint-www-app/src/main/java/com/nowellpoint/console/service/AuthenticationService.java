@@ -9,15 +9,12 @@ import com.nowellpoint.oauth.model.AuthenticationRequest;
 import com.nowellpoint.oauth.model.OktaOAuthProvider;
 import com.nowellpoint.oauth.model.TokenResponse;
 
-import freemarker.log.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class AuthenticationService extends AbstractService {
-	
-	private static final Logger LOGGER = Logger.getLogger(AuthenticationService.class.getName());
 	
 	private final IdentityService identityService = new IdentityService();
 	

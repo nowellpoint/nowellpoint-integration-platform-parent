@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 public interface IdentityResource {
 	
 	@GET
-	@Path("{organizationId}/{userId}")
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getIdentity(@PathParam("organizationId") String organizationId, @PathParam("userId") String userId);
+	public Response getIdentity(@PathParam("id") String id);
 }

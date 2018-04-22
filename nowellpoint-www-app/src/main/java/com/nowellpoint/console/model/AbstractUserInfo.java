@@ -22,6 +22,7 @@ public abstract class AbstractUserInfo {
 	public abstract @Nullable String getPhone();
 	public abstract @Nullable Photos getPhotos();
 	
+	@Value.Default
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())

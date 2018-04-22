@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.api.IdentityResource;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -23,5 +24,12 @@ public abstract class AbstractIdentity {
 	public abstract Locale getLocale();
 	public abstract Address getAddress();
 	public abstract Resources getResources();
-	public abstract Meta getMeta();
+	
+	@Value.Default
+	public Meta getMeta() {
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(IdentityResource.class)
+				.build();
+	}
 }

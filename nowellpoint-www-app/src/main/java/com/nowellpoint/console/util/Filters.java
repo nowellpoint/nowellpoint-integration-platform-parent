@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Token;
+import com.nowellpoint.console.model.Identity;
+import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.service.IdentityService;
 import com.nowellpoint.www.app.util.Path;
 
 import spark.Filter;
@@ -19,6 +19,7 @@ import spark.Response;
 
 public class Filters {
 	
+	private static final IdentityService identityService = new IdentityService();
 	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
 	private static final String IDENTITY = "com.nowellpoint.auth.identity";
 	private static final String LOCALE = "com.nowellpoint.default.locale";
@@ -37,21 +38,20 @@ public class Filters {
 	};
 	
 	public static Filter authenticatedUser = (Request request, Response response) -> {
-		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
 
+		Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
+		
 		if (cookie.isPresent()) {
 
 			Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
 
 			request.attribute(AUTH_TOKEN, token);
-
-			Identity identity = NowellpointClient.defaultClient(token)
-					.identity()
-					.get(token.getId());
+			
+			Identity identity = identityService.getIdentity(token.getId());
 
 			request.attribute(IDENTITY, identity);
 			request.attribute(LOCALE, identity.getLocale() != null ? identity.getLocale() : Locale.getDefault());
-			request.attribute(TIME_ZONE, identity.getTimeZone() != null ? identity.getTimeZone() : TimeZone.getDefault());
+			request.attribute(TIME_ZONE, identity.getTimeZone() != null ? TimeZone.getTimeZone(identity.getTimeZone()) : TimeZone.getDefault());
 
 		} else {
 			

@@ -12,8 +12,8 @@ import java.util.TimeZone;
 
 import org.immutables.value.Value;
 
-import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Token;
+import com.nowellpoint.console.model.Identity;
+import com.nowellpoint.console.model.Token;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;

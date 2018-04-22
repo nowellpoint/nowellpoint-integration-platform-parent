@@ -5,16 +5,12 @@ import javax.ws.rs.core.UriBuilder;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.Query;
 
+import com.nowellpoint.api.OrganizationResource;
+import com.nowellpoint.console.entity.IdentityDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.Identity;
-import com.nowellpoint.console.model.Meta;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Resources;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.api.OrganizationResource;
-import com.nowellpoint.client.resource.UserProfileResource;
-import com.nowellpoint.console.entity.IdentityDAO;
 
 public class IdentityService extends AbstractService {
 	
@@ -61,7 +57,7 @@ public class IdentityService extends AbstractService {
 				.toString();
 		
 		Identity identity = Identity.builder()
-				.id(document.getUserProfile().getId().toString())
+				.id(document.getId().toString())
 				.userId(document.getUserProfile().getId().toString())
 				.email(document.getUserProfile().getEmail())
 				.firstName(document.getUserProfile().getFirstName())
@@ -73,10 +69,6 @@ public class IdentityService extends AbstractService {
 						.connectors(connectorsHref)
 						.organization(organizationHref)
 						.jobs(jobsHref)
-						.build())
-				.meta(Meta.builder()
-						.id(document.getUserProfile().getId().toString())
-						.resourceClass(UserProfileResource.class)
 						.build())
 				.address(Address.builder()
 						.addedOn(document.getUserProfile().getAddress().getAddedOn())

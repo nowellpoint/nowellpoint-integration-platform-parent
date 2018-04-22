@@ -24,6 +24,7 @@ public abstract class AbstractOrganization {
 	public abstract @Nullable Set<Transaction> getTransactions();
 	public abstract @Nullable Set<UserInfo> getUsers();
 	
+	@Value.Default
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())

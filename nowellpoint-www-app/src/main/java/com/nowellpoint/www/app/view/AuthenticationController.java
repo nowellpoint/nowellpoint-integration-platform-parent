@@ -5,6 +5,7 @@ import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.AuthenticationService;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.oauth.model.OAuthClientException;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -31,7 +32,7 @@ public class AuthenticationController {
 	private static final String REDIRECT_URI = "redirect_uri";
 	private static final AuthenticationService authenticationService = new AuthenticationService();
 
-	public static void setupEndpoints(Configuration configuration) {
+	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.LOGIN, (request, response) 
 				-> serveLoginPage(configuration, request, response));
 		
@@ -53,15 +54,39 @@ public class AuthenticationController {
 		Token token = null;
 		try {
 			token = authenticationService.authenticate(username, password);
+		} catch (OAuthClientException e) {
+
+			String acceptLanguages = request.headers("Accept-Language");
+
+			LOGGER.info(acceptLanguages);
+
+			String[] languages = acceptLanguages.trim().replace("-", "_").split(";");
+
+			String[] locales = languages[0].split(",");
+
+			LOGGER.info(locales[0]);
+
+			Map<String, Object> model = new HashMap<>();
+			model.put("errorMessage", e.getErrorDescription());
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(AuthenticationController.class)
+					.model(model)
+					.request(request)
+					.templateName(Templates.LOGIN)
+					.build();
+			
+			return template.render();
+
 		} catch (UnsupportedEncodingException e) {
 			throw new InternalServerErrorException(e);
 		}
 		
 		Long expiresIn = token.getExpiresIn();
-
+		
 		try {
-			LOGGER.info(new ObjectMapper().writeValueAsString(token));
-			response.cookie(AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
+			response.cookie("/", AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
 		} catch (IOException e) {
 			throw new InternalServerErrorException(e);
 		}

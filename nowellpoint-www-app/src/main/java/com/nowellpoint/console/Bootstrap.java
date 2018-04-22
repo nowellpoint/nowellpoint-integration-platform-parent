@@ -90,14 +90,12 @@ public class Bootstrap implements SparkApplication {
 		configuration.setDefaultEncoding("UTF-8");
 		
 		//
-		// setup routes
+		// setup filters
 		//
 		
 		before("/*",                            Filters.addTrailingSlashes);
 		before("/*",                            Filters.setDefaultAttributes);
 		before("/app/*",                        Filters.authenticatedUser);
-		
-		//exception(NotFoundException.class,      Exceptions.notFoundException);
 
 		//
 		// load countries list
@@ -114,10 +112,11 @@ public class Bootstrap implements SparkApplication {
 		}
 
 		//
-		// index routes
+		// setup routes
 		//
 		
-		AuthenticationController.setupEndpoints(configuration);
+		AuthenticationController.configureRoutes(configuration);
+		StartController.configureRoutes(configuration);
 
 		get(Path.Route.INDEX, (request, response) 
 				-> IndexController.serveIndexPage(configuration, request, response));
@@ -182,12 +181,8 @@ public class Bootstrap implements SparkApplication {
 		
 		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
 				-> OrganizationController.getInvoice(configuration, request, response));
-		
-		//
-		// start routes
-		//
 
-		get(Path.Route.START, (request, response) -> StartController.serveStartPage(configuration, request, response));
+		
 
 		//
 		// administration routes
