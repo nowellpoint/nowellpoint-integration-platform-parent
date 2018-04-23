@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.view;
+package com.nowellpoint.console.view;
 
 import com.nowellpoint.client.model.Token;
 import com.nowellpoint.http.HttpResponse;

@@ -1,6 +1,7 @@
 package com.nowellpoint.console.model;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.UriBuilder;
 
 import org.immutables.value.Value;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.console.api.JaxRsActivator;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -26,6 +28,7 @@ public abstract class AbstractMeta {
 	
 	public String getHref() {		
 		return UriBuilder.fromUri("https://localhost:8443")
+				.path(JaxRsActivator.class.getAnnotation(ApplicationPath.class).value())
 				.path(getResourceClass())
 				.path("/{id}")
 				.build(getId())

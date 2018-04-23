@@ -8,8 +8,8 @@ import java.util.Map;
 import org.eclipse.jetty.http.HttpStatus;
 
 import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.www.app.util.MessageProvider;
-import com.nowellpoint.www.app.view.AuthenticationController;
 
 import freemarker.template.Configuration;
 import spark.Request;

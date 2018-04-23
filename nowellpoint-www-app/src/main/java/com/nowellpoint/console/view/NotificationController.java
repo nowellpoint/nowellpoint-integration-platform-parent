@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.view;
+package com.nowellpoint.console.view;
 
 import java.util.HashMap;
 import java.util.Map;

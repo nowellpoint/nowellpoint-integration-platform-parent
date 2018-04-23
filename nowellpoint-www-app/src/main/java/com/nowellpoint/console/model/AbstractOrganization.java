@@ -8,7 +8,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.api.OrganizationResource;
+import com.nowellpoint.console.api.OrganizationResource;
 
 @Value.Immutable
 @Value.Modifiable

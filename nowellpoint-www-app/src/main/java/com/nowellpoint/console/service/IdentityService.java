@@ -5,7 +5,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.Query;
 
-import com.nowellpoint.api.OrganizationResource;
 import com.nowellpoint.console.entity.IdentityDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.Identity;
@@ -39,12 +38,17 @@ public class IdentityService extends AbstractService {
 		
 	}
 	
-	public static Identity fromDocument(com.nowellpoint.console.entity.Identity document) {
+	private Identity fromDocument(com.nowellpoint.console.entity.Identity document) {
 		
-		String organizationHref = UriBuilder.fromUri("https://localhost:8443")
-				.path(OrganizationResource.class)
-				.build()
-				.toString();
+		Organization organization = Organization.builder()
+				.domain(document.getOrganization().getDomain())
+				.id(document.getOrganization().getId().toString())
+				.name(document.getOrganization().getName())
+				.number(document.getOrganization().getNumber())
+				//.subscription(document.getOrganization().)
+				//.transactions(elements)
+				//.users(elements)
+				.build();
 		
 		String jobsHref = UriBuilder.fromUri("https://localhost:8443")
 				//.path(JobResource.class)
@@ -67,7 +71,7 @@ public class IdentityService extends AbstractService {
 				.timeZone(document.getUserProfile().getTimeZone())
 				.resources(Resources.builder()
 						.connectors(connectorsHref)
-						.organization(organizationHref)
+						.organization(organization.getMeta().getHref())
 						.jobs(jobsHref)
 						.build())
 				.address(Address.builder()
@@ -82,15 +86,7 @@ public class IdentityService extends AbstractService {
 						.street(document.getUserProfile().getAddress().getStreet())
 						.updatedOn(document.getUserProfile().getAddress().getUpdatedOn())
 						.build())
-				.organization(Organization.builder()
-						.domain(document.getOrganization().getDomain())
-						.id(document.getOrganization().getId().toString())
-						.name(document.getOrganization().getName())
-						.number(document.getOrganization().getNumber())
-						//.subscription(document.getOrganization().)
-						//.transactions(elements)
-						//.users(elements)
-						.build())
+				.organization(organization)
 				.build();
 		
 		return identity;

@@ -14,6 +14,7 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.util.RequestAttributes;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
@@ -27,16 +28,15 @@ import spark.Request;
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 public abstract class AbstractTemplate {
 	
-	protected static final String TOKEN = "com.nowellpoint.auth.token";
-	protected static final String IDENTITY = "com.nowellpoint.auth.identity";
-	protected static final String LOCALE = "com.nowellpoint.default.locale";
-	protected static final String TIME_ZONE = "com.nowellpoint.default.timezone";
-	
 	public abstract String getTemplateName();
 	public abstract Class<?> getControllerClass();
 	public abstract Configuration getConfiguration();
 	public abstract Request getRequest();
-	public abstract Map<String,Object> getModel();
+
+	@Value.Default
+	public Map<String,Object> getModel() {
+		return new HashMap<String,Object>();
+	}
 	
 	private String buildTemplate(Configuration configuration, Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
@@ -54,32 +54,31 @@ public abstract class AbstractTemplate {
 		return output.toString();
 	}
 	
-	protected Token getToken(Request request) {
-		return request.attribute(TOKEN);
+	private Token getToken(Request request) {
+		return request.attribute(RequestAttributes.AUTH_TOKEN);
 	}
 	
-	protected Identity getIdentity(Request request) {
-		return request.attribute(IDENTITY);
+	private Identity getIdentity(Request request) {
+		return request.attribute(RequestAttributes.IDENTITY);
 	}
 	
-	protected Locale getLocale(Request request) {
-		return request.attribute(LOCALE);
+	private Locale getLocale(Request request) {
+		return request.attribute(RequestAttributes.LOCALE);
 	}
 	
-	protected TimeZone getTimeZone(Request request) {		
-		return request.attribute(TIME_ZONE);
-	}
-	
-	protected String getLabel(Class<?> controllerClass, Request request, String key) {
-		return ResourceBundle.getBundle(controllerClass.getName(), getLocale(request)).getString(key);
+	private TimeZone getTimeZone(Request request) {		
+		return request.attribute(RequestAttributes.TIME_ZONE);
 	}
 	
 	public String render() {	
+		Token token = getToken(getRequest());
 		Identity identity = getIdentity(getRequest());
 		Locale locale = getLocale(getRequest());
 		TimeZone timeZone = getTimeZone(getRequest());
+		
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.putAll(getModel());
+		model.put("token", token);
 		model.put("identity", identity);
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

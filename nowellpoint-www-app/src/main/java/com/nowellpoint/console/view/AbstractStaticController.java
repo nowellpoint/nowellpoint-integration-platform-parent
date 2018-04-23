@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.view;
+package com.nowellpoint.console.view;
 
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.div;

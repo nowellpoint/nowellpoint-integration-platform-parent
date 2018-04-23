@@ -1,9 +1,10 @@
-package com.nowellpoint.www.app.view;
+package com.nowellpoint.console.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.AuthenticationService;
+import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.oauth.model.OAuthClientException;
 import com.nowellpoint.www.app.util.Path;
@@ -28,9 +29,8 @@ import javax.ws.rs.InternalServerErrorException;
 public class AuthenticationController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
-	private static final String AUTH_TOKEN = "com.nowellpoint.auth.token";
-	private static final String REDIRECT_URI = "redirect_uri";
 	private static final AuthenticationService authenticationService = new AuthenticationService();
+	private static final String REDIRECT_URI = "redirect_uri";
 
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.LOGIN, (request, response) 
@@ -86,7 +86,7 @@ public class AuthenticationController {
 		Long expiresIn = token.getExpiresIn();
 		
 		try {
-			response.cookie("/", AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
+			response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true);
 		} catch (IOException e) {
 			throw new InternalServerErrorException(e);
 		}
@@ -116,7 +116,7 @@ public class AuthenticationController {
     };
     
     private static String logout(Configuration configuration, Request request, Response response) {
-    	Optional<String> cookie = Optional.ofNullable(request.cookie(AUTH_TOKEN));
+    	Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 
 		if (cookie.isPresent()) {
 
@@ -127,7 +127,7 @@ public class AuthenticationController {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
 
-			response.removeCookie(AUTH_TOKEN);
+			response.removeCookie(RequestAttributes.AUTH_TOKEN);
 		}
 
 		request.session().invalidate();

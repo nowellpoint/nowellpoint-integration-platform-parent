@@ -1,4 +1,4 @@
-package com.nowellpoint.api;
+package com.nowellpoint.console.api;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;

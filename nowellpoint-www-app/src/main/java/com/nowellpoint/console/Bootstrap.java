@@ -21,51 +21,29 @@ package com.nowellpoint.console;
 import static spark.Spark.before;
 import static spark.Spark.delete;
 import static spark.Spark.get;
-import static spark.Spark.halt;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import com.nowellpoint.console.util.Exceptions;
 import com.nowellpoint.console.util.Filters;
-import com.nowellpoint.content.model.IsoCountry;
-import com.nowellpoint.content.model.IsoCountryList;
-import com.nowellpoint.content.model.Plan;
-import com.nowellpoint.content.model.PlanList;
-import com.nowellpoint.content.service.ContentService;
+import com.nowellpoint.console.util.Routes;
+import com.nowellpoint.console.view.AdministrationController;
+import com.nowellpoint.console.view.ConnectorController;
+import com.nowellpoint.console.view.DashboardController;
+import com.nowellpoint.console.view.JobController;
+import com.nowellpoint.console.view.NotificationController;
+import com.nowellpoint.console.view.OrganizationController;
+import com.nowellpoint.console.view.SalesforceOauthController;
+import com.nowellpoint.console.view.SignUpController;
+import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.www.app.util.Path;
-import com.nowellpoint.www.app.view.AdministrationController;
-import com.nowellpoint.www.app.view.AuthenticationController;
-import com.nowellpoint.www.app.view.ConnectorController;
-import com.nowellpoint.www.app.view.DashboardController;
-import com.nowellpoint.www.app.view.IndexController;
-import com.nowellpoint.www.app.view.JobController;
-import com.nowellpoint.www.app.view.NotificationController;
-import com.nowellpoint.www.app.view.OrganizationController;
-import com.nowellpoint.www.app.view.SalesforceOauthController;
-import com.nowellpoint.www.app.view.SignUpController;
-import com.nowellpoint.www.app.view.StartController;
-import com.nowellpoint.www.app.view.UserProfileController;
 
-import freemarker.log.Logger;
 import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
 import spark.servlet.SparkApplication;
 
-public class Bootstrap implements SparkApplication {
-
-	private static final Logger LOG = Logger.getLogger(Bootstrap.class.getName());
-	
-	
+public class Bootstrap implements SparkApplication {	
 
 	@Override
 	public void init() {
@@ -98,31 +76,10 @@ public class Bootstrap implements SparkApplication {
 		before("/app/*",                        Filters.authenticatedUser);
 
 		//
-		// load countries list
-		//
-
-		List<IsoCountry> isoCountries = loadCountries(configuration.getLocale());
-
-		try {
-			configuration.setSharedVariable("countryList", isoCountries);
-			configuration.setSharedVariable("planList", loadPlans());
-		} catch (TemplateModelException e) {
-			e.printStackTrace();
-			halt();
-		}
-
-		//
 		// setup routes
 		//
 		
-		AuthenticationController.configureRoutes(configuration);
-		StartController.configureRoutes(configuration);
-
-		get(Path.Route.INDEX, (request, response) 
-				-> IndexController.serveIndexPage(configuration, request, response));
-		
-		post(Path.Route.CONTACT, (request, response) 
-				-> IndexController.contact(configuration, request, response));
+		Routes.configureRoutes(configuration);
 
 		//
 		// dashboard controller
@@ -367,43 +324,26 @@ public class Bootstrap implements SparkApplication {
 //		});
 	}
 
-	private static String generateExceptionPage(Configuration configuration, String errorMessage) {
-		Map<String, Object> model = new HashMap<>();
-		model.put("errorMessage", errorMessage);
-
-		String page = null;
-
-		Writer output = new StringWriter();
-		try {
-			Template template = configuration.getTemplate("error.html");
-			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-			environment.process();
-			page = output.toString();
-			output.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-			halt();
-		}
-
-		return page;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-
-	private static List<IsoCountry> loadCountries(Locale locale) {				
-		ContentService service = new ContentService();
-		IsoCountryList countryList = service.getCountries();
-		return countryList.getItems();
-	}
-	
-	private static List<Plan> loadPlans() {				
-		ContentService service = new ContentService();
-		PlanList planList = service.getPlans();
-		return planList.getItems();
-	}
+//	private static String generateExceptionPage(Configuration configuration, String errorMessage) {
+//		Map<String, Object> model = new HashMap<>();
+//		model.put("errorMessage", errorMessage);
+//
+//		String page = null;
+//
+//		Writer output = new StringWriter();
+//		try {
+//			Template template = configuration.getTemplate("error.html");
+//			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
+//			environment.process();
+//			page = output.toString();
+//			output.flush();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			halt();
+//		}
+//
+//		return page;
+//	}
 
 	/**
 	 * 

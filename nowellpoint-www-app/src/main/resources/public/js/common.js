@@ -3,14 +3,6 @@ $("#menu-toggle").click(function (e) {
     $("#wrapper").toggleClass("toggled");
 });
 
-
-$(document).ready(function () {
-    var token = Cookies.getJSON("com.nowellpoint.auth.token");
-    if (token == null) {
-        $(location).attr('href','/login');
-    }
-});
-
 $( document ).ready(function(){
     $('[data-toggle="popover"]').popover(); 
 });
