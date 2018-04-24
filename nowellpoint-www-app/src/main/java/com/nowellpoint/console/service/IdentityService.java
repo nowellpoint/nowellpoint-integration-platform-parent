@@ -10,6 +10,7 @@ import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Resources;
+import com.nowellpoint.console.model.UserInfo;
 
 public class IdentityService extends AbstractService {
 	
@@ -50,6 +51,14 @@ public class IdentityService extends AbstractService {
 				//.users(elements)
 				.build();
 		
+		UserInfo userInfo = UserInfo.builder()
+				.email(document.getUserProfile().getEmail())
+				.firstName(document.getUserProfile().getFirstName())
+				.id(document.getUserProfile().getId().toString())
+				.lastName(document.getUserProfile().getLastName())
+				.phone(document.getUserProfile().getPhone())
+				.build();
+		
 		String jobsHref = UriBuilder.fromUri("https://localhost:8443")
 				//.path(JobResource.class)
 				.build()
@@ -69,7 +78,9 @@ public class IdentityService extends AbstractService {
 				.name(document.getUserProfile().getName())
 				.locale(document.getUserProfile().getLocale())
 				.timeZone(document.getUserProfile().getTimeZone())
+				.organization(organization)
 				.resources(Resources.builder()
+						.userProfile(userInfo.getMeta().getHref())
 						.connectors(connectorsHref)
 						.organization(organization.getMeta().getHref())
 						.jobs(jobsHref)
@@ -86,7 +97,6 @@ public class IdentityService extends AbstractService {
 						.street(document.getUserProfile().getAddress().getStreet())
 						.updatedOn(document.getUserProfile().getAddress().getUpdatedOn())
 						.build())
-				.organization(organization)
 				.build();
 		
 		return identity;

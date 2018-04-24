@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>${messages["application.title"]}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="/css/mdb.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="container mt-5">
+
+        <section class="section">
+
+            <!--Section heading-->
+            <h2 class="section-heading h1 pt-4">${labels["contact.us"]}</h2>
+            <!--Section description-->
+            <p class="section-description">${labels["contact.us.headline"]}</p>
+
+            <div class="row">
+
+                <!--Grid column-->
+                <div class="col-9">
+                    <form id="contact-form" name="contact-form" action="mail.php" method="POST">
+
+                        <!--Grid row-->
+                        <div class="row">
+
+                            <!--Grid column-->
+                            <div class="col-6">
+                                <div class="md-form">
+                                    <input type="text" id="firstName" name="firstName" class="form-control">
+                                    <label for="firstName" class="">${labels['first.name']}</label>
+                                </div>
+                            </div>
+                            <div class="col-6"></div>
+                            <!--Grid column-->
+                            
+                        </div>
+                        <!--Grid row-->
+                        
+                        <div class="row">
+
+                            <!--Grid column-->
+                            <div class="col-6">
+                                <div class="md-form">
+                                    <input type="text" id="lastName" name="lastName" class="form-control">
+                                    <label for="lastName" class="">${labels['last.name']}</label>
+                                </div>
+                            </div>
+                            <div class="col-6"></div>
+                            <!--Grid column-->
+
+                            <!--Grid column-->
+                            <div class="col-6">
+                                <div class="md-form">
+                                    <input type="text" id="email" name="email" class="form-control">
+                                    <label for="email" class="">${labels['email']}</label>
+                                </div>
+                            </div>
+                            <div class="col-6"></div>
+                            <!--Grid column-->
+
+                        </div>
+                        <!--Grid row-->
+
+                        <!--Grid row-->
+                        <div class="row">
+
+                            <!--Grid column-->
+                            <div class="col-md-12">
+
+                                <div class="md-form">
+                                    <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea"></textarea>
+                                    <label for="message">Your message</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--Grid row-->
+
+                    </form>
+
+                    <div class="center-on-small-only">
+                        <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">${labels['send.message']}</a>
+                    </div>
+                    <div class="status"></div>
+                </div>
+                <!--Grid column-->
+
+                <!--Grid column-->
+                <div class="col-3">
+                    <ul class="contact-icons">
+                        <li><i class="fa fa-map-marker fa-2x"></i>
+                            <p>${labels["address.street"]}, ${labels["address.city"]}, ${labels["address.state"]}</p>
+                        </li>
+
+                        <li><i class="fa fa-phone fa-2x"></i>
+                            <p>${labels["phone.number"]}</p>
+                        </li>
+
+                        <li><i class="fa fa-envelope fa-2x"></i>
+                            <p><a href="mailto:${labels['contact.email.address']}">${labels["contact.email.address"]}</a></p>
+                        </li>
+                    </ul>
+
+                    <ul>
+                        <li>
+                            <a id="github" href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent"><i class="fa fa-lg fa-github"></i> ${labels["github"]}</a>
+                        </li>
+                        <li>
+                            <a id="googlePlus" href="https://plus.google.com/+Nowellpoint/posts"><i class="fa fa-lg fa-google-plus"></i> ${labels["google.plus"]}</a>
+                        </li>
+                        <li>
+                            <a id="twitter" href="https://twitter.com/nowellpoint"><i class="fa fa-lg fa-twitter"></i> ${labels["twitter"]}</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--Grid column-->
+
+            </div>
+
+        </section>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="/js/mdb.min.js"></script>
+
+</body>
+
+</html>

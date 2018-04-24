@@ -30,30 +30,15 @@ public class IndexController {
 	private static final LeadService leadService = new LeadService();
 	
 	public static void configureRoutes(Configuration configuration) {
+		
 		get(Path.Route.INDEX, (request, response) 
 				-> serveIndexPage(configuration, request, response));
 		
+		get(Path.Route.CONTACT, (request, response) 
+				-> serveContactPage(configuration, request, response));
+		
 		post(Path.Route.CONTACT, (request, response) 
 				-> contact(configuration, request, response));
-		
-		
-		if (! Optional.ofNullable(configuration.getSharedVariable("countryList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("countryList", loadCountries(configuration.getLocale()));
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
-		
-		if (! Optional.ofNullable(configuration.getSharedVariable("planList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("planList", loadPlans());
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
 	}
 	
 	/**
@@ -66,11 +51,49 @@ public class IndexController {
 	
 	private static String serveIndexPage(Configuration configuration, Request request, Response response) {
 		
+		if (! Optional.ofNullable(configuration.getSharedVariable("countryList")).isPresent()) {
+			try {
+				configuration.setSharedVariable("countryList", loadCountries(configuration.getLocale()));
+			} catch (TemplateModelException e) {
+				e.printStackTrace();
+				halt();
+			}
+		}
+		
+		if (! Optional.ofNullable(configuration.getSharedVariable("planList")).isPresent()) {
+			try {
+				configuration.setSharedVariable("planList", loadPlans(configuration.getLocale()));
+			} catch (TemplateModelException e) {
+				e.printStackTrace();
+				halt();
+			}
+		}
+		
 		Template template = Template.builder()
 				.configuration(configuration)
 				.controllerClass(IndexController.class)
 				.request(request)
 				.templateName(Templates.INDEX)
+				.build();
+    	
+    	return template.render();
+	}
+	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String serveContactPage(Configuration configuration, Request request, Response response) {
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(IndexController.class)
+				.request(request)
+				.templateName(Templates.CONTACT)
 				.build();
     	
     	return template.render();
@@ -103,13 +126,24 @@ public class IndexController {
     	return MessageProvider.getMessage(configuration.getLocale(), "contact.confirmation.message");
 	};
 	
+	/**
+	 * 
+	 * @param locale
+	 * @return List of IsoCountries
+	 */
+	
 	private static List<IsoCountry> loadCountries(Locale locale) {				
 		ContentService service = new ContentService();
 		IsoCountryList countryList = service.getCountries();
 		return countryList.getItems();
 	}
 	
-	private static List<Plan> loadPlans() {				
+	/**
+	 * 
+	 * @return List of Plans
+	 */
+	
+	private static List<Plan> loadPlans(Locale locale) {				
 		ContentService service = new ContentService();
 		PlanList planList = service.getPlans();
 		return planList.getItems();

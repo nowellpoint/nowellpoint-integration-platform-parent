@@ -46,7 +46,7 @@
                                         <span class="menu-item-bg"></span>
                                     </li>
                                     <li>
-                                        <a href="#contact">${labels["contact"]}</a>
+                                        <a href="/contact/">${labels["contact"]}</a>
                                         <span class="menu-item-bg"></span>
                                     </li>
                                 </ul>
@@ -195,80 +195,11 @@
                     </div>
                 </div>
 
-                <div class="Contact_sec">
-                    <div class="Get_sec" id="contact">
-                        <div class="Center">
-                            <h2>${labels["contact.us"]}</h2>
-                            <p>${labels["contact.us.headline"]}</p>
-                            <div class="Line"></div>
-                        </div>
-
-                        <div class="Mid">
-                            <div class="Leftside">
-                                <form role="form" id="contact-form" method="post" action="/contact/">
-                                    <fieldset>
-                                        <p class="form-group">
-                                            <label for="firstName">${labels['first.name']}</label>
-                                            <input type="text" name="firstName" id="firstName" placeholder="${labels['first.name']}" class="field">
-                                        </p>
-                                        <p class="form-group">
-                                            <label for="lastName">${labels['last.name']}</label>
-                                            <input type="text" name="lastName" id="lastName" placeholder="${labels['last.name']}" required data-msg="${messages['last.name.required']}" class="field">
-                                        </p>
-                                        <p class="form-group">
-                                            <label for="email">${labels['email']}</label>
-                                            <input type="email" name="email" id="email" placeholder="${labels['email']}" required data-msg="${messages['email.required']}" class="field">
-                                        </p>
-                                        <p class="form-group">
-                                            <label for="message">${labels['enter.message']}</label>
-                                            <textarea name="message" id="message" placeholder="${labels['enter.message']}" required data-msg="${messages['message.required']}"></textarea>
-                                        </p>
-                                        <p class="form-group">
-                                            <input type="submit" id="submit" value="${labels['send.message']}" class="button">
-                                        </p>
-                                    </fieldset>
-                                </form>
-                            </div>
-
-                            <div class="Rightside">
-                                <h3>${labels["get.in.touch"]}</h3>
-                                <address>
-                                    ${labels["address.street"]}, ${labels["address.city"]}, ${labels["address.state"]}.
-                                </address>
-                                <address class="Number">
-                                    ${labels["phone.number"]}
-                                </address>
-                                <address class="Email">
-                                    <a href="mailto:${labels['contact.email.address']}">${labels["contact.email.address"]}</a>
-                                </address>
-                                <div class="clear"></div>
-                                <ul>
-                                    <li>
-                                        <a id="github" href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent"><i class="fa fa-lg fa-github"></i> ${labels["github"]}</a>
-                                    </li>
-                                    <li>
-                                        <a id="googlePlus" href="https://plus.google.com/+Nowellpoint/posts"><i class="fa fa-lg fa-google-plus"></i> ${labels["google.plus"]}</a>
-                                    </li>
-                                    <li>
-                                        <a id="twitter" href="https://twitter.com/nowellpoint"><i class="fa fa-lg fa-twitter"></i> ${labels["twitter"]}</a>
-                                    </li>
-                                </ul>
-
-                                <br>
-                                <br>
-                                <br>
-                                <p id="response"></p>
-                            </div>
-                        </div>
-
-                        <footer>
+                <footer>
                             <div class="Cntr">
                                 <p>${labels["copyright"]}
                             </div>
                         </footer>
-
-                    </div>
-                </div>
             </div>
         </div>
     </div>
