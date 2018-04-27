@@ -44,10 +44,10 @@
                             </div>
                             <div class="col-6"></div>
                             <!--Grid column-->
-                            
+
                         </div>
                         <!--Grid row-->
-                        
+
                         <div class="row">
 
                             <!--Grid column-->
@@ -78,7 +78,6 @@
 
                             <!--Grid column-->
                             <div class="col-md-12">
-
                                 <div class="md-form">
                                     <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea"></textarea>
                                     <label for="message">Your message</label>
@@ -112,26 +111,68 @@
                             <p><a href="mailto:${labels['contact.email.address']}">${labels["contact.email.address"]}</a></p>
                         </li>
                     </ul>
-
-                    <ul>
-                        <li>
-                            <a id="github" href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent"><i class="fa fa-lg fa-github"></i> ${labels["github"]}</a>
-                        </li>
-                        <li>
-                            <a id="googlePlus" href="https://plus.google.com/+Nowellpoint/posts"><i class="fa fa-lg fa-google-plus"></i> ${labels["google.plus"]}</a>
-                        </li>
-                        <li>
-                            <a id="twitter" href="https://twitter.com/nowellpoint"><i class="fa fa-lg fa-twitter"></i> ${labels["twitter"]}</a>
-                        </li>
-                    </ul>
                 </div>
-
                 <!--Grid column-->
 
             </div>
 
         </section>
     </div>
+    
+    <br>
+    <br>
+    <br>
+
+    <!--Footer-->
+    <footer class="page-footer font-small stylish-color-dark pt-4 mt-4">
+
+        <hr>
+
+        <!--Call to action-->
+        <div class="text-center py-3">
+            <ul class="list-unstyled list-inline mb-0">
+                <li class="list-inline-item">
+                    <h5 class="mb-1">${labels['create.free.account']}</h5>
+                </li>
+                <li class="list-inline-item">
+                    <a href="#!" class="btn btn-danger btn-rounded">${labels['sign.up']}</a>
+                </li>
+            </ul>
+        </div>
+        <!--/.Call to action-->
+
+        <hr>
+
+        <!--Social buttons-->
+        <div class="text-center">
+            <ul class="list-unstyled list-inline">
+                <li class="list-inline-item">
+                    <a href="https://twitter.com/nowellpoint" class="btn-floating btn-sm btn-tw mx-1">
+                        <i class="fa fa-twitter"> </i>
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="https://plus.google.com/+Nowellpoint/posts" class="btn-floating btn-sm btn-gplus mx-1">
+                        <i class="fa fa-google-plus"> </i>
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent" class="btn-floating btn-sm btn-li mx-1">
+                        <i class="fa fa-github"> </i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!--/.Social buttons-->
+
+        <!--Copyright-->
+        <div class="footer-copyright py-3 text-center">
+            ${labels["copyright"]}
+        </div>
+        <!--/.Copyright-->
+
+    </footer>
+    <!--/.Footer-->
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>

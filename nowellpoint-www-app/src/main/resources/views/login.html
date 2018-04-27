@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <title>${messages["application.title"]}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -16,77 +15,39 @@
 
 </head>
 
-<body>
-
+<body class="special-color-dark">
     <div class="container mt-5">
+        <div class="row">
+            <div class="col-6 mx-auto">
+                <!-- Card -->
+                <div class="card">
+                    <!-- Card body -->
+                    <div class="card-body">
+                        <form>
+                            <p class="h4 text-center mb-4">${labels["welcome.back"]}</p>
 
-        <section class="section">
-
-            <div class="row">
-
-                <!--Grid column-->
-                <div class="col-3"></div>
-
-                <!--Grid column-->
-                <div class="col-6">
-
-                    <!--Section heading-->
-                    <h2 class="section-heading h1 pt-4"><a href="/">${messages["application.title"]}</a></h2>
-                    <!--Section description-->
-                    <p class="section-description">${labels["welcome.back"]}</p>
-
-                    <p class="error">${errorMessage!}</p>
-
-                    <form role="form" id="login-form" method="post" action="/login/">
-
-                        <input type="hidden" name="redirect_uri" value="${(redirect_uri)!}" />
-
-                        <!--Grid row-->
-                        <div class="row">
-
-                            <!--Grid column-->
-                            <div class="col-12">
-                                <div class="md-form">
-                                    <label for="username">${labels['email']}</label>
-                                    <input type="email" name="username" id="username" autofocus>
-                                </div>
+                            <!-- Material input email -->
+                            <div class="md-form">
+                                <i class="fa fa-envelope prefix grey-text"></i>
+                                <input type="email" id="materialFormLoginEmailEx" class="form-control">
+                                <label for="materialFormLoginEmailEx">${labels['email']}</label>
                             </div>
-                            <!--Grid column-->
 
-                        </div>
-
-                        <!--Grid row-->
-                        <div class="row">
-
-                            <!--Grid column-->
-                            <div class="col-12">
-                                <div class="md-form">
-                                    <label for="password">${labels['password']}</label>
-                                    <input type="password" name="password" id="password" autocomplete="off">
-                                </div>
+                            <!-- Material input password -->
+                            <div class="md-form">
+                                <i class="fa fa-lock prefix grey-text"></i>
+                                <input type="password" id="materialFormLoginPasswordEx" class="form-control">
+                                <label for="materialFormLoginPasswordEx">${labels['password']}</label>
                             </div>
-                            <!--Grid column-->
 
-                        </div>
-                    </form>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-default" type="submit">${labels['login']}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <div class="center-on-small-only">
-                    <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">${labels['login']}</a>
-                </div>
-                
-                <div class="status"></div>
-
-                <div class="center-on-small-only">
-                        <a href="/free" class="btn btn-warning">${labels["create.free.account"]}</a>
-                </div>
-
             </div>
-
-            <!--Grid column-->
-            <div class="col-3"></div>
-
-        </section>
+        </div>
     </div>
 
     <!-- JQuery -->
