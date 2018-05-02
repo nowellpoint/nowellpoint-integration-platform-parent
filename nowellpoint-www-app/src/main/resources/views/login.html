@@ -15,7 +15,25 @@
 
 </head>
 
-<body class="special-color-dark">
+<body class="special-color">
+
+    <!-- Nav -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/"><strong>${messages["application.title"]}</strong></a>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav ml-auto">
+                <li>
+                    <button type="button" class="btn btn-warning btn-rounded">Create Free Account</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Nav -->
+
+    <!-- Container -->
     <div class="container mt-5">
         <div class="row">
             <div class="col-6 mx-auto">
@@ -23,23 +41,23 @@
                 <div class="card">
                     <!-- Card body -->
                     <div class="card-body">
-                        <form>
+                        <form id="login-form" name="login-form" action="/login/" method="POST">
                             <p class="h4 text-center mb-4">${labels["welcome.back"]}</p>
-
                             <!-- Material input email -->
                             <div class="md-form">
-                                <i class="fa fa-envelope prefix grey-text"></i>
-                                <input type="email" id="materialFormLoginEmailEx" class="form-control">
-                                <label for="materialFormLoginEmailEx">${labels['email']}</label>
+                                <input type="email" id="username" name="username" class="form-control" autofocus>
+                                <label for="username">${labels['email']}</label>
                             </div>
-
                             <!-- Material input password -->
                             <div class="md-form">
-                                <i class="fa fa-lock prefix grey-text"></i>
-                                <input type="password" id="materialFormLoginPasswordEx" class="form-control">
-                                <label for="materialFormLoginPasswordEx">${labels['password']}</label>
+                                <input type="password" id="password" name="password" class="form-control">
+                                <label for="password">${labels['password']}</label>
                             </div>
-
+                            <#if errorMessage??>
+                                <div>
+                                    <p class="text-center red-text">${errorMessage}</p>
+                                </div>
+                            </#if>
                             <div class="text-center mt-4">
                                 <button class="btn btn-default" type="submit">${labels['login']}</button>
                             </div>
@@ -49,6 +67,7 @@
             </div>
         </div>
     </div>
+    <!-- Container -->
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>

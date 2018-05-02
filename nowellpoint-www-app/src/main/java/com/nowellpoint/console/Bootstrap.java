@@ -18,15 +18,15 @@
 
 package com.nowellpoint.console;
 
-import static spark.Spark.before;
+import static com.nowellpoint.console.util.Exceptions.configureExceptionRoutes;
+import static com.nowellpoint.console.util.Filters.setupFilters;
+import static com.nowellpoint.console.util.Routes.configureRoutes;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
 import com.nowellpoint.console.util.Exceptions;
-import com.nowellpoint.console.util.Filters;
-import com.nowellpoint.console.util.Routes;
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.ConnectorController;
 import com.nowellpoint.console.view.DashboardController;
@@ -71,15 +71,13 @@ public class Bootstrap implements SparkApplication {
 		// setup filters
 		//
 		
-		before("/*",                            Filters.addTrailingSlashes);
-		before("/*",                            Filters.setDefaultAttributes);
-		before("/app/*",                        Filters.authenticatedUser);
+		setupFilters();
 
 		//
 		// setup routes
 		//
 		
-		Routes.configureRoutes(configuration);
+		configureRoutes(configuration);
 
 		//
 		// dashboard controller
@@ -263,7 +261,7 @@ public class Bootstrap implements SparkApplication {
 		
 		
 		
-		Exceptions.setupEndpoints(configuration);
+		configureExceptionRoutes(configuration);
 
 		//
 		// exception handlers

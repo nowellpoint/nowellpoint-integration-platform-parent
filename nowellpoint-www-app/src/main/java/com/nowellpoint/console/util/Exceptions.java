@@ -17,7 +17,7 @@ import spark.Response;
 
 public class Exceptions {
 	
-	public static void setupEndpoints(Configuration configuration) {
+	public static void configureExceptionRoutes(Configuration configuration) {
 		get("*", (request, response) -> serveNotFoundPage(configuration, request, response));
 	}
 	
@@ -25,7 +25,7 @@ public class Exceptions {
 		response.status(HttpStatus.NOT_FOUND_404);
 		
 		Map<String, Object> model = new HashMap<String,Object>();
-		model.put("errorMessage", MessageProvider.getMessage(request.attribute("com.nowellpoint.default.locale"), "page.not.found"));
+		model.put("errorMessage", MessageProvider.getMessage(request.attribute(RequestAttributes.LOCALE), "page.not.found"));
 		
 		Template template = Template.builder()
 				.configuration(configuration)
