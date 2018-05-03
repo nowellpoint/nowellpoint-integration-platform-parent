@@ -11,6 +11,10 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.console.entity.Lead;
+import com.nowellpoint.console.model.Address;
+import com.nowellpoint.console.model.ModifiableAddress;
+import com.nowellpoint.console.model.ModifiableOrganization;
+import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
 
 public abstract class AbstractService {
@@ -47,6 +51,18 @@ public abstract class AbstractService {
 			@Override
 			protected String convert(ObjectId source) {
 				return source == null ? null : source.toString();
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Address, Address>() {		
+			@Override
+			protected Address convert(com.nowellpoint.console.entity.Address source) {
+				return source == null ? null : modelMapper.map(source, ModifiableAddress.class).toImmutable();
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Organization, Organization>() {		
+			@Override
+			protected Organization convert(com.nowellpoint.console.entity.Organization source) {
+				return source == null ? null : modelMapper.map(source, ModifiableOrganization.class).toImmutable();
 			}
 		});
 	}

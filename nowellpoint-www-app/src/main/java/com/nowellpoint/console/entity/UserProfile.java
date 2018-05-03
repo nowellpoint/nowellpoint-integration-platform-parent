@@ -3,6 +3,7 @@ package com.nowellpoint.console.entity;
 import java.util.Locale;
 
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Reference;
 
 @Entity(value = "user.profiles")
 public class UserProfile extends BaseEntity {
@@ -28,6 +29,9 @@ public class UserProfile extends BaseEntity {
 	private Locale locale;
 	
 	private Address address;
+	
+	@Reference
+	private Organization organization;
 	
 	public UserProfile() {
 		
@@ -123,5 +127,13 @@ public class UserProfile extends BaseEntity {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public Organization getOrganziation() {
+		return organization;
+	}
+
+	public void setOrganziation(Organization organization) {
+		this.organization = organization;
 	}
 }

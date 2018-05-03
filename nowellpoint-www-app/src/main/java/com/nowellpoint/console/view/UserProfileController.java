@@ -1,6 +1,10 @@
 package com.nowellpoint.console.view;
 
+import static spark.Spark.get;
+import static spark.Spark.post;
+
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -8,23 +12,35 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.client.NowellpointClient;
 import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.Identity;
-import com.nowellpoint.client.model.Token;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UserProfile;
 import com.nowellpoint.client.model.UserProfileRequest;
+import com.nowellpoint.console.model.Identity;
+import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.model.UserProfile;
+import com.nowellpoint.console.service.UserProfileService;
+import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class UserProfileController extends AbstractStaticController {
+public class UserProfileController extends BaseController {
 	
-	public static class Template {
-		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
-		public static final String USER_PROFILE_CONTENT = String.format(APPLICATION_CONTEXT, "user-profile-content.html");
+	private static final UserProfileService userProfileService = new UserProfileService();
+	
+	public static void configureRoutes(Configuration configuration) {
+		
+		get(Path.Route.USER_PROFILE_VIEW,
+				(request, response) -> viewUserProfile(configuration, request, response));
+		
+		post(Path.Route.USER_PROFILE_VIEW,
+				(request, response) -> updateUserProfile(configuration, request, response));
+		
+		post(Path.Route.USER_PROFILE_ADDRESS,
+				(request, response) -> updateAddress(configuration, request, response));
 	}
 	
 	/**
@@ -35,27 +51,29 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String viewUserProfile(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
-		
+	private static String viewUserProfile(Configuration configuration, Request request, Response response) {
 		Identity identity = getIdentity(request);
 		
 		String id = request.params(":id");
 		
-		UserProfile userProfile = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.get(id);
+		UserProfile userProfile = userProfileService.get(id);
 		
-		Boolean readonly = ! userProfile.getId().equals(identity.getId());
+		Boolean readonly = ! userProfile.getId().equals(identity.getUserId());
 		
-		Map<String, Object> model = getModel();
-		model.put("userProfile", userProfile);
-		model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-		model.put("timeZones", getTimeZones());
-		model.put("readonly", readonly);
-		model.put("content", Template.USER_PROFILE);
-
-		return render(UserProfileController.class, configuration, request, response, model, CONSOLE);
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(UserProfileController.class)
+				.putModel("userProfile", userProfile)
+				.putModel("locales", new TreeMap<String, String>(getLocales(identity.getLocale())))
+				.putModel("timeZones", getTimeZones())
+				.putModel("timeZones", getTimeZones())
+				.putModel("readonly", readonly)
+				.putModel("content", Templates.USER_PROFILE)
+				.request(request)
+				.templateName(Templates.CONSOLE)
+				.build();
+		
+		return template.render();
 	}
 	
 	/**
@@ -66,7 +84,7 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String updateUserProfile(Configuration configuration, Request request, Response response) {
+	private static String updateUserProfile(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -87,24 +105,31 @@ public class UserProfileController extends AbstractStaticController {
 				.phone(phone)
 				.locale(locale)
 				.timeZone(timeZone)
-				.token(token)
+				//.token(token)
 				.build();
 
-		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.update(request.params(":id"), userProfileRequest);
+		UpdateResult<UserProfile> updateResult = null;
 		
 		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
 		
 		if (updateResult.isSuccess()) {
-			Map<String, Object> model = getModel();
+			Map<String, Object> model = new HashMap<>();
 			model.put("userProfile", updateResult.getTarget());
 			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 			model.put("timeZones", getTimeZones());
 			model.put("readonly", readonly);
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE);
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(UserProfileController.class)
+					.request(request)
+					.templateName(Templates.USER_PROFILE)
+					.build();
+			
+			return template.render();
+			
 		} else {
-			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
+			return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 	}
 	
@@ -116,7 +141,7 @@ public class UserProfileController extends AbstractStaticController {
 	 * @return
 	 */
 	
-	public static String updateAddress(Configuration configuration, Request request, Response response) {
+	private static String updateAddress(Configuration configuration, Request request, Response response) {
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
@@ -136,25 +161,31 @@ public class UserProfileController extends AbstractStaticController {
 				.postalCode(postalCode)
 				.state(state)
 				.street(street)
-				.token(token)
+				//.token(token)
 				.build();
 		
-		UpdateResult<UserProfile> updateResult = NowellpointClient.defaultClient(token)
-				.userProfile()
-				.address()
-				.update(request.params(":id"), addressRequest);
+		UpdateResult<UserProfile> updateResult = null;
 		
 		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
 		
 		if (updateResult.isSuccess()) {
-			Map<String, Object> model = getModel();
+			Map<String, Object> model = new HashMap<>();
 			model.put("userProfile", updateResult.getTarget());
 			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
 			model.put("timeZones", getTimeZones());
 			model.put("readonly", readonly);
-			return render(UserProfileController.class, configuration, request, response, model, Template.USER_PROFILE);
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(UserProfileController.class)
+					.request(request)
+					.templateName(Templates.USER_PROFILE)
+					.build();
+			
+			return template.render();
+			
 		} else {
-			return showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
+			return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
 		}
 	}
 	

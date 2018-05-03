@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true)
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
 @JsonSerialize(as = Address.class)
 @JsonDeserialize(as = Address.class)
 public abstract class AbstractAddress {

@@ -10,4 +10,5 @@ docker run -it \
 -e OKTA_CLIENT_ID=$OKTA_CLIENT_ID \
 -e OKTA_CLIENT_SECRET=$OKTA_CLIENT_SECRET \
 -e OKTA_AUTHORIZATION_SERVER=$OKTA_AUTHORIZATION_SERVER \
--p 8443:8443 nowellpoint/console:latest
+-p 8443:8443 \
+-h sandbox.nowellpoint.com nowellpoint/console:latest

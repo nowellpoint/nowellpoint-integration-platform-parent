@@ -21,7 +21,7 @@
             extension: "${userProfile.extension!}",
             fax: "${userProfile.fax!}",
             locale: "${userProfile.locale!}",
-            timeZone: "${userProfile.timeZone.ID!}"
+            timeZone: "${userProfile.timeZone!}"
         }
         sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
     </script>
@@ -102,7 +102,7 @@
                                 <b>${labels["timezone.key"]}</b>
                             </div>
                             <div class="col-9">
-                                ${userProfile.timeZone.ID!}
+                                ${userProfile.timeZone!}
                             </div>
                         </div>
                         <hr>
@@ -173,10 +173,10 @@
                                 <div class="col-4">
                                     <select id="timeZone" name="timeZone" class="form-control" required>
                                         <#list timeZones as timeZone>
-                                            <#if userProfile.timeZone.ID==timeZone>
+                                            <#if userProfile.timeZone==timeZone>
                                                 <option value="${timeZone}" selected="selected">${timeZone}</option>
                                             </#if>
-                                            <#if userProfile.timeZone.ID !=timeZone>
+                                            <#if userProfile.timeZone !=timeZone>
                                                 <option value="${timeZone}">${timeZone}</option>
                                             </#if>
                                         </#list>
@@ -204,7 +204,9 @@
                             <h4><b>${labels["address"]}</b></h4>
                         </div>
                         <div class="flextable-item">
-                            <button class="btn btn-link" id="editAddress"><span class="icon icon-pencil"></span></button>
+                            <#if ! readonly>
+                                <button class="btn btn-link" id="editAddress"><span class="icon icon-pencil"></span></button>
+                            </#if>    
                         </div>
                     </div>
                     <hr>
@@ -296,11 +298,11 @@
                                 <div class="col-4">
                                     <select id="countryCode" name="countryCode" class="form-control" required>
                                         <#list countryList as country>
-                                            <#if country.iso2Code==userProfile.address.countryCode>
-                                                <option value="${country.iso2Code}" selected="selected">${country.name}</option>
+                                            <#if country.code==userProfile.address.countryCode>
+                                                <option value="${country.code}" selected="selected">${country.name}</option>
                                             </#if>
-                                            <#if country.iso2Code !=userProfile.address.countryCode>
-                                                <option value="${country.iso2Code}">${country.name}</option>
+                                            <#if country.code !=userProfile.address.countryCode>
+                                                <option value="${country.code}">${country.name}</option>
                                             </#if>
                                         </#list>
                                     </select>

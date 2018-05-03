@@ -1,27 +1,16 @@
 package com.nowellpoint.console.view;
 
 import static spark.Spark.get;
-import static spark.Spark.halt;
 import static spark.Spark.post;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import com.nowellpoint.console.model.LeadRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.LeadService;
 import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.content.model.IsoCountry;
-import com.nowellpoint.content.model.IsoCountryList;
-import com.nowellpoint.content.model.Plan;
-import com.nowellpoint.content.model.PlanList;
-import com.nowellpoint.content.service.ContentService;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
-import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
 
@@ -50,24 +39,6 @@ public class IndexController {
 	 */
 	
 	private static String serveIndexPage(Configuration configuration, Request request, Response response) {
-		
-		if (! Optional.ofNullable(configuration.getSharedVariable("countryList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("countryList", loadCountries(configuration.getLocale()));
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
-		
-		if (! Optional.ofNullable(configuration.getSharedVariable("planList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("planList", loadPlans(configuration.getLocale()));
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -126,26 +97,5 @@ public class IndexController {
     	return MessageProvider.getMessage(configuration.getLocale(), "contact.confirmation.message");
 	};
 	
-	/**
-	 * 
-	 * @param locale
-	 * @return List of IsoCountries
-	 */
 	
-	private static List<IsoCountry> loadCountries(Locale locale) {				
-		ContentService service = new ContentService();
-		IsoCountryList countryList = service.getCountries();
-		return countryList.getItems();
-	}
-	
-	/**
-	 * 
-	 * @return List of Plans
-	 */
-	
-	private static List<Plan> loadPlans(Locale locale) {				
-		ContentService service = new ContentService();
-		PlanList planList = service.getPlans();
-		return planList.getItems();
-	}
 }

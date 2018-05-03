@@ -13,10 +13,10 @@ import spark.Response;
 public class StartController {
 	
 	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.START, (request, response) -> serveStartPage(configuration, request, response));
+		get(Path.Route.START, (request, response) -> viewStartPage(configuration, request, response));
 	}
 
-	private static String serveStartPage(Configuration configuration, Request request, Response response) {
+	private static String viewStartPage(Configuration configuration, Request request, Response response) {
     	Template template = Template.builder()
 				.configuration(configuration)
 				.controllerClass(StartController.class)

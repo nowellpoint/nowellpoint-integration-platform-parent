@@ -94,19 +94,6 @@ public class Bootstrap implements SparkApplication {
 				(request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
 
 		//
-		// user profile routes
-		//
-
-		get(Path.Route.USER_PROFILE_VIEW,
-				(request, response) -> UserProfileController.viewUserProfile(configuration, request, response));
-		
-		post(Path.Route.USER_PROFILE_VIEW,
-				(request, response) -> UserProfileController.updateUserProfile(configuration, request, response));
-		
-		post(Path.Route.USER_PROFILE_ADDRESS,
-				(request, response) -> UserProfileController.updateAddress(configuration, request, response));
-
-		//
 		// organization routes
 		//
 
