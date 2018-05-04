@@ -28,5 +28,6 @@ public abstract class AbstractUserProfile {
 	public abstract String getTimeZone();
 	public abstract Locale getLocale();
 	public abstract Address getAddress();
-	public abstract Organization getOrganziation();
+	public abstract Organization getOrganization();
+	public abstract Photos getPhotos();
 }

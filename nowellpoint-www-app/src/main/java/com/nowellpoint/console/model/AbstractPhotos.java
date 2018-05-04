@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true)
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
 @JsonSerialize(as = Photos.class)
 @JsonDeserialize(as = Photos.class)
 public abstract class AbstractPhotos {

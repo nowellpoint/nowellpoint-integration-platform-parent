@@ -30,6 +30,8 @@ public class UserProfile extends BaseEntity {
 	
 	private Address address;
 	
+	private Photos photos;
+	
 	@Reference
 	private Organization organization;
 	
@@ -129,11 +131,19 @@ public class UserProfile extends BaseEntity {
 		this.address = address;
 	}
 
-	public Organization getOrganziation() {
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
+	}
+
+	public Organization getOrganization() {
 		return organization;
 	}
 
-	public void setOrganziation(Organization organization) {
+	public void setOrganization(Organization organization) {
 		this.organization = organization;
 	}
 }

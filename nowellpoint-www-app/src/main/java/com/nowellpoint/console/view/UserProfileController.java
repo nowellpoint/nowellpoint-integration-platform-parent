@@ -68,9 +68,9 @@ public class UserProfileController extends BaseController {
 				.putModel("timeZones", getTimeZones())
 				.putModel("timeZones", getTimeZones())
 				.putModel("readonly", readonly)
-				.putModel("content", Templates.USER_PROFILE)
+				//.putModel("content", Templates.USER_PROFILE)
 				.request(request)
-				.templateName(Templates.CONSOLE)
+				.templateName(Templates.USER_PROFILE)
 				.build();
 		
 		return template.render();

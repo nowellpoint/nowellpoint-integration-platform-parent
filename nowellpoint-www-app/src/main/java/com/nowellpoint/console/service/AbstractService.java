@@ -14,7 +14,9 @@ import com.nowellpoint.console.entity.Lead;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.ModifiableAddress;
 import com.nowellpoint.console.model.ModifiableOrganization;
+import com.nowellpoint.console.model.ModifiablePhotos;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.Photos;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
 
 public abstract class AbstractService {
@@ -63,6 +65,12 @@ public abstract class AbstractService {
 			@Override
 			protected Organization convert(com.nowellpoint.console.entity.Organization source) {
 				return source == null ? null : modelMapper.map(source, ModifiableOrganization.class).toImmutable();
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Photos, Photos>() {		
+			@Override
+			protected Photos convert(com.nowellpoint.console.entity.Photos source) {
+				return source == null ? null : modelMapper.map(source, ModifiablePhotos.class).toImmutable();
 			}
 		});
 	}
