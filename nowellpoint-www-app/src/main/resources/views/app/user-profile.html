@@ -76,36 +76,20 @@
 
     <!--Main Layout-->
     <main>
-        <div class="container-fluid mt-5">
-
+        <div class="container mt-5">
             <div class="row">
+                <nav class="navbar navbar-expand-lg default-color w-100">
+                    <span class="navbar-text white-text">${labels["user.information"]}</span>
+                    <ul class="navbar-nav ml-auto">
+                        <#if ! readonly>
+                            <a class="white-text" data-toggle="modal" data-target="#modalUserProfileForm" id="editUserProfile"><i class="fa fa-edit"></i></a>
+                        </#if>
+                    </ul>
+                </nav>
                 <div class="col-12">
-                    <h4><b>${labels["user.profile"]}</b></h4>
-                </div>
-            </div>
-            <hr>
-            <br>
-            <div class="row">
-                <div class="col-3">
-                    <img src="${(userProfile.photos.profilePicture)!}" class="rounded img-thumbnail" alt="no image">
-                </div>
-                <div class="col-9">
-                    <div class="row" id="detail">
+                    <div class="row mt-3">
                         <div class="col-12">
-                            <div class="row">
-                            <div class="col-6">
-                                <span class="align-middle"><h4><b>${labels["details"]}</b></h4></span>
-                            </div>    
-                            <div class="col-6">
-                                <#if ! readonly>
-                                        <div class="pull-right">
-                                        <button class="btn btn-success" data-toggle="modal" data-target="#modalUserProfileForm" id="editUserProfile">${labels["edit"]}</button> 
-                                    </div>    
-                                    </#if>
-                            </div>    
-                            </div>    
-                            <hr>
-                            <div id="userView">
+                            <div>
                                 <div class="row">
                                     <div class="col-3">
                                         <b>${labels["name"]}</b>
@@ -159,141 +143,81 @@
                                         ${userProfile.timeZone!}
                                     </div>
                                 </div>
-                                <hr>
                             </div>
                         </div>
                     </div>
                     <br>
-                    <br>
-                    <div class="row" id="address">
+                    <div class="row">
+                        <nav class="navbar navbar-expand-lg default-color w-100">
+                            <span class="navbar-text white-text">${labels["address"]}</span>
+                            <ul class="navbar-nav ml-auto">
+                                <#if ! readonly>
+                                    <a class="white-text" data-toggle="modal" data-target="#modalAddressForm" id="editUserAddress"><i class="fa fa-edit"></i></a>
+                                </#if>
+                            </ul>
+                        </nav>
                         <div class="col-12">
-                            <div class="flextable" style="height: 18px">
-                                <div class="flextable-item flextable-primary">
-                                    <h4><b>${labels["address"]}</b></h4>
-                                </div>
-                                <div class="flextable-item">
-                                    <#if ! readonly>
-                                        <button class="btn btn-link" id="editAddress"><span class="icon icon-pencil"></span></button>
-                                    </#if>
-                                </div>
-                            </div>
-                            <hr>
-                            <div id="addressView">
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["street"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${(userProfile.address.street)!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["city"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${(userProfile.address.city)!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["state"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${(userProfile.address.state)!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["postal.code"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${(userProfile.address.postalCode)!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["country"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${(userProfile.address.country)!}
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
-                            <div id="addressEdit" class="hidden">
-                                <form class="form-vertical" name="profile-address" id="profile-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address">
-                                    <div class="row form-group">
-                                        <div class="col-3">
-                                            <b><label class="control-label" for="street">${labels["street"]}</label></b>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <b>${labels["street"]}</b>
+                                            </div>
+                                            <div class="col-9">
+                                                ${(userProfile.address.street)!}
+                                            </div>
                                         </div>
-                                        <div class="col-4">
-                                            <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <b>${labels["city"]}</b>
+                                            </div>
+                                            <div class="col-9">
+                                                ${(userProfile.address.city)!}
+                                            </div>
                                         </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <b>${labels["state"]}</b>
+                                            </div>
+                                            <div class="col-9">
+                                                ${(userProfile.address.state)!}
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <b>${labels["postal.code"]}</b>
+                                            </div>
+                                            <div class="col-9">
+                                                ${(userProfile.address.postalCode)!}
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <b>${labels["country"]}</b>
+                                            </div>
+                                            <div class="col-9">
+                                                ${(userProfile.address.country)!}
+                                            </div>
+                                        </div>
+                                        <hr>
                                     </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">
-                                            <b><label class="control-label" for="city">${labels["city"]}</label></b>
-                                        </div>
-                                        <div class="col-4">
-                                            <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">
-                                            <b><label class="control-label" for="state">${labels["state"]}</label></b>
-                                        </div>
-                                        <div class="col-4">
-                                            <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">
-                                            <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
-                                        </div>
-                                        <div class="col-4">
-                                            <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-3">
-                                            <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
-                                        </div>
-                                        <div class="col-4">
-                                            <select id="countryCode" name="countryCode" class="form-control" required>
-                                                <#list countryList as country>
-                                                    <#if country.code==userProfile.address.countryCode>
-                                                        <option value="${country.code}" selected="selected">${country.name}</option>
-                                                    </#if>
-                                                    <#if country.code !=userProfile.address.countryCode>
-                                                        <option value="${country.code}">${country.name}</option>
-                                                    </#if>
-                                                </#list>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </form>
-                                <div class="row">
-                                    <div class="col-3"></div>
-                                    <div class="col-4">
-                                        <button class="btn btn-primary" id="saveAddress">${labels["save"]}</button>
-                                        <button class="btn btn-secodary" id="cancelAddress">${labels["cancel"]}</button>
-                                    </div>
-                                    <hr>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
     <!--Main Layout-->
+
+    <br>
+    <br>
 
     <div class="modal fade" id="modalUserProfileForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
@@ -304,99 +228,65 @@
 
                 <!--Header-->
                 <div class="modal-header primary-color white-text">
-                    <h4 class="title">
-                    <i class="fa fa-pencil"></i> Contact form</h4>
-                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                    <h4 class="title">${labels["edit.user.profile"]}</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <!--Body-->
                 <div class="modal-body">
 
-                    <form class="form-vertical" name="profile-details" id="profile-details" role="form" method="post" action="${links['user.profile']}/${userProfile.id}">
+                    <form class="form" name="profile" id="profile" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
 
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label for="firstName">${labels["first.name"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <input type="text" name="firstName" id="firstName" class="form-control" value="${userProfile.firstName!}" autofocus>
-                            </div>
+                            <b><label for="firstName">${labels["first.name"]}</label></b>
+                            <input type="text" name="firstName" id="firstName" class="form-control" value="${userProfile.firstName!}" autofocus>
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <input type="text" name="lastName" id="lastName" class="form-control" value="${userProfile.lastName!}" required>
-                            </div>
+                            <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
+                            <input type="text" name="lastName" id="lastName" class="form-control" value="${userProfile.lastName!}" required>
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="email">${labels["email"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <input type="text" name="email" id="email" class="form-control" value="${userProfile.email!}" required>
-                            </div>
+                            <b><label class="control-label" for="email">${labels["email"]}</label></b>
+                            <input type="text" name="email" id="email" class="form-control" value="${userProfile.email!}" required>
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <input type="text" name="phone" id="phone" class="form-control" value="${userProfile.phone!}">
-                            </div>
+                            <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
+                            <input type="text" name="phone" id="phone" class="form-control" value="${userProfile.phone!}">
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="title">${labels["title"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <input type="text" name="title" id="title" class="form-control" value="${userProfile.title!}">
-                            </div>
+                            <b><label class="control-label" for="title">${labels["title"]}</label></b>
+                            <input type="text" name="title" id="title" class="form-control" value="${userProfile.title!}">
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <select id="locale" name="locale" class="form-control" required>
-                                    <#list locales?keys as key>
-                                        <#if userProfile.locale==key>
-                                            <option value="${key}" selected="selected">${locales[key]}</option>
-                                        </#if>
-                                        <#if userProfile.locale !=key>
-                                            <option value="${key}">${locales[key]}</option>
-                                        </#if>
-                                    </#list>
-                                </select>
-                            </div>
+                            <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
+                            <select id="locale" name="locale" class="form-control" required>
+                                <#list locales?keys as key>
+                                    <#if userProfile.locale==key>
+                                        <option value="${key}" selected="selected">${locales[key]}</option>
+                                    </#if>
+                                    <#if userProfile.locale !=key>
+                                        <option value="${key}">${locales[key]}</option>
+                                    </#if>
+                                </#list>
+                            </select>
                         </div>
                         <div class="row form-group">
-                            <div class="col-4">
-                                <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
-                            </div>
-                            <div class="col-8">
-                                <select id="timeZone" name="timeZone" class="form-control" required>
-                                    <#list timeZones as timeZone>
-                                        <#if userProfile.timeZone==timeZone>
-                                            <option value="${timeZone}" selected="selected">${timeZone}</option>
-                                        </#if>
-                                        <#if userProfile.timeZone !=timeZone>
-                                            <option value="${timeZone}">${timeZone}</option>
-                                        </#if>
-                                    </#list>
-                                </select>
-                            </div>
+                            <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
+                            <select id="timeZone" name="timeZone" class="form-control" required>
+                                <#list timeZones as timeZone>
+                                    <#if userProfile.timeZone==timeZone>
+                                        <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                    </#if>
+                                    <#if userProfile.timeZone !=timeZone>
+                                        <option value="${timeZone}">${timeZone}</option>
+                                    </#if>
+                                </#list>
+                            </select>
                         </div>
                     </form>
                     <div class="row">
-                        <div class="col-4"></div>
-                        <div class="col-4">
-                            <button class="btn btn-primary" id="saveUserProfile">${labels["save"]}</button>
-                            <button class="btn btn-secondary" id="cancelUserProfile">${labels["cancel"]}</button>
-                        </div>
-                        <hr>
+                        <button class="btn btn-primary" id="save-profile">${labels["save"]}</button>
                     </div>
 
                 </div>
@@ -406,14 +296,62 @@
         <!--/Modal: Contact form-->
     </div>
 
-    <!--Footer-->
-    <footer class="page-footer font-small mdb-color lighten-3 pt-4 mt-4">
+    <div class="modal fade" id="modalAddressForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!--Modal: Contact form-->
+        <div class="modal-dialog cascading-modal" role="document">
 
-        <div class="footer-copyright py-3 text-center">
+            <!--Content-->
+            <div class="modal-content">
+
+                <!--Header-->
+                <div class="modal-header primary-color white-text">
+                    <h4 class="title">${labels["edit.address"]}</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <!--Body-->
+                <div class="modal-body">
+                    <form class="form" name="address" id="address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
+                        <div class="row form-group">
+                            <b><label class="control-label" for="street">${labels["street"]}</label></b>
+                            <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="city">${labels["city"]}</label></b>
+                            <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="state">${labels["state"]}</label></b>
+                            <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
+                            <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
+                            <select id="countryCode" name="countryCode" class="form-control" required>
+                                <#list countryList as country>
+                                    <#if country.code==userProfile.address.countryCode>
+                                        <option value="${country.code}" selected="selected">${country.name}</option>
+                                    </#if>
+                                    <#if country.code !=userProfile.address.countryCode>
+                                        <option value="${country.code}">${country.name}</option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <button class="btn btn-primary" id="save-address">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+            <!--/.Content-->
         </div>
-
-    </footer>
-    <!--/.Footer-->
+        <!--/Modal: Contact form-->
+    </div>
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
@@ -424,7 +362,7 @@
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="/js/mdb.min.js"></script>
     <!-- Custom JavaScript -->
-    <script src="/js/user-profile.js"></script>
+    <script type="text/javascript" src="/js/user-profile.js"></script>
 
 </body>
 

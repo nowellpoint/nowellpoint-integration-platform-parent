@@ -85,7 +85,7 @@ public class AuthenticationController {
 		
 		Long expiresIn = token.getExpiresIn();
 		
-		try {
+		try {			
 			response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true, true);
 		} catch (IOException e) {
 			throw new InternalServerErrorException(e);

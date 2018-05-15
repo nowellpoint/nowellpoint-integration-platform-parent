@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Version;
 
 abstract class BaseEntity {
@@ -16,7 +17,13 @@ abstract class BaseEntity {
 	
 	private Date createdOn;
 	
+	@Reference
+	private UserProfile createdBy;
+	
 	private Date lastUpdatedOn;
+	
+	@Reference
+	private UserProfile lastUpdatedBy;
 	
 	public BaseEntity() {
 		
@@ -60,5 +67,21 @@ abstract class BaseEntity {
 
 	public void setLastUpdatedOn(Date lastUpdatedOn) {
 		this.lastUpdatedOn = lastUpdatedOn;
+	}
+
+	public UserProfile getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(UserProfile createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public UserProfile getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(UserProfile lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 }

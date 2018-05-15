@@ -20,7 +20,6 @@ public abstract class AbstractUserProfile {
 	public abstract String getUsername();
 	public abstract String getLastName();
 	public abstract String getFirstName();
-	public abstract String getName();
 	public abstract String getTitle();
 	public abstract String getEmail();
 	public abstract String getPhone();
@@ -30,4 +29,9 @@ public abstract class AbstractUserProfile {
 	public abstract Address getAddress();
 	public abstract Organization getOrganization();
 	public abstract Photos getPhotos();
+
+	@Value.Derived
+	public String getName() {
+		return getFirstName() != null || ! getFirstName().isEmpty() ? getFirstName().concat(" ").concat(getLastName()) : getLastName();
+	}
 }

@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.UpdateResult;
-import com.nowellpoint.client.model.UserProfileRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.model.UserProfile;
+import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.service.UserProfileService;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
@@ -33,11 +33,11 @@ public class UserProfileController extends BaseController {
 	
 	public static void configureRoutes(Configuration configuration) {
 		
-		get(Path.Route.USER_PROFILE_VIEW,
-				(request, response) -> viewUserProfile(configuration, request, response));
-		
-		post(Path.Route.USER_PROFILE_VIEW,
+		post(Path.Route.USER_PROFILE,
 				(request, response) -> updateUserProfile(configuration, request, response));
+		
+		get(Path.Route.USER_PROFILE,
+				(request, response) -> viewUserProfile(configuration, request, response));
 		
 		post(Path.Route.USER_PROFILE_ADDRESS,
 				(request, response) -> updateAddress(configuration, request, response));
@@ -52,6 +52,7 @@ public class UserProfileController extends BaseController {
 	 */
 	
 	private static String viewUserProfile(Configuration configuration, Request request, Response response) {
+		
 		Identity identity = getIdentity(request);
 		
 		String id = request.params(":id");
@@ -66,9 +67,7 @@ public class UserProfileController extends BaseController {
 				.putModel("userProfile", userProfile)
 				.putModel("locales", new TreeMap<String, String>(getLocales(identity.getLocale())))
 				.putModel("timeZones", getTimeZones())
-				.putModel("timeZones", getTimeZones())
 				.putModel("readonly", readonly)
-				//.putModel("content", Templates.USER_PROFILE)
 				.request(request)
 				.templateName(Templates.USER_PROFILE)
 				.build();
@@ -85,9 +84,12 @@ public class UserProfileController extends BaseController {
 	 */
 	
 	private static String updateUserProfile(Configuration configuration, Request request, Response response) {
+		
 		Token token = getToken(request);
 		
 		Identity identity = getIdentity(request);
+		
+		String id = request.params(":id");
 		
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
@@ -97,6 +99,8 @@ public class UserProfileController extends BaseController {
 		String locale = request.queryParams("locale");
 		String timeZone = request.queryParams("timeZone");
 		
+		System.out.println("id: " + id);
+		
 		UserProfileRequest userProfileRequest = UserProfileRequest.builder()
 				.firstName(firstName)
 				.lastName(lastName)
@@ -105,32 +109,31 @@ public class UserProfileController extends BaseController {
 				.phone(phone)
 				.locale(locale)
 				.timeZone(timeZone)
-				//.token(token)
 				.build();
-
-		UpdateResult<UserProfile> updateResult = null;
 		
-		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
+		UserProfile userProfile = userProfileService.update(id, userProfileRequest);
 		
-		if (updateResult.isSuccess()) {
-			Map<String, Object> model = new HashMap<>();
-			model.put("userProfile", updateResult.getTarget());
-			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-			model.put("timeZones", getTimeZones());
-			model.put("readonly", readonly);
+		Boolean readonly = ! userProfile.getId().equals(identity.getId());
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(UserProfileController.class)
+				.putModel("userProfile", userProfile)
+				.putModel("locales", new TreeMap<String, String>(getLocales(identity.getLocale())))
+				.putModel("timeZones", getTimeZones())
+				.putModel("readonly", readonly)
+				.request(request)
+				.templateName(Templates.USER_PROFILE)
+				.build();
+		
+		return template.render();
+		
+//		if (updateResult.isSuccess()) {
 			
-			Template template = Template.builder()
-					.configuration(configuration)
-					.controllerClass(UserProfileController.class)
-					.request(request)
-					.templateName(Templates.USER_PROFILE)
-					.build();
 			
-			return template.render();
-			
-		} else {
-			return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
-		}
+//		} else {
+	//		return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
+//		}
 	}
 	
 	/**

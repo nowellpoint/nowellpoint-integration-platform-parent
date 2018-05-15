@@ -26,7 +26,6 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
-import com.nowellpoint.console.util.Exceptions;
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.ConnectorController;
 import com.nowellpoint.console.view.DashboardController;
@@ -35,7 +34,6 @@ import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.console.view.SignUpController;
-import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;

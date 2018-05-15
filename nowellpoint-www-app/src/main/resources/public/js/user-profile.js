@@ -4,23 +4,20 @@
  *
  */
 
-$(document).on('click', 'button#saveUserProfile', function(e) {
+$(document).on('click', 'button#save-profile', function(e) {
     e.preventDefault();
-    
-    $('#error').remove();
-    
-    $("#overlay").show();
 
-    $form = $("#profile-details");
+    $form = $("#profile");
 
     $.ajax({
-        method: $form.attr('method'),
+        type: $form.attr('method'),
         url: $form.attr('action'),
         dataType: "html",
         data: $form.serialize(),
         complete: function (response) {
-            $("#overlay").hide();
+            console.log(response);
             if (response.status == 200) {
+                $form.hide();
                 $('#content').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
@@ -36,14 +33,12 @@ $(document).on('click', 'button#saveUserProfile', function(e) {
  *
  */
 
-$(document).on('click', 'button#saveAddress', function(e) {
+$(document).on('click', 'button#save-address', function(e) {
     e.preventDefault();
     
     $('#error').remove();
-    
-    $("#overlay").show();
 
-    $form = $("#profile-address");
+    $form = $("#address");
 
     $.ajax({
         method: $form.attr('method'),
@@ -51,8 +46,8 @@ $(document).on('click', 'button#saveAddress', function(e) {
         dataType: "html",
         data: $form.serialize(),
         complete: function (response) {
-            $("#overlay").hide();
             if (response.status == 200) {
+                $form.hide();
                 $('#content').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
