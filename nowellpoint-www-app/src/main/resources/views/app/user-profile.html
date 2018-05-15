@@ -77,139 +77,39 @@
     <!--Main Layout-->
     <main>
         <div class="container mt-5">
-            <div class="row">
-                <nav class="navbar navbar-expand-lg default-color w-100">
-                    <span class="navbar-text white-text">${labels["user.information"]}</span>
-                    <ul class="navbar-nav ml-auto">
-                        <#if ! readonly>
-                            <a class="white-text" data-toggle="modal" data-target="#modalUserProfileForm" id="editUserProfile"><i class="fa fa-edit"></i></a>
-                        </#if>
-                    </ul>
-                </nav>
-                <div class="col-12">
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["name"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${userProfile.name!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["email"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${userProfile.email!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["title"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${userProfile.title!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["phone"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${userProfile.phone!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["locale.key"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${locales[userProfile.locale]!}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-3">
-                                        <b>${labels["timezone.key"]}</b>
-                                    </div>
-                                    <div class="col-9">
-                                        ${userProfile.timeZone!}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
+            <div class="card border-light mb-3">
+                <div class="card-header bg-transparent">
                     <div class="row">
-                        <nav class="navbar navbar-expand-lg default-color w-100">
-                            <span class="navbar-text white-text">${labels["address"]}</span>
-                            <ul class="navbar-nav ml-auto">
-                                <#if ! readonly>
-                                    <a class="white-text" data-toggle="modal" data-target="#modalAddressForm" id="editUserAddress"><i class="fa fa-edit"></i></a>
-                                </#if>
-                            </ul>
-                        </nav>
-                        <div class="col-12">
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <div>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <b>${labels["street"]}</b>
-                                            </div>
-                                            <div class="col-9">
-                                                ${(userProfile.address.street)!}
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <b>${labels["city"]}</b>
-                                            </div>
-                                            <div class="col-9">
-                                                ${(userProfile.address.city)!}
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <b>${labels["state"]}</b>
-                                            </div>
-                                            <div class="col-9">
-                                                ${(userProfile.address.state)!}
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <b>${labels["postal.code"]}</b>
-                                            </div>
-                                            <div class="col-9">
-                                                ${(userProfile.address.postalCode)!}
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-3">
-                                                <b>${labels["country"]}</b>
-                                            </div>
-                                            <div class="col-9">
-                                                ${(userProfile.address.country)!}
-                                            </div>
-                                        </div>
-                                        <hr>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-6 align-self-center">
+                            <h4>${labels["user.information"]}</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <#if ! readonly>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["edit"]}</button>
+                            </#if>
                         </div>
                     </div>
+                </div>
+                <div id="user-information" class="card-body">
+                    <#include "user-profile-information.html" />
+                </div>
+            </div>
+            <br>
+            <div class="card border-light mb-3">
+                <div class="card-header bg-transparent">
+                    <div class="row">
+                        <div class="col-6 align-self-center">
+                            <h4>${labels["address"]}</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <#if ! readonly>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address-form" id="editUserAddress">${labels["edit"]}</button>
+                            </#if>
+                        </div>
+                    </div>
+                </div>
+                <div id="address" class="card-body">
+                    <#include "user-profile-address.html" />
                 </div>
             </div>
         </div>
@@ -219,7 +119,7 @@
     <br>
     <br>
 
-    <div class="modal fade" id="modalUserProfileForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
         <div class="modal-dialog cascading-modal" role="document">
 
@@ -236,7 +136,7 @@
                 <!--Body-->
                 <div class="modal-body">
 
-                    <form class="form" name="profile" id="profile" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
+                    <form class="form" name="form-user-information" id="form-user-information" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
 
                         <div class="row form-group">
                             <b><label for="firstName">${labels["first.name"]}</label></b>
@@ -286,7 +186,7 @@
                         </div>
                     </form>
                     <div class="row">
-                        <button class="btn btn-primary" id="save-profile">${labels["save"]}</button>
+                        <button class="btn btn-primary" id="save-user-information">${labels["save"]}</button>
                     </div>
 
                 </div>
@@ -296,7 +196,7 @@
         <!--/Modal: Contact form-->
     </div>
 
-    <div class="modal fade" id="modalAddressForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-address-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
         <div class="modal-dialog cascading-modal" role="document">
 
@@ -312,7 +212,7 @@
                 </div>
                 <!--Body-->
                 <div class="modal-body">
-                    <form class="form" name="address" id="address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
+                    <form class="form" name="form-address" id="form-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
                         <div class="row form-group">
                             <b><label class="control-label" for="street">${labels["street"]}</label></b>
                             <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />

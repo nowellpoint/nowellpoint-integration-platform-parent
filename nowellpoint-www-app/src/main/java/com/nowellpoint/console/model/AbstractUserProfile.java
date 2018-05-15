@@ -1,6 +1,10 @@
 package com.nowellpoint.console.model;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.immutables.value.Value;
 
@@ -18,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public abstract class AbstractUserProfile {
 	public abstract String getId();
 	public abstract String getUsername();
+	public abstract String getName();
 	public abstract String getLastName();
 	public abstract String getFirstName();
 	public abstract String getTitle();
@@ -29,9 +34,30 @@ public abstract class AbstractUserProfile {
 	public abstract Address getAddress();
 	public abstract Organization getOrganization();
 	public abstract Photos getPhotos();
-
+	
+	private final Date now = Date.from(Instant.now());
+	
 	@Value.Derived
-	public String getName() {
-		return getFirstName() != null || ! getFirstName().isEmpty() ? getFirstName().concat(" ").concat(getLastName()) : getLastName();
+	public String getLocaleDisplayName() {
+		Optional<Locale> locale = Arrays.asList(Locale.getAvailableLocales()).stream()
+				.filter(l -> l.equals(getLocale()))
+				.findFirst();
+		
+		if (locale.isPresent()) {
+			return locale.get().getDisplayLanguage()
+					.concat(! locale.get().getCountry().isEmpty() ? " (".concat(locale.get().getDisplayCountry().concat(")")) : "");
+		}
+		
+		return null;
+	}
+	
+	@Value.Default
+	public Date getCreatedOn() {
+		return now;
+	}
+	
+	@Value.Default
+	public Date getLastUpdatedOn() {
+		return now;
 	}
 }

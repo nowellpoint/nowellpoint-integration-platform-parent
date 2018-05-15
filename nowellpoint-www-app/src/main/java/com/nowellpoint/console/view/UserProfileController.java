@@ -4,19 +4,16 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.client.model.AddressRequest;
-import com.nowellpoint.client.model.UpdateResult;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.model.UserAddressRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.service.UserProfileService;
@@ -65,8 +62,8 @@ public class UserProfileController extends BaseController {
 				.configuration(configuration)
 				.controllerClass(UserProfileController.class)
 				.putModel("userProfile", userProfile)
-				.putModel("locales", new TreeMap<String, String>(getLocales(identity.getLocale())))
-				.putModel("timeZones", getTimeZones())
+				.putModel("locales", getAvailableLocales())
+				.putModel("timeZones", getAvailableTimeZones())
 				.putModel("readonly", readonly)
 				.request(request)
 				.templateName(Templates.USER_PROFILE)
@@ -99,8 +96,6 @@ public class UserProfileController extends BaseController {
 		String locale = request.queryParams("locale");
 		String timeZone = request.queryParams("timeZone");
 		
-		System.out.println("id: " + id);
-		
 		UserProfileRequest userProfileRequest = UserProfileRequest.builder()
 				.firstName(firstName)
 				.lastName(lastName)
@@ -119,11 +114,9 @@ public class UserProfileController extends BaseController {
 				.configuration(configuration)
 				.controllerClass(UserProfileController.class)
 				.putModel("userProfile", userProfile)
-				.putModel("locales", new TreeMap<String, String>(getLocales(identity.getLocale())))
-				.putModel("timeZones", getTimeZones())
 				.putModel("readonly", readonly)
 				.request(request)
-				.templateName(Templates.USER_PROFILE)
+				.templateName(Templates.USER_PROFILE_INFORMATION)
 				.build();
 		
 		return template.render();
@@ -149,7 +142,7 @@ public class UserProfileController extends BaseController {
 		
 		Identity identity = getIdentity(request);
 		
-		String userProfileId = request.params(":id");
+		String id = request.params(":id");
 		
 		String city = request.queryParams("city");
 		String countryCode = request.queryParams("countryCode");
@@ -157,39 +150,28 @@ public class UserProfileController extends BaseController {
 		String state = request.queryParams("state");
 		String street = request.queryParams("street");
 		
-		AddressRequest addressRequest = AddressRequest.builder()
+		UserAddressRequest addressRequest = UserAddressRequest.builder()
 				.city(city)
 				.countryCode(countryCode)
-				.userProfileId(userProfileId)
 				.postalCode(postalCode)
 				.state(state)
 				.street(street)
-				//.token(token)
 				.build();
 		
-		UpdateResult<UserProfile> updateResult = null;
+		UserProfile userProfile = userProfileService.update(id, addressRequest);
 		
-		Boolean readonly = ! updateResult.getTarget().getId().equals(identity.getId());
+		Boolean readonly = ! userProfile.getId().equals(identity.getId());
 		
-		if (updateResult.isSuccess()) {
-			Map<String, Object> model = new HashMap<>();
-			model.put("userProfile", updateResult.getTarget());
-			model.put("locales", new TreeMap<String, String>(getLocales(identity.getLocale())));
-			model.put("timeZones", getTimeZones());
-			model.put("readonly", readonly);
-			
-			Template template = Template.builder()
-					.configuration(configuration)
-					.controllerClass(UserProfileController.class)
-					.request(request)
-					.templateName(Templates.USER_PROFILE)
-					.build();
-			
-			return template.render();
-			
-		} else {
-			return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
-		}
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(UserProfileController.class)
+				.putModel("userProfile", userProfile)
+				.putModel("readonly", readonly)
+				.request(request)
+				.templateName(Templates.USER_PROFILE_INFORMATION)
+				.build();
+		
+		return template.render();
 	}
 	
 	/**
@@ -198,9 +180,7 @@ public class UserProfileController extends BaseController {
 	 * @return Locale map 
 	 */
 	
-	private static Map<String,String> getLocales(Locale locale) {
-		Locale.setDefault(locale);
-		
+	private static Map<String,String> getAvailableLocales() {		
 		Map<String,String> localeMap = Arrays.asList(Locale.getAvailableLocales())
 				.stream()
 				.collect(Collectors.toMap(l -> l.toString(), l -> l.getDisplayLanguage()
@@ -214,7 +194,7 @@ public class UserProfileController extends BaseController {
 	 * @return application supported timezones
 	 */
 	
-	private static List<String> getTimeZones() {
+	private static List<String> getAvailableTimeZones() {
 		return Arrays.asList(TimeZone.getAvailableIDs());
 	}
 }

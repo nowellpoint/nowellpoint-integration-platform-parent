@@ -9,5 +9,6 @@ public class Templates {
 	public static final String CONSOLE = String.format(APPLICATION_CONTEXT, "console.html");
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
 	public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
-	public static final String USER_PROFILE_CONTENT = String.format(APPLICATION_CONTEXT, "user-profile-content.html");
+	public static final String USER_PROFILE_INFORMATION = String.format(APPLICATION_CONTEXT, "user-profile-information.html");
+	public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile-address.html");
 }

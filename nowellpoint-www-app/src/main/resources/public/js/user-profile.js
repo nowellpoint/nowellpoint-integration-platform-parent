@@ -4,10 +4,10 @@
  *
  */
 
-$(document).on('click', 'button#save-profile', function(e) {
+$(document).on('click', 'button#save-user-information', function(e) {
     e.preventDefault();
 
-    $form = $("#profile");
+    $form = $("#form-user-information");
 
     $.ajax({
         type: $form.attr('method'),
@@ -17,8 +17,8 @@ $(document).on('click', 'button#save-profile', function(e) {
         complete: function (response) {
             console.log(response);
             if (response.status == 200) {
-                $form.hide();
-                $('#content').html(response.responseText);
+            	$('#modal-user-information').modal('toggle');
+                $('#user-information').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }
@@ -35,20 +35,18 @@ $(document).on('click', 'button#save-profile', function(e) {
 
 $(document).on('click', 'button#save-address', function(e) {
     e.preventDefault();
-    
-    $('#error').remove();
 
-    $form = $("#address");
+    $form = $("#form-address");
 
     $.ajax({
-        method: $form.attr('method'),
+        type: $form.attr('method'),
         url: $form.attr('action'),
         dataType: "html",
         data: $form.serialize(),
         complete: function (response) {
             if (response.status == 200) {
-                $form.hide();
-                $('#content').html(response.responseText);
+            	$('#modal-address-form').modal('toggle');
+                $('#address').html(response.responseText);
             } else {
                 $form.prepend(response.responseText);
             }
