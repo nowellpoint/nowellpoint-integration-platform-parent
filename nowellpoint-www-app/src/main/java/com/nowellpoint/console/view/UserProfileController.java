@@ -108,7 +108,7 @@ public class UserProfileController extends BaseController {
 		
 		UserProfile userProfile = userProfileService.update(id, userProfileRequest);
 		
-		Boolean readonly = ! userProfile.getId().equals(identity.getId());
+		Boolean readonly = ! userProfile.getId().equals(identity.getUserId());
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -160,7 +160,7 @@ public class UserProfileController extends BaseController {
 		
 		UserProfile userProfile = userProfileService.update(id, addressRequest);
 		
-		Boolean readonly = ! userProfile.getId().equals(identity.getId());
+		Boolean readonly = ! userProfile.getId().equals(identity.getUserId());
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -168,7 +168,7 @@ public class UserProfileController extends BaseController {
 				.putModel("userProfile", userProfile)
 				.putModel("readonly", readonly)
 				.request(request)
-				.templateName(Templates.USER_PROFILE_INFORMATION)
+				.templateName(Templates.USER_PROFILE_ADDRESS)
 				.build();
 		
 		return template.render();

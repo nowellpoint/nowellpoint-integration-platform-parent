@@ -76,6 +76,11 @@
 
     <!--Main Layout-->
     <main>
+        <div id="success-alert" class="alert alert-success" style="display: none">
+            <button type="button" class="close" data-dismiss="alert">x</button>
+            <strong>${labels["success"]}</strong> ${labels["record.saved"]}
+        </div>
+
         <div class="container mt-5">
             <div class="card border-light mb-3">
                 <div class="card-header bg-transparent">
@@ -84,7 +89,7 @@
                             <h4>${labels["user.information"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <#if ! readonly>
+                            <#if !readonly>
                                 <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["edit"]}</button>
                             </#if>
                         </div>
@@ -102,7 +107,7 @@
                             <h4>${labels["address"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <#if ! readonly>
+                            <#if !readonly>
                                 <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address-form" id="editUserAddress">${labels["edit"]}</button>
                             </#if>
                         </div>
@@ -140,27 +145,27 @@
 
                         <div class="row form-group">
                             <b><label for="firstName">${labels["first.name"]}</label></b>
-                            <input type="text" name="firstName" id="firstName" class="form-control" value="${userProfile.firstName!}" autofocus>
+                            <input type="text" name="firstName" id="firstName" class="form-control form-control-lg" value="${userProfile.firstName!}" autofocus>
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
-                            <input type="text" name="lastName" id="lastName" class="form-control" value="${userProfile.lastName!}" required>
+                            <input type="text" name="lastName" id="lastName" class="form-control form-control-lg" value="${userProfile.lastName!}" required>
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="email">${labels["email"]}</label></b>
-                            <input type="text" name="email" id="email" class="form-control" value="${userProfile.email!}" required>
+                            <input type="text" name="email" id="email" class="form-control form-control-lg" value="${userProfile.email!}" required>
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
-                            <input type="text" name="phone" id="phone" class="form-control" value="${userProfile.phone!}">
+                            <input type="text" name="phone" id="phone" class="form-control form-control-lg" value="${userProfile.phone!}">
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="title">${labels["title"]}</label></b>
-                            <input type="text" name="title" id="title" class="form-control" value="${userProfile.title!}">
+                            <input type="text" name="title" id="title" class="form-control form-control-lg" value="${userProfile.title!}">
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
-                            <select id="locale" name="locale" class="form-control" required>
+                            <select id="locale" name="locale" class="form-control form-control-lg" required>
                                 <#list locales?keys as key>
                                     <#if userProfile.locale==key>
                                         <option value="${key}" selected="selected">${locales[key]}</option>
@@ -173,7 +178,7 @@
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
-                            <select id="timeZone" name="timeZone" class="form-control" required>
+                            <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
                                 <#list timeZones as timeZone>
                                     <#if userProfile.timeZone==timeZone>
                                         <option value="${timeZone}" selected="selected">${timeZone}</option>
@@ -215,23 +220,23 @@
                     <form class="form" name="form-address" id="form-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
                         <div class="row form-group">
                             <b><label class="control-label" for="street">${labels["street"]}</label></b>
-                            <input type="text" class="form-control" name="street" id="street" value="${(userProfile.address.street)!}" />
+                            <input type="text" class="form-control form-control-lg" name="street" id="street" value="${(userProfile.address.street)!}" />
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="city">${labels["city"]}</label></b>
-                            <input type="text" class="form-control" name="city" id="city" value="${(userProfile.address.city)!}" />
+                            <input type="text" class="form-control form-control-lg" name="city" id="city" value="${(userProfile.address.city)!}" />
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="state">${labels["state"]}</label></b>
-                            <input type="text" class="form-control" name="state" id="state" value="${(userProfile.address.state)!}" />
+                            <input type="text" class="form-control form-control-lg" name="state" id="state" value="${(userProfile.address.state)!}" />
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
-                            <input type="text" class="form-control" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
+                            <input type="text" class="form-control form-control-lg" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
                         </div>
                         <div class="row form-group">
                             <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
-                            <select id="countryCode" name="countryCode" class="form-control" required>
+                            <select id="countryCode" name="countryCode" class="form-control form-control-lg" required>
                                 <#list countryList as country>
                                     <#if country.code==userProfile.address.countryCode>
                                         <option value="${country.code}" selected="selected">${country.name}</option>

@@ -19,6 +19,9 @@ $(document).on('click', 'button#save-user-information', function(e) {
             if (response.status == 200) {
             	$('#modal-user-information').modal('toggle');
                 $('#user-information').html(response.responseText);
+                $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                    $("#success-alert").slideUp(500);
+                }); 
             } else {
                 $form.prepend(response.responseText);
             }
@@ -47,6 +50,9 @@ $(document).on('click', 'button#save-address', function(e) {
             if (response.status == 200) {
             	$('#modal-address-form').modal('toggle');
                 $('#address').html(response.responseText);
+                $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                    $("#success-alert").slideUp(500);
+                });
             } else {
                 $form.prepend(response.responseText);
             }
