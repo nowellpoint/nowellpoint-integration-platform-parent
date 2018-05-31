@@ -11,4 +11,5 @@ public class Templates {
 	public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");
 	public static final String USER_PROFILE_INFORMATION = String.format(APPLICATION_CONTEXT, "user-profile-information.html");
 	public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile-address.html");
+	public static final String USER_PROFILE_PREFERENCES = String.format(APPLICATION_CONTEXT, "user-profile-preferences.html");
 }

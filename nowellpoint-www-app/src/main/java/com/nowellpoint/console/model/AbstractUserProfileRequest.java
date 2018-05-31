@@ -17,8 +17,6 @@ public abstract class AbstractUserProfileRequest {
 	public abstract String getEmail();
 	public abstract @Nullable String getPhone();
 	public abstract @Nullable String getTitle();
-	public abstract String getLocale();
-	public abstract String getTimeZone();
 	
 	private final Date now = Date.from(Instant.now());
 	

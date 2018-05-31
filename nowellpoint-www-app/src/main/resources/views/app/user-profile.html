@@ -89,9 +89,7 @@
                             <h4>${labels["user.information"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <#if !readonly>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["edit"]}</button>
-                            </#if>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["edit"]}</button>
                         </div>
                     </div>
                 </div>
@@ -107,14 +105,28 @@
                             <h4>${labels["address"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <#if !readonly>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address-form" id="editUserAddress">${labels["edit"]}</button>
-                            </#if>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${labels["edit"]}</button>
                         </div>
                     </div>
                 </div>
                 <div id="address" class="card-body">
                     <#include "user-profile-address.html" />
+                </div>
+            </div>
+            <br>
+            <div class="card border-light mb-3">
+                <div class="card-header bg-transparent">
+                    <div class="row">
+                        <div class="col-6 align-self-center">
+                            <h4>${labels["preferences"]}</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${labels["edit"]}</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="address" class="card-body">
+                    <#include "user-profile-preferences.html" />
                 </div>
             </div>
         </div>
@@ -127,10 +139,8 @@
     <div class="modal fade" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
         <div class="modal-dialog cascading-modal" role="document">
-
             <!--Content-->
             <div class="modal-content">
-
                 <!--Header-->
                 <div class="modal-header primary-color white-text">
                     <h4 class="title">${labels["edit.user.profile"]}</h4>
@@ -140,9 +150,7 @@
                 </div>
                 <!--Body-->
                 <div class="modal-body">
-
                     <form class="form" name="form-user-information" id="form-user-information" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
-
                         <div class="row form-group">
                             <b><label for="firstName">${labels["first.name"]}</label></b>
                             <input type="text" name="firstName" id="firstName" class="form-control form-control-lg" value="${userProfile.firstName!}" autofocus>
@@ -163,37 +171,10 @@
                             <b><label class="control-label" for="title">${labels["title"]}</label></b>
                             <input type="text" name="title" id="title" class="form-control form-control-lg" value="${userProfile.title!}">
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
-                            <select id="locale" name="locale" class="form-control form-control-lg" required>
-                                <#list locales?keys as key>
-                                    <#if userProfile.locale==key>
-                                        <option value="${key}" selected="selected">${locales[key]}</option>
-                                    </#if>
-                                    <#if userProfile.locale !=key>
-                                        <option value="${key}">${locales[key]}</option>
-                                    </#if>
-                                </#list>
-                            </select>
-                        </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
-                            <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
-                                <#list timeZones as timeZone>
-                                    <#if userProfile.timeZone==timeZone>
-                                        <option value="${timeZone}" selected="selected">${timeZone}</option>
-                                    </#if>
-                                    <#if userProfile.timeZone !=timeZone>
-                                        <option value="${timeZone}">${timeZone}</option>
-                                    </#if>
-                                </#list>
-                            </select>
-                        </div>
                     </form>
                     <div class="row">
                         <button class="btn btn-primary" id="save-user-information">${labels["save"]}</button>
                     </div>
-
                 </div>
             </div>
             <!--/.Content-->
@@ -201,13 +182,11 @@
         <!--/Modal: Contact form-->
     </div>
 
-    <div class="modal fade" id="modal-address-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
         <div class="modal-dialog cascading-modal" role="document">
-
             <!--Content-->
             <div class="modal-content">
-
                 <!--Header-->
                 <div class="modal-header primary-color white-text">
                     <h4 class="title">${labels["edit.address"]}</h4>
@@ -251,6 +230,61 @@
                     <div class="row">
                         <button class="btn btn-primary" id="save-address">${labels["save"]}</button>
                     </div>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+        <!--/Modal: Contact form-->
+    </div>
+
+    <div class="modal fade" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!--Modal: Contact form-->
+        <div class="modal-dialog cascading-modal" role="document">
+
+            <!--Content-->
+            <div class="modal-content">
+
+                <!--Header-->
+                <div class="modal-header primary-color white-text">
+                    <h4 class="title">${labels["edit.user.preferences"]}</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <!--Body-->
+                <div class="modal-body">
+                    <form class="form" name="form-preferences" id="form-preferences" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/preferences/">
+                        <div class="row form-group">
+                            <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
+                            <select id="locale" name="locale" class="form-control form-control-lg" required>
+                                <#list locales?keys as key>
+                                    <#if userProfile.preferences.locale==key>
+                                        <option value="${key}" selected="selected">${locales[key]}</option>
+                                    </#if>
+                                    <#if userProfile.preferences.locale !=key>
+                                        <option value="${key}">${locales[key]}</option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
+                            <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
+                                <#list timeZones as timeZone>
+                                    <#if userProfile.preferences.timeZone==timeZone>
+                                        <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                    </#if>
+                                    <#if userProfile.preferences.timeZone !=timeZone>
+                                        <option value="${timeZone}">${timeZone}</option>
+                                    </#if>
+                                </#list>
+                            </select>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <button class="btn btn-primary" id="save-preferences">${labels["save"]}</button>
+                    </div>
+
                 </div>
             </div>
             <!--/.Content-->

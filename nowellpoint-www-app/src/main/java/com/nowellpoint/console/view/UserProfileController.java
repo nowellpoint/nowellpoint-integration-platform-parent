@@ -14,6 +14,7 @@ import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.model.UserAddressRequest;
+import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.service.UserProfileService;
@@ -30,14 +31,17 @@ public class UserProfileController extends BaseController {
 	
 	public static void configureRoutes(Configuration configuration) {
 		
-		post(Path.Route.USER_PROFILE,
-				(request, response) -> updateUserProfile(configuration, request, response));
-		
 		get(Path.Route.USER_PROFILE,
 				(request, response) -> viewUserProfile(configuration, request, response));
 		
+		post(Path.Route.USER_PROFILE,
+				(request, response) -> updateUserProfile(configuration, request, response));
+		
 		post(Path.Route.USER_PROFILE_ADDRESS,
 				(request, response) -> updateAddress(configuration, request, response));
+		
+		post(Path.Route.USER_PROFILE_PREFERENCES,
+				(request, response) -> updateUserPreferences(configuration, request, response));
 	}
 	
 	/**
@@ -93,8 +97,6 @@ public class UserProfileController extends BaseController {
 		String title = request.queryParams("title");
 		String email = request.queryParams("email");
 		String phone = request.queryParams("phone");
-		String locale = request.queryParams("locale");
-		String timeZone = request.queryParams("timeZone");
 		
 		UserProfileRequest userProfileRequest = UserProfileRequest.builder()
 				.firstName(firstName)
@@ -102,8 +104,6 @@ public class UserProfileController extends BaseController {
 				.title(title)
 				.email(email)
 				.phone(phone)
-				.locale(locale)
-				.timeZone(timeZone)
 				.build();
 		
 		UserProfile userProfile = userProfileService.update(id, userProfileRequest);
@@ -172,6 +172,45 @@ public class UserProfileController extends BaseController {
 				.build();
 		
 		return template.render();
+	}
+	
+	private static String updateUserPreferences(Configuration configuration, Request request, Response response) {
+		
+		Token token = getToken(request);
+		
+		Identity identity = getIdentity(request);
+		
+		String id = request.params(":id");
+		
+		String locale = request.queryParams("locale");
+		String timeZone = request.queryParams("timeZone");
+		
+		UserPreferenceRequest userPreferenceRequest = UserPreferenceRequest.builder()
+				.locale(locale)
+				.timeZone(timeZone)
+				.build();
+		
+		UserProfile userProfile = userProfileService.update(id, userPreferenceRequest);
+		
+		Boolean readonly = ! userProfile.getId().equals(identity.getUserId());
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(UserProfileController.class)
+				.putModel("userProfile", userProfile)
+				.putModel("readonly", readonly)
+				.request(request)
+				.templateName(Templates.USER_PROFILE_PREFERENCES)
+				.build();
+		
+		return template.render();
+		
+//		if (updateResult.isSuccess()) {
+			
+			
+//		} else {
+	//		return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
+//		}
 	}
 	
 	/**

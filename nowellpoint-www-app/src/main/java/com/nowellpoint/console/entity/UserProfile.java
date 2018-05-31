@@ -1,7 +1,5 @@
 package com.nowellpoint.console.entity;
 
-import java.util.Locale;
-
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Reference;
 
@@ -24,13 +22,11 @@ public class UserProfile extends BaseEntity {
 
 	private Boolean isActive;
 	
-	private String timeZone;
-	
-	private Locale locale;
-	
 	private Address address;
 	
 	private Photos photos;
+	
+	private Preferences preferences;
 	
 	@Reference
 	private Organization organization;
@@ -107,22 +103,6 @@ public class UserProfile extends BaseEntity {
 		this.isActive = isActive;
 	}
 
-	public String getTimeZone() {
-		return timeZone;
-	}
-
-	public void setTimeZone(String timeZone) {
-		this.timeZone = timeZone;
-	}
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
 	public Address getAddress() {
 		return address;
 	}
@@ -137,6 +117,14 @@ public class UserProfile extends BaseEntity {
 
 	public void setPhotos(Photos photos) {
 		this.photos = photos;
+	}
+
+	public Preferences getPreferences() {
+		return preferences;
+	}
+
+	public void setPreferences(Preferences preferences) {
+		this.preferences = preferences;
 	}
 
 	public Organization getOrganization() {

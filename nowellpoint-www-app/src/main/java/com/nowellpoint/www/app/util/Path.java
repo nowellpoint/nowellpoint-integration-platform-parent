@@ -55,6 +55,7 @@ public class Path {
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce/oauth");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id/");
 		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");
+		public static final String USER_PROFILE_PREFERENCES = String.format(APPLICATION_CONTEXT, "user-profile/:id/preferences");
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");

@@ -9,7 +9,9 @@ import org.bson.types.ObjectId;
 import com.nowellpoint.console.entity.UserProfileDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.ModifiableUserProfile;
+import com.nowellpoint.console.model.Preferences;
 import com.nowellpoint.console.model.UserAddressRequest;
+import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
 
@@ -32,13 +34,12 @@ public class UserProfileService extends AbstractService {
 		
 		UserProfile userProfile = UserProfile.builder()
 				.from(instance)
+				.lastUpdatedOn(Date.from(Instant.now()))
 				.email(request.getEmail())
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
 				.name(request.getFirstName() != null || ! request.getFirstName().isEmpty() ? request.getFirstName().concat(" ").concat(request.getLastName()) : request.getLastName())
-				.locale(convertStringToLocale(request.getLocale()))
 				.phone(request.getPhone())
-				.timeZone(request.getTimeZone())
 				.title(request.getTitle())
 				.build();
 		
@@ -61,6 +62,26 @@ public class UserProfileService extends AbstractService {
 		UserProfile userProfile = UserProfile.builder()
 				.from(instance)
 				.address(address)
+				.lastUpdatedOn(Date.from(Instant.now()))
+				.build();
+		
+		return update(userProfile);
+		
+	}
+	
+	public UserProfile update(String id, UserPreferenceRequest request) {
+		UserProfile instance = get(id);
+		
+		Preferences preferences = Preferences.builder()
+				.from(instance.getPreferences())
+				.locale(convertStringToLocale(request.getLocale()))
+				.timeZone(request.getTimeZone())
+				.build();
+		
+		UserProfile userProfile = UserProfile.builder()
+				.from(instance)
+				.preferences(preferences)
+				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		return update(userProfile);
