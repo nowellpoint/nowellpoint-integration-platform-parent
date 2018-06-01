@@ -11,6 +11,8 @@ public class Organization extends BaseEntity {
 	
 	private String domain;
 	
+	private Subscription subscription;
+	
 	public Organization() {
 		
 	}
@@ -41,5 +43,13 @@ public class Organization extends BaseEntity {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public Subscription getSubscription() {
+		return subscription;
+	}
+
+	public void setSubscription(Subscription subscription) {
+		this.subscription = subscription;
 	}
 }

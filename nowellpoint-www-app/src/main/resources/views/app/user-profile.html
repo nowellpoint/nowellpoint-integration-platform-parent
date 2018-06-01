@@ -15,7 +15,7 @@
 
 </head>
 
-<body class="fixed-sn light-blue-skin">
+<body>
 
     <script>
         var userProfile = {
@@ -78,18 +78,18 @@
     <main>
         <div id="success-alert" class="alert alert-success" style="display: none">
             <button type="button" class="close" data-dismiss="alert">x</button>
-            <strong>${labels["success"]}</strong> ${labels["record.saved"]}
+            <strong>${messages["success"]}</strong> ${messages["record.saved"]}
         </div>
 
         <div class="container mt-5">
             <div class="card border-light mb-3">
-                <div class="card-header bg-transparent">
+                <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
                             <h4>${labels["user.information"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["edit"]}</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button>
                         </div>
                     </div>
                 </div>
@@ -99,13 +99,13 @@
             </div>
             <br>
             <div class="card border-light mb-3">
-                <div class="card-header bg-transparent">
+                <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
                             <h4>${labels["address"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${labels["edit"]}</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${messages["edit"]}</button>
                         </div>
                     </div>
                 </div>
@@ -115,13 +115,13 @@
             </div>
             <br>
             <div class="card border-light mb-3">
-                <div class="card-header bg-transparent">
+                <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
                             <h4>${labels["preferences"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${labels["edit"]}</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${messages["edit"]}</button>
                         </div>
                     </div>
                 </div>

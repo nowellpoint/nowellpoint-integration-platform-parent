@@ -16,9 +16,11 @@ import com.nowellpoint.console.model.ModifiableAddress;
 import com.nowellpoint.console.model.ModifiableOrganization;
 import com.nowellpoint.console.model.ModifiablePhotos;
 import com.nowellpoint.console.model.ModifiablePreferences;
+import com.nowellpoint.console.model.ModifiableSubscription;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Photos;
 import com.nowellpoint.console.model.Preferences;
+import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
 
 public abstract class AbstractService {
@@ -79,6 +81,12 @@ public abstract class AbstractService {
 			@Override
 			protected Photos convert(com.nowellpoint.console.entity.Photos source) {
 				return source == null ? null : modelMapper.map(source, ModifiablePhotos.class).toImmutable();
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Subscription, Subscription>() {		
+			@Override
+			protected Subscription convert(com.nowellpoint.console.entity.Subscription source) {
+				return source == null ? null : modelMapper.map(source, ModifiableSubscription.class).toImmutable();
 			}
 		});
 	}

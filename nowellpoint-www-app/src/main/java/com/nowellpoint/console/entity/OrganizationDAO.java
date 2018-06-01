@@ -4,9 +4,9 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.dao.BasicDAO;
 
-public class UserProfileDAO extends BasicDAO<UserProfile, ObjectId>{
+public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 
-	public UserProfileDAO(Class<UserProfile> entityClass, Datastore ds) {
+	public OrganizationDAO(Class<Organization> entityClass, Datastore ds) {
 		super(entityClass, ds);
 	}
 }

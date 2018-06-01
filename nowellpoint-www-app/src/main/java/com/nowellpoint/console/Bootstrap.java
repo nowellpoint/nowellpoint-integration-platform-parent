@@ -95,32 +95,7 @@ public class Bootstrap implements SparkApplication {
 		// organization routes
 		//
 
-		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
-				-> OrganizationController.viewOrganization(configuration, request, response));
 		
-		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
-				-> OrganizationController.listPlans(configuration, request, response));
-		
-		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
-				-> OrganizationController.reviewPlan(configuration, request, response));
-		
-		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
-				-> OrganizationController.changePlan(configuration, request, response));
-		
-		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-				-> OrganizationController.updatePaymentMethod(configuration, request, response));
-		
-		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-				-> OrganizationController.removeCreditCard(configuration, request, response));
-		
-		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response) 
-				-> OrganizationController.updateBillingAddress(configuration, request, response));
-		
-		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
-				-> OrganizationController.updateBillingContact(configuration, request, response));
-		
-		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
-				-> OrganizationController.getInvoice(configuration, request, response));
 
 		
 
