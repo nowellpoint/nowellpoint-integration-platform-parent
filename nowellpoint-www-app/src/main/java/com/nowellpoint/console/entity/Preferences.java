@@ -1,9 +1,12 @@
 package com.nowellpoint.console.entity;
 
+import java.io.Serializable;
 import java.util.Locale;
 
-public class Preferences {
+public class Preferences implements Serializable {
 	
+	private static final long serialVersionUID = -379308611788575877L;
+
 	private String timeZone;
 	
 	private Locale locale;

@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.PaymentMethodRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.util.Templates;
@@ -31,9 +32,9 @@ public class OrganizationController extends BaseController {
 //		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
 //				-> OrganizationController.changePlan(configuration, request, response));
 //		
-//		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-//				-> OrganizationController.updatePaymentMethod(configuration, request, response));
-//		
+		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+				-> updatePaymentMethod(configuration, request, response));
+		
 //		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 //				-> OrganizationController.removeCreditCard(configuration, request, response));
 //		
@@ -295,41 +296,34 @@ public class OrganizationController extends BaseController {
 	 */
 	
 	public static String updatePaymentMethod(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String organizationId = request.params(":id");
-//		
-//		String cardholderName = request.queryParams("cardholderName");
-//		String expirationMonth = request.queryParams("expirationMonth");
-//		String expirationYear = request.queryParams("expirationYear");
-//		String number = request.queryParams("number");
-//		String cvv = request.queryParams("cvv");
-//		
-//		CreditCardRequest creditCardRequest = CreditCardRequest.builder()
-//				.cardholderName(cardholderName)
-//				.cvv(cvv)
-//				.expirationMonth(expirationMonth)
-//				.expirationYear(expirationYear)
-//				.number(number)
-//				.organizationId(organizationId)
-//				.token(token)
-//				.build();
-//		
-//		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.subscription()
-//				.creditCard()
-//				.update(creditCardRequest);
-//		
-//		if (updateResult.isSuccess()) {
-//			Map<String, Object> model = getModel();
-//			model.put("organization", updateResult.getTarget());
-//			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
-//		} else {
-//			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
-//		}
 		
-		return null;
+		String id = request.params(":id");
+		
+		String cardholderName = request.queryParams("cardholderName");
+		String expirationMonth = request.queryParams("expirationMonth");
+		String expirationYear = request.queryParams("expirationYear");
+		String number = request.queryParams("number");
+		String cvv = request.queryParams("cvv");
+		
+		PaymentMethodRequest paymentMethodRequest = PaymentMethodRequest.builder()
+				.cardholderName(cardholderName)
+				.cvv(cvv)
+				.expirationMonth(expirationMonth)
+				.expirationYear(expirationYear)
+				.number(number)
+				.build();
+		
+		Organization organization = organizationService.update(id, paymentMethodRequest);
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(OrganizationController.class)
+				.putModel("organization", organization)
+				.request(request)
+				.templateName(Templates.ORGANIZATION_PAYMENT_METHOD)
+				.build();
+		
+		return template.render();
 	};
 	
 	/**

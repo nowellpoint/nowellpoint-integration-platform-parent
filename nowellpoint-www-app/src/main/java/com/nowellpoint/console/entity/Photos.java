@@ -1,6 +1,10 @@
 package com.nowellpoint.console.entity;
 
-public class Photos {
+import java.io.Serializable;
+
+public class Photos implements Serializable {
+	
+	private static final long serialVersionUID = 2979641826151898765L;
 	
 	private String profilePicture;
 	

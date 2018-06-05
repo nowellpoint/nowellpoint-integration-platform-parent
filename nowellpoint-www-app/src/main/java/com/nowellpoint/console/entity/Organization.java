@@ -5,6 +5,8 @@ import org.mongodb.morphia.annotations.Entity;
 @Entity(value = "organizations")
 public class Organization extends BaseEntity {
 	
+	private static final long serialVersionUID = -7891914413636330372L;
+
 	private String number;
 	
 	private String name;

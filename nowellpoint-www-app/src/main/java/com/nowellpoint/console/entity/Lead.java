@@ -5,9 +5,14 @@ import org.mongodb.morphia.annotations.Entity;
 @Entity(value = "leads")
 public class Lead extends BaseEntity {
 
+	private static final long serialVersionUID = 5038204198098590206L;
+	
 	private String firstName;
+	
 	private String lastName;
+	
 	private String email;
+	
 	private String message;
 	
 	public Lead() {

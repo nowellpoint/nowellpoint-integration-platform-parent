@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-3">
+        <b>${labels["payment.method"]}</b>
+    </div>
+    <div class="col-9">
+        <span class="font-weight-normal"><img src="${(organization.subscription.creditCard.imageUrl)!}" height="24" width="36" />&emsp;${organization.subscription.creditCard.cardType} ${labels["ending.in"]} ${(organization.subscription.creditCard.lastFour)!}</span>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-3">
+        <b>${labels["name.on.card"]}</b>
+    </div>
+    <div class="col-9">
+        ${organization.subscription.creditCard.cardholderName}
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-3">
+        <b>${labels["expires.on"]}</b>
+    </div>
+    <div class="col-9">
+        ${organization.subscription.creditCard.expirationMonth}/${organization.subscription.creditCard.expirationYear}
+    </div>
+</div>

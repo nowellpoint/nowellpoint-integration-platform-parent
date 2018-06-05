@@ -24,12 +24,17 @@ public abstract class AbstractAddress {
 	public abstract @Nullable String getState();
 	//public abstract @Nullable String getStateCode();
 	public abstract @Nullable String getPostalCode();
-	public abstract String getCountryCode();
 	public abstract @Nullable String getLatitude();
 	public abstract @Nullable String getLongitude();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 	
+	@Value.Default
+	public String getCountryCode() {
+		return Locale.getDefault().getCountry();
+	}
+	
+	@Value.Derived
 	public String getCountry() {
 		return ResourceBundle.getBundle("countries", Locale.getDefault()).getString(getCountryCode());
 	}

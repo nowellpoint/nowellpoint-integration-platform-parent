@@ -15,3 +15,12 @@
         ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
     </div>
 </div>
+<hr>
+<div class="row">
+    <div class="col-3">
+        <strong>${labels["next.billing.date"]}</strong>
+    </div>
+    <div class="col-9">
+        ${organization.subscription.nextBillingDate?date?string.long}
+    </div>
+</div>

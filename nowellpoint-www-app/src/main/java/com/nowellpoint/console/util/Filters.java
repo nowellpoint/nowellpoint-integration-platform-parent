@@ -59,6 +59,8 @@ public class Filters {
 			request.attribute(RequestAttributes.IDENTITY, identity);
 			request.attribute(RequestAttributes.LOCALE, locale);
 			request.attribute(RequestAttributes.TIME_ZONE, timeZone);
+			
+			UserContext.set(identity);
 
 		} else {
 

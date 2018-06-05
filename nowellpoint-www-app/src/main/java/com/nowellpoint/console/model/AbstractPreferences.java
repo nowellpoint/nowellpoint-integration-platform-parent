@@ -3,6 +3,7 @@ package com.nowellpoint.console.model;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.immutables.value.Value;
 
@@ -15,8 +16,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = Preferences.class)
 @JsonDeserialize(as = Preferences.class)
 public abstract class AbstractPreferences {
-	public abstract String getTimeZone();
-	public abstract Locale getLocale();
+	
+	@Value.Default
+	public Locale getLocale() {
+		return Locale.getDefault();
+	}
+	
+	@Value.Default
+	public String getTimeZone() {
+		return TimeZone.getDefault().getID();
+	}
 	
 	@Value.Derived
 	public String getLocaleDisplayName() {

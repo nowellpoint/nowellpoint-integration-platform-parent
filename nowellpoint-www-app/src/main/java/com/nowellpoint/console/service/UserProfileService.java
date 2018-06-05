@@ -14,6 +14,7 @@ import com.nowellpoint.console.model.UserAddressRequest;
 import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
+import com.nowellpoint.console.util.UserContext;
 
 public class UserProfileService extends AbstractService {
 	
@@ -29,12 +30,25 @@ public class UserProfileService extends AbstractService {
 		return userProfile.toImmutable();
 	}
 	
+	public UserProfile create(UserProfileRequest request) {
+		
+		UserProfile userProfile = UserProfile.builder()
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.name(request.getFirstName() != null || ! request.getFirstName().isEmpty() ? request.getFirstName().concat(" ").concat(request.getLastName()) : request.getLastName())
+				.phone(request.getPhone())
+				.title(request.getTitle())
+				.build();
+		
+		return create(userProfile);
+	}
+	
 	public UserProfile update(String id, UserProfileRequest request) {
 		UserProfile instance = get(id);
 		
 		UserProfile userProfile = UserProfile.builder()
 				.from(instance)
-				.lastUpdatedOn(Date.from(Instant.now()))
 				.email(request.getEmail())
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
@@ -62,11 +76,9 @@ public class UserProfileService extends AbstractService {
 		UserProfile userProfile = UserProfile.builder()
 				.from(instance)
 				.address(address)
-				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		return update(userProfile);
-		
 	}
 	
 	public UserProfile update(String id, UserPreferenceRequest request) {
@@ -81,15 +93,25 @@ public class UserProfileService extends AbstractService {
 		UserProfile userProfile = UserProfile.builder()
 				.from(instance)
 				.preferences(preferences)
-				.lastUpdatedOn(Date.from(Instant.now()))
 				.build();
 		
 		return update(userProfile);
-		
+	}
+	
+	private UserProfile create(UserProfile userProfile) {
+		com.nowellpoint.console.entity.UserProfile entity = modelMapper.map(userProfile, com.nowellpoint.console.entity.UserProfile.class);
+		entity.setCreatedOn(Date.from(Instant.now()));
+		entity.setCreatedBy(UserContext.get().getUserId());
+		entity.setLastUpdatedOn(Date.from(Instant.now()));
+		entity.setLastUpdatedBy(UserContext.get().getUserId());
+		userProfileDAO.save(entity);
+		return modelMapper.map(entity, ModifiableUserProfile.class).toImmutable();
 	}
 	
 	private UserProfile update(UserProfile userProfile) {
 		com.nowellpoint.console.entity.UserProfile entity = modelMapper.map(userProfile, com.nowellpoint.console.entity.UserProfile.class);
+		entity.setLastUpdatedOn(Date.from(Instant.now()));
+		entity.setLastUpdatedBy(UserContext.get().getUserId());
 		userProfileDAO.save(entity);
 		return modelMapper.map(entity, ModifiableUserProfile.class).toImmutable();
 	}

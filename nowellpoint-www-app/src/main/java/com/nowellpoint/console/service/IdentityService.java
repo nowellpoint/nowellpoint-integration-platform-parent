@@ -22,7 +22,12 @@ public class IdentityService extends AbstractService {
 
 	public Identity getIdentity(String id) {
 		
-		com.nowellpoint.console.entity.Identity document = identityDAO.get(new ObjectId(id));
+		com.nowellpoint.console.entity.Identity document = getEntry(id);
+		
+		if (document == null) {
+			document = identityDAO.get(new ObjectId(id));
+			putEntry(document.getId().toString(), document);
+		}
 		
 		return fromDocument(document);
 	}
@@ -35,8 +40,9 @@ public class IdentityService extends AbstractService {
 		
 		com.nowellpoint.console.entity.Identity document = identityDAO.findOne(query);
 		
-		return fromDocument(document);
+		putEntry(document.getId().toString(), document);
 		
+		return fromDocument(document);
 	}
 	
 	private Identity fromDocument(com.nowellpoint.console.entity.Identity document) {
@@ -46,9 +52,6 @@ public class IdentityService extends AbstractService {
 				.id(document.getOrganization().getId().toString())
 				.name(document.getOrganization().getName())
 				.number(document.getOrganization().getNumber())
-				//.subscription(document.getOrganization().)
-				//.transactions(elements)
-				//.users(elements)
 				.build();
 		
 		UserInfo userInfo = UserInfo.builder()

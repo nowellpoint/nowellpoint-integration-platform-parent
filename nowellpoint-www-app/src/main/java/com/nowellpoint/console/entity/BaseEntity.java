@@ -1,5 +1,6 @@
 package com.nowellpoint.console.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
@@ -7,7 +8,9 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.Reference;
 import org.mongodb.morphia.annotations.Version;
 
-abstract class BaseEntity {
+abstract class BaseEntity implements Serializable {
+
+	private static final long serialVersionUID = -5484847535380950162L;
 
 	@Id
 	private ObjectId id;
@@ -76,6 +79,12 @@ abstract class BaseEntity {
 	public void setCreatedBy(UserProfile createdBy) {
 		this.createdBy = createdBy;
 	}
+	
+	public void setCreatedBy(String id) {
+		UserProfile userProfile = new UserProfile();
+		userProfile.setId(new ObjectId(id));
+		setLastUpdatedBy(userProfile);
+	}
 
 	public UserProfile getLastUpdatedBy() {
 		return lastUpdatedBy;
@@ -83,5 +92,11 @@ abstract class BaseEntity {
 
 	public void setLastUpdatedBy(UserProfile lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
+	}
+	
+	public void setLastUpdatedBy(String id) {
+		UserProfile userProfile = new UserProfile();
+		userProfile.setId(new ObjectId(id));
+		setLastUpdatedBy(userProfile);
 	}
 }

@@ -31,7 +31,6 @@ import com.nowellpoint.console.view.ConnectorController;
 import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.JobController;
 import com.nowellpoint.console.view.NotificationController;
-import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.www.app.util.Path;
@@ -90,14 +89,6 @@ public class Bootstrap implements SparkApplication {
 
 		get(Path.Route.NOTIFICATIONS,
 				(request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
-
-		//
-		// organization routes
-		//
-
-		
-
-		
 
 		//
 		// administration routes

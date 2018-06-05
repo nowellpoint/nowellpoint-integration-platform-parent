@@ -29,6 +29,10 @@ public class Subscription implements Serializable {
 	
 	private String billingFrequency;
 	
+	private Date nextBillingDate;
+	
+	private CreditCard creditCard;
+	
 	public Subscription() {
 		
 	}
@@ -119,5 +123,21 @@ public class Subscription implements Serializable {
 
 	public void setBillingFrequency(String billingFrequency) {
 		this.billingFrequency = billingFrequency;
+	}
+
+	public Date getNextBillingDate() {
+		return nextBillingDate;
+	}
+
+	public void setNextBillingDate(Date nextBillingDate) {
+		this.nextBillingDate = nextBillingDate;
+	}
+
+	public CreditCard getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(CreditCard creditCard) {
+		this.creditCard = creditCard;
 	}
 }

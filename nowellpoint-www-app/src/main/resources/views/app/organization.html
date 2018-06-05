@@ -93,7 +93,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
-                            <h4>${labels["organization.information"]}</h4>
+                            <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h4>
                         </div>
                         <div class="col-6 text-right">
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button>
@@ -105,13 +105,13 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="container mt-5">
             <div class="card border-light mb-3">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
-                            <h4>${labels["subscription"]}</h4>
+                            <h4><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h4>
                         </div>
                         <div class="col-6 text-right">
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["change.plan"]}</button>
@@ -123,10 +123,96 @@
                 </div>
             </div>
         </div>
+
+        <div class="container mt-5">
+            <div class="card border-light mb-3">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6 align-self-center">
+                            <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method" id="editPaymentMethod">${labels["update"]}</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="user-information" class="card-body">
+                    <#include "organization-payment-method.html" />
+                </div>
+            </div>
+        </div>
     </main>
 
     <br>
     <br>
+
+    <div class="modal fade" id="modal-payment-method" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!--Modal: Contact form-->
+        <div class="modal-dialog cascading-modal" role="document">
+            <!--Content-->
+            <div class="modal-content">
+                <!--Header-->
+                <div class="modal-header primary-color white-text">
+                    <h4 class="title">${labels["edit.payment.method"]}</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <!--Body-->
+                <div class="modal-body">
+                    <form class="form" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
+                        <div class="row form-group">
+                            <b><label class="control-label" for="cardholderName">${labels["name.on.card"]}</label></b>
+                            <input type="text" name="cardholderName" id="cardholderName" class="form-control" value="${organization.subscription.creditCard.cardholderName}" autofocus required>
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="number">${labels["number"]}</label></b>
+                            <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}">
+                        </div>
+                        <div class="row form-group">
+                            <b><label class="control-label" for="expirationMonth">${labels["month"]} / ${labels["year"]} / ${labels["cvv"]}</label></b>
+                            <div class="row">
+                                <div class="col-3">
+                                    <select class="form-control" name="expirationMonth" id="expirationMonth">
+                                        <#assign x=12 />
+                                        <#list 1..x as month>
+                                            <#if organization.subscription.creditCard.expirationMonth?eval==month>
+                                                <option value="${month?c}" selected="selected">${month?c}</option>
+                                            </#if>
+                                            <#if organization.subscription.creditCard.expirationMonth?eval !=month>
+                                                <option value="${month?c}">${month?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-control" name="expirationYear" id="expirationYear">
+                                        <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                        <#list .now?string[ "yyyy"]?number..x as year>
+                                            <#if organization.subscription.creditCard.expirationYear?eval==year>
+                                                <option value="${year?c}" selected="selected">${year?c}</option>
+                                            </#if>
+                                            <#if organization.subscription.creditCard.expirationYear?eval !=year>
+                                                <option value="${year?c}">${year?c}</option>
+                                            </#if>
+                                        </#list>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <input type="text" name="cvv" id="cvv" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <button class="btn btn-primary" id="save-payment-information">${labels["save"]}</button>
+                    </div>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+        <!--/Modal: Contact form-->
+    </div>
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>

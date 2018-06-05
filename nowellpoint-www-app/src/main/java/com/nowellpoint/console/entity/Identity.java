@@ -6,6 +6,8 @@ import org.mongodb.morphia.annotations.Reference;
 @Entity(value = "identities")
 public class Identity extends BaseEntity {
 	
+	private static final long serialVersionUID = -2208648612942290914L;
+
 	private String subject;
 	
 	@Reference

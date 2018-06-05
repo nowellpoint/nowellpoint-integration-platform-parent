@@ -6,6 +6,8 @@ import org.mongodb.morphia.annotations.Reference;
 @Entity(value = "user.profiles")
 public class UserProfile extends BaseEntity {
 	
+	private static final long serialVersionUID = 6395286691068095913L;
+
 	private String username;
 
 	private String lastName;
