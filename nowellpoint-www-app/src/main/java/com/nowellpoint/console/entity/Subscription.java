@@ -33,6 +33,8 @@ public class Subscription implements Serializable {
 	
 	private CreditCard creditCard;
 	
+	private Address billingAddress;
+	
 	public Subscription() {
 		
 	}
@@ -139,5 +141,13 @@ public class Subscription implements Serializable {
 
 	public void setCreditCard(CreditCard creditCard) {
 		this.creditCard = creditCard;
+	}
+
+	public Address getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(Address billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 }

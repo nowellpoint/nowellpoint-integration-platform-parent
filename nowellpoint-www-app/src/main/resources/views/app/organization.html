@@ -90,22 +90,18 @@
 
         <div class="container mt-5">
             <div class="card border-light mb-3">
-                <div class="card-header">
+                <div class="card-header pt-4">
                     <div class="row">
-                        <div class="col-6 align-self-center">
+                        <div class="col-12 align-self-center">
                             <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button>
                         </div>
                     </div>
                 </div>
-                <div id="user-information" class="card-body">
+                <div id="organization-information" class="card-body">
                     <#include "organization-information.html" />
                 </div>
             </div>
         </div>
-
         <div class="container mt-5">
             <div class="card border-light mb-3">
                 <div class="card-header">
@@ -114,16 +110,15 @@
                             <h4><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${labels["change.plan"]}</button>
+                            <button class="btn btn-warning" data-toggle="modal" data-target="#modal-user-information">${labels["change.plan"]}</button>
                         </div>
                     </div>
                 </div>
-                <div id="user-information" class="card-body">
+                <div id="organization-subscription" class="card-body">
                     <#include "organization-subscription.html" />
                 </div>
             </div>
         </div>
-
         <div class="container mt-5">
             <div class="card border-light mb-3">
                 <div class="card-header">
@@ -132,11 +127,11 @@
                             <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method" id="editPaymentMethod">${labels["update"]}</button>
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method">${labels["update"]}</button>
                         </div>
                     </div>
                 </div>
-                <div id="user-information" class="card-body">
+                <div id="organization-payment-method" class="card-body">
                     <#include "organization-payment-method.html" />
                 </div>
             </div>
@@ -160,7 +155,7 @@
                 </div>
                 <!--Body-->
                 <div class="modal-body">
-                    <form class="form" name="paymentMethodForm" id="paymentMethodForm" role="form" method="post" action="${links['organization']}/${organization.id}/credit-card">
+                    <form class="form" name="payment-method-form" id="payment-method-form" role="form" method="POST" action="${links['organization']}/${organization.id}/credit-card/">
                         <div class="row form-group">
                             <b><label class="control-label" for="cardholderName">${labels["name.on.card"]}</label></b>
                             <input type="text" name="cardholderName" id="cardholderName" class="form-control" value="${organization.subscription.creditCard.cardholderName}" autofocus required>
@@ -170,14 +165,23 @@
                             <input type="text" name="number" id="number" class="form-control" placeholder="${organization.subscription.creditCard.cardType} ${labels['ending.in']} ${(organization.subscription.creditCard.lastFour)!}">
                         </div>
                         <div class="row form-group">
-                            <b><label class="control-label" for="expirationMonth">${labels["month"]} / ${labels["year"]} / ${labels["cvv"]}</label></b>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-4">
+                                    <b><label class="control-label" for="expirationMonth">${labels["month"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <b><label class="control-label" for="expirationYear">${labels["year"]}</label></b>
+                                </div>
+                                <div class="col-4">
+                                    <b><label class="control-label" for="cvv">${labels["cvv"]}</label></b>
+                                </div>
+
+                                <div class="col-4">
                                     <select class="form-control" name="expirationMonth" id="expirationMonth">
                                         <#assign x=12 />
                                         <#list 1..x as month>
                                             <#if organization.subscription.creditCard.expirationMonth?eval==month>
-                                                <option value="${month?c}" selected="selected">${month?c}</option>
+                                                <option value="${month?c}" selected>${month?c}</option>
                                             </#if>
                                             <#if organization.subscription.creditCard.expirationMonth?eval !=month>
                                                 <option value="${month?c}">${month?c}</option>
@@ -185,12 +189,12 @@
                                         </#list>
                                     </select>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <select class="form-control" name="expirationYear" id="expirationYear">
                                         <#assign x=.now?string[ "yyyy"]?number + 19/>
                                         <#list .now?string[ "yyyy"]?number..x as year>
                                             <#if organization.subscription.creditCard.expirationYear?eval==year>
-                                                <option value="${year?c}" selected="selected">${year?c}</option>
+                                                <option value="${year?c}" selected>${year?c}</option>
                                             </#if>
                                             <#if organization.subscription.creditCard.expirationYear?eval !=year>
                                                 <option value="${year?c}">${year?c}</option>
@@ -198,7 +202,7 @@
                                         </#list>
                                     </select>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <input type="text" name="cvv" id="cvv" class="form-control" required>
                                 </div>
                             </div>

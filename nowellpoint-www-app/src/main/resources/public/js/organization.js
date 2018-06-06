@@ -30,23 +30,22 @@
      *
      */
 
-    $(document).on('click', 'button#savePaymentMethod', function () {
+    $(document).on('click', 'button#save-payment-information', function () {
 
-        $('#error').remove();
-
-        $('#overlay').show();
-
-        $form = $("#paymentMethodForm");
+        $form = $("#payment-method-form");
 
         $.ajax({
-            method: $form.attr('method'),
+        	type: $form.attr('method'),
             url: $form.attr('action'),
             dataType: "html",
             data: $form.serialize(),
             complete: function (response) {
-                $('#overlay').hide();
                 if (response.status == 200) {
-                    $('#content').html(response.responseText);
+                	$('#modal-payment-method').modal('toggle');
+                    $('#organization-payment-method').html(response.responseText);
+                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function() {
+                        $("#success-alert").slideUp(500);
+                    }); 
                 } else {
                     $form.prepend(response.responseText);
                 }
@@ -55,7 +54,7 @@
 
         return false;
     });
-
+    
     /*-----------------------------------------------------------
      *
      *

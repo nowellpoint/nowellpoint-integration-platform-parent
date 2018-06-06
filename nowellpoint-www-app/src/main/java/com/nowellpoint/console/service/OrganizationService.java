@@ -3,19 +3,22 @@ package com.nowellpoint.console.service;
 import java.sql.Date;
 import java.time.Instant;
 
+import javax.validation.ValidationException;
+
 import org.bson.types.ObjectId;
 
 import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.model.BillingContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.ModifiableOrganization;
 import com.nowellpoint.console.model.Organization;
-import com.nowellpoint.console.model.PaymentMethodRequest;
+import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.util.UserContext;
+import com.nowellpoint.util.Assert;
 
 public class OrganizationService extends AbstractService {
 	
@@ -42,20 +45,24 @@ public class OrganizationService extends AbstractService {
 		return organization.toImmutable();
 	}
 	
-	public Organization update(String id, PaymentMethodRequest request) {
+	public Organization update(String id, CreditCardRequest request) {
 		
 		Organization instance = get(id);
 		
-		CreditCardRequest creditCardRequest = new CreditCardRequest()
+		com.braintreegateway.CreditCardRequest creditCardRequest = new com.braintreegateway.CreditCardRequest()
 				.billingAddressId(instance.getSubscription().getBillingAddress().getId())
 				.cardholderName(request.getCardholderName())
 				.customerId(instance.getNumber())
-				.cvv(request.getCvv())
+				.cvv(Assert.isEmpty(request.getCvv()) ? null : request.getCvv())
 				.expirationMonth(request.getExpirationMonth())
 				.expirationYear(request.getExpirationYear())
-				.number(request.getNumber());
+				.number(Assert.isEmpty(request.getNumber()) ? null : request.getNumber());
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
+		
+		if (creditCardResult.getMessage() != null) {
+			throw new ValidationException(creditCardResult.getMessage());
+		}
 		
 		CreditCard creditCard = CreditCard.builder()
 				.from(instance.getSubscription().getCreditCard())
@@ -79,6 +86,10 @@ public class OrganizationService extends AbstractService {
 				.build();
 		
 		return update(organization);
+	}
+	
+	public Organization update(String id, BillingContactRequest request) {
+		return null;
 	}
 	
 	private Organization update(Organization organization) {

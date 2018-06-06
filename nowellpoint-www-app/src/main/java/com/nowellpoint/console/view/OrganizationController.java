@@ -1,17 +1,23 @@
 package com.nowellpoint.console.view;
 
+import static j2html.TagCreator.a;
+import static j2html.TagCreator.div;
+import static j2html.TagCreator.strong;
 import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import javax.validation.ValidationException;
+
 import com.nowellpoint.console.model.Organization;
-import com.nowellpoint.console.model.PaymentMethodRequest;
+import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
+import j2html.tags.UnescapedText;
 import spark.Request;
 import spark.Response;
 
@@ -305,7 +311,7 @@ public class OrganizationController extends BaseController {
 		String number = request.queryParams("number");
 		String cvv = request.queryParams("cvv");
 		
-		PaymentMethodRequest paymentMethodRequest = PaymentMethodRequest.builder()
+		CreditCardRequest creditCardRequest = CreditCardRequest.builder()
 				.cardholderName(cardholderName)
 				.cvv(cvv)
 				.expirationMonth(expirationMonth)
@@ -313,7 +319,23 @@ public class OrganizationController extends BaseController {
 				.number(number)
 				.build();
 		
-		Organization organization = organizationService.update(id, paymentMethodRequest);
+		Organization organization = null;
+		
+		try {
+			organization = organizationService.update(id, creditCardRequest);
+		} catch (ValidationException e) {
+			
+			System.out.println(e.getMessage());
+			
+			response.status(400);
+			
+			return div().withId("error").withClass("alert alert-danger")
+					.with(a().withClass("close").withData("dismiss", "alert")
+							.with(new UnescapedText("&times;")))
+					.with(div().with(strong().withText(e.getMessage())))
+					.render();
+			
+		}
 		
 		Template template = Template.builder()
 				.configuration(configuration)

@@ -118,6 +118,12 @@ public abstract class AbstractService {
 				return source == null ? null : modelMapper.map(source, ModifiableCreditCard.class).toImmutable();
 			}
 		});
+		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Address, Address>() {		
+			@Override
+			protected Address convert(com.nowellpoint.console.entity.Address source) {
+				return source == null ? null : modelMapper.map(source, ModifiableAddress.class).toImmutable();
+			}
+		});
 	}
 	
 	static {
