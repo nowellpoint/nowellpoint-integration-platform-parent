@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.Locale;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+
 import org.bson.types.ObjectId;
 
 import com.nowellpoint.console.entity.UserProfileDAO;
@@ -15,6 +18,7 @@ import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.util.UserContext;
+import com.nowellpoint.util.Assert;
 
 public class UserProfileService extends AbstractService {
 	
@@ -25,7 +29,17 @@ public class UserProfileService extends AbstractService {
 	}
 	
 	public UserProfile get(String id) {
-		com.nowellpoint.console.entity.UserProfile entity = userProfileDAO.get(new ObjectId(id));
+		com.nowellpoint.console.entity.UserProfile entity = null;
+		try {
+			entity = userProfileDAO.get(new ObjectId(id));
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(String.format("Invalid UserProfile Id: %s", id));
+		}
+		
+		if (Assert.isNull(entity)) {
+			throw new NotFoundException(String.format("UserProfile Id: %s was not found",id));
+		}
+		
 		ModifiableUserProfile userProfile = modelMapper.map(entity, ModifiableUserProfile.class);
 		return userProfile.toImmutable();
 	}

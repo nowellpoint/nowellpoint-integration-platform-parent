@@ -22,9 +22,13 @@ import static com.nowellpoint.console.util.Exceptions.configureExceptionRoutes;
 import static com.nowellpoint.console.util.Filters.setupFilters;
 import static com.nowellpoint.console.util.Routes.configureRoutes;
 import static spark.Spark.delete;
+import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
+
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.ConnectorController;
@@ -211,6 +215,15 @@ public class Bootstrap implements SparkApplication {
 				-> healthCheck(request, response));
 		
 		
+		exception(BadRequestException.class, (exception, request, response) -> {
+			response.status(400);
+			response.body(exception.getMessage());
+		});
+		
+		exception(NotFoundException.class, (exception, request, response) -> {
+			response.status(404);
+			response.body(exception.getMessage());
+		});
 		
 		configureExceptionRoutes(configuration);
 
@@ -239,11 +252,6 @@ public class Bootstrap implements SparkApplication {
 //			}
 //		});
 //
-//		exception(BadRequestException.class, (exception, request, response) -> {
-//			LOG.error(BadRequestException.class.getName(), exception);
-//			response.status(400);
-//			response.body(exception.getMessage());
-//		});
 //
 //		exception(InternalServerErrorException.class, (exception, request, response) -> {
 //			LOG.error(InternalServerErrorException.class.getName(), exception);

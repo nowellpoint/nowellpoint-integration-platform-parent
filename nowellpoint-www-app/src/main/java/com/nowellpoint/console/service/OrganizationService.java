@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.time.Instant;
 
 import javax.validation.ValidationException;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.bson.types.ObjectId;
 
@@ -40,7 +42,17 @@ public class OrganizationService extends AbstractService {
 	}
 
 	public Organization get(String id) {
-		com.nowellpoint.console.entity.Organization entity = organizationDAO.get(new ObjectId(id));
+		com.nowellpoint.console.entity.Organization entity = null;
+		try {
+			entity = organizationDAO.get(new ObjectId(id));
+		} catch (IllegalArgumentException e) {
+			throw new BadRequestException(String.format("Invalid Organization Id: %s", id));
+		}
+		
+		if (Assert.isNull(entity)) {
+			throw new NotFoundException(String.format("Organization Id: %s was not found",id));
+		}
+		
 		ModifiableOrganization organization = modelMapper.map(entity, ModifiableOrganization.class);
 		return organization.toImmutable();
 	}
