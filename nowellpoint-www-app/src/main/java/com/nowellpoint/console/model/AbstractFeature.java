@@ -19,4 +19,15 @@ public abstract class AbstractFeature {
 	public abstract @Nullable String getDescription();
 	public abstract @Nullable Boolean getEnabled();
 	public abstract String getQuantity();
+	
+	public static Feature of(com.nowellpoint.console.entity.Feature source) {
+		return Feature.builder()
+				.code(source.getCode())
+				.description(source.getDescription())
+				.enabled(source.getEnabled())
+				.name(source.getName())
+				.quantity(source.getQuantity())
+				.sortOrder(source.getSortOrder())
+				.build();
+	}
 }

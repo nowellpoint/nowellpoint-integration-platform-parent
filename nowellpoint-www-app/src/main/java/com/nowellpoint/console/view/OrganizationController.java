@@ -1,23 +1,23 @@
 package com.nowellpoint.console.view;
 
-import static j2html.TagCreator.a;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.strong;
-import static spark.Spark.delete;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.util.List;
+
 import javax.validation.ValidationException;
 
-import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.OrganizationService;
+import com.nowellpoint.console.service.PlanService;
+import com.nowellpoint.console.util.Alert;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
-import j2html.tags.UnescapedText;
 import spark.Request;
 import spark.Response;
 
@@ -25,13 +25,15 @@ public class OrganizationController extends BaseController {
 	
 	private static final OrganizationService organizationService = new OrganizationService();
 	
+	private static final PlanService planService = new PlanService();
+	
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
 				-> viewOrganization(configuration, request, response));
 		
-//		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
-//				-> OrganizationController.listPlans(configuration, request, response));
-//		
+		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
+				-> listPlans(configuration, request, response));
+		
 //		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
 //				-> OrganizationController.reviewPlan(configuration, request, response));
 //		
@@ -80,22 +82,24 @@ public class OrganizationController extends BaseController {
 	 */
 	
 	public static String listPlans(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		//Identity identity = getIdentity(request);
-//		
-//		String id = request.params(":id");
-//		
-//		Organization organization = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.get(id);
-//
-//		Map<String, Object> model = getModel();
-//		model.put("organization", organization);
-//		model.put("action", "listPlans");
-//
-//		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
-		return null;
+		
+		String id = request.params(":id");
+		
+		Organization organization = organizationService.get(id);
+		
+		List<Plan> plans = planService.getPlans("en_US");
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(OrganizationController.class)
+				.putModel("organization", organization)
+				.putModel("plans", plans)
+				.putModel("action", "listPlans")
+				.request(request)
+				.templateName(Templates.ORGANIZATION_CHANGE_PLAN)
+				.build();
+		
+		return template.render();
 	}
 	
 	/**
@@ -319,33 +323,26 @@ public class OrganizationController extends BaseController {
 				.number(number)
 				.build();
 		
-		Organization organization = null;
-		
 		try {
-			organization = organizationService.update(id, creditCardRequest);
-		} catch (ValidationException e) {
 			
-			System.out.println(e.getMessage());
+			Organization organization = organizationService.update(id, creditCardRequest);
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(OrganizationController.class)
+					.putModel("organization", organization)
+					.request(request)
+					.templateName(Templates.ORGANIZATION_PAYMENT_METHOD)
+					.build();
+			
+			return template.render();
+			
+		} catch (ValidationException e) {
 			
 			response.status(400);
 			
-			return div().withId("error").withClass("alert alert-danger")
-					.with(a().withClass("close").withData("dismiss", "alert")
-							.with(new UnescapedText("&times;")))
-					.with(div().with(strong().withText(e.getMessage())))
-					.render();
-			
+			return Alert.showError(e.getMessage());
 		}
-		
-		Template template = Template.builder()
-				.configuration(configuration)
-				.controllerClass(OrganizationController.class)
-				.putModel("organization", organization)
-				.request(request)
-				.templateName(Templates.ORGANIZATION_PAYMENT_METHOD)
-				.build();
-		
-		return template.render();
 	};
 	
 	/**
