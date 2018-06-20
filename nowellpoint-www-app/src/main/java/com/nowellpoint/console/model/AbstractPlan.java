@@ -1,6 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.immutables.value.Value;
@@ -28,28 +27,15 @@ public abstract class AbstractPlan {
 	public abstract List<Feature> getFeatures();
 	
 	public static Plan of(com.nowellpoint.console.entity.Plan source) {
-		
-		Price price = Price.builder()
-				.currencyIsoCode(source.getPrice().getCurrencyIsoCode())
-				.currencySymbol(source.getPrice().getCurrencySymbol())
-				.unitPrice(source.getPrice().getUnitPrice())
-				.build();
-		
-		List<Feature> features = new ArrayList<>();
-		
-		source.getFeatures().stream().forEach(f -> {
-			features.add(Feature.of(f));
-		});
-		
 		return Plan.builder()
 				.id(source.getId().toString())
 				.billingFrequency(source.getBillingFrequency())
-				.features(features)
+				.features(Features.of(source.getFeatures()))
 				.isActive(source.getIsActive())
 				.language(source.getLanguage())
 				.planCode(source.getPlanCode())
 				.planName(source.getPlanName())
-				.price(price)
+				.price(Price.of(source.getPrice()))
 				.recommendedPlan(source.getRecommendedPlan())
 				.build();
 	}

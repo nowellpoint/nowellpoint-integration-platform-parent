@@ -14,4 +14,12 @@ public abstract class AbstractPrice {
 	public abstract String getCurrencyIsoCode();
 	public abstract String getCurrencySymbol();
 	public abstract Double getUnitPrice();
+	
+	public static Price of(com.nowellpoint.console.entity.Price source) {
+		return Price.builder()
+				.currencyIsoCode(source.getCurrencyIsoCode())
+				.currencySymbol(source.getCurrencySymbol())
+				.unitPrice(source.getUnitPrice())
+				.build();
+	}
 }

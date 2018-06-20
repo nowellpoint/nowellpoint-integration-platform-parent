@@ -4,6 +4,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.validation.ValidationException;
 
@@ -34,12 +35,12 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 				-> listPlans(configuration, request, response));
 		
-//		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
-//				-> OrganizationController.reviewPlan(configuration, request, response));
-//		
-//		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
-//				-> OrganizationController.changePlan(configuration, request, response));
-//		
+		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
+				-> reviewPlan(configuration, request, response));
+		
+		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
+				-> setPlan(configuration, request, response));
+		
 		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 				-> updatePaymentMethod(configuration, request, response));
 		
@@ -87,7 +88,7 @@ public class OrganizationController extends BaseController {
 		
 		Organization organization = organizationService.get(id);
 		
-		List<Plan> plans = planService.getPlans("en_US");
+		List<Plan> plans = planService.getPlans(Locale.getDefault().toString());
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -142,7 +143,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String changePlan(Configuration configuration, Request request, Response response) {
+	public static String setPlan(Configuration configuration, Request request, Response response) {
 //		Token token = getToken(request);
 //		
 //		String id = request.params(":id");
@@ -184,27 +185,25 @@ public class OrganizationController extends BaseController {
 	 */
 	
 	public static String reviewPlan(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String id = request.params(":id");
-//		
-//		Organization organization = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.get(id);
-//		
-//		String planId = request.params(":planId");
-//		
-//		Plan plan = NowellpointClient.defaultClient(token)
-//				.plan()
-//				.get(planId);
-//
-//		Map<String, Object> model = getModel();
-//		model.put("organization", organization);
-//		model.put("action", "reviewPlan");
-//		model.put("plan", plan);
-//			
-//		return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION_CHANGE_PLAN);	
-		return null;
+		
+		String id = request.params(":id");
+		String planId = request.params(":planId");
+		
+		Organization organization = organizationService.get(id);
+		
+		Plan plan = planService.get(planId);
+		
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(OrganizationController.class)
+				.putModel("organization", organization)
+				.putModel("plan", plan)
+				.putModel("action", "reviewPlan")
+				.request(request)
+				.templateName(Templates.ORGANIZATION_CHANGE_PLAN)
+				.build();
+		
+		return template.render();
 	}
 	
 	/**

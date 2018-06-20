@@ -1,24 +1,69 @@
-<#import "template.html" as t>
+<!DOCTYPE HTML>
+<html lang="en">
 
-    <@t.page>
+<head>
+    <title>${messages["application.title"]}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <div class="container">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="/css/mdb.min.css" rel="stylesheet">
 
-            <br>
-            <br>
-            <br>
+</head>
+
+<body>
+
+    <!--Double navigation-->
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar fixed-top navbar-toggleable-md navbar-expand-lg scrolling-navbar double-nav sticky-top">
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-brand">${messages["application.title"]}</div>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="nav navbar-nav nav-flex-icons mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${links['start']}">
+                            <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
+                    </li>
+                </ul>
+                <#include "navbar-menu.html" />
+            </div>
+        </nav>
+        <!-- /.Navbar -->
+    </header>
+    <!--/.Double navigation-->
+
+    <!--Main Layout-->
+    <main>
+
+        <div class="container mt-5">
 
             <#if action=="listPlans">
 
                 <div id="plans-list">
-                    <div class="flextable">
-                        <div class="flextable-item flextable-primary">
+                    <div class="row">
+                        <div class="col-12">
                             <h4><b>${labels["select.plan"]}</b></h4>
                         </div>
-                        <div class="flextable-item">
-                            &nbsp;
-                        </div>
                     </div>
+                    <hr>
                     <div class="row">
                         <div class="col-12">
                             <table class="table table-responsive w-100 d-block d-md-table">
@@ -67,13 +112,13 @@
                                                 <!-- <#if organization.subscription?? && plan.id==organization.subscription.planId> -->
                                                 ${labels["current.plan"]}
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice gt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-success" role="button">${labels["upgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-success" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice lt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-light" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-light" role="button">${labels["downgrade"]}</a>
                                                 <!-- <#elseif organization.subscription?? && plan.price.unitPrice gt organization.subscription.unitPrice> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-primary" role="button">${labels["upgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-primary" role="button">${labels["upgrade"]}</a>
                                                 <!-- <#else> -->
-                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}" class="btn btn-light" role="button">${labels["downgrade"]}</a>
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-light" role="button">${labels["downgrade"]}</a>
                                                 <!-- </#if> -->
                                             </td>
                                         </#list>
@@ -111,14 +156,12 @@
             </#if>
 
             <#if action=="reviewPlan">
-                <div class="flextable">
-                    <div class="flextable-item flextable-primary">
+                <div class="row">
+                    <div class="col-12">
                         <h4><b>${labels["review.plan"]}</b></h4>
                     </div>
-                    <div class="flextable-item">
-                        &nbsp;
-                    </div>
                 </div>
+                <hr>
                 <div class="row">
                     <div class="col-12">
                         <div class="content table-responsive">
@@ -153,16 +196,13 @@
                         </div>
                     </div>
                 </div>
-                <form id="change-plan-form" name="change-plan-form" class="form-vertical" method="post" action="${links['organization']}/${organization.id}/plans/${plan.id}">
+                <form id="change-plan-form" name="change-plan-form" class="form-vertical" method="post" action="${links['organization']}/${organization.id}/plans/${plan.id}/">
                     <#if plan.price.unitPrice gt 0>
                         <br>
                         <!-- <#if ! organization.subscription.creditCard??> -->
-                        <div class="flextable" style="height: 18px">
-                            <div class="flextable-item flextable-primary">
+                        <div class="row">
+                            <div class="col-12">
                                 <h4><b>${labels["payment.method"]}</b></h4>
-                            </div>
-                            <div class="flextable-item">
-                                &nbsp;
                             </div>
                         </div>
                         <hr>
@@ -194,40 +234,55 @@
                     </#if>
                     <div class="row">
                         <div class="col-12 text-right">
-                            <a href="${links['organization']}/${organization.id}" class="btn btn-secondary" role="button">${labels["cancel"]}</a>
-                            <a href="${links['organization']}/${organization.id}/plans" class="btn btn-secondary" role="button">${labels["back"]}</a>
+                            <a href="${links['organization']}/${organization.id}/" class="btn btn-light" role="button">${labels["cancel"]}</a>
+                            <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-light" role="button">${labels["back"]}</a>
                             <button type="button" id="change-plan" class="btn btn-primary">${labels["set.plan"]}</button>
                         </div>
                     </div>
                 </form>
             </#if>
         </div>
+    </main>
 
-        <script>
-            $("#change-plan").click(function (e) {
-                e.preventDefault();
+    <script>
+        $("#change-plan").click(function(e) {
+            e.preventDefault();
 
-                $form = $("#change-plan-form");
+            $form = $("#change-plan-form");
 
-                $.ajax({
-                    method: $form.attr('method'),
-                    url: $form.attr('action'),
-                    dataType: "html",
-                    data: $form.serialize(),
-                    complete: function (response) {
-                        if (response.status == 200) {
-                            jQuery("#notification").modal('show');
-                            setTimeout(function () {
-                                $("#notification").slideUp('slow').fadeOut(function () {
-                                    $(location).attr("href", "${links['organization']}/${organization.id}");
-                                });
-                            }, 1000);
-                        } else {
-                            $form.prepend(response.responseText);
-                        }
+            $.ajax({
+                method: $form.attr('method'),
+                url: $form.attr('action'),
+                dataType: "html",
+                data: $form.serialize(),
+                complete: function(response) {
+                    if (response.status == 200) {
+                        jQuery("#notification").modal('show');
+                        setTimeout(function() {
+                            $("#notification").slideUp('slow').fadeOut(function() {
+                                $(location).attr("href", "${links['organization']}/${organization.id}");
+                            });
+                        }, 1000);
+                    } else {
+                        $form.prepend(response.responseText);
                     }
+                }
 
-                });
             });
-        </script>
-    </@t.page>
+        });
+    </script>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="/js/mdb.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script type="text/javascript" src="/js/organization.js"></script>
+
+</body>
+
+</html>

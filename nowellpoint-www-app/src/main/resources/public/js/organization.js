@@ -69,7 +69,7 @@
         $form = $("#billingAddressForm");
 
         $.ajax({
-            method: $form.attr('method'),
+            type: $form.attr('method'),
             url: $form.attr('action'),
             dataType: "html",
             data: $form.serialize(),
@@ -101,7 +101,7 @@
         $form = $("#billingContactForm");
 
         $.ajax({
-            method: $form.attr('method'),
+            type: $form.attr('method'),
             url: $form.attr('action'),
             dataType: "html",
             data: $form.serialize(),
@@ -116,4 +116,31 @@
         });
 
         return true;
+    });
+    
+    
+    $("#change-plan").click(function(e) {
+        e.preventDefault();
+
+        $form = $("#change-plan-form");
+
+        $.ajax({
+            type: $form.attr('method'),
+            url: $form.attr('action'),
+            dataType: "html",
+            data: $form.serialize(),
+            complete: function(response) {
+                if (response.status == 200) {
+                    jQuery("#notification").modal('show');
+                    setTimeout(function() {
+                        $("#notification").slideUp('slow').fadeOut(function() {
+                            $(location).attr("href", "${links['organization']}/${organization.id}");
+                        });
+                    }, 1000);
+                } else {
+                    $form.prepend(response.responseText);
+                }
+            }
+
+        });
     });
