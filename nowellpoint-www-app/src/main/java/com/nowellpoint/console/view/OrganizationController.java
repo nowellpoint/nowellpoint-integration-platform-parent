@@ -82,7 +82,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String listPlans(Configuration configuration, Request request, Response response) {
+	private static String listPlans(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -111,7 +111,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String getInvoice(Configuration configuration, Request request, Response response) {
+	private static String getInvoice(Configuration configuration, Request request, Response response) {
 //		Token token = getToken(request);
 //		
 //		String id = request.params(":id");
@@ -143,16 +143,38 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String setPlan(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String id = request.params(":id");
-//		String planId = request.params(":planId");
-//		String cardholderName = request.queryParamOrDefault("cardholderName", "");
-//		String number = request.queryParamOrDefault("number", "");
-//		String expirationMonth = request.queryParamOrDefault("expirationMonth", "");
-//		String expirationYear = request.queryParamOrDefault("expirationYear", "");
-//		String cvv = request.queryParamOrDefault("cvv", "");
+	private static String setPlan(Configuration configuration, Request request, Response response) {
+		
+		String id = request.params(":id");
+		String planId = request.params(":planId");
+		String cardholderName = request.queryParamOrDefault("cardholderName", "");
+		String number = request.queryParamOrDefault("number", "");
+		String expirationMonth = request.queryParamOrDefault("expirationMonth", "");
+		String expirationYear = request.queryParamOrDefault("expirationYear", "");
+		String cvv = request.queryParamOrDefault("cvv", "");
+		
+		Plan plan = planService.get(planId);
+		
+		if ("FREE".equals(plan.getPlanCode())) {
+			organizationService.setPlan(id, plan);
+		} else {
+			
+			CreditCardRequest creditCardRequest = CreditCardRequest.builder()
+					.cardholderName(cardholderName)
+					.cvv(cvv)
+					.expirationMonth(expirationMonth)
+					.expirationYear(expirationYear)
+					.number(number)
+					.build();
+			
+			try {
+				organizationService.setPlan(id, plan, creditCardRequest);
+			} catch (ValidationException e) {
+				response.status(400);
+				return Alert.showError(e.getMessage());
+			}
+		}
+		
 //		
 //		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 //				.withOrganizationId(id)

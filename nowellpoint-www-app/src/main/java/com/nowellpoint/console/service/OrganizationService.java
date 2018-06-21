@@ -1,7 +1,8 @@
 package com.nowellpoint.console.service;
 
-import java.sql.Date;
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
@@ -12,11 +13,13 @@ import org.bson.types.ObjectId;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.braintreegateway.SubscriptionRequest;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.BillingContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.ModifiableOrganization;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.util.UserContext;
@@ -90,6 +93,92 @@ public class OrganizationService extends AbstractService {
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.creditCard(creditCard)
+				.build();
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.subscription(subscription)
+				.build();
+		
+		return update(organization);
+	}
+	
+	public Organization setPlan(String id, Plan plan) {
+		
+		Organization instance = get(id);
+		
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				.paymentMethodToken(instance.getSubscription().getCreditCard().getToken())
+				.planId(plan.getPlanCode())
+				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+		
+		Result<com.braintreegateway.Subscription> subscriptionResult = gateway.subscription().update(instance.getSubscription().getNumber(), subscriptionRequest);
+		
+		Subscription subscription = Subscription.builder()
+				.from(instance.getSubscription())
+				.billingFrequency(plan.getBillingFrequency())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
+				.features(plan.getFeatures())
+				.planCode(plan.getPlanCode())
+				.planId(plan.getId())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.updatedOn(Date.from(Instant.now()))
+				.build();
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.subscription(subscription)
+				.build();
+		
+		return update(organization);
+	}
+	
+	public Organization setPlan(String id, Plan plan, CreditCardRequest request) {
+		
+		Organization instance = get(id);
+		
+		com.braintreegateway.CreditCardRequest creditCardRequest = new com.braintreegateway.CreditCardRequest()
+				.billingAddressId(instance.getSubscription().getBillingAddress().getId())
+				.cardholderName(request.getCardholderName())
+				.customerId(instance.getNumber())
+				.cvv(Assert.isEmpty(request.getCvv()) ? null : request.getCvv())
+				.expirationMonth(request.getExpirationMonth())
+				.expirationYear(request.getExpirationYear())
+				.number(Assert.isEmpty(request.getNumber()) ? null : request.getNumber());
+		
+		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
+		
+		if (creditCardResult.getMessage() != null) {
+			throw new ValidationException(creditCardResult.getMessage());
+		}
+		
+		CreditCard creditCard = CreditCard.builder()
+				.from(instance.getSubscription().getCreditCard())
+				.cardholderName(creditCardResult.getTarget().getCardholderName())
+				.cardType(creditCardResult.getTarget().getCardType())
+				.expirationMonth(request.getExpirationMonth())
+				.expirationYear(request.getExpirationYear())
+				.imageUrl(creditCardResult.getTarget().getImageUrl())
+				.lastFour(creditCardResult.getTarget().getLast4())
+				.updatedOn(Date.from(Instant.now()))
+				.build();
+		
+		Subscription subscription = Subscription.builder()
+				.from(instance.getSubscription())
+				.billingFrequency(plan.getBillingFrequency())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.creditCard(creditCard)
+				.features(plan.getFeatures())
+				.planCode(plan.getPlanCode())
+				.planId(plan.getId())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
 		Organization organization = Organization.builder()
