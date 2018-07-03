@@ -3,6 +3,7 @@ package com.nowellpoint.console.service;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
@@ -112,7 +113,21 @@ public class OrganizationService extends AbstractService {
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
 		
-		Result<com.braintreegateway.Subscription> subscriptionResult = gateway.subscription().update(instance.getSubscription().getNumber(), subscriptionRequest);
+		Result<com.braintreegateway.Subscription> subscriptionResult = null;
+		
+		Optional<String> number = Optional.of(instance)
+				.map(Organization::getSubscription)
+				.map(Subscription::getNumber);
+		
+		if (number.isPresent()) {
+			subscriptionResult = gateway.subscription().update(instance.getSubscription().getNumber(), subscriptionRequest);
+		} else {
+			subscriptionResult = gateway.subscription().create(subscriptionRequest);
+		}
+		
+		if (subscriptionResult.getMessage() != null) {
+			throw new ValidationException(subscriptionResult.getMessage());
+		}
 		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
@@ -150,7 +165,18 @@ public class OrganizationService extends AbstractService {
 				.expirationYear(request.getExpirationYear())
 				.number(Assert.isEmpty(request.getNumber()) ? null : request.getNumber());
 		
-		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
+		Result<com.braintreegateway.CreditCard> creditCardResult = null;
+		
+		Optional<String> token = Optional.of(instance)
+				.map(Organization::getSubscription)
+				.map(Subscription::getCreditCard)
+				.map(CreditCard::getToken);
+		
+		if (token.isPresent()) {
+			creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
+		} else {
+			creditCardResult = gateway.creditCard().create(creditCardRequest);
+		}
 		
 		if (creditCardResult.getMessage() != null) {
 			throw new ValidationException(creditCardResult.getMessage());
@@ -167,12 +193,35 @@ public class OrganizationService extends AbstractService {
 				.updatedOn(Date.from(Instant.now()))
 				.build();
 		
+		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+				.paymentMethodToken(creditCardResult.getTarget().getToken())
+				.planId(plan.getPlanCode())
+				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
+		
+		Result<com.braintreegateway.Subscription> subscriptionResult = null;
+		
+		Optional<String> number = Optional.of(instance)
+				.map(Organization::getSubscription)
+				.map(Subscription::getNumber);
+		
+		if (number.isPresent()) {
+			subscriptionResult = gateway.subscription().update(instance.getSubscription().getNumber(), subscriptionRequest);
+		} else {
+			subscriptionResult = gateway.subscription().create(subscriptionRequest);
+		}
+		
+		if (subscriptionResult.getMessage() != null) {
+			throw new ValidationException(subscriptionResult.getMessage());
+		}
+		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.billingFrequency(plan.getBillingFrequency())
+				.creditCard(creditCard)
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
-				.creditCard(creditCard)
+				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
+				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
 				.features(plan.getFeatures())
 				.planCode(plan.getPlanCode())
 				.planId(plan.getId())

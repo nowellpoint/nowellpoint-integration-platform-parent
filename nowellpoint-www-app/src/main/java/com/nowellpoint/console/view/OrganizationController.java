@@ -147,15 +147,15 @@ public class OrganizationController extends BaseController {
 		
 		String id = request.params(":id");
 		String planId = request.params(":planId");
-		String cardholderName = request.queryParamOrDefault("cardholderName", "");
-		String number = request.queryParamOrDefault("number", "");
-		String expirationMonth = request.queryParamOrDefault("expirationMonth", "");
-		String expirationYear = request.queryParamOrDefault("expirationYear", "");
-		String cvv = request.queryParamOrDefault("cvv", "");
+		String cardholderName = request.queryParamOrDefault("cardholderName", null);
+		String number = request.queryParamOrDefault("number", null);
+		String expirationMonth = request.queryParamOrDefault("expirationMonth", null);
+		String expirationYear = request.queryParamOrDefault("expirationYear", null);
+		String cvv = request.queryParamOrDefault("cvv", null);
 		
 		Plan plan = planService.get(planId);
 		
-		if ("FREE".equals(plan.getPlanCode())) {
+		if ("FREE".equals(plan.getPlanCode()) || cardholderName == null) {
 			organizationService.setPlan(id, plan);
 		} else {
 			
@@ -174,28 +174,8 @@ public class OrganizationController extends BaseController {
 				return Alert.showError(e.getMessage());
 			}
 		}
-		
-//		
-//		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
-//				.withOrganizationId(id)
-//				.withPlanId(planId)
-//				.withCardholderName(cardholderName)
-//				.withNumber(number)
-//				.withExpirationMonth(expirationMonth)
-//				.withExpirationYear(expirationYear)
-//				.withCvv(cvv);
-//		
-//		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.subscription()
-//				.set(subscriptionRequest);
-//		
-//		if (! updateResult.isSuccess()) {
-//			response.status(400);
-//		}
-//		
-//		return responseBody(updateResult);
-		return null;
+
+		return "";
 	}
 	
 	/**

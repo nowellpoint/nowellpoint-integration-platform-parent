@@ -56,6 +56,38 @@
     });
     
     /*-----------------------------------------------------------
+    *
+    *
+    */
+    
+    $("#change-plan").click(function(e) {
+        
+        $('#error').remove();
+
+        $form = $("#change-plan-form");
+
+        $.ajax({
+            type: $form.attr('method'),
+            url: $form.attr('action'),
+            dataType: "html",
+            data: $form.serialize(),
+            complete: function(response) {
+                if (response.status == 200) {
+                	var organization = JSON.parse(sessionStorage.getItem("organization"));
+                	console.log(organization.id);
+                	console.log(organization.basePath);
+                	$(location).attr("href", organization.basePath + "/" + organization.id + "/");
+                } else {
+                    $("#error").prepend(response.responseText);
+                }
+            }
+
+        });
+        
+        return false;
+    });
+    
+    /*-----------------------------------------------------------
      *
      *
      */

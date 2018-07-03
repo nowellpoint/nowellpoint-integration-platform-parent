@@ -162,6 +162,7 @@
                     </div>
                 </div>
                 <hr>
+                <div id="error"></div>
                 <div class="row">
                     <div class="col-12">
                         <div class="content table-responsive">
@@ -243,34 +244,6 @@
             </#if>
         </div>
     </main>
-
-    <script>
-        $("#change-plan").click(function(e) {
-            e.preventDefault();
-
-            $form = $("#change-plan-form");
-
-            $.ajax({
-                method: $form.attr('method'),
-                url: $form.attr('action'),
-                dataType: "html",
-                data: $form.serialize(),
-                complete: function(response) {
-                    if (response.status == 200) {
-                        jQuery("#notification").modal('show');
-                        setTimeout(function() {
-                            $("#notification").slideUp('slow').fadeOut(function() {
-                                $(location).attr("href", "${links['organization']}/${organization.id}");
-                            });
-                        }, 1000);
-                    } else {
-                        $form.prepend(response.responseText);
-                    }
-                }
-
-            });
-        });
-    </script>
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
