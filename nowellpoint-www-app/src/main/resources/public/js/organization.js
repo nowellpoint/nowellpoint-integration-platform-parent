@@ -73,10 +73,12 @@
             data: $form.serialize(),
             complete: function(response) {
                 if (response.status == 200) {
-                	var organization = JSON.parse(sessionStorage.getItem("organization"));
-                	console.log(organization.id);
-                	console.log(organization.basePath);
-                	$(location).attr("href", organization.basePath + "/" + organization.id + "/");
+                	$('#success-popup').modal('show');
+                	setTimeout(function() {
+                		  $('.success-popup').modal( 'hide');
+                		  var organization = JSON.parse(sessionStorage.getItem("organization"));
+                		  $(location).attr("href", organization.basePath + "/" + organization.id + "/");
+                		}, 2000);                	
                 } else {
                     $("#error").prepend(response.responseText);
                 }
@@ -150,29 +152,20 @@
         return true;
     });
     
+   /*-----------------------------------------------------------
+    *
+    *
+    */
     
-    $("#change-plan").click(function(e) {
-        e.preventDefault();
-
-        $form = $("#change-plan-form");
-
-        $.ajax({
-            type: $form.attr('method'),
-            url: $form.attr('action'),
-            dataType: "html",
-            data: $form.serialize(),
-            complete: function(response) {
-                if (response.status == 200) {
-                    jQuery("#notification").modal('show');
-                    setTimeout(function() {
-                        $("#notification").slideUp('slow').fadeOut(function() {
-                            $(location).attr("href", "${links['organization']}/${organization.id}");
-                        });
-                    }, 1000);
-                } else {
-                    $form.prepend(response.responseText);
-                }
-            }
-
-        });
+    $( document ).ajaxStart(function() {
+    	$( "#wait" ).show();
     });
+    
+   /*-----------------------------------------------------------
+    *
+    *
+    */
+    
+    $( document ).ajaxStop(function() {
+    	$( "#wait" ).hide();
+  	});

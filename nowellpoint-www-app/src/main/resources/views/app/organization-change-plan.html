@@ -12,7 +12,8 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="/css/mdb.min.css" rel="stylesheet">
-
+    <!-- Custom styles -->
+    <link href="/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -237,12 +238,36 @@
                         <div class="col-12 text-right">
                             <a href="${links['organization']}/${organization.id}/" class="btn btn-light" role="button">${labels["cancel"]}</a>
                             <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-light" role="button">${labels["back"]}</a>
-                            <button type="button" id="change-plan" class="btn btn-primary">${labels["set.plan"]}</button>
+                            <button type="button" id="change-plan" class="btn btn-primary"><i id="wait" class="fa fa-spinner fa-spin" style="display: none"></i> ${labels["set.plan"]}</button>
                         </div>
                     </div>
                 </form>
             </#if>
         </div>
+
+        <div class="modal fade" id="success-popup" tabindex="-1" role="dialog">
+            <!--Modal: Contact form-->
+            <div class="modal-dialog cascading-modal" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Body-->
+                    <div class="modal-body border border-success">
+                        <div class="row">
+                            <div class="col-2 text-center">
+                                <span class="fa-stack fa-lg text-success">
+                                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                                <i class="fa fa-check fa-stack-1x"></i>
+                            </span>
+                            </div>
+                            <div class="col-10 align-middle">
+                                <h4>${labels["plan.change.success"]}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- JQuery -->
