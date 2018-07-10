@@ -23,4 +23,16 @@ public abstract class AbstractTransaction {
 	public abstract @Nullable CreditCard getCreditCard();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	
+	public static Transaction of(com.nowellpoint.console.entity.Transaction source) {
+		return source == null ? null : Transaction.builder()
+				.amount(source.getAmount())
+				.createdOn(source.getCreatedOn())
+				.creditCard(CreditCard.of(source.getCreditCard()))
+				.currencyIsoCode(source.getCurrencyIsoCode())
+				.id(source.getId())
+				.status(source.getStatus())
+				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
 }

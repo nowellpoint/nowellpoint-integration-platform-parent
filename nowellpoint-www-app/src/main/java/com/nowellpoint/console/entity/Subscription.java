@@ -2,6 +2,7 @@ package com.nowellpoint.console.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 public class Subscription implements Serializable {
 	
@@ -34,6 +35,10 @@ public class Subscription implements Serializable {
 	private CreditCard creditCard;
 	
 	private Address billingAddress;
+	
+	private Contact billingContact;
+	
+	private Set<Feature> features;
 	
 	public Subscription() {
 		
@@ -149,5 +154,21 @@ public class Subscription implements Serializable {
 
 	public void setBillingAddress(Address billingAddress) {
 		this.billingAddress = billingAddress;
+	}
+
+	public Contact getBillingContact() {
+		return billingContact;
+	}
+
+	public void setBillingContact(Contact billingContact) {
+		this.billingContact = billingContact;
+	}
+
+	public Set<Feature> getFeatures() {
+		return features;
+	}
+
+	public void setFeatures(Set<Feature> features) {
+		this.features = features;
 	}
 }

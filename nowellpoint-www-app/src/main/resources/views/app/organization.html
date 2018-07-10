@@ -137,6 +137,64 @@
                 </div>
             </div>
         </div>
+        <div class="container mt-5">
+            <div class="card border-light mb-3">
+                <div class="card-header pt-4">
+                    <div class="row">
+                        <div class="col-12 align-self-center">
+                            <h4><i class="fa fa-list fa-lg light-blue-text"></i>&emsp;${labels["transactions"]}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div id="organization-transactions" class="card-body">
+
+                    <div class="row">
+                        <div class="col-2">
+                            <strong>${labels["id"]}</strong>
+                        </div>
+                        <div class="col-3">
+                            <strong>${labels["payment.method"]}</strong>
+                        </div>
+                        <div class="col-2 text-right">
+                            <strong>${labels["amount"]}</strong>
+                        </div>
+                        <div class="col-2">
+                            <strong>${labels["transaction.date"]}</strong>
+                        </div>
+                        <div class="col-3">
+                            <strong>${labels["status"]}</strong>
+                        </div>
+                    </div>
+                    <#if organization.transactions?size==0>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                ${labels["no.transactions"]}
+                            </div>
+                        </div>
+                    </#if>
+                    <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                        <hr>
+                        <div class="col-2">
+                            ${transaction.id}
+                        </div>
+                        <div class="col-3">
+                            <img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a>
+                        </div>
+                        <div class="col-2 text-right">
+                            ${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}
+                        </div>
+                        <div class="col-2">
+                            ${(transaction.updatedOn?date?string.long)!}
+                        </div>
+                        <div class="col-3">
+                            ${transaction.status}
+                        </div>
+                    </#list>
+
+                </div>
+            </div>
+        </div>
     </main>
 
     <br>

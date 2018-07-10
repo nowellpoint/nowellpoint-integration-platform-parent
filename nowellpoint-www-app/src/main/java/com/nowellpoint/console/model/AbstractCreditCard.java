@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public abstract class AbstractCreditCard {
 	public abstract String getCardType();
 	public abstract String getCardholderName();
-	public abstract @Nullable String getCvv();
 	public abstract String getExpirationMonth();
 	public abstract String getExpirationYear();
 	public abstract @Nullable String getLastFour();
@@ -26,4 +25,18 @@ public abstract class AbstractCreditCard {
 	public abstract @Nullable String getImageUrl();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
+	
+	public static CreditCard of(com.nowellpoint.console.entity.CreditCard source) {
+		return source == null ? null : CreditCard.builder()
+				.addedOn(source.getAddedOn())
+				.cardholderName(source.getCardholderName())
+				.cardType(source.getCardType())
+				.expirationMonth(source.getExpirationMonth())
+				.expirationYear(source.getExpirationYear())
+				.imageUrl(source.getImageUrl())
+				.lastFour(source.getLastFour())
+				.token(source.getToken())
+				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
 }

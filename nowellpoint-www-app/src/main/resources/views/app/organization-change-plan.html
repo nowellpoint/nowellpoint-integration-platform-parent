@@ -200,8 +200,8 @@
                 </div>
                 <form id="change-plan-form" name="change-plan-form" class="form-vertical" method="post" action="${links['organization']}/${organization.id}/plans/${plan.id}/">
                     <#if plan.price.unitPrice gt 0>
-                        <br>
                         <!-- <#if ! organization.subscription.creditCard??> -->
+                        <br>
                         <div class="row">
                             <div class="col-12">
                                 <h4><b>${labels["payment.method"]}</b></h4>
@@ -234,6 +234,7 @@
                         </div>
                         <!-- </#if> -->
                     </#if>
+                    <hr>
                     <div class="row">
                         <div class="col-12 text-right">
                             <a href="${links['organization']}/${organization.id}/" class="btn btn-light" role="button">${labels["cancel"]}</a>

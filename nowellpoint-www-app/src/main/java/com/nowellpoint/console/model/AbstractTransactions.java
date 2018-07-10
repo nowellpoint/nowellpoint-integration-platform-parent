@@ -8,11 +8,11 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-public abstract class AbstractFeatures {
-	public static Set<Feature> of(Set<com.nowellpoint.console.entity.Feature> source) {
+public abstract class AbstractTransactions {
+	public static Set<Transaction> of(Set<com.nowellpoint.console.entity.Transaction> source) {
 		return source == null ? Collections.emptySet() : source.stream()
 				.map(f -> {
-					return Feature.of(f);
+					return Transaction.of(f);
 				})
 				.collect(Collectors.toSet());
 	}

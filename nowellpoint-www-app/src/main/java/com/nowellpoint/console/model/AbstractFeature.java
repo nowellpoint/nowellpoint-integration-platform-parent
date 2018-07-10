@@ -1,8 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -24,7 +21,7 @@ public abstract class AbstractFeature {
 	public abstract String getQuantity();
 	
 	public static Feature of(com.nowellpoint.console.entity.Feature source) {
-		return Feature.builder()
+		return source == null ? null : Feature.builder()
 				.code(source.getCode())
 				.description(source.getDescription())
 				.enabled(source.getEnabled())
@@ -32,13 +29,5 @@ public abstract class AbstractFeature {
 				.quantity(source.getQuantity())
 				.sortOrder(source.getSortOrder())
 				.build();
-	}
-	
-	public static List<Feature> asList(List<com.nowellpoint.console.entity.Feature> source) {
-		return source.stream()
-				.map(f -> {
-					return of(f);
-				})
-				.collect(Collectors.toList());
 	}
 }

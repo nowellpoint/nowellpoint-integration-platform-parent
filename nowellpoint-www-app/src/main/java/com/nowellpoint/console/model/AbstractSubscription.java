@@ -35,4 +35,25 @@ public abstract class AbstractSubscription {
 	public abstract @Nullable Address getBillingAddress();
 	public abstract @Nullable Contact getBillingContact();
 	public abstract Set<Feature> getFeatures();
+	
+	public static Subscription of(com.nowellpoint.console.entity.Subscription source) {
+		return source == null ? null : Subscription.builder()
+				.addedOn(source.getAddedOn())
+				.billingAddress(Address.of(source.getBillingAddress()))
+				.billingContact(Contact.of(source.getBillingContact()))
+				.billingFrequency(source.getBillingFrequency())
+				.creditCard(CreditCard.of(source.getCreditCard()))
+				.currencyIsoCode(source.getCurrencyIsoCode())
+				.currencySymbol(source.getCurrencySymbol())
+				.features(AbstractFeatures.of(source.getFeatures()))
+				.nextBillingDate(source.getNextBillingDate())
+				.number(source.getNumber())
+				.planCode(source.getPlanCode())
+				.planId(source.getPlanId())
+				.planName(source.getPlanName())
+				.status(source.getStatus())
+				.unitPrice(source.getUnitPrice())
+				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
 }

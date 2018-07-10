@@ -26,4 +26,15 @@ public abstract class AbstractContact {
 	public String getName() {
 		return getFirstName() != null ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
+	
+	public static Contact of(com.nowellpoint.console.entity.Contact source) {
+		return source == null ? null : Contact.builder()
+				.addedOn(source.getAddedOn())
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.lastName(source.getLastName())
+				.phone(source.getPhone())
+				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
 }

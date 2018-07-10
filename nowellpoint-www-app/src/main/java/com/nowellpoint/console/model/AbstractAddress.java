@@ -46,4 +46,19 @@ public abstract class AbstractAddress {
 //			return null;
 //		}
 //	}
+	
+	public static Address of(com.nowellpoint.console.entity.Address source) {
+		return source == null ? null : Address.builder()
+				.addedOn(source.getAddedOn())
+				.city(source.getCity())
+				.countryCode(source.getCountryCode())
+				.id(source.getId())
+				.latitude(source.getLatitude())
+				.longitude(source.getLongitude())
+				.postalCode(source.getPostalCode())
+				.state(source.getState())
+				.street(source.getStreet())
+				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
 }

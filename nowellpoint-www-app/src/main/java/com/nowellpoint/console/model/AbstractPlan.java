@@ -1,6 +1,6 @@
 package com.nowellpoint.console.model;
 
-import java.util.List;
+import java.util.Set;
 
 import org.immutables.value.Value;
 
@@ -24,7 +24,7 @@ public abstract class AbstractPlan {
 	public abstract Boolean getIsActive();
 	public abstract String getLanguage();
 	public abstract Price getPrice();
-	public abstract List<Feature> getFeatures();
+	public abstract Set<Feature> getFeatures();
 	
 	public static Plan of(com.nowellpoint.console.entity.Plan source) {
 		return Plan.builder()

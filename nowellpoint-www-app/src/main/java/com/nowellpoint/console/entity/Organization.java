@@ -1,5 +1,7 @@
 package com.nowellpoint.console.entity;
 
+import java.util.Set;
+
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity(value = "organizations")
@@ -14,6 +16,8 @@ public class Organization extends BaseEntity {
 	private String domain;
 	
 	private Subscription subscription;
+	
+	private Set<Transaction> transactions;
 	
 	public Organization() {
 		
@@ -53,5 +57,13 @@ public class Organization extends BaseEntity {
 
 	public void setSubscription(Subscription subscription) {
 		this.subscription = subscription;
+	}
+
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 }

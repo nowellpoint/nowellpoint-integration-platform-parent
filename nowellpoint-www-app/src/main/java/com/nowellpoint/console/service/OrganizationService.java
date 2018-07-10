@@ -57,8 +57,8 @@ public class OrganizationService extends AbstractService {
 			throw new NotFoundException(String.format("Organization Id: %s was not found",id));
 		}
 		
-		ModifiableOrganization organization = modelMapper.map(entity, ModifiableOrganization.class);
-		return organization.toImmutable();
+		Organization organization = Organization.of(entity);
+		return organization;
 	}
 	
 	public Organization update(String id, CreditCardRequest request) {
@@ -137,6 +137,7 @@ public class OrganizationService extends AbstractService {
 				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
 				.billingPeriodStartDate(subscriptionResult.getTarget().getBillingPeriodStartDate().getTime())
 				.features(plan.getFeatures())
+				.nextBillingDate(subscriptionResult.getTarget().getNextBillingDate().getTime())
 				.planCode(plan.getPlanCode())
 				.planId(plan.getId())
 				.planName(plan.getPlanName())
@@ -247,6 +248,6 @@ public class OrganizationService extends AbstractService {
 		entity.setLastUpdatedOn(Date.from(Instant.now()));
 		entity.setLastUpdatedBy(UserContext.get().getUserId());
 		organizationDAO.save(entity);
-		return modelMapper.map(entity, ModifiableOrganization.class).toImmutable();
+		return Organization.of(entity);
 	}
 }

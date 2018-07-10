@@ -1,6 +1,6 @@
 package com.nowellpoint.console.entity;
 
-import java.util.List;
+import java.util.Set;
 
 import org.mongodb.morphia.annotations.Entity;
 
@@ -23,7 +23,7 @@ public class Plan extends BaseEntity {
 	
 	private Price price;
 	
-	private List<Feature> features;
+	private Set<Feature> features;
 	
 	public Plan() {
 		
@@ -85,11 +85,11 @@ public class Plan extends BaseEntity {
 		this.price = price;
 	}
 
-	public List<Feature> getFeatures() {
+	public Set<Feature> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(List<Feature> features) {
+	public void setFeatures(Set<Feature> features) {
 		this.features = features;
 	}
 }
