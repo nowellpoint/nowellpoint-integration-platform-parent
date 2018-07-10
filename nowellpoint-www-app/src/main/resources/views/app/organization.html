@@ -125,6 +125,23 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-6 align-self-center">
+                            <h4><i class="fa fa-address-card fa-lg light-blue-text"></i>&emsp;${labels["billing.address"]}</h4>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-billing-address">${labels["update"]}</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="organization-billing-address" class="card-body">
+                    <#include "organization-billing-address.html" />
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <div class="card border-light mb-3">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6 align-self-center">
                             <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
                         </div>
                         <div class="col-6 text-right">
