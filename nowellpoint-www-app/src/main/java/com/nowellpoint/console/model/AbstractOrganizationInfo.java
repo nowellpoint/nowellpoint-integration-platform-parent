@@ -1,8 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.util.Date;
-import java.util.Set;
-
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -14,17 +11,13 @@ import com.nowellpoint.console.api.OrganizationResource;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"transaction:transactions"})
-@JsonSerialize(as = Organization.class)
-@JsonDeserialize(as = Organization.class)
-public abstract class AbstractOrganization {
-	public abstract Date getCreatedOn();
+@JsonSerialize(as = OrganizationInfo.class)
+@JsonDeserialize(as = OrganizationInfo.class)
+public abstract class AbstractOrganizationInfo {
 	public abstract String getId();
-	public abstract Date getLastUpdatedOn();
 	public abstract String getNumber();
 	public abstract String getDomain();
 	public abstract @Nullable String getName();
-	public abstract Subscription getSubscription();
-	public abstract Set<Transaction> getTransactions();
 	
 	@Value.Default
 	public Meta getMeta() {
@@ -34,16 +27,12 @@ public abstract class AbstractOrganization {
 				.build();
 	}
 	
-	public static Organization of(com.nowellpoint.console.entity.Organization source) {
-		return Organization.builder()
-				.createdOn(source.getCreatedOn())
+	public static OrganizationInfo of(com.nowellpoint.console.entity.Organization source) {
+		return OrganizationInfo.builder()
 				.domain(source.getDomain())
 				.id(source.getId().toString())
-				.lastUpdatedOn(source.getLastUpdatedOn())
 				.name(source.getName())
 				.number(source.getNumber())
-				.subscription(Subscription.of(source.getSubscription()))
-				.transactions(Transactions.of(source.getTransactions()))
 				.build();
 	}
 }

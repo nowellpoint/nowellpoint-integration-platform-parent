@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.console.api.UserProfileResource;
 
 @Value.Immutable
 @Value.Modifiable
@@ -28,10 +29,18 @@ public abstract class AbstractUserProfile {
 	public abstract Boolean getIsActive();
 	public abstract Address getAddress();
 	public abstract Preferences getPreferences();
-	public abstract Organization getOrganization();
+	public abstract OrganizationInfo getOrganization();
 	public abstract Photos getPhotos();
 	
 	private final Date now = Date.from(Instant.now());
+	
+	@Value.Default
+	public Meta getMeta() {
+		return Meta.builder()
+				.id(getId())
+				.resourceClass(UserProfileResource.class)
+				.build();
+	}
 	
 	@Value.Default
 	public Date getCreatedOn() {
@@ -41,5 +50,25 @@ public abstract class AbstractUserProfile {
 	@Value.Default
 	public Date getLastUpdatedOn() {
 		return now;
+	}
+	
+	public static UserProfile of(com.nowellpoint.console.entity.UserProfile source) {
+		return UserProfile.builder()
+				.address(Address.of(source.getAddress()))
+				.createdOn(source.getCreatedOn())
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.isActive(source.getIsActive())
+				.lastName(source.getName())
+				.lastUpdatedOn(source.getLastUpdatedOn())
+				.name(source.getName())
+				.organization(OrganizationInfo.of(source.getOrganization()))
+				.phone(source.getPhone())
+				.photos(Photos.of(source.getPhotos()))
+				.preferences(Preferences.of(source.getPreferences()))
+				.title(source.getTitle())
+				.username(source.getUsername())
+				.build();
 	}
 }

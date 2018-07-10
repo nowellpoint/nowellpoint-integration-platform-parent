@@ -11,7 +11,6 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.console.entity.UserProfileDAO;
 import com.nowellpoint.console.model.Address;
-import com.nowellpoint.console.model.ModifiableUserProfile;
 import com.nowellpoint.console.model.Preferences;
 import com.nowellpoint.console.model.UserAddressRequest;
 import com.nowellpoint.console.model.UserPreferenceRequest;
@@ -40,8 +39,8 @@ public class UserProfileService extends AbstractService {
 			throw new NotFoundException(String.format("UserProfile Id: %s was not found",id));
 		}
 		
-		ModifiableUserProfile userProfile = modelMapper.map(entity, ModifiableUserProfile.class);
-		return userProfile.toImmutable();
+		UserProfile userProfile = UserProfile.of(entity);
+		return userProfile;
 	}
 	
 	public UserProfile create(UserProfileRequest request) {
@@ -119,7 +118,7 @@ public class UserProfileService extends AbstractService {
 		entity.setLastUpdatedOn(Date.from(Instant.now()));
 		entity.setLastUpdatedBy(UserContext.get().getUserId());
 		userProfileDAO.save(entity);
-		return modelMapper.map(entity, ModifiableUserProfile.class).toImmutable();
+		return UserProfile.of(entity);
 	}
 	
 	private UserProfile update(UserProfile userProfile) {
@@ -127,7 +126,7 @@ public class UserProfileService extends AbstractService {
 		entity.setLastUpdatedOn(Date.from(Instant.now()));
 		entity.setLastUpdatedBy(UserContext.get().getUserId());
 		userProfileDAO.save(entity);
-		return modelMapper.map(entity, ModifiableUserProfile.class).toImmutable();
+		return UserProfile.of(entity);
 	}
 	
 	private Locale convertStringToLocale(String localeString) {

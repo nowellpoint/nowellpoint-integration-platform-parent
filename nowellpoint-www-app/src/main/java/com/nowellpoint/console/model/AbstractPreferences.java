@@ -40,4 +40,11 @@ public abstract class AbstractPreferences {
 		
 		return null;
 	}
+	
+	public static Preferences of(com.nowellpoint.console.entity.Preferences source) {
+		return source == null ? null : Preferences.builder()
+				.locale(source.getLocale())
+				.timeZone(source.getTimeZone())
+				.build();
+	}
 }

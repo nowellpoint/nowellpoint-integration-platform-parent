@@ -9,6 +9,7 @@ import com.nowellpoint.console.entity.IdentityDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.Resources;
 import com.nowellpoint.console.model.UserInfo;
 
@@ -47,7 +48,7 @@ public class IdentityService extends AbstractService {
 	
 	private Identity fromDocument(com.nowellpoint.console.entity.Identity document) {
 		
-		Organization organization = Organization.builder()
+		OrganizationInfo organization = OrganizationInfo.builder()
 				.domain(document.getOrganization().getDomain())
 				.id(document.getOrganization().getId().toString())
 				.name(document.getOrganization().getName())

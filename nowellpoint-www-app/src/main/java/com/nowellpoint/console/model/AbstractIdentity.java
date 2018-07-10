@@ -19,7 +19,7 @@ public abstract class AbstractIdentity {
 	public abstract String getFirstName();
 	public abstract String getLastName();
 	public abstract String getName();
-	public abstract Organization getOrganization();
+	public abstract OrganizationInfo getOrganization();
 	public abstract String getTimeZone();
 	public abstract Locale getLocale();
 	public abstract Address getAddress();
