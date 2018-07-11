@@ -18,7 +18,6 @@ import com.braintreegateway.SubscriptionRequest;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.BillingContactRequest;
 import com.nowellpoint.console.model.CreditCard;
-import com.nowellpoint.console.model.ModifiableOrganization;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.CreditCardRequest;

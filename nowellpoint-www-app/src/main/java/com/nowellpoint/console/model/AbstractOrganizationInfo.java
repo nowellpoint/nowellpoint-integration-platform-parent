@@ -28,7 +28,7 @@ public abstract class AbstractOrganizationInfo {
 	}
 	
 	public static OrganizationInfo of(com.nowellpoint.console.entity.Organization source) {
-		return OrganizationInfo.builder()
+		return source == null ? null : OrganizationInfo.builder()
 				.domain(source.getDomain())
 				.id(source.getId().toString())
 				.name(source.getName())

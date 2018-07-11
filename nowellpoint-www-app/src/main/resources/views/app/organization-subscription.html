@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-3">
-        <strong>${labels["plan.name"]}</strong>
+        <span class="grey-text">${labels["plan.name"]}</span>
     </div>
     <div class="col-9">
         ${organization.subscription.planName}
@@ -9,7 +9,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <strong>${labels["price"]} (${organization.subscription.billingFrequency})</strong>
+        <span class="grey-text">${labels["price"]} (${organization.subscription.billingFrequency})</span>
     </div>
     <div class="col-9">
         ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
@@ -18,7 +18,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <strong>${labels["next.billing.date"]}</strong>
+        <span class="grey-text">${labels["next.billing.date"]}</span>
     </div>
     <div class="col-9">
         ${organization.subscription.nextBillingDate?date?string.long}

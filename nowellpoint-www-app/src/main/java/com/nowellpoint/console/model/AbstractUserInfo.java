@@ -29,4 +29,14 @@ public abstract class AbstractUserInfo {
 				.resourceClass(UserProfileResource.class)
 				.build();
 	}
+	
+	public static UserInfo of(com.nowellpoint.console.entity.UserProfile source) {
+		return source == null ? null : UserInfo.builder()
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.id(source.getId().toString())
+				.lastName(source.getLastName())
+				.phone(source.getPhone())
+				.build();
+	}
 }
