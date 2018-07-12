@@ -94,13 +94,9 @@
      *
      */
 
-    $(document).on('click', 'button#saveBillingAddress', function () {
+    $(document).on('click', 'button#save-billing-address', function () {
 
-        $('#error').remove();
-
-        $('#overlay').show();
-
-        $form = $("#billingAddressForm");
+        $form = $("#billing-address-form");
 
         $.ajax({
             type: $form.attr('method'),
@@ -108,9 +104,12 @@
             dataType: "html",
             data: $form.serialize(),
             complete: function (response) {
-                $('#overlay').hide();
-                if (response.status == 200) {
-                    $('#content').html(response.responseText);
+            	if (response.status == 200) {
+                	$('#modal-billing-address').modal('toggle');
+                    $('#organization-billing-address').html(response.responseText);
+                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function() {
+                        $("#success-alert").slideUp(500);
+                    }); 
                 } else {
                     $form.prepend(response.responseText);
                 }

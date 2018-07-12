@@ -8,6 +8,8 @@ import java.util.Locale;
 
 import javax.validation.ValidationException;
 
+import com.nowellpoint.console.model.AddressRequest;
+import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
@@ -44,14 +46,16 @@ public class OrganizationController extends BaseController {
 		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 				-> updatePaymentMethod(configuration, request, response));
 		
+		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response)
+				-> updateBillingAddress(configuration, request, response));
+		
 //		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
 //				-> OrganizationController.removeCreditCard(configuration, request, response));
 //		
-//		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response) 
-//				-> OrganizationController.updateBillingAddress(configuration, request, response));
+
 //		
-//		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
-//				-> OrganizationController.updateBillingContact(configuration, request, response));
+		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
+				-> updateBillingContact(configuration, request, response));
 //		
 //		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
 //				-> OrganizationController.getInvoice(configuration, request, response));
@@ -186,7 +190,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String reviewPlan(Configuration configuration, Request request, Response response) {
+	private static String reviewPlan(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String planId = request.params(":planId");
@@ -216,42 +220,44 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String updateBillingAddress(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String organizationId = request.params(":id");
-//		
-//		String city = request.queryParams("city");
-//		String countryCode = request.queryParams("countryCode");
-//		String postalCode = request.queryParams("postalCode");
-//		String state = request.queryParams("state");
-//		String street = request.queryParams("street");
-//		
-//		AddressRequest addressRequest = AddressRequest.builder()
-//				.city(city)
-//				.countryCode(countryCode)
-//				.organizationId(organizationId)
-//				.postalCode(postalCode)
-//				.state(state)
-//				.street(street)
-//				.token(token)
-//				.build();
-//		
-//		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.subscription()
-//				.billingAddress()
-//				.update(addressRequest);
-//		
-//		if (updateResult.isSuccess()) {
-//			Map<String, Object> model = getModel();
-//			model.put("organization", updateResult.getTarget());			
-//			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
-//		} else {
-//			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
-//		}
+	private static String updateBillingAddress(Configuration configuration, Request request, Response response) {
 		
-		return null;
+		String id = request.params(":id");
+		
+		String street = request.queryParams("street");
+		String postalCode = request.queryParams("postalCode");
+		String city = request.queryParams("city");
+		String countryCode = request.queryParams("countryCode");
+		String state = request.queryParamOrDefault("state", null);
+		
+		AddressRequest addressRequest = AddressRequest.builder()
+				.city(city)
+				.countryCode(countryCode)
+				.postalCode(postalCode)
+				.state(state)
+				.street(street)
+				.build();
+		
+		try {
+			
+			Organization organization = organizationService.update(id, addressRequest);
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(OrganizationController.class)
+					.putModel("organization", organization)
+					.request(request)
+					.templateName(Templates.ORGANIZATION_BILLING_ADDRESS)
+					.build();
+			
+			return template.render();
+			
+		} catch (ValidationException e) {
+			
+			response.status(400);
+			
+			return Alert.showError(e.getMessage());
+		}
 	}
 	
 	/**
@@ -262,40 +268,41 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String updateBillingContact(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String organizationId = request.params(":id");
-//		
-//		String firstName = request.queryParams("firstName");
-//		String lastName = request.queryParams("lastName");
-//		String email = request.queryParams("email");
-//		String phone = request.queryParams("phone");
-//		
-//		ContactRequest contactRequest = ContactRequest.builder()
-//				.email(email)
-//				.firstName(firstName)
-//				.lastName(lastName)
-//				.phone(phone)
-//				.organizationId(organizationId)
-//				.token(token)
-//				.build();
-//		
-//		UpdateResult<Organization> updateResult = NowellpointClient.defaultClient(token)
-//				.organization()
-//				.subscription()
-//				.billingContact()
-//				.update(contactRequest);
-//		
-//		if (updateResult.isSuccess()) {
-//			Map<String, Object> model = getModel();
-//			model.put("organization", updateResult.getTarget());			
-//			return render(OrganizationController.class, configuration, request, response, model, Template.ORGANIZATION);
-//		} else {
-//			return showErrorMessage(OrganizationController.class, configuration, request, response, updateResult.getErrorMessage());
-//		}
+	private static String updateBillingContact(Configuration configuration, Request request, Response response) {
+		String id = request.params(":id");
 		
-		return null;
+		String firstName = request.queryParams("firstName");
+		String lastName = request.queryParams("lastName");
+		String email = request.queryParams("email");
+		String phone = request.queryParamOrDefault("phone", null);
+		
+		ContactRequest contactRequest = ContactRequest.builder()
+				.email(email)
+				.firstName(firstName)
+				.lastName(lastName)
+				.phone(phone)
+				.build();
+		
+		try {
+			
+			Organization organization = organizationService.update(id, contactRequest);
+			
+			Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(OrganizationController.class)
+					.putModel("organization", organization)
+					.request(request)
+					.templateName(Templates.ORGANIZATION_BILLING_CONTACT)
+					.build();
+			
+			return template.render();
+			
+		} catch (ValidationException e) {
+			
+			response.status(400);
+			
+			return Alert.showError(e.getMessage());
+		}
 	}
 	
 	/**
@@ -306,7 +313,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	public static String updatePaymentMethod(Configuration configuration, Request request, Response response) {
+	private static String updatePaymentMethod(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		

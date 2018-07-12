@@ -49,249 +49,294 @@
         sessionStorage.setItem("organization", JSON.stringify(organization));
     </script>
 
-    <!--Double navigation-->
-    <header>
-        <!-- Navbar -->
-        <nav class="navbar fixed-top navbar-toggleable-md navbar-expand-lg scrolling-navbar double-nav sticky-top">
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-brand">${messages["application.title"]}</div>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="nav navbar-nav nav-flex-icons mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['start']}">
-                            <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
-                    </li>
-                </ul>
-                <#include "navbar-menu.html" />
-            </div>
-        </nav>
-        <!-- /.Navbar -->
-    </header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default fixed-top navbar-light bg-white navbar-expand-lg">
+        <div class="navbar-brand">${messages["application.title"]}</div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="nav navbar-nav nav-flex-icons mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['start']}">
+                        <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
+                </li>
+            </ul>
+            <#include "navbar-menu.html" />
+        </div>
+    </nav>
+    <!-- /.Navbar -->
+
     <!--/.Double navigation-->
 
     <!--Main Layout-->
     <main>
-        <div id="success-alert" class="alert alert-success" style="display: none">
-            <button type="button" class="close" data-dismiss="alert">x</button>
-            <strong>${messages["success"]}</strong> ${messages["record.saved"]}
-        </div>
 
-        <div class="container mt-5">
-            <div class="card border-light mb-3">
-                <div class="card-header pt-4">
-                    <div class="row">
-                        <div class="col-12 align-self-center">
-                            <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div id="organization-information" class="card-body">
-                    <#include "organization-information.html" />
-                </div>
-            </div>
-        </div>
-        <div class="container mt-5">
-            <div class="card border-light mb-3">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-warning" role="button">${labels["change.plan"]}</a>
-                        </div>
-                    </div>
-                </div>
-                <div id="organization-subscription" class="card-body">
-                    <#include "organization-subscription.html" />
-                </div>
-            </div>
-        </div>
-        <div class="container mt-5">
-            <div class="card border-light mb-3">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-address-card fa-lg light-blue-text"></i>&emsp;${labels["billing.address"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-billing-address">${labels["update"]}</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="organization-billing-address" class="card-body">
-                    <#include "organization-billing-address.html" />
-                </div>
-            </div>
-        </div>
-        <div class="container mt-5">
-            <div class="card border-light mb-3">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method">${labels["update"]}</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="organization-payment-method" class="card-body">
-                    <#include "organization-payment-method.html" />
-                </div>
-            </div>
-        </div>
-        <div class="container mt-5">
-            <div class="card border-light mb-3">
-                <div class="card-header pt-4">
-                    <div class="row">
-                        <div class="col-12 align-self-center">
-                            <h4><i class="fa fa-list fa-lg light-blue-text"></i>&emsp;${labels["transactions"]}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div id="organization-transactions" class="card-body">
+        <br>
+        <br>
 
-                    <div class="row">
-                        <div class="col-2">
-                            <span class="grey-text">${labels["id"]}</span>
-                        </div>
-                        <div class="col-3">
-                            <span class="grey-text">${labels["payment.method"]}</span>
-                        </div>
-                        <div class="col-2 text-right">
-                            <span class="grey-text">${labels["amount"]}</span>
-                        </div>
-                        <div class="col-2">
-                            <span class="grey-text">${labels["transaction.date"]}</span>
-                        </div>
-                        <div class="col-3">
-                            <span class="grey-text">${labels["status"]}</span>
-                        </div>
-                    </div>
-                    <#if organization.transactions?size==0>
-                        <hr>
+        <div class="container-fluid">
+
+            <div id="success-alert" class="alert alert-success" style="display: none">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>${messages["success"]}</strong> ${messages["record.saved"]}
+            </div>
+
+            <div class="container mt-5">
+                <div class="card border-light mb-3">
+                    <div class="card-header pt-4">
                         <div class="row">
-                            <div class="col-12">
-                                ${labels["no.transactions"]}
+                            <div class="col-12 align-self-center">
+                                <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h4>
                             </div>
                         </div>
-                    </#if>
-                    <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
-                        <hr>
-                        <div class="col-2">
-                            ${transaction.id}
-                        </div>
-                        <div class="col-3">
-                            <img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a>
-                        </div>
-                        <div class="col-2 text-right">
-                            ${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}
-                        </div>
-                        <div class="col-2">
-                            ${(transaction.updatedOn?date?string.long)!}
-                        </div>
-                        <div class="col-3">
-                            ${transaction.status}
-                        </div>
-                    </#list>
-
+                    </div>
+                    <div id="organization-information" class="card-body">
+                        <#include "organization-information.html" />
+                    </div>
                 </div>
+            </div>
+            <div class="container mt-5">
+                <div class="card border-light mb-3">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 align-self-center">
+                                <h4><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h4>
+                            </div>
+                            <div class="col-6 text-right">
+                                <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-warning" role="button">${labels["change.plan"]}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="organization-subscription" class="card-body">
+                        <#include "organization-subscription.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5">
+                <div class="card border-light mb-3">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 align-self-center">
+                                <h4><i class="fa fa-address-card fa-lg light-blue-text"></i>&emsp;${labels["billing.address"]}</h4>
+                            </div>
+                            <div class="col-6 text-right">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-billing-address">${labels["update"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="organization-billing-address" class="card-body">
+                        <#include "organization-billing-address.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5">
+                <div class="card border-light mb-3">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 align-self-center">
+                                <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
+                            </div>
+                            <div class="col-6 text-right">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method">${labels["update"]}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="organization-payment-method" class="card-body">
+                        <#include "organization-payment-method.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5">
+                <div class="card border-light mb-3">
+                    <div class="card-header pt-4">
+                        <div class="row">
+                            <div class="col-12 align-self-center">
+                                <h4><i class="fa fa-list fa-lg light-blue-text"></i>&emsp;${labels["transactions"]}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="organization-transactions" class="card-body">
+
+                        <div class="row">
+                            <div class="col-2">
+                                <span class="grey-text">${labels["id"]}</span>
+                            </div>
+                            <div class="col-3">
+                                <span class="grey-text">${labels["payment.method"]}</span>
+                            </div>
+                            <div class="col-2 text-right">
+                                <span class="grey-text">${labels["amount"]}</span>
+                            </div>
+                            <div class="col-2">
+                                <span class="grey-text">${labels["transaction.date"]}</span>
+                            </div>
+                            <div class="col-3">
+                                <span class="grey-text">${labels["status"]}</span>
+                            </div>
+                        </div>
+                        <#if organization.transactions?size==0>
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    ${labels["no.transactions"]}
+                                </div>
+                            </div>
+                        </#if>
+                        <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                            <hr>
+                            <div class="col-2">
+                                ${transaction.id}
+                            </div>
+                            <div class="col-3">
+                                <img src="${(transaction.creditCard.imageUrl)!}" height="24" width="36" />&emsp;<a href="${links['organization']}/${organization.id}/payment-methods/${transaction.creditCard.token}/view">${(transaction.creditCard.cardType)!} ${labels["ending.in"]} ${(transaction.creditCard.lastFour)!}</a>
+                            </div>
+                            <div class="col-2 text-right">
+                                ${transaction.currencyIsoCode} ${transaction.amount?string["0.00"]}
+                            </div>
+                            <div class="col-2">
+                                ${(transaction.updatedOn?date?string.long)!}
+                            </div>
+                            <div class="col-3">
+                                ${transaction.status}
+                            </div>
+                        </#list>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal" id="modal-billing-address" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <!--Modal: Contact form-->
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <!--Content-->
+                    <div class="modal-content">
+                        <!--Header-->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel">${labels["edit.billing.address"]}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <!--Body-->
+                        <div class="modal-body">
+                            <form class="form" name="billing-address-form" id="billing-address-form" role="form" method="POST" action="${links['organization']}/${organization.id}/billing-address/">
+                                <div class="form-group">
+                                    <input type="text" name="street" id="street" class="form-control" placeholder="${labels['street']}" value="${(organization.subscription.billingAddress.street)!}" autofocus required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="city" id="city" class="form-control" placeholder="${labels['city']}" value="${(organization.subscription.billingAddress.city)!}">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="state" id="state" class="form-control" placeholder="${labels['state']}" value="${(organization.subscription.billingAddress.state)!}">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="postalCode" id="postalCode" class="form-control" placeholder="${labels['postal.code']}" value="${(organization.subscription.billingAddress.postalCode)!}">
+                                </div>
+                                <div class="form-group">
+                                    <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <option value="XX" selected="selected">${labels['select.country']}</option>
+                                        <#list countryList as country>
+                                            <!-- <#if country.code==organization.subscription.billingAddress.countryCode> -->
+                                                <option value="${country.code}" selected="selected">${country.name}</option>
+                                            <!-- <#else> -->
+                                                <option value="${country.code}">${country.name}</option>
+                                            <!-- </#if> -->
+                                        </#list>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-default" id="save-billing-address">${labels["save"]}</button>
+                        </div>
+                    </div>
+                    <!--/.Content-->
+                </div>
+                <!--/Modal: Contact form-->
+            </div>
+
+            <div class="modal" id="modal-payment-method" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <!--Modal: Contact form-->
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <!--Content-->
+                    <div class="modal-content">
+                        <!--Header-->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel">${labels["edit.payment.method"]}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <!--Body-->
+                        <div class="modal-body">
+                            <form class="form" name="payment-method-form" id="payment-method-form" role="form" method="POST" action="${links['organization']}/${organization.id}/credit-card/">
+                                <div class="form-group">
+                                    <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="number" id="number" class="form-control" placeholder="${labels['card.number']}">
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <select class="form-control" name="expirationMonth" id="expirationMonth" placeholder="${labels['mm']}">
+                                                <#assign x=12 />
+                                                <#list 1..x as month>
+                                                    <option value="${month?c}">${month?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <select class="form-control" name="expirationYear" id="expirationYear" placeholder="${labels['yy']}">
+                                                <#assign x=.now?string[ "yyyy"]?number + 19/>
+                                                <#list .now?string[ "yyyy"]?number..x as year>
+                                                    <option value="${year?c}">${year?c}</option>
+                                                </#list>
+                                            </select>
+                                        </div>
+                                        <div class="col-3"></div>
+                                        <div class="col-3">
+                                            <input type="text" name="cvv" id="cvv" class="form-control" placeholder="${labels['cvv']}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-default" id="save-payment-information">${labels["save"]}</button>
+                        </div>
+                    </div>
+                    <!--/.Content-->
+                </div>
+                <!--/Modal: Contact form-->
             </div>
         </div>
     </main>
 
-    <br>
-    <br>
 
-    <div class="modal fade" id="modal-payment-method" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <!--Modal: Contact form-->
-        <div class="modal-dialog cascading-modal" role="document">
-            <!--Content-->
-            <div class="modal-content">
-                <!--Header-->
-                <!--
-                <div class="modal-header primary-color white-text">
-                    <h4 class="title">${labels["edit.payment.method"]}</h4>
-                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
--->
-                <!--Body-->
-                <div class="modal-body">
-                    <div class="row mt-3 mb-3 pull-right">
-                        <div class="col-12">
-                            <button type="link" data-dismiss="modal" aria-label="Close">
-                                <span>&times;</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row mt-3 mb-3">
-                        <div class="col-12">
-                            <h4 class="title">${labels["edit.payment.method"]}</h4>
-                        </div>
-                    </div>
-                    <hr>
-                    <form class="form" name="payment-method-form" id="payment-method-form" role="form" method="POST" action="${links['organization']}/${organization.id}/credit-card/">
-                        <div class="row form-group mt-3">
-                            <div class="col-12">
-                                <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus required>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-12">
-                                <input type="text" name="number" id="number" class="form-control" placeholder="${labels['card.number']}">
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-4">
-                                <select class="form-control" name="expirationMonth" id="expirationMonth" placeholder="${labels['mm']}">
-                                    <#assign x=12 />
-                                    <#list 1..x as month>
-                                        <option value="${month?c}">${month?c}</option>
-                                    </#list>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <select class="form-control" name="expirationYear" id="expirationYear" placeholder="${labels['yy']}">
-                                    <#assign x=.now?string[ "yyyy"]?number + 19/>
-                                    <#list .now?string[ "yyyy"]?number..x as year>
-                                        <option value="${year?c}">${year?c}</option>
-                                    </#list>
-                                </select>
-                            </div>
-                            <div class="col-4">
-                                <input type="text" name="cvv" id="cvv" class="form-control" placeholder="${labels['cvv']}" required>
-                            </div>
-                        </div>
-                    </form>
-                    <hr>
-                    <div class="row pull-right">
-                        <div class="col-12">
-                            <button class="btn btn-light" data-dismiss="modal">${labels["cancel"]}</button>
-                            <button class="btn btn-success" id="save-payment-information">${labels["save"]}</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/.Content-->
+    <!-- Footer -->
+    <footer class="page-footer font-small">
+
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">© 2018 Copyright:
+            <a href="https://mdbootstrap.com/bootstrap-tutorial/"> MDBootstrap.com</a>
         </div>
-        <!--/Modal: Contact form-->
-    </div>
+        <!-- Copyright -->
+
+    </footer>
+    <!-- Footer -->
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>

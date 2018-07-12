@@ -16,7 +16,9 @@ import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
 import com.nowellpoint.console.entity.OrganizationDAO;
-import com.nowellpoint.console.model.BillingContactRequest;
+import com.nowellpoint.console.model.Address;
+import com.nowellpoint.console.model.AddressRequest;
+import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
@@ -238,8 +240,85 @@ public class OrganizationService extends AbstractService {
 		return update(organization);
 	}
 	
-	public Organization update(String id, BillingContactRequest request) {
-		return null;
+	public Organization update(String id, AddressRequest request) {
+		
+		Organization instance = get(id);
+		
+		com.braintreegateway.AddressRequest addressRequest = new com.braintreegateway.AddressRequest()
+				.countryCodeAlpha2(request.getCountryCode())
+				.locality(request.getState())
+				.postalCode(request.getPostalCode())
+				.region(request.getState())
+				.streetAddress(request.getStreet());
+		
+		Result<com.braintreegateway.Address> addressResult = null;
+		
+		Optional<String> addressId = Optional.of(instance)
+				.map(Organization::getSubscription)
+				.map(Subscription::getBillingAddress)
+				.map(Address::getId);
+		
+		if (addressId.isPresent()) {
+			addressResult = gateway.address().update(instance.getNumber(), addressId.get(), addressRequest);
+		} else {
+			addressResult = gateway.address().create(instance.getNumber(), addressRequest);
+		}
+		
+		if (addressResult.getMessage() != null) {
+			throw new ValidationException(addressResult.getMessage());
+		}
+		
+		Address billingAddress = Address.builder()
+				.from(instance.getSubscription().getBillingAddress())
+				.city(request.getCity())
+				.countryCode(request.getCountryCode())
+				.id(addressResult.getTarget().getId())
+				.postalCode(request.getPostalCode())
+				.state(request.getState())
+				.street(request.getStreet())
+				.updatedOn(Date.from(Instant.now()))
+				.build();
+		
+		Subscription subscription = Subscription.builder()
+				.from(instance.getSubscription())
+				.billingAddress(billingAddress)
+				.updatedOn(Date.from(Instant.now()))
+				.build();
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.subscription(subscription)
+				.build();
+		
+		return update(organization);
+	}
+	
+	public Organization update(String id, ContactRequest request) {
+		
+		Organization instance = get(id);
+		
+		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.phone(request.getPhone());
+		
+		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
+		
+		if (customerResult.getMessage() != null) {
+			throw new ValidationException(customerResult.getMessage());
+		}
+		
+		Subscription subscription = Subscription.builder()
+				.from(instance.getSubscription())
+				.build();
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.subscription(subscription)
+				.build();
+		
+		return update(organization);
 	}
 	
 	private Organization update(Organization organization) {
