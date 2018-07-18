@@ -16,8 +16,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class AuthenticationService extends AbstractService {
 	
-	private final IdentityService identityService = new IdentityService();
-	
 	public AuthenticationService() {
 		
 	}
@@ -43,6 +41,8 @@ public class AuthenticationService extends AbstractService {
 		TokenResponse response = client.authenticate(request);
 		
 		Jws<Claims> claims = client.getClaims(response.getAccessToken());
+		
+		IdentityService identityService = new IdentityService();
 		
 		Identity identity = identityService.getBySubject(claims.getBody().getSubject());
 		

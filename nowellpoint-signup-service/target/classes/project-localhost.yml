@@ -1,0 +1,25 @@
+logger:
+    level: DEBUG
+swarm:
+    http:
+        port: 5000
+    https:
+        certificate:
+            generate: true
+        port: 5100
+    management:
+        http:
+          port: 5990
+        https:
+          port: 5993       
+registration:
+    send:
+      notification: false
+    email:
+      template:
+        id: 3e2b0449-2ff8-40cb-86eb-32cad32886de         
+api:
+    hostname: http://localhost:5000/rest
+verify:
+    email:
+      redirect: https://localhost:8443/verify-email           

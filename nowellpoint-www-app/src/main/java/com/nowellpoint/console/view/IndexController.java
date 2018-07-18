@@ -16,8 +16,6 @@ import spark.Response;
 
 public class IndexController {
 	
-	private static final LeadService leadService = new LeadService();
-	
 	public static void configureRoutes(Configuration configuration) {
 		
 		get(Path.Route.INDEX, (request, response) 
@@ -91,6 +89,8 @@ public class IndexController {
     			.lastName(lastName)
     			.message(message)
     			.build();
+    	
+    	LeadService leadService = new LeadService();
     	
     	leadService.createLead(leadRequest);
     	

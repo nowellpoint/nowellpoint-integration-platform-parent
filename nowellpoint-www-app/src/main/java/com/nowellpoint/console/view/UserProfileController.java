@@ -24,9 +24,7 @@ import spark.Request;
 import spark.Response;
 
 public class UserProfileController extends BaseController {
-	
-	private static final UserProfileService userProfileService = new UserProfileService();
-	
+		
 	public static void configureRoutes(Configuration configuration) {
 		
 		get(Path.Route.USER_PROFILE, (request, response) 
@@ -53,6 +51,8 @@ public class UserProfileController extends BaseController {
 	private static String viewUserProfile(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
+		
+		UserProfileService userProfileService = new UserProfileService();
 		
 		UserProfile userProfile = userProfileService.get(id);
 		
@@ -94,6 +94,8 @@ public class UserProfileController extends BaseController {
 				.email(email)
 				.phone(phone)
 				.build();
+		
+		UserProfileService userProfileService = new UserProfileService();
 		
 		UserProfile userProfile = userProfileService.update(id, userProfileRequest);
 		
@@ -141,6 +143,8 @@ public class UserProfileController extends BaseController {
 				.street(street)
 				.build();
 		
+		UserProfileService userProfileService = new UserProfileService();
+		
 		UserProfile userProfile = userProfileService.update(id, addressRequest);
 		
 		Template template = Template.builder()
@@ -165,6 +169,8 @@ public class UserProfileController extends BaseController {
 				.locale(locale)
 				.timeZone(timeZone)
 				.build();
+		
+		UserProfileService userProfileService = new UserProfileService();
 		
 		UserProfile userProfile = userProfileService.update(id, userPreferenceRequest);
 		

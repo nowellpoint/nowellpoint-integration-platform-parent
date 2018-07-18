@@ -138,44 +138,39 @@
 
     <div class="modal fade" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
-        <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">    
             <!--Content-->
             <div class="modal-content">
                 <!--Header-->
-                <div class="modal-header primary-color white-text">
-                    <h4 class="title">${labels["edit.user.profile"]}</h4>
-                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
-                        <span aria-hidden="true">×</span>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">${labels["edit.user.profile"]}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <!--Body-->
                 <div class="modal-body">
                     <form class="form" name="form-user-information" id="form-user-information" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
-                        <div class="row form-group">
-                            <b><label for="firstName">${labels["first.name"]}</label></b>
-                            <input type="text" name="firstName" id="firstName" class="form-control form-control-lg" value="${userProfile.firstName!}" autofocus>
+                        <div class="form-group">
+                            <input type="text" name="firstName" id="firstName" class="form-control" placeholder="${labels['first.name']}" value="${userProfile.firstName!}" autofocus>
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="lastName">${labels["last.name"]}</label></b>
-                            <input type="text" name="lastName" id="lastName" class="form-control form-control-lg" value="${userProfile.lastName!}" required>
+                        <div class="form-group">
+                            <input type="text" name="lastName" id="lastName" class="form-control" placeholder="${labels['last.name']}" value="${userProfile.lastName!}" required>
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="email">${labels["email"]}</label></b>
-                            <input type="text" name="email" id="email" class="form-control form-control-lg" value="${userProfile.email!}" required>
+                        <div class="form-group">
+                            <input type="text" name="email" id="email" class="form-control" placeholder="${labels['email']}" value="${userProfile.email!}" required>
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="phone">${labels["phone"]}</label></b>
-                            <input type="text" name="phone" id="phone" class="form-control form-control-lg" value="${userProfile.phone!}">
+                        <div class="form-group">
+                            <input type="text" name="phone" id="phone" class="form-control" placeholder="${labels['phone']}" value="${userProfile.phone!}">
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="title">${labels["title"]}</label></b>
-                            <input type="text" name="title" id="title" class="form-control form-control-lg" value="${userProfile.title!}">
+                        <div class="form-group">
+                            <input type="text" name="title" id="title" class="form-control" placeholder="${labels['title']}" value="${userProfile.title!}">
                         </div>
                     </form>
-                    <div class="row">
-                        <button class="btn btn-primary" id="save-user-information">${labels["save"]}</button>
-                    </div>
                 </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="save-user-information">${labels["save"]}</button>
+                </div>    
             </div>
             <!--/.Content-->
         </div>
@@ -184,38 +179,33 @@
 
     <div class="modal fade" id="modal-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
-        <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <!--Content-->
             <div class="modal-content">
                 <!--Header-->
-                <div class="modal-header primary-color white-text">
-                    <h4 class="title">${labels["edit.address"]}</h4>
-                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
-                        <span aria-hidden="true">×</span>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">${labels["edit.address"]}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <!--Body-->
                 <div class="modal-body">
                     <form class="form" name="form-address" id="form-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
-                        <div class="row form-group">
-                            <b><label class="control-label" for="street">${labels["street"]}</label></b>
-                            <input type="text" class="form-control form-control-lg" name="street" id="street" value="${(userProfile.address.street)!}" />
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(userProfile.address.street)!}" />
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="city">${labels["city"]}</label></b>
-                            <input type="text" class="form-control form-control-lg" name="city" id="city" value="${(userProfile.address.city)!}" />
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(userProfile.address.city)!}" />
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="state">${labels["state"]}</label></b>
-                            <input type="text" class="form-control form-control-lg" name="state" id="state" value="${(userProfile.address.state)!}" />
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(userProfile.address.state)!}" />
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="postalCode">${labels["postal.code"]}</label></b>
-                            <input type="text" class="form-control form-control-lg" name="postalCode" id="postalCode" value="${(userProfile.address.postalCode)!}" />
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['postal.code']}" value="${(userProfile.address.postalCode)!}" />
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="countryCode">${labels["country"]}</label></b>
-                            <select id="countryCode" name="countryCode" class="form-control form-control-lg" required>
+                        <div class="form-group">
+                            <select id="countryCode" name="countryCode" class="form-control" required>
                                 <#list countryList as country>
                                     <#if country.code==userProfile.address.countryCode>
                                         <option value="${country.code}" selected="selected">${country.name}</option>
@@ -227,9 +217,9 @@
                             </select>
                         </div>
                     </form>
-                    <div class="row">
-                        <button class="btn btn-primary" id="save-address">${labels["save"]}</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="save-address">${labels["save"]}</button>
                 </div>
             </div>
             <!--/.Content-->
@@ -239,24 +229,24 @@
 
     <div class="modal fade" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <!--Modal: Contact form-->
-        <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
 
             <!--Content-->
             <div class="modal-content">
 
                 <!--Header-->
-                <div class="modal-header primary-color white-text">
-                    <h4 class="title">${labels["edit.user.preferences"]}</h4>
-                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="${labels['close']}">
-                        <span aria-hidden="true">×</span>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">${labels["edit.user.preferences"]}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <!--Body-->
                 <div class="modal-body">
                     <form class="form" name="form-preferences" id="form-preferences" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/preferences/">
-                        <div class="row form-group">
-                            <b><label class="control-label" for="locale">${labels["locale.key"]}</label></b>
-                            <select id="locale" name="locale" class="form-control form-control-lg" required>
+                        <div class="form-group">
+                            <select id="locale" name="locale" class="form-control" required>
+                                <option value="" disabled selected>${labels["locale.key"]}</option>
                                 <#list locales?keys as key>
                                     <#if userProfile.preferences.locale==key>
                                         <option value="${key}" selected="selected">${locales[key]}</option>
@@ -267,9 +257,10 @@
                                 </#list>
                             </select>
                         </div>
-                        <div class="row form-group">
-                            <b><label class="control-label" for="timeZone">${labels["timezone.key"]}</label></b>
-                            <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
+                        <div class="form-group">
+                            <b><label class="control-label" for="timeZone"></label></b>
+                            <select id="timeZone" name="timeZone" class="form-control" required>
+                                <option value="" disabled selected>${labels["timezone"]}</option>
                                 <#list timeZones as timeZone>
                                     <#if userProfile.preferences.timeZone==timeZone>
                                         <option value="${timeZone}" selected="selected">${timeZone}</option>
@@ -281,11 +272,10 @@
                             </select>
                         </div>
                     </form>
-                    <div class="row">
-                        <button class="btn btn-primary" id="save-preferences">${labels["save"]}</button>
-                    </div>
-
                 </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="save-preferences">${labels["save"]}</button>
+                </div>    
             </div>
             <!--/.Content-->
         </div>

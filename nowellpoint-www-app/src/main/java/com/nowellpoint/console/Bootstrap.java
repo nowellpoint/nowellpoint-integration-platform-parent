@@ -31,6 +31,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.console.view.AdministrationController;
+import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.ConnectorController;
 import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.JobController;
@@ -77,6 +78,8 @@ public class Bootstrap implements SparkApplication {
 		//
 		// setup routes
 		//
+		
+		new AuthenticationController().configureRoutes(configuration);
 		
 		configureRoutes(configuration);
 

@@ -29,7 +29,6 @@ import javax.ws.rs.InternalServerErrorException;
 public class AuthenticationController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
-	private static final AuthenticationService authenticationService = new AuthenticationService();
 	private static final String REDIRECT_URI = "redirect_uri";
 
 	public static void configureRoutes(Configuration configuration) {
@@ -50,6 +49,8 @@ public class AuthenticationController {
 		String password = request.queryParams("password");
 		
 		request.session().invalidate();
+		
+		AuthenticationService authenticationService = new AuthenticationService();
 		
 		Token token = null;
 		try {
@@ -119,6 +120,8 @@ public class AuthenticationController {
     	Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 
 		if (cookie.isPresent()) {
+			
+			AuthenticationService authenticationService = new AuthenticationService();
 
 			try {
 				Token token = new ObjectMapper().readValue(cookie.get(), Token.class);

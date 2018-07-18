@@ -22,7 +22,6 @@ import spark.Response;
 
 public class Filters {
 	
-	private static final IdentityService identityService = new IdentityService();
 	private static final String REDIRECT_URI = "redirect_uri";
 	
 	public static void setupFilters() {
@@ -48,6 +47,8 @@ public class Filters {
 		if (cookie.isPresent()) {
 			
 			Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
+			
+			IdentityService identityService = new IdentityService();
 			
 			Identity identity = identityService.getIdentity(token.getId());
 			

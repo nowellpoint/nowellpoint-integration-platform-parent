@@ -26,10 +26,6 @@ import spark.Response;
 
 public class OrganizationController extends BaseController {
 	
-	private static final OrganizationService organizationService = new OrganizationService();
-	
-	private static final PlanService planService = new PlanService();
-	
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
 				-> viewOrganization(configuration, request, response));
@@ -65,6 +61,8 @@ public class OrganizationController extends BaseController {
 
 		String id = request.params(":id");
 		
+		OrganizationService organizationService = new OrganizationService();
+		
 		Organization organization = organizationService.get(id);
 		
 		Template template = Template.builder()
@@ -89,6 +87,9 @@ public class OrganizationController extends BaseController {
 	private static String listPlans(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
+		
+		OrganizationService organizationService = new OrganizationService();
+		PlanService planService = new PlanService();
 		
 		Organization organization = organizationService.get(id);
 		
@@ -157,6 +158,9 @@ public class OrganizationController extends BaseController {
 		String expirationYear = request.queryParamOrDefault("expirationYear", null);
 		String cvv = request.queryParamOrDefault("cvv", null);
 		
+		OrganizationService organizationService = new OrganizationService();
+		PlanService planService = new PlanService();
+		
 		Plan plan = planService.get(planId);
 		
 		if ("FREE".equals(plan.getPlanCode()) || cardholderName == null) {
@@ -194,6 +198,9 @@ public class OrganizationController extends BaseController {
 		
 		String id = request.params(":id");
 		String planId = request.params(":planId");
+		
+		OrganizationService organizationService = new OrganizationService();
+		PlanService planService = new PlanService();
 		
 		Organization organization = organizationService.get(id);
 		
@@ -237,6 +244,8 @@ public class OrganizationController extends BaseController {
 				.state(state)
 				.street(street)
 				.build();
+		
+		OrganizationService organizationService = new OrganizationService();
 		
 		try {
 			
@@ -282,6 +291,8 @@ public class OrganizationController extends BaseController {
 				.lastName(lastName)
 				.phone(phone)
 				.build();
+		
+		OrganizationService organizationService = new OrganizationService();
 		
 		try {
 			
@@ -330,6 +341,8 @@ public class OrganizationController extends BaseController {
 				.expirationYear(expirationYear)
 				.number(number)
 				.build();
+		
+		OrganizationService organizationService = new OrganizationService();
 		
 		try {
 			
