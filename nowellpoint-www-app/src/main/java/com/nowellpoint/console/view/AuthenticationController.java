@@ -3,7 +3,7 @@ package com.nowellpoint.console.view;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
-import com.nowellpoint.console.service.AuthenticationService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.oauth.model.OAuthClientException;
@@ -50,11 +50,28 @@ public class AuthenticationController {
 		
 		request.session().invalidate();
 		
-		AuthenticationService authenticationService = new AuthenticationService();
-		
-		Token token = null;
 		try {
-			token = authenticationService.authenticate(username, password);
+			
+			Token token = ServiceClient.getInstance()
+					.authentication()
+					.authenticate(username, password);
+			
+			Long expiresIn = token.getExpiresIn();
+			
+			try {			
+				response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true, true);
+			} catch (IOException e) {
+				throw new InternalServerErrorException(e);
+			}
+			
+			if (request.queryParams(REDIRECT_URI) != null && !request.queryParams(REDIRECT_URI).isEmpty()) {
+				response.redirect(request.queryParams(REDIRECT_URI));
+			} else {
+				response.redirect(Path.Route.START);
+			}
+			
+			return "";
+			
 		} catch (OAuthClientException e) {
 
 			String acceptLanguages = request.headers("Accept-Language");
@@ -83,22 +100,6 @@ public class AuthenticationController {
 		} catch (UnsupportedEncodingException e) {
 			throw new InternalServerErrorException(e);
 		}
-		
-		Long expiresIn = token.getExpiresIn();
-		
-		try {			
-			response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true, true);
-		} catch (IOException e) {
-			throw new InternalServerErrorException(e);
-		}
-		
-		if (request.queryParams(REDIRECT_URI) != null && !request.queryParams(REDIRECT_URI).isEmpty()) {
-			response.redirect(request.queryParams(REDIRECT_URI));
-		} else {
-			response.redirect(Path.Route.START);
-		}
-		
-		return "";
 	}
 	
 	private static String serveLoginPage(Configuration configuration, Request request, Response response) {
@@ -120,12 +121,10 @@ public class AuthenticationController {
     	Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 
 		if (cookie.isPresent()) {
-			
-			AuthenticationService authenticationService = new AuthenticationService();
 
 			try {
 				Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
-				authenticationService.revoke(token.getAccessToken());
+				ServiceClient.getInstance().authentication().revoke(token.getAccessToken());
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}

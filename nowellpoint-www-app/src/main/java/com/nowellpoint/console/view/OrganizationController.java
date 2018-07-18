@@ -14,8 +14,7 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Template;
-import com.nowellpoint.console.service.OrganizationService;
-import com.nowellpoint.console.service.PlanService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Alert;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
@@ -61,9 +60,9 @@ public class OrganizationController extends BaseController {
 
 		String id = request.params(":id");
 		
-		OrganizationService organizationService = new OrganizationService();
-		
-		Organization organization = organizationService.get(id);
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(id);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -88,12 +87,13 @@ public class OrganizationController extends BaseController {
 		
 		String id = request.params(":id");
 		
-		OrganizationService organizationService = new OrganizationService();
-		PlanService planService = new PlanService();
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(id);
 		
-		Organization organization = organizationService.get(id);
-		
-		List<Plan> plans = planService.getPlans(Locale.getDefault().toString());
+		List<Plan> plans = ServiceClient.getInstance()
+				.plan()
+				.getPlans(Locale.getDefault().toString());
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -158,13 +158,12 @@ public class OrganizationController extends BaseController {
 		String expirationYear = request.queryParamOrDefault("expirationYear", null);
 		String cvv = request.queryParamOrDefault("cvv", null);
 		
-		OrganizationService organizationService = new OrganizationService();
-		PlanService planService = new PlanService();
-		
-		Plan plan = planService.get(planId);
+		Plan plan = ServiceClient.getInstance()
+				.plan()
+				.get(planId);
 		
 		if ("FREE".equals(plan.getPlanCode()) || cardholderName == null) {
-			organizationService.setPlan(id, plan);
+			ServiceClient.getInstance().organization().setPlan(id, plan);
 		} else {
 			
 			CreditCardRequest creditCardRequest = CreditCardRequest.builder()
@@ -176,7 +175,7 @@ public class OrganizationController extends BaseController {
 					.build();
 			
 			try {
-				organizationService.setPlan(id, plan, creditCardRequest);
+				ServiceClient.getInstance().organization().setPlan(id, plan, creditCardRequest);
 			} catch (ValidationException e) {
 				response.status(400);
 				return Alert.showError(e.getMessage());
@@ -199,12 +198,13 @@ public class OrganizationController extends BaseController {
 		String id = request.params(":id");
 		String planId = request.params(":planId");
 		
-		OrganizationService organizationService = new OrganizationService();
-		PlanService planService = new PlanService();
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(id);
 		
-		Organization organization = organizationService.get(id);
-		
-		Plan plan = planService.get(planId);
+		Plan plan = ServiceClient.getInstance()
+				.plan()
+				.get(planId);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -245,11 +245,11 @@ public class OrganizationController extends BaseController {
 				.street(street)
 				.build();
 		
-		OrganizationService organizationService = new OrganizationService();
-		
 		try {
 			
-			Organization organization = organizationService.update(id, addressRequest);
+			Organization organization = ServiceClient.getInstance()
+					.organization()
+					.update(id, addressRequest);
 			
 			Template template = Template.builder()
 					.configuration(configuration)
@@ -292,11 +292,11 @@ public class OrganizationController extends BaseController {
 				.phone(phone)
 				.build();
 		
-		OrganizationService organizationService = new OrganizationService();
-		
 		try {
 			
-			Organization organization = organizationService.update(id, contactRequest);
+			Organization organization = ServiceClient.getInstance()
+					.organization()
+					.update(id, contactRequest);
 			
 			Template template = Template.builder()
 					.configuration(configuration)
@@ -342,11 +342,11 @@ public class OrganizationController extends BaseController {
 				.number(number)
 				.build();
 		
-		OrganizationService organizationService = new OrganizationService();
-		
 		try {
 			
-			Organization organization = organizationService.update(id, creditCardRequest);
+			Organization organization = ServiceClient.getInstance()
+					.organization()
+					.update(id, creditCardRequest);
 			
 			Template template = Template.builder()
 					.configuration(configuration)
