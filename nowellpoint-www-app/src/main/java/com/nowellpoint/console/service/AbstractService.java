@@ -2,13 +2,17 @@ package com.nowellpoint.console.service;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -163,7 +167,11 @@ public abstract class AbstractService {
 	protected <T extends Serializable> void putEntry(String key, T value) {
 		Jedis jedis = jedisPool.getResource();
 		try {
-			jedis.set(key.getBytes(), SerializationUtils.serialize(value));
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+			byte[] bytes = cipher.doFinal(SerializationUtils.serialize(value));
+			jedis.set(key.getBytes(), bytes);
+		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
 		} finally {
 			jedis.close();
 		}
@@ -181,6 +189,13 @@ public abstract class AbstractService {
 		
 		T value = null;
 		if (bytes != null) {
+			try {
+				cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+				bytes = cipher.doFinal(bytes);
+			} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+				e.printStackTrace();
+			}
+			
 			value = SerializationUtils.deserialize(bytes);
 		}
 		

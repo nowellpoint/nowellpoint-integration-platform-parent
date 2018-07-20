@@ -10,7 +10,6 @@ import com.nowellpoint.console.entity.IdentityDAO;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
-import com.nowellpoint.util.Assert;
 
 public class IdentityServiceImpl extends AbstractService implements IdentityService {
 	
@@ -25,7 +24,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		com.nowellpoint.console.entity.Identity entity = getEntry(id);
 		
-		if (Assert.isNull(entity)) {
+		if (entity == null) {
 			
 			try {
 				entity = identityDAO.get(new ObjectId(id));
@@ -33,7 +32,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				throw new BadRequestException(String.format("Invalid Identity Id: %s", id));
 			}
 			
-			if (Assert.isNull(entity)) {
+			if (entity == null) {
 				throw new NotFoundException(String.format("Identity Id: %s was not found", id));
 			}
 			
