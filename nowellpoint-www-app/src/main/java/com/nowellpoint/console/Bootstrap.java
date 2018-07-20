@@ -79,8 +79,6 @@ public class Bootstrap implements SparkApplication {
 		// setup routes
 		//
 		
-		new AuthenticationController().configureRoutes(configuration);
-		
 		configureRoutes(configuration);
 
 		//

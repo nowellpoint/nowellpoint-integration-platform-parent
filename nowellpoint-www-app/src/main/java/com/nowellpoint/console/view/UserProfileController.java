@@ -15,7 +15,7 @@ import com.nowellpoint.console.model.UserAddressRequest;
 import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
-import com.nowellpoint.console.service.UserProfileService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
 
@@ -52,9 +52,9 @@ public class UserProfileController extends BaseController {
 		
 		String id = request.params(":id");
 		
-		UserProfileService userProfileService = new UserProfileService();
-		
-		UserProfile userProfile = userProfileService.get(id);
+		UserProfile userProfile = ServiceClient.getInstance()
+				.userProfile()
+				.get(id);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -95,9 +95,9 @@ public class UserProfileController extends BaseController {
 				.phone(phone)
 				.build();
 		
-		UserProfileService userProfileService = new UserProfileService();
-		
-		UserProfile userProfile = userProfileService.update(id, userProfileRequest);
+		UserProfile userProfile = ServiceClient.getInstance()
+				.userProfile()
+				.update(id, userProfileRequest);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -108,13 +108,6 @@ public class UserProfileController extends BaseController {
 				.build();
 		
 		return template.render();
-		
-//		if (updateResult.isSuccess()) {
-			
-			
-//		} else {
-	//		return null; //showErrorMessage(UserProfileController.class, configuration, request, response, updateResult.getErrorMessage());
-//		}
 	}
 	
 	/**
@@ -143,9 +136,9 @@ public class UserProfileController extends BaseController {
 				.street(street)
 				.build();
 		
-		UserProfileService userProfileService = new UserProfileService();
-		
-		UserProfile userProfile = userProfileService.update(id, addressRequest);
+		UserProfile userProfile = ServiceClient.getInstance()
+				.userProfile()
+				.update(id, addressRequest);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -170,9 +163,9 @@ public class UserProfileController extends BaseController {
 				.timeZone(timeZone)
 				.build();
 		
-		UserProfileService userProfileService = new UserProfileService();
-		
-		UserProfile userProfile = userProfileService.update(id, userPreferenceRequest);
+		UserProfile userProfile = ServiceClient.getInstance()
+				.userProfile()
+				.update(id, userPreferenceRequest);
 		
 		Template template = Template.builder()
 				.configuration(configuration)

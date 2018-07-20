@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -183,5 +185,9 @@ public abstract class AbstractService {
 		}
 		
 		return value;
+	}
+	
+	protected Date getCurrentDateTime() {
+		return Date.from(Instant.now());
 	}
 }

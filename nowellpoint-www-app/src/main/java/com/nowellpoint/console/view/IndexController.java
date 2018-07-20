@@ -5,7 +5,7 @@ import static spark.Spark.post;
 
 import com.nowellpoint.console.model.LeadRequest;
 import com.nowellpoint.console.model.Template;
-import com.nowellpoint.console.service.LeadService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
@@ -90,12 +90,8 @@ public class IndexController {
     			.message(message)
     			.build();
     	
-    	LeadService leadService = new LeadService();
-    	
-    	leadService.createLead(leadRequest);
+    	ServiceClient.getInstance().lead().createLead(leadRequest);
     	
     	return MessageProvider.getMessage(configuration.getLocale(), "contact.confirmation.message");
 	};
-	
-	
 }

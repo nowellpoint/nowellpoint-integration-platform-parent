@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
-import com.nowellpoint.console.service.IdentityService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.www.app.util.Path;
 
 import spark.Request;
@@ -48,9 +48,9 @@ public class Filters {
 			
 			Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
 			
-			IdentityService identityService = new IdentityService();
-			
-			Identity identity = identityService.getIdentity(token.getId());
+			Identity identity = ServiceClient.getInstance()
+					.identity()
+					.getIdentity(token.getId());
 			
 			Locale locale =  Optional.ofNullable(identity.getLocale()).orElse(request.attribute(RequestAttributes.LOCALE));
 			
