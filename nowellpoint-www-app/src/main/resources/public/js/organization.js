@@ -43,9 +43,10 @@
                 if (response.status == 200) {
                 	$('#modal-payment-method').modal('toggle');
                     $('#organization-payment-method').html(response.responseText);
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function() {
-                        $("#success-alert").slideUp(500);
-                    }); 
+                    $('#success-modal').modal('toggle');
+                    setTimeout(function() {
+                    	$('#success-modal').modal('toggle');
+                    }, 2000);
                 } else {
                     $form.prepend(response.responseText);
                 }
@@ -73,9 +74,9 @@
             data: $form.serialize(),
             complete: function(response) {
                 if (response.status == 200) {
-                	$('#success-popup').modal('show');
+                	$('#change-plan-success-popup').modal('toggle');
                 	setTimeout(function() {
-                		  $('.success-popup').modal( 'hide');
+                		  $('#change-plan-success-popup').modal( 'toggle');
                 		  var organization = JSON.parse(sessionStorage.getItem("organization"));
                 		  $(location).attr("href", organization.basePath + "/" + organization.id + "/");
                 		}, 2000);                	
@@ -95,6 +96,8 @@
      */
 
     $(document).on('click', 'button#save-billing-address', function () {
+    	
+    	$('#error').remove();
 
         $form = $("#billing-address-form");
 
@@ -106,10 +109,12 @@
             complete: function (response) {
             	if (response.status == 200) {
                 	$('#modal-billing-address').modal('toggle');
-                    $('#organization-billing-address').html(response.responseText);
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function() {
-                        $("#success-alert").slideUp(500);
-                    }); 
+                    $('#organization-billing-address').html(response.responseText); 
+                    $('#success-modal').modal('toggle');
+                    setTimeout(function() {
+                    	$('#success-modal').modal('toggle');
+                    }, 2000);
+
                 } else {
                     $form.prepend(response.responseText);
                 }
@@ -124,14 +129,11 @@
      *
      */
 
-    $(document).on('click', 'button#saveBillingContact', function (e) {
-        e.preventDefault();
+    $(document).on('click', 'button#saveBillingContact', function () {
 
         $('#error').remove();
 
-        $('#overlay').show();
-
-        $form = $("#billingContactForm");
+        $form = $("#billing-contact-form");
 
         $.ajax({
             type: $form.attr('method'),
@@ -139,16 +141,21 @@
             dataType: "html",
             data: $form.serialize(),
             complete: function (response) {
-                $('#overlay').hide();
-                if (response.status == 200) {
-                    $('#content').html(response.responseText);
+            	if (response.status == 200) {
+                	$('#modal-billing-address').modal('toggle');
+                    $('#organization-billing-contact').html(response.responseText); 
+                    $('#success-modal').modal('toggle');
+                    setTimeout(function() {
+                    	$('#success-modal').modal('toggle');
+                    }, 2000);
+
                 } else {
                     $form.prepend(response.responseText);
                 }
             }
         });
 
-        return true;
+        return false;
     });
     
    /*-----------------------------------------------------------
