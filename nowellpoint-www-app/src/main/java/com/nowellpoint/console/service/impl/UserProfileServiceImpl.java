@@ -40,8 +40,7 @@ public class UserProfileServiceImpl extends AbstractService implements UserProfi
 			throw new NotFoundException(String.format("UserProfile Id: %s was not found",id));
 		}
 		
-		UserProfile userProfile = UserProfile.of(entity);
-		return userProfile;
+		return UserProfile.of(entity);
 	}
 	
 	@Override

@@ -41,50 +41,24 @@
         sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
     </script>
 
-    <!--Double navigation-->
-    <header>
-        <!-- Navbar -->
-        <nav class="navbar fixed-top navbar-toggleable-md navbar-expand-lg scrolling-navbar double-nav sticky-top">
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-brand">${messages["application.title"]}</div>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="nav navbar-nav nav-flex-icons mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['start']}">
-                            <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
-                    </li>
-                </ul>
-                <#include "navbar-menu.html" />
-            </div>
-        </nav>
-        <!-- /.Navbar -->
-    </header>
-    <!--/.Double navigation-->
+    <#include "header.html" />
 
     <!--Main Layout-->
     <main>
+        
+        <br>
+        <br>
+        
         <div class="container mt-5">
             <div class="card border-light mb-3">
-                <div class="card-header">
+                <div class="card-header pt-3">
                     <div class="row">
                         <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["user.information"]}</h4>
+                            <h6><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["user.information"]}</h6>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button>
+                            <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-user-information" tooltip="${labels['update']}"></i></p></h6>
+                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>
@@ -94,13 +68,14 @@
             </div>
             <br>
             <div class="card border-light mb-3">
-                <div class="card-header">
+                <div class="card-header pt-3">
                     <div class="row">
                         <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-address-card-o fa-lg light-blue-text"></i>&emsp;${labels["address"]}</h4>
+                            <h6><i class="fa fa-address-card-o fa-lg light-blue-text"></i>&emsp;${labels["address"]}</h6>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${messages["edit"]}</button>
+                            <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-address" tooltip="${labels['update']}"></i></p></h6>
+                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>
@@ -110,13 +85,14 @@
             </div>
             <br>
             <div class="card border-light mb-3">
-                <div class="card-header">
+                <div class="card-header pt-3">
                     <div class="row">
                         <div class="col-6 align-self-center">
-                            <h4><i class="fa fa-bolt fa-lg light-blue-text"></i>&emsp;${labels["preferences"]}</h4>
+                            <h6><i class="fa fa-bolt fa-lg light-blue-text"></i>&emsp;${labels["preferences"]}</h4>
                         </div>
                         <div class="col-6 text-right">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${messages["edit"]}</button>
+                            <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-preferences" tooltip="${labels['update']}"></i></p></h6>
+                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>

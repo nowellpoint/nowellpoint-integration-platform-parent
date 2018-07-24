@@ -59,8 +59,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new NotFoundException(String.format("Organization Id: %s was not found",id));
 		}
 		
-		Organization organization = Organization.of(entity);
-		return organization;
+		return Organization.of(entity);
 	}
 	
 	@Override

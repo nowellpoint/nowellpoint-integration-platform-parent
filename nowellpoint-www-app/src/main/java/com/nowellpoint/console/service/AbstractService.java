@@ -30,15 +30,18 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.console.entity.Lead;
+import com.nowellpoint.console.entity.UserProfile;
+import com.nowellpoint.console.entity.Plan;
+import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.ModifiableAddress;
 import com.nowellpoint.console.model.ModifiableCreditCard;
-import com.nowellpoint.console.model.ModifiableOrganization;
+//import com.nowellpoint.console.model.ModifiableOrganization;
 import com.nowellpoint.console.model.ModifiablePhotos;
 import com.nowellpoint.console.model.ModifiablePreferences;
 import com.nowellpoint.console.model.ModifiableSubscription;
-import com.nowellpoint.console.model.Organization;
+//import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Photos;
 import com.nowellpoint.console.model.Preferences;
 import com.nowellpoint.console.model.Subscription;
@@ -65,6 +68,9 @@ public abstract class AbstractService {
         final Morphia morphia = new Morphia();
         
         morphia.map(Lead.class);
+        morphia.map(UserProfile.class);
+        morphia.map(Plan.class);
+        morphia.map(Organization.class);
 
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();
@@ -100,12 +106,12 @@ public abstract class AbstractService {
 				return source == null ? null : modelMapper.map(source, ModifiablePreferences.class).toImmutable();
 			}
 		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Organization, Organization>() {		
-			@Override
-			protected Organization convert(com.nowellpoint.console.entity.Organization source) {
-				return source == null ? null : modelMapper.map(source, ModifiableOrganization.class).toImmutable();
-			}
-		});
+//		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Organization, Organization>() {		
+//			@Override
+//			protected Organization convert(com.nowellpoint.console.entity.Organization source) {
+//				return source == null ? null : modelMapper.map(source, ModifiableOrganization.class).toImmutable();
+//			}
+//		});
 		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Photos, Photos>() {		
 			@Override
 			protected Photos convert(com.nowellpoint.console.entity.Photos source) {

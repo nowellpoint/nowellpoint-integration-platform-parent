@@ -2,8 +2,11 @@
     <div class="col-3">
         <span class="grey-text">${labels["plan.name"]}</span>
     </div>
-    <div class="col-9">
+    <div class="col-6">
         ${organization.subscription.planName}
+    </div>
+    <div class="col-3">
+        <a href="${links['organization']}/${organization.id}/plans/" class="pull-right">${labels["change.plan"]}</a>
     </div>
 </div>
 <hr>
@@ -24,16 +27,3 @@
         ${organization.subscription.nextBillingDate?date?string.long}
     </div>
 </div>
-
-<!--
-<#list organization.subscription.features?sort_by( "sortOrder") as feature>
-    <div class="row">
-        <div class="col-3">
-            <strong>${feature.name}</strong>
-        </div>
-        <div class="col-9">
-            ${feature.quantity}
-        </div>
-    </div>    
-</#list>
--->

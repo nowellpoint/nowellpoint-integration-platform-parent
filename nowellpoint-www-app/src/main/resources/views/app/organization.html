@@ -16,7 +16,7 @@
     <link href="/css/custom.css" rel="stylesheet">
 </head>
 
-<body class="fixed-sn mdb-skin">
+<body>
 
     <script>
         var billingContact = {
@@ -48,39 +48,8 @@
 
         sessionStorage.setItem("organization", JSON.stringify(organization));
     </script>
-
-
-    <header>
-
-        <!-- Navbar -->
-        <nav class="navbar navbar-default fixed-top navbar-light bg-white navbar-expand-lg">
-            <div class="navbar-brand">${messages["application.title"]}</div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="nav navbar-nav nav-flex-icons mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['start']}">
-                            <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
-                    </li>
-                </ul>
-                <#include "navbar-menu.html" />
-            </div>
-        </nav>
-        <!-- /.Navbar -->
-    </header>
-    <!--/.Double navigation-->
+    
+    <#include "header.html" />
 
     <!--Main Layout-->
     <main>
@@ -89,13 +58,12 @@
         <br>
 
         <div class="container-fluid">
-
             <div class="container mt-5">
                 <div class="card border-light mb-3">
-                    <div class="card-header pt-4">
+                    <div class="card-header pt-3">
                         <div class="row">
                             <div class="col-12 align-self-center">
-                                <h4><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h4>
+                                <h6><i class="fa fa-info-circle fa-lg light-blue-text"></i>&emsp;${labels["organization.information"]}</h6>
                             </div>
                         </div>
                     </div>
@@ -106,13 +74,10 @@
             </div>
             <div class="container mt-5">
                 <div class="card border-light mb-3">
-                    <div class="card-header">
+                    <div class="card-header pt-3">
                         <div class="row">
-                            <div class="col-6 align-self-center">
-                                <h4><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h4>
-                            </div>
-                            <div class="col-6 text-right">
-                                <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-warning" role="button">${labels["change.plan"]}</a>
+                            <div class="col-12 align-self-center">
+                                <h6><i class="fa fa-barcode fa-lg light-blue-text"></i>&emsp;${labels["subscription"]}</h6>
                             </div>
                         </div>
                     </div>
@@ -123,13 +88,14 @@
             </div>
             <div class="container mt-5">
                 <div class="card border-light mb-3">
-                    <div class="card-header">
+                    <div class="card-header pt-3">
                         <div class="row">
                             <div class="col-6 align-self-center">
-                                <h4><i class="fa fa-address-card fa-lg light-blue-text"></i>&emsp;${labels["billing.address"]}</h4>
+                                <h6><i class="fa fa-address-card fa-lg light-blue-text"></i>&emsp;${labels["billing.address"]}</h6>
                             </div>
                             <div class="col-6 text-right">
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-billing-address">${labels["update"]}</button>
+                                <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-billing-address" tooltip="${labels['update']}"></i></p></h6>
+                                <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-billing-address">${labels["update"]}</button> -->
                             </div>
                         </div>
                     </div>
@@ -140,13 +106,14 @@
             </div>
             <div class="container mt-5">
                 <div class="card border-light mb-3">
-                    <div class="card-header">
+                    <div class="card-header pt-3">
                         <div class="row">
                             <div class="col-6 align-self-center">
-                                <h4><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h4>
+                                <h6><i class="fa fa-credit-card fa-lg light-blue-text"></i>&emsp;${labels["payment.method"]}</h6>
                             </div>
                             <div class="col-6 text-right">
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method">${labels["update"]}</button>
+                                <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-payment-method" tooltip="${labels['update']}"></i></p></h6>
+                                <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-payment-method">${labels["update"]}</button> -->
                             </div>
                         </div>
                     </div>
@@ -157,10 +124,10 @@
             </div>
             <div class="container mt-5">
                 <div class="card border-light mb-3">
-                    <div class="card-header pt-4">
+                    <div class="card-header pt-3">
                         <div class="row">
                             <div class="col-12 align-self-center">
-                                <h4><i class="fa fa-list fa-lg light-blue-text"></i>&emsp;${labels["transactions"]}</h4>
+                                <h6><i class="fa fa-list fa-lg light-blue-text"></i>&emsp;${labels["transactions"]}</h6>
                             </div>
                         </div>
                     </div>
