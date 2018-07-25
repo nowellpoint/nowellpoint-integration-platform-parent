@@ -1,6 +1,8 @@
 package com.nowellpoint.console.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.ValidationException;
@@ -22,6 +24,7 @@ import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Subscription;
+import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.util.UserContext;
@@ -132,6 +135,16 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
+		Transaction transaction = Transaction.builder()
+				.amount(subscriptionResult.getTransaction().getAmount().doubleValue())
+				.createdOn(subscriptionResult.getTransaction().getCreatedAt().getTime())
+				.creditCard(instance.getSubscription().getCreditCard())
+				.currencyIsoCode(subscriptionResult.getTransaction().getCurrencyIsoCode())
+				.id(subscriptionResult.getTransaction().getId())
+				.status(subscriptionResult.getTransaction().getStatus().name())
+				.updatedOn(subscriptionResult.getTransaction().getUpdatedAt().getTime())
+				.build();
+		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.billingFrequency(plan.getBillingFrequency())
@@ -151,6 +164,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
+				.addTransaction(transaction)
 				.build();
 		
 		return update(organization);
@@ -219,6 +233,16 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
+		Transaction transaction = Transaction.builder()
+				.amount(subscriptionResult.getTransaction().getAmount().doubleValue())
+				.createdOn(subscriptionResult.getTransaction().getCreatedAt().getTime())
+				.creditCard(creditCard)
+				.currencyIsoCode(subscriptionResult.getTransaction().getCurrencyIsoCode())
+				.id(subscriptionResult.getTransaction().getId())
+				.status(subscriptionResult.getTransaction().getStatus().name())
+				.updatedOn(subscriptionResult.getTransaction().getUpdatedAt().getTime())
+				.build();
+		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.billingFrequency(plan.getBillingFrequency())
@@ -238,6 +262,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
+				.addTransaction(transaction)
 				.build();
 		
 		return update(organization);
@@ -289,9 +314,33 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.updatedOn(getCurrentDateTime())
 				.build();
 		
+		com.braintreegateway.Subscription subscriptionResult = gateway.subscription().find(subscription.getNumber());
+		
+		List<Transaction> transactions = new ArrayList<>();
+		
+		while (subscriptionResult.getTransactions().iterator().hasNext()) {
+			
+			com.braintreegateway.Transaction transactionResult = subscriptionResult.getTransactions().iterator().next();
+			
+			Transaction transaction = Transaction.builder()
+					.amount(transactionResult.getAmount().doubleValue())
+					.createdOn(transactionResult.getCreatedAt().getTime())
+					.creditCard(subscription.getCreditCard())
+					.currencyIsoCode(transactionResult.getCurrencyIsoCode())
+					.id(transactionResult.getId())
+					.status(transactionResult.getStatus().name())
+					.updatedOn(transactionResult.getUpdatedAt().getTime())
+					.build();
+			
+			transactions.add(transaction);
+		}
+
+		
+		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
+				.addTransaction(transactions.toArray(new Transaction[transactions.size()]))
 				.build();
 		
 		return update(organization);

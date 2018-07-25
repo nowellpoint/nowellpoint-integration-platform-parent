@@ -11,8 +11,6 @@ import com.nowellpoint.console.service.LeadService;
 
 public class LeadServiceImpl extends AbstractService implements LeadService {
 	
-	private static final UserProfile who = getSystemAdmin();
-	
 	private LeadDAO leadDAO;
 
 	public LeadServiceImpl() {
@@ -22,15 +20,15 @@ public class LeadServiceImpl extends AbstractService implements LeadService {
 	@Override
 	public Lead createLead(LeadRequest request) {
 		com.nowellpoint.console.entity.Lead entity = modelMapper.map(request, Lead.class);
-		entity.setCreatedBy(who);
+		entity.setCreatedBy(getSystemAdmin());
 		entity.setCreatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(who);
-		entity.setLastUpdatedOn(getCurrentDateTime());
+		entity.setLastUpdatedOn(entity.getCreatedOn());
+		entity.setLastUpdatedBy(entity.getCreatedBy());
 		leadDAO.save(entity);
 		return entity;
 	}
 	
-	private static UserProfile getSystemAdmin() {
+	private UserProfile getSystemAdmin() {
 		Query<UserProfile> query = datastore.createQuery(UserProfile.class)
 				.field("username")
 				.equal("system.administrator@nowellpoint.com");

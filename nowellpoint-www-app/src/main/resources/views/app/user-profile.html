@@ -1,22 +1,6 @@
-<!DOCTYPE HTML>
-<html lang="en">
-
-<head>
-    <title>${messages["application.title"]}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="/css/mdb.min.css" rel="stylesheet">
-
-</head>
-
-<body>
-
+<#import "template.html" as t>
+    <@t.page>
+        
     <script>
         var userProfile = {
             basePath: "${links['user.profile']}",
@@ -40,8 +24,6 @@
         }
         sessionStorage.setItem("userProfile", JSON.stringify(userProfile));
     </script>
-
-    <#include "header.html" />
 
     <!--Main Layout-->
     <main>
@@ -102,7 +84,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal" id="modal-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <!--Modal: Contact form-->
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <!--Content-->
@@ -152,7 +134,7 @@
             <!--/Modal: Contact form-->
         </div>
 
-        <div class="modal fade" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <!--Modal: Contact form-->
             <div class="modal-dialog modal-dialog-centered" role="document">
 
@@ -207,7 +189,7 @@
             <!--/Modal: Contact form-->
         </div>
 
-        <div class="modal fade" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <!--Modal: Contact form-->
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <!--Content-->
@@ -253,8 +235,6 @@
     </main>
     <!--Main Layout-->
 
-    <#include "footer.html" />
-
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
     <!-- Bootstrap tooltips -->
@@ -266,6 +246,4 @@
     <!-- Custom JavaScript -->
     <script type="text/javascript" src="/js/user-profile.js"></script>
 
-</body>
-
-</html>
+    </@t.page>

@@ -33,18 +33,6 @@ import com.nowellpoint.console.entity.Lead;
 import com.nowellpoint.console.entity.UserProfile;
 import com.nowellpoint.console.entity.Plan;
 import com.nowellpoint.console.entity.Organization;
-import com.nowellpoint.console.model.Address;
-import com.nowellpoint.console.model.CreditCard;
-import com.nowellpoint.console.model.ModifiableAddress;
-import com.nowellpoint.console.model.ModifiableCreditCard;
-//import com.nowellpoint.console.model.ModifiableOrganization;
-import com.nowellpoint.console.model.ModifiablePhotos;
-import com.nowellpoint.console.model.ModifiablePreferences;
-import com.nowellpoint.console.model.ModifiableSubscription;
-//import com.nowellpoint.console.model.Organization;
-import com.nowellpoint.console.model.Photos;
-import com.nowellpoint.console.model.Preferences;
-import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
 
 import redis.clients.jedis.Jedis;
@@ -92,48 +80,6 @@ public abstract class AbstractService {
 			@Override
 			protected String convert(ObjectId source) {
 				return source == null ? null : source.toString();
-			}
-		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Address, Address>() {		
-			@Override
-			protected Address convert(com.nowellpoint.console.entity.Address source) {
-				return source == null ? null : modelMapper.map(source, ModifiableAddress.class).toImmutable();
-			}
-		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Preferences, Preferences>() {		
-			@Override
-			protected Preferences convert(com.nowellpoint.console.entity.Preferences source) {
-				return source == null ? null : modelMapper.map(source, ModifiablePreferences.class).toImmutable();
-			}
-		});
-//		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Organization, Organization>() {		
-//			@Override
-//			protected Organization convert(com.nowellpoint.console.entity.Organization source) {
-//				return source == null ? null : modelMapper.map(source, ModifiableOrganization.class).toImmutable();
-//			}
-//		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Photos, Photos>() {		
-			@Override
-			protected Photos convert(com.nowellpoint.console.entity.Photos source) {
-				return source == null ? null : modelMapper.map(source, ModifiablePhotos.class).toImmutable();
-			}
-		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Subscription, Subscription>() {		
-			@Override
-			protected Subscription convert(com.nowellpoint.console.entity.Subscription source) {
-				return source == null ? null : modelMapper.map(source, ModifiableSubscription.class).toImmutable();
-			}
-		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.CreditCard, CreditCard>() {		
-			@Override
-			protected CreditCard convert(com.nowellpoint.console.entity.CreditCard source) {
-				return source == null ? null : modelMapper.map(source, ModifiableCreditCard.class).toImmutable();
-			}
-		});
-		modelMapper.addConverter(new AbstractConverter<com.nowellpoint.console.entity.Address, Address>() {		
-			@Override
-			protected Address convert(com.nowellpoint.console.entity.Address source) {
-				return source == null ? null : modelMapper.map(source, ModifiableAddress.class).toImmutable();
 			}
 		});
 	}

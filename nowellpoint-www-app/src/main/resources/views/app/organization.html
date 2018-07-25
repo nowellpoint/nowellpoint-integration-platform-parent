@@ -1,22 +1,5 @@
-<!DOCTYPE HTML>
-<html lang="en">
-
-<head>
-    <title>${messages["application.title"]}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="/css/mdb.min.css" rel="stylesheet">
-    <!-- Custom styles -->
-    <link href="/css/custom.css" rel="stylesheet">
-</head>
-
-<body>
+<#import "template.html" as t>
+    <@t.page>
 
     <script>
         var billingContact = {
@@ -48,8 +31,6 @@
 
         sessionStorage.setItem("organization", JSON.stringify(organization));
     </script>
-    
-    <#include "header.html" />
 
     <!--Main Layout-->
     <main>
@@ -288,8 +269,6 @@
         </div>
     </main>
 
-    <#include "footer.html" />
-
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
     <!-- Bootstrap tooltips -->
@@ -301,6 +280,4 @@
     <!-- Custom JavaScript -->
     <script type="text/javascript" src="/js/organization.js"></script>
 
-</body>
-
-</html>
+    </@t.page>

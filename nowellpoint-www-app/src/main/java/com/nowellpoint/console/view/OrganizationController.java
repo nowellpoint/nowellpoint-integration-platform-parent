@@ -3,9 +3,12 @@ package com.nowellpoint.console.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
 import com.nowellpoint.console.model.AddressRequest;
@@ -14,6 +17,7 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Alert;
 import com.nowellpoint.console.util.Templates;
@@ -117,25 +121,38 @@ public class OrganizationController extends BaseController {
 	 */
 	
 	private static String getInvoice(Configuration configuration, Request request, Response response) {
-//		Token token = getToken(request);
-//		
-//		String id = request.params(":id");
-//		String invoiceNumber = request.params(":invoiceNumber");
-//		
-//		try {
-//			byte[] data = NowellpointClient.defaultClient(token)
-//					.organization()
-//					.downloadInvoice(id, invoiceNumber);
-//			
-//			HttpServletResponse httpServletResponse = response.raw();
-//	        httpServletResponse.setContentType("application/pdf");
-//	        httpServletResponse.addHeader("Content-Disposition", String.format("inline; filename=invoice_%s.pdf", invoiceNumber));
-//	        httpServletResponse.getOutputStream().write(data);
-//	        httpServletResponse.getOutputStream().close();
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		
+		String id = request.params(":id");
+		String invoiceNumber = request.params(":invoiceNumber");
+		
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(id);
+		
+		Optional<Transaction> optional = organization.getTransactions()
+				.stream()
+				.filter(t -> t.getId().equals(invoiceNumber))
+				.findFirst();
+		
+		if (optional.isPresent()) {
+			
+			Transaction transaction = optional.get();
+			
+			try {
+				
+				byte[] data = null;
+				
+				HttpServletResponse httpServletResponse = response.raw();
+		        httpServletResponse.setContentType("application/pdf");
+		        httpServletResponse.addHeader("Content-Disposition", String.format("inline; filename=invoice_%s.pdf", invoiceNumber));
+		        httpServletResponse.getOutputStream().write(data);
+		        httpServletResponse.getOutputStream().close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 		
 		return "";
 	}
