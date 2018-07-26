@@ -1,8 +1,6 @@
 package com.nowellpoint.console.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.validation.ValidationException;
@@ -135,15 +133,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
-		Transaction transaction = Transaction.builder()
-				.amount(subscriptionResult.getTransaction().getAmount().doubleValue())
-				.createdOn(subscriptionResult.getTransaction().getCreatedAt().getTime())
-				.creditCard(instance.getSubscription().getCreditCard())
-				.currencyIsoCode(subscriptionResult.getTransaction().getCurrencyIsoCode())
-				.id(subscriptionResult.getTransaction().getId())
-				.status(subscriptionResult.getTransaction().getStatus().name())
-				.updatedOn(subscriptionResult.getTransaction().getUpdatedAt().getTime())
-				.build();
+		Transaction transaction = Transaction.of(subscriptionResult.getTransaction());
 		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
@@ -201,17 +191,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(creditCardResult.getMessage());
 		}
 		
-		CreditCard creditCard = CreditCard.builder()
-				.from(instance.getSubscription().getCreditCard())
-				.cardholderName(creditCardResult.getTarget().getCardholderName())
-				.cardType(creditCardResult.getTarget().getCardType())
-				.expirationMonth(request.getExpirationMonth())
-				.expirationYear(request.getExpirationYear())
-				.imageUrl(creditCardResult.getTarget().getImageUrl())
-				.lastFour(creditCardResult.getTarget().getLast4())
-				.updatedOn(getCurrentDateTime())
-				.build();
-		
 		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
 				.paymentMethodToken(creditCardResult.getTarget().getToken())
 				.planId(plan.getPlanCode())
@@ -233,20 +212,12 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
-		Transaction transaction = Transaction.builder()
-				.amount(subscriptionResult.getTransaction().getAmount().doubleValue())
-				.createdOn(subscriptionResult.getTransaction().getCreatedAt().getTime())
-				.creditCard(creditCard)
-				.currencyIsoCode(subscriptionResult.getTransaction().getCurrencyIsoCode())
-				.id(subscriptionResult.getTransaction().getId())
-				.status(subscriptionResult.getTransaction().getStatus().name())
-				.updatedOn(subscriptionResult.getTransaction().getUpdatedAt().getTime())
-				.build();
+		Transaction transaction = Transaction.of(subscriptionResult.getTransaction());
 		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.billingFrequency(plan.getBillingFrequency())
-				.creditCard(creditCard)
+				.creditCard(transaction.getCreditCard())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
 				.billingPeriodEndDate(subscriptionResult.getTarget().getBillingPeriodEndDate().getTime())
@@ -313,34 +284,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.billingAddress(billingAddress)
 				.updatedOn(getCurrentDateTime())
 				.build();
-		
-		com.braintreegateway.Subscription subscriptionResult = gateway.subscription().find(subscription.getNumber());
-		
-		List<Transaction> transactions = new ArrayList<>();
-		
-		while (subscriptionResult.getTransactions().iterator().hasNext()) {
-			
-			com.braintreegateway.Transaction transactionResult = subscriptionResult.getTransactions().iterator().next();
-			
-			Transaction transaction = Transaction.builder()
-					.amount(transactionResult.getAmount().doubleValue())
-					.createdOn(transactionResult.getCreatedAt().getTime())
-					.creditCard(subscription.getCreditCard())
-					.currencyIsoCode(transactionResult.getCurrencyIsoCode())
-					.id(transactionResult.getId())
-					.status(transactionResult.getStatus().name())
-					.updatedOn(transactionResult.getUpdatedAt().getTime())
-					.build();
-			
-			transactions.add(transaction);
-		}
 
-		
-		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
-				.addTransaction(transactions.toArray(new Transaction[transactions.size()]))
 				.build();
 		
 		return update(organization);

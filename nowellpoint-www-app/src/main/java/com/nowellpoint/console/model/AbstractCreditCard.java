@@ -1,5 +1,6 @@
 package com.nowellpoint.console.model;
 
+import java.time.Instant;
 import java.util.Date;
 
 import javax.annotation.Nullable;
@@ -37,6 +38,22 @@ public abstract class AbstractCreditCard {
 				.lastFour(source.getLastFour())
 				.token(source.getToken())
 				.updatedOn(source.getUpdatedOn())
+				.build();
+	}
+	
+	public static CreditCard of(com.braintreegateway.CreditCard source) {
+		return source == null ? null : CreditCard.builder()
+				.addedOn(source.getCreatedAt() != null ? source.getCreatedAt().getTime() : Date.from(Instant.now()))
+				.addedOn(Date.from(Instant.now()))
+				.cardholderName(source.getCardholderName())
+				.cardType(source.getCardType())
+				.expirationMonth(source.getExpirationMonth())
+				.expirationYear(source.getExpirationYear())
+				.imageUrl(source.getImageUrl())
+				.lastFour(source.getLast4())
+				.token(source.getToken())
+				.updatedOn(Date.from(Instant.now()))
+				.updatedOn(source.getUpdatedAt() != null ? source.getUpdatedAt().getTime() : Date.from(Instant.now()))
 				.build();
 	}
 }

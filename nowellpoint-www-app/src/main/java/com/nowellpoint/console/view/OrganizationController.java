@@ -3,6 +3,7 @@ package com.nowellpoint.console.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -10,6 +11,12 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
@@ -55,9 +62,9 @@ public class OrganizationController extends BaseController {
 //		
 		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
 				-> updateBillingContact(configuration, request, response));
-//		
-//		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
-//				-> OrganizationController.getInvoice(configuration, request, response));
+		
+		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
+				-> getInvoice(configuration, request, response));
 	}
 	
 	private static String viewOrganization(Configuration configuration, Request request, Response response) {
@@ -140,7 +147,7 @@ public class OrganizationController extends BaseController {
 			
 			try {
 				
-				byte[] data = null;
+				byte[] data = createInvoice(transaction);
 				
 				HttpServletResponse httpServletResponse = response.raw();
 		        httpServletResponse.setContentType("application/pdf");
@@ -420,4 +427,34 @@ public class OrganizationController extends BaseController {
 		
 		return null;
 	};
+	
+	private static byte[] createInvoice(Transaction transaction) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		PDDocument document = new PDDocument();
+		PDPage page = new PDPage();
+		document.addPage( page );
+
+		// Create a new font object selecting one of the PDF base fonts
+		PDFont font = PDType1Font.HELVETICA_BOLD;
+
+		// Start a new content stream which will "hold" the to be created content
+		PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+		// Define a text content stream using the selected font, moving the cursor and drawing the text "Hello World"
+		contentStream.beginText();
+		contentStream.setFont( font, 12 );
+		//contentStream.moveTo( 100, 700 );
+		contentStream.showText( "Hello World" );
+		contentStream.endText();
+
+		// Make sure that the content stream is closed:
+		contentStream.close();
+
+		// Save the results and ensure that the document is properly closed:
+		document.save( baos );
+		document.close();
+		
+		return baos.toByteArray();
+	}
 }

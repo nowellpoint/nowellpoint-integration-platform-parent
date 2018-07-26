@@ -35,4 +35,16 @@ public abstract class AbstractTransaction {
 				.updatedOn(source.getUpdatedOn())
 				.build();
 	}
+	
+	public static Transaction of(com.braintreegateway.Transaction source) {
+		return source == null ? null : Transaction.builder()
+				.amount(source.getAmount().doubleValue())
+				.createdOn(source.getCreatedAt().getTime())
+				.creditCard(CreditCard.of(source.getCreditCard()))
+				.currencyIsoCode(source.getCurrencyIsoCode())
+				.id(source.getId())
+				.status(source.getStatus().name())
+				.updatedOn(source.getUpdatedAt().getTime())
+				.build();
+	}
 }
