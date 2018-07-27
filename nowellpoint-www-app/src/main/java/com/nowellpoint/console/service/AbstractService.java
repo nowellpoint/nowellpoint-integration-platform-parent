@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
@@ -140,15 +141,15 @@ public abstract class AbstractService {
 		}
 		
 		T value = null;
+		
 		if (bytes != null) {
 			try {
 				cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
 				bytes = cipher.doFinal(bytes);
-			} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+				value = SerializationUtils.deserialize(bytes);
+			} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | SerializationException e) {
 				e.printStackTrace();
 			}
-			
-			value = SerializationUtils.deserialize(bytes);
 		}
 		
 		return value;

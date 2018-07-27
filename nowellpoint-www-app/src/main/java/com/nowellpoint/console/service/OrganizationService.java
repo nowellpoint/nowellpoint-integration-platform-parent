@@ -1,5 +1,7 @@
 package com.nowellpoint.console.service;
 
+import java.io.IOException;
+
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
@@ -19,4 +21,6 @@ public interface OrganizationService {
 	public Organization update(String id, AddressRequest request);
 	
 	public Organization update(String id, ContactRequest request);
+	
+	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
 }

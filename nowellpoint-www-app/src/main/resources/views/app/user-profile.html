@@ -40,7 +40,6 @@
                         </div>
                         <div class="col-6 text-right">
                             <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-user-information" tooltip="${labels['update']}"></i></p></h6>
-                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-user-information" id="editUserInformation">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>
@@ -57,7 +56,6 @@
                         </div>
                         <div class="col-6 text-right">
                             <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-address" tooltip="${labels['update']}"></i></p></h6>
-                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-address" id="editUserAddress">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>
@@ -74,7 +72,6 @@
                         </div>
                         <div class="col-6 text-right">
                             <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-preferences" tooltip="${labels['update']}"></i></p></h6>
-                            <!-- <button class="btn btn-primary" data-toggle="modal" data-target="#modal-preferences" id="editUserPreferences">${messages["edit"]}</button> -->
                         </div>
                     </div>
                 </div>
@@ -90,29 +87,29 @@
                 <!--Content-->
                 <div class="modal-content">
                     <!--Header-->
-                    <div class="modal-header">
+                    <div class="modal-header unique-color white-text">
                         <h5 class="modal-title" id="modalLabel">${labels["edit.address"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                            <span aria-hidden="true">&times;</span>
+                            <span class="white-text" aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <!--Body-->
                     <div class="modal-body">
                         <form class="form" name="form-address" id="form-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
                             <div class="form-group">
-                                <input type="text" class="form-control" name="street" id="street" placeholder="${labels['street']}" value="${(userProfile.address.street)!}" />
+                                <input type="text" class="form-control form-control-lg" name="street" id="street" placeholder="${labels['street']}" value="${(userProfile.address.street)!}" required />
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="city" id="city" placeholder="${labels['city']}" value="${(userProfile.address.city)!}" />
+                                <input type="text" class="form-control form-control-lg" name="city" id="city" placeholder="${labels['city']}" value="${(userProfile.address.city)!}" required/>
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="state" id="state" placeholder="${labels['state']}" value="${(userProfile.address.state)!}" />
+                                <input type="text" class="form-control form-control-lg" name="state" id="state" placeholder="${labels['state']}" value="${(userProfile.address.state)!}" />
                             </div>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="postalCode" id="postalCode" placeholder="${labels['postal.code']}" value="${(userProfile.address.postalCode)!}" />
+                                <input type="text" class="form-control form-control-lg" name="postalCode" id="postalCode" placeholder="${labels['postal.code']}" value="${(userProfile.address.postalCode)!}" required/>
                             </div>
                             <div class="form-group">
-                                <select id="countryCode" name="countryCode" class="form-control" required>
+                                <select id="countryCode" name="countryCode" class="form-control form-control-lg">
                                     <#list countryList as country>
                                         <#if country.code==userProfile.address.countryCode>
                                             <option value="${country.code}" selected="selected">${country.name}</option>
@@ -126,7 +123,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" id="save-address">${labels["save"]}</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
+                        <button class="btn btn-primary" id="save-address">${messages["save"]}</button>
                     </div>
                 </div>
                 <!--/.Content-->
@@ -137,22 +135,20 @@
         <div class="modal" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <!--Modal: Contact form-->
             <div class="modal-dialog modal-dialog-centered" role="document">
-
                 <!--Content-->
                 <div class="modal-content">
-
                     <!--Header-->
-                    <div class="modal-header">
+                    <div class="modal-header unique-color white-text">
                         <h5 class="modal-title" id="modalLabel">${labels["edit.user.preferences"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                            <span aria-hidden="true">&times;</span>
+                            <span class="white-text" aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <!--Body-->
                     <div class="modal-body">
                         <form class="form" name="form-preferences" id="form-preferences" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/preferences/">
                             <div class="form-group">
-                                <select id="locale" name="locale" class="form-control" required>
+                                <select id="locale" name="locale" class="form-control form-control-lg" required>
                                     <option value="" disabled selected>${labels["locale.key"]}</option>
                                     <#list locales?keys as key>
                                         <#if userProfile.preferences.locale==key>
@@ -165,8 +161,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <b><label class="control-label" for="timeZone"></label></b>
-                                <select id="timeZone" name="timeZone" class="form-control" required>
+                                <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
                                     <option value="" disabled selected>${labels["timezone"]}</option>
                                     <#list timeZones as timeZone>
                                         <#if userProfile.preferences.timeZone==timeZone>
@@ -181,7 +176,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" id="save-preferences">${labels["save"]}</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
+                        <button class="btn btn-primary" id="save-preferences">${messages["save"]}</button>
                     </div>
                 </div>
                 <!--/.Content-->
@@ -195,34 +191,35 @@
                 <!--Content-->
                 <div class="modal-content">
                     <!--Header-->
-                    <div class="modal-header">
+                    <div class="modal-header unique-color white-text">
                         <h5 class="modal-title" id="modalLabel">${labels["edit.user.profile"]}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                            <span aria-hidden="true">&times;</span>
+                            <span class="white-text" aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <!--Body-->
                     <div class="modal-body">
                         <form class="form" name="form-user-information" id="form-user-information" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/">
                             <div class="form-group">
-                                <input type="text" name="firstName" id="firstName" class="form-control" placeholder="${labels['first.name']}" value="${userProfile.firstName!}" autofocus>
+                                <input type="text" name="firstName" id="firstName" class="form-control form-control-lg" placeholder="${labels['first.name']}" value="${userProfile.firstName!}">
                             </div>
                             <div class="form-group">
-                                <input type="text" name="lastName" id="lastName" class="form-control" placeholder="${labels['last.name']}" value="${userProfile.lastName!}" required>
+                                <input type="text" name="lastName" id="lastName" class="form-control form-control-lg" placeholder="${labels['last.name']}" value="${userProfile.lastName!}" required>
                             </div>
                             <div class="form-group">
-                                <input type="text" name="email" id="email" class="form-control" placeholder="${labels['email']}" value="${userProfile.email!}" required>
+                                <input type="text" name="email" id="email" class="form-control form-control-lg" placeholder="${labels['email']}" value="${userProfile.email!}" required>
                             </div>
                             <div class="form-group">
-                                <input type="text" name="phone" id="phone" class="form-control" placeholder="${labels['phone']}" value="${userProfile.phone!}">
+                                <input type="text" name="phone" id="phone" class="form-control form-control-lg" placeholder="${labels['phone']}" value="${userProfile.phone!}">
                             </div>
                             <div class="form-group">
-                                <input type="text" name="title" id="title" class="form-control" placeholder="${labels['title']}" value="${userProfile.title!}">
+                                <input type="text" name="title" id="title" class="form-control form-control-lg" placeholder="${labels['title']}" value="${userProfile.title!}">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" id="save-user-information">${labels["save"]}</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
+                        <button class="btn btn-primary" id="save-user-information">${messages["save"]}</button>
                     </div>
                 </div>
                 <!--/.Content-->

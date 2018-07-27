@@ -173,29 +173,29 @@
                         <!--Content-->
                         <div class="modal-content">
                             <!--Header-->
-                            <div class="modal-header">
+                            <div class="modal-header unique-color white-text">
                                 <h5 class="modal-title" id="modalLabel">${labels["edit.billing.address"]}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                                    <span aria-hidden="true">&times;</span>
+                                    <span class="white-text" aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <!--Body-->
                             <div class="modal-body">
                                 <form class="form" name="billing-address-form" id="billing-address-form" role="form" method="POST" action="${links['organization']}/${organization.id}/billing-address/">
                                     <div class="form-group">
-                                        <input type="text" name="street" id="street" class="form-control" placeholder="${labels['street']}" value="${(organization.subscription.billingAddress.street)!}" autofocus required>
+                                        <input type="text" name="street" id="street" class="form-control form-control-lg" placeholder="${labels['street']}" value="${(organization.subscription.billingAddress.street)!}" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="city" id="city" class="form-control" placeholder="${labels['city']}" value="${(organization.subscription.billingAddress.city)!}">
+                                        <input type="text" name="city" id="city" class="form-control form-control-lg" placeholder="${labels['city']}" value="${(organization.subscription.billingAddress.city)!}">
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="state" id="state" class="form-control" placeholder="${labels['state']}" value="${(organization.subscription.billingAddress.state)!}">
+                                        <input type="text" name="state" id="state" class="form-control form-control-lg" placeholder="${labels['state']}" value="${(organization.subscription.billingAddress.state)!}">
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="postalCode" id="postalCode" class="form-control" placeholder="${labels['postal.code']}" value="${(organization.subscription.billingAddress.postalCode)!}">
+                                        <input type="text" name="postalCode" id="postalCode" class="form-control form-control-lg" placeholder="${labels['postal.code']}" value="${(organization.subscription.billingAddress.postalCode)!}">
                                     </div>
                                     <div class="form-group">
-                                        <select id="countryCode" name="countryCode" class="form-control" required>
+                                        <select id="countryCode" name="countryCode" class="form-control form-control-lg" required>
                                             <option value="XX" selected="selected">${labels['select.country']}</option>
                                             <#list countryList as country>
                                                 <!-- <#if country.code==organization.subscription.billingAddress.countryCode> -->
@@ -209,7 +209,8 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-default" id="save-billing-address">${labels["save"]}</button>
+                                <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
+                                <button class="btn btn-primary" id="save-billing-address">${messages["save"]}</button>
                             </div>
                         </div>
                     </div>
@@ -221,25 +222,25 @@
                         <!--Content-->
                         <div class="modal-content">
                             <!--Header-->
-                            <div class="modal-header">
+                            <div class="modal-header unique-color white-text">
                                 <h5 class="modal-title" id="modalLabel">${labels["edit.payment.method"]}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                                    <span aria-hidden="true">&times;</span>
+                                    <span class="white-text" aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <!--Body-->
                             <div class="modal-body">
                                 <form class="form" name="payment-method-form" id="payment-method-form" role="form" method="POST" action="${links['organization']}/${organization.id}/credit-card/">
                                     <div class="form-group">
-                                        <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus required>
+                                        <input type="text" name="cardholderName" id="cardholderName" class="form-control form-control-lg" placeholder="${labels['name.on.card']}" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="number" id="number" class="form-control" placeholder="${labels['card.number']}">
+                                        <input type="text" name="number" id="number" class="form-control form-control-lg" placeholder="${labels['card.number']}">
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-3">
-                                                <select class="form-control" name="expirationMonth" id="expirationMonth" placeholder="${labels['mm']}">
+                                                <select class="form-control form-control-lg" name="expirationMonth" id="expirationMonth" placeholder="${labels['mm']}">
                                                     <#assign x=12 />
                                                     <#list 1..x as month>
                                                         <option value="${month?c}">${month?c}</option>
@@ -247,7 +248,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-3">
-                                                <select class="form-control" name="expirationYear" id="expirationYear" placeholder="${labels['yy']}">
+                                                <select class="form-control form-control-lg" name="expirationYear" id="expirationYear" placeholder="${labels['yy']}">
                                                     <#assign x=.now?string[ "yyyy"]?number + 19/>
                                                     <#list .now?string[ "yyyy"]?number..x as year>
                                                         <option value="${year?c}">${year?c}</option>
@@ -256,14 +257,15 @@
                                             </div>
                                             <div class="col-3"></div>
                                             <div class="col-3">
-                                                <input type="text" name="cvv" id="cvv" class="form-control" placeholder="${labels['cvv']}" required>
+                                                <input type="text" name="cvv" id="cvv" class="form-control form-control-lg" placeholder="${labels['cvv']}" required>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-default" id="save-payment-information">${labels["save"]}</button>
+                                <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
+                                <button class="btn btn-primary" id="save-payment-information">${messages["save"]}</button>
                             </div>
                         </div>
                     </div>

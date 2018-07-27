@@ -1,6 +1,9 @@
 package com.nowellpoint.console.service.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Optional;
 
 import javax.validation.ValidationException;
@@ -13,6 +16,14 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
 import com.braintreegateway.SubscriptionRequest;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
@@ -320,6 +331,71 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.build();
 		
 		return update(organization);
+	}
+	
+	@Override
+	public byte[] createInvoice(String id, String invoiceNumber) throws IOException {
+		
+		Organization organization = get(id);
+		
+		Optional<Transaction> optional = organization.getTransactions()
+				.stream()
+				.filter(t -> t.getId().equals(invoiceNumber))
+				.findFirst();
+		
+		if (optional.isPresent()) {
+			
+			Transaction transaction = optional.get();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+			Document document = new Document();
+			
+			try {
+				
+				PdfWriter.getInstance(document, baos);
+				
+				document.setMargins(75, 75, 75, 10);
+//				document.addTitle(getLabel(InvoiceLabels.INVOICE_TITLE));
+//				document.addAuthor(getLabel(InvoiceLabels.INVOICE_AUTHOR));
+//				document.addSubject(String.format(getLabel(InvoiceLabels.INVOICE_SUBJECT), invoice.getPayee().getCompanyName()));
+				document.addCreator(OrganizationService.class.getName());
+				
+				document.open();
+				
+				Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
+				 
+				Paragraph paragraph = new Paragraph();
+				paragraph.add(new Chunk("Nowellpoint", font));
+				paragraph.add(Chunk.NEWLINE);
+				paragraph.add(new Chunk("129 S. Bloodworth Street", font));
+				paragraph.add(Chunk.NEWLINE);
+				paragraph.add(new Chunk("Raleigh, NC 27601", font));
+				paragraph.add(Chunk.NEWLINE);
+				paragraph.add(new Chunk("United States", font));
+				paragraph.add(Chunk.NEWLINE);
+				
+				document.add(paragraph);
+				//document.add(getHeader());
+				
+//				document.add(getCompany(transaction.getId(), transaction.getCreatedOn()));
+//				document.add(getPayee(invoice.getPayee()));
+//				document.add(getBillingPeriod(invoice.getBillingPeriodStartDate(), invoice.getBillingPeriodEndDate()));
+//				document.add(getServicesList(invoice.getServices()));
+//				document.add(getPaymentMethod(invoice.getPaymentMethod()));
+//				document.add(getSeparator());
+				
+				document.close();
+				
+			} catch (DocumentException e) {
+				throw new IOException(e);
+			}
+			
+			return baos.toByteArray();
+		
+		}
+		
+		return null;
 	}
 	
 	private Organization update(Organization organization) {

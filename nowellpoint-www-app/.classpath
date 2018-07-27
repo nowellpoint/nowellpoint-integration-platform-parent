@@ -62,12 +62,11 @@
 	<classpathentry kind="var" path="M2_REPO/com/braintreepayments/gateway/braintree-java/2.72.1/braintree-java-2.72.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/json/json/20160810/json-20160810.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/pdfbox/2.0.4/pdfbox-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/pdfbox/fontbox/2.0.4/fontbox-2.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/itextpdf/itextpdf/5.5.11/itextpdf-5.5.11.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.5/httpclient-4.5.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpclient/4.5/httpclient-4.5-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9-sources.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-sdk"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5-sources.jar"/>
