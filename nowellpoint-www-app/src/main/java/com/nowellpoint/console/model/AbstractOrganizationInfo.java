@@ -17,6 +17,7 @@ public abstract class AbstractOrganizationInfo {
 	public abstract String getId();
 	public abstract String getNumber();
 	public abstract String getDomain();
+	public abstract String getPlan();
 	public abstract @Nullable String getName();
 	
 	@Value.Default
@@ -33,6 +34,7 @@ public abstract class AbstractOrganizationInfo {
 				.id(source.getId().toString())
 				.name(source.getName())
 				.number(source.getNumber())
+				.plan(source.getSubscription().getPlanName())
 				.build();
 	}
 }

@@ -3,8 +3,10 @@ package com.nowellpoint.console.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
@@ -22,20 +24,23 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
+import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
-import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
 
@@ -144,8 +149,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
-		Transaction transaction = Transaction.of(subscriptionResult.getTransaction());
-		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
 				.billingFrequency(plan.getBillingFrequency())
@@ -162,10 +165,16 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.updatedOn(getCurrentDateTime())
 				.build();
 		
+		Set<Transaction> transactions = new HashSet<>();
+		
+		subscriptionResult.getTarget().getTransactions().stream().forEach(t -> {
+			transactions.add(Transaction.of(t));
+		});
+		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
-				.addTransaction(transaction)
+				.transactions(transactions)
 				.build();
 		
 		return update(organization);
@@ -347,6 +356,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			Transaction transaction = optional.get();
 			
+			Plan plan = ServiceClient.getInstance().plan().getByCode(transaction.getPlan());
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
 			Document document = new Document();
@@ -355,37 +366,22 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				
 				PdfWriter.getInstance(document, baos);
 				
+				document.open();
+				
 				document.setMargins(75, 75, 75, 10);
 //				document.addTitle(getLabel(InvoiceLabels.INVOICE_TITLE));
 //				document.addAuthor(getLabel(InvoiceLabels.INVOICE_AUTHOR));
 //				document.addSubject(String.format(getLabel(InvoiceLabels.INVOICE_SUBJECT), invoice.getPayee().getCompanyName()));
 				document.addCreator(OrganizationService.class.getName());
-				
-				document.open();
-				
-				Font font = FontFactory.getFont(FontFactory.TIMES, 16, BaseColor.BLACK);
 				 
-				Paragraph paragraph = new Paragraph();
-				paragraph.add(new Chunk("Nowellpoint", font));
-				paragraph.add(Chunk.NEWLINE);
-				paragraph.add(new Chunk("129 S. Bloodworth Street", font));
-				paragraph.add(Chunk.NEWLINE);
-				paragraph.add(new Chunk("Raleigh, NC 27601", font));
-				paragraph.add(Chunk.NEWLINE);
-				paragraph.add(new Chunk("United States", font));
-				paragraph.add(Chunk.NEWLINE);
+				document.add(getHeader(organization, transaction));
+				document.add(new Chunk("Invoice", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK)));
+				document.add(getPayer(organization, transaction));
+				document.add(Chunk.NEWLINE);
+				document.add(getPlan(plan, transaction));
+				document.add(getPaymentMethod(transaction));
 				
-				document.add(paragraph);
-				//document.add(getHeader());
-				
-//				document.add(getCompany(transaction.getId(), transaction.getCreatedOn()));
-//				document.add(getPayee(invoice.getPayee()));
-//				document.add(getBillingPeriod(invoice.getBillingPeriodStartDate(), invoice.getBillingPeriodEndDate()));
-//				document.add(getServicesList(invoice.getServices()));
-//				document.add(getPaymentMethod(invoice.getPaymentMethod()));
-//				document.add(getSeparator());
-				
-				document.close();
+				document.close();  
 				
 			} catch (DocumentException e) {
 				throw new IOException(e);
@@ -404,5 +400,90 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		entity.setLastUpdatedBy(UserContext.get().getUserId());
 		organizationDAO.save(entity);
 		return Organization.of(entity);
+	}
+	
+	private PdfPTable getHeader(Organization organization, Transaction transaction) {
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		PdfPTable table = new PdfPTable(2);
+		table.setWidthPercentage(100);
+		table.setSpacingAfter(36f);
+		table.addCell(getCell("NOWELLPOINT, LLC", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK)));
+		table.addCell(getCell("Account Number:  " + String.format("%s", organization.getNumber()), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("129 S. Bloodworth Street", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("Invoice Number:  " + String.format("%s", transaction.getId().toUpperCase()), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("Raleigh, NC 27601", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("Invoice Date:  " + String.format("%s", sdf.format(transaction.getCreatedOn())), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("United States", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(" ", PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(" ", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(" ", PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell("Tax ID: 47-5575435", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(" ", PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		return table;
+	}
+	
+	private PdfPTable getPayer(Organization organization, Transaction transaction) {
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100);
+		table.setSpacingBefore(18f);
+		table.setSpacingAfter(36f);
+		table.addCell(getCell(organization.getDomain().toUpperCase(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(transaction.getName(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(transaction.getBillingAddress().getStreet(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(transaction.getBillingAddress().getCity() + ", " + transaction.getBillingAddress().getState() + " " + transaction.getBillingAddress().getPostalCode(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getCell(transaction.getBillingAddress().getCountry(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		return table;
+	}
+	
+	private PdfPTable getPlan(Plan plan, Transaction transaction) {	
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, YYYY");
+		PdfPTable table = new PdfPTable(3);
+		table.setWidthPercentage(100);
+		table.setSpacingAfter(36f);
+		table.addCell(getHeaderCell("Plan", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getHeaderCell("Billing Period", PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getHeaderCell("Price", PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getPlanCell(plan.getPlanName(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getPlanCell(sdf.format(transaction.getBillingPeriodStartDate().getTime()) + " - " + sdf.format(transaction.getBillingPeriodEndDate().getTime()), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getPlanCell(transaction.getCurrencyIsoCode() + " " + transaction.getAmount(), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		return table;
+	}
+	
+	private Chunk getPaymentMethod(Transaction transaction) {	
+		Chunk chunk = new Chunk("Payment Method: " + transaction.getCreditCard().getCardType() + " " + transaction.getCreditCard().getLastFour(), FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK));
+		return chunk;
+	}
+	
+	private PdfPCell getCell(String text, int alignment, Font font) {
+	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
+	    cell.setPadding(0);
+	    cell.setPaddingBottom(2f);
+	    cell.setHorizontalAlignment(alignment);
+	    cell.setBorder(PdfPCell.NO_BORDER);
+	    return cell;
+	}
+	
+	private PdfPCell getHeaderCell(String text, int alignment, Font font) {
+	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
+	    cell.setPadding(2f);
+	    cell.setPaddingLeft(5f);
+	    cell.setPaddingRight(5f);
+	    cell.setPaddingBottom(13f);
+	    cell.setPaddingTop(13f);
+	    cell.setHorizontalAlignment(alignment);
+	    cell.setBorder(PdfPCell.NO_BORDER);
+	    cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+	    return cell;
+	}
+	
+	private PdfPCell getPlanCell(String text, int alignment, Font font) {
+	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
+	    cell.setPadding(2f);
+	    cell.setPaddingBottom(5f);
+	    cell.setPaddingLeft(5f);
+	    cell.setPaddingRight(5f);
+	    cell.setHorizontalAlignment(alignment);
+	    cell.setBorder(PdfPCell.BOTTOM);
+	    return cell;
 	}
 }

@@ -39,6 +39,23 @@ public class PlanServiceImpl extends AbstractService implements PlanService {
 		
 		return Plan.of(entity);
 	}
+	
+	@Override
+	public Plan getByCode(String planCode) {
+		
+		Query<com.nowellpoint.console.entity.Plan> query = planDAO.createQuery()
+				.field("planCode")
+				.equal(planCode);
+		
+		com.nowellpoint.console.entity.Plan entity = planDAO.findOne(query);
+		
+		
+		if (Assert.isNull(entity)) {
+			throw new NotFoundException(String.format("Plan code: %s was not found", planCode));
+		}
+		
+		return Plan.of(entity);
+	}
 
 	@Override
 	public List<Plan> getPlans(String language) {

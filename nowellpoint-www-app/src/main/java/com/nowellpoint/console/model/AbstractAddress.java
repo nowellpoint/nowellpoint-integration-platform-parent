@@ -61,4 +61,17 @@ public abstract class AbstractAddress {
 				.updatedOn(source.getUpdatedOn())
 				.build();
 	}
+	
+	public static Address of(com.braintreegateway.Address source) {
+		return source == null ? null : Address.builder()
+				.addedOn(source.getCreatedAt().getTime())
+				.city(source.getLocality())
+				.countryCode(source.getCountryCodeAlpha2())
+				.id(source.getId())
+				.postalCode(source.getPostalCode())
+				.state(source.getRegion())
+				.street(source.getStreetAddress())
+				.updatedOn(source.getUpdatedAt().getTime())
+				.build();
+	}
 }

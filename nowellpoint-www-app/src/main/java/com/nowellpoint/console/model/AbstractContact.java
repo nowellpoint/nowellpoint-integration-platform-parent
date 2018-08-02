@@ -23,6 +23,7 @@ public abstract class AbstractContact {
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 	
+	@Value.Derived
 	public String getName() {
 		return getFirstName() != null ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}

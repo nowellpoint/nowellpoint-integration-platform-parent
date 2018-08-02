@@ -38,6 +38,10 @@ public class Subscription implements Serializable {
 	
 	private Contact billingContact;
 	
+	private Date billingPeriodStartDate;
+	
+	private Date billingPeriodEndDate;
+	
 	private Set<Feature> features;
 	
 	public Subscription() {
@@ -162,6 +166,22 @@ public class Subscription implements Serializable {
 
 	public void setBillingContact(Contact billingContact) {
 		this.billingContact = billingContact;
+	}
+
+	public Date getBillingPeriodStartDate() {
+		return billingPeriodStartDate;
+	}
+
+	public void setBillingPeriodStartDate(Date billingPeriodStartDate) {
+		this.billingPeriodStartDate = billingPeriodStartDate;
+	}
+
+	public Date getBillingPeriodEndDate() {
+		return billingPeriodEndDate;
+	}
+
+	public void setBillingPeriodEndDate(Date billingPeriodEndDate) {
+		this.billingPeriodEndDate = billingPeriodEndDate;
 	}
 
 	public Set<Feature> getFeatures() {
