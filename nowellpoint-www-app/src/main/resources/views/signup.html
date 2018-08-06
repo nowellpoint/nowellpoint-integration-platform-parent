@@ -18,12 +18,13 @@
 <body>
 
     <header>
-
+        <nav class="navbar navbar-default fixed-top navbar-dark unique-color navbar-expand-lg">
+            <div class="navbar-brand">${messages["application.title"]}</div>
+        </nav>
     </header>
 
     <main>
 
-        <br>
         <br>
         <br>
 
@@ -69,9 +70,39 @@
                     </form>
                 </div>
                 <div class="col-5">
-                    <p class="lead">&emsp;1. ${labels['step1']}</p>
-                    <p class="lead">&emsp;2. ${labels['step2']}</p>
-                    <p class="lead">&emsp;3. ${labels['step3']}</p>
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-user blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <h5 class="font-weight-bold">${labels['step1.label']}</h5>
+                            <p class="grey-text">${labels['step1']}</p>
+                        </div>
+                    </div>
+
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-check blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <h5 class="font-weight-bold">${labels['step2.label']}</h5>
+                            <p class="grey-text">${labels['step2']}</p>
+                        </div>
+                    </div>
+
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-link blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <h5 class="font-weight-bold">${labels['step3.label']}</h5>
+                            <p class="grey-text">${labels['step3']}</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -81,38 +112,35 @@
     <br>
     <br>
 
-    <!--Footer-->
-    <footer class="page-footer font-small stylish-color-dark pt-4 mt-4">
-        <!--Social buttons-->
-        <div class="text-center">
-            <ul class="list-unstyled list-inline">
-                <li class="list-inline-item">
-                    <a href="https://twitter.com/nowellpoint" class="btn-floating btn-sm btn-tw mx-1">
-                        <i class="fa fa-twitter"> </i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="https://plus.google.com/+Nowellpoint/posts" class="btn-floating btn-sm btn-gplus mx-1">
-                        <i class="fa fa-google-plus"> </i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent" class="btn-floating btn-sm btn-li mx-1">
-                        <i class="fa fa-github"> </i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!--/.Social buttons-->
+    <hr>
+    
+     <!--Copyright-->
+    <div class="footer-copyright py-3 text-center">
+        ${messages["copyright"]}
+    </div>
+    <!--/.Copyright-->
 
-        <!--Copyright-->
-        <div class="footer-copyright py-3 text-center">
-            ${messages["copyright"]}
-        </div>
-        <!--/.Copyright-->
-
-    </footer>
-    <!--/.Footer-->
+    <!--Social buttons-->
+    <div class="text-center">
+        <ul class="list-unstyled list-inline">
+            <li class="list-inline-item">
+                <a href="https://twitter.com/nowellpoint" class="btn-floating btn-sm btn-tw mx-1">
+                    <i class="fa fa-twitter"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="https://plus.google.com/+Nowellpoint/posts" class="btn-floating btn-sm btn-gplus mx-1">
+                    <i class="fa fa-google-plus"> </i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent" class="btn-floating btn-sm btn-li mx-1">
+                    <i class="fa fa-github"> </i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--/.Social buttons-->
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
