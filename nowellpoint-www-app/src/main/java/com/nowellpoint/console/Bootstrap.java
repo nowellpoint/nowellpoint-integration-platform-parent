@@ -115,28 +115,6 @@ public class Bootstrap implements SparkApplication {
 				(request, response) -> SalesforceOauthController.callback(configuration, request, response));
 
 		//
-		// signup routes
-		//
-
-		get(Path.Route.PLANS, (request, response) 
-				-> SignUpController.plans(configuration, request, response));
-		
-		get(Path.Route.FREE_ACCOUNT, (request, response) 
-				-> SignUpController.freeAccount(configuration, request, response));
-		
-		get(Path.Route.SIGN_UP, (request, response) 
-				-> SignUpController.paidAccount(configuration, request, response));
-		
-		post(Path.Route.SIGN_UP, (request, response) 
-				-> SignUpController.signUp(configuration, request, response));
-		
-		get(Path.Route.VERIFY_EMAIL, (request, response) 
-				-> SignUpController.verifyEmail(configuration, request, response));
-		
-		post(Path.Route.PROVISION, (request, response) 
-				-> SignUpController.provision(configuration, request, response));
-
-		//
 		// connector routes
 		//
 

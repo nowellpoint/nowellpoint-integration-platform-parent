@@ -3,8 +3,10 @@ package com.nowellpoint.console.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -356,7 +358,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			Transaction transaction = optional.get();
 			
-			Plan plan = ServiceClient.getInstance().plan().getByCode(transaction.getPlan());
+			Plan plan = ServiceClient.getInstance()
+					.plan()
+					.getByCode(transaction.getPlan());
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
@@ -445,7 +449,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		table.addCell(getHeaderCell("Price", PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
 		table.addCell(getPlanCell(plan.getPlanName(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
 		table.addCell(getPlanCell(sdf.format(transaction.getBillingPeriodStartDate().getTime()) + " - " + sdf.format(transaction.getBillingPeriodEndDate().getTime()), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
-		table.addCell(getPlanCell(transaction.getCurrencyIsoCode() + " " + transaction.getAmount(), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
+		table.addCell(getPlanCell(NumberFormat.getCurrencyInstance(Locale.getDefault()).format(transaction.getAmount()), PdfPCell.ALIGN_RIGHT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
 		return table;
 	}
 	

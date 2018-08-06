@@ -5,6 +5,7 @@ public class Templates {
 	public static final String INDEX = "index.html";
 	public static final String LOGIN = "login.html";
 	public static final String CONTACT = "contact.html";
+	public static final String SIGN_UP = "signup.html";
 	public static final String NOT_FOUND = "not-found.html";
 	public static final String CONSOLE = String.format(APPLICATION_CONTEXT, "console.html");
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.html");

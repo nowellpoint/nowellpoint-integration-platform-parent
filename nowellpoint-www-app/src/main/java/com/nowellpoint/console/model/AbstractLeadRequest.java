@@ -1,6 +1,7 @@
 package com.nowellpoint.console.model;
 
 import java.util.Date;
+import java.util.Locale;
 import java.time.Instant;
 
 import org.bson.types.ObjectId;
@@ -20,6 +21,11 @@ public abstract class AbstractLeadRequest {
 	@Value.Default
 	public ObjectId getId() {
 		return new ObjectId();
+	}
+	
+	@Value.Default
+	public Locale getLocale() {
+		return Locale.getDefault();
 	}
 	
 	@Value.Default

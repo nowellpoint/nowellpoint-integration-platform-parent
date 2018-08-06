@@ -17,9 +17,16 @@
 
 <body>
 
-    <div class="container mt-5">
+    <header>
 
-        <section class="section">
+    </header>
+
+    <main>
+
+        <br>
+        <br>
+
+        <div class="container mt-5">
 
             <!--Section heading-->
             <h2 class="section-heading h1 pt-4">${labels["contact.us"]}</h2>
@@ -30,7 +37,16 @@
 
                 <!--Grid column-->
                 <div class="col-9">
-                    <form id="contact-form" name="contact-form" action="mail.php" method="POST">
+
+                    <!-- <#if lead??> -->
+                    <p class="text-success">${lead.successMessage!}</p>
+
+                    <div class="center-on-small-only">
+                        <a href="/" class="btn btn-success">${messages['done']}</a>
+                    </div>
+
+                    <!-- <#else> -->
+                    <form id="contact-form" name="contact-form" action="/contact/" method="POST">
 
                         <!--Grid row-->
                         <div class="row">
@@ -75,7 +91,6 @@
 
                         <!--Grid row-->
                         <div class="row">
-
                             <!--Grid column-->
                             <div class="col-md-12">
                                 <div class="md-form">
@@ -86,13 +101,14 @@
                             </div>
                         </div>
                         <!--Grid row-->
-
+                        <div class="row">
+                            <div class="text-right col-12">
+                                <a href="/">${messages['cancel']}</a>&emsp;
+                                <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">${labels['send.message']}</a>&emsp;
+                            </div>
+                        </div>
                     </form>
-
-                    <div class="center-on-small-only">
-                        <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">${labels['send.message']}</a>
-                    </div>
-                    <div class="status"></div>
+                    <!-- </#if> -->
                 </div>
                 <!--Grid column-->
 
@@ -115,10 +131,10 @@
                 <!--Grid column-->
 
             </div>
+        </div>
 
-        </section>
-    </div>
-    
+    </main>
+
     <br>
     <br>
     <br>
@@ -135,7 +151,7 @@
                     <h5 class="mb-1">${labels['create.free.account']}</h5>
                 </li>
                 <li class="list-inline-item">
-                    <a href="#!" class="btn btn-danger btn-rounded">${labels['sign.up']}</a>
+                    <a href="/free/" class="btn btn-danger">${labels['sign.up']}</a>
                 </li>
             </ul>
         </div>
@@ -167,7 +183,7 @@
 
         <!--Copyright-->
         <div class="footer-copyright py-3 text-center">
-            ${labels["copyright"]}
+            ${messages["copyright"]}
         </div>
         <!--/.Copyright-->
 

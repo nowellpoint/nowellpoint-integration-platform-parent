@@ -1,5 +1,7 @@
 package com.nowellpoint.console.entity;
 
+import java.util.Locale;
+
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity(value = "leads")
@@ -14,6 +16,8 @@ public class Lead extends BaseEntity {
 	private String email;
 	
 	private String message;
+	
+	private Locale locale;
 	
 	public Lead() {
 		
@@ -49,5 +53,13 @@ public class Lead extends BaseEntity {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public Locale getLocale() {
+		return locale;
+	}
+	
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 }

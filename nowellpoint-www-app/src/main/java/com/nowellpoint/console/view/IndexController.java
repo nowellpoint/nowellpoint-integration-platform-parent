@@ -3,11 +3,11 @@ package com.nowellpoint.console.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import com.nowellpoint.console.model.Lead;
 import com.nowellpoint.console.model.LeadRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.www.app.util.MessageProvider;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -87,11 +87,22 @@ public class IndexController {
     			.email(email)
     			.firstName(firstName)
     			.lastName(lastName)
+    			.locale(configuration.getLocale())
     			.message(message)
     			.build();
     	
-    	ServiceClient.getInstance().lead().createLead(leadRequest);
+    	Lead lead = ServiceClient.getInstance()
+    			.lead()
+    			.create(leadRequest);
     	
-    	return MessageProvider.getMessage(configuration.getLocale(), "contact.confirmation.message");
+    	Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(IndexController.class)
+				.request(request)
+				.putModel("lead", lead)
+				.templateName(Templates.CONTACT)
+				.build();
+    	
+    	return template.render();
 	};
 }

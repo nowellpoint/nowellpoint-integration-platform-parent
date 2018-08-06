@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.IndexController;
 import com.nowellpoint.console.view.OrganizationController;
+import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
 import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.content.model.IsoCountry;
@@ -43,6 +44,7 @@ public class Routes {
 		}
 		
 		IndexController.configureRoutes(configuration);
+		SignUpController.configureRoutes(configuration);
 		AuthenticationController.configureRoutes(configuration);
 		StartController.configureRoutes(configuration);
 		UserProfileController.configureRoutes(configuration);

@@ -49,7 +49,6 @@ public class PlanServiceImpl extends AbstractService implements PlanService {
 		
 		com.nowellpoint.console.entity.Plan entity = planDAO.findOne(query);
 		
-		
 		if (Assert.isNull(entity)) {
 			throw new NotFoundException(String.format("Plan code: %s was not found", planCode));
 		}
