@@ -19,7 +19,7 @@
 
     <header>
         <nav class="navbar navbar-default fixed-top navbar-dark unique-color navbar-expand-lg">
-            <div class="navbar-brand">${messages["application.title"]}</div>
+            <a class="navbar-brand" href="/"><strong>${messages["application.title"]}</strong></a>
         </nav>
     </header>
 
@@ -61,8 +61,8 @@
                             <label for="password" class="">${labels['password']}</label>
                             <input type="password" name="password" id="password" class="form-control form-control-lg" required>
                         </div>
-                        <div class="row">
-                            <div class="text-right col-12">
+                        <div class="form-group">
+                            <div class="text-right">
                                 <a href="/">${messages['cancel']}</a>&emsp;
                                 <button type="submit" id="submit" class="btn btn-primary">${labels['sign.up']}</button>
                             </div>
@@ -102,7 +102,6 @@
                             <p class="grey-text">${labels['step3']}</p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -113,34 +112,6 @@
     <br>
 
     <hr>
-    
-     <!--Copyright-->
-    <div class="footer-copyright py-3 text-center">
-        ${messages["copyright"]}
-    </div>
-    <!--/.Copyright-->
-
-    <!--Social buttons-->
-    <div class="text-center">
-        <ul class="list-unstyled list-inline">
-            <li class="list-inline-item">
-                <a href="https://twitter.com/nowellpoint" class="btn-floating btn-sm btn-tw mx-1">
-                    <i class="fa fa-twitter"> </i>
-                </a>
-            </li>
-            <li class="list-inline-item">
-                <a href="https://plus.google.com/+Nowellpoint/posts" class="btn-floating btn-sm btn-gplus mx-1">
-                    <i class="fa fa-google-plus"> </i>
-                </a>
-            </li>
-            <li class="list-inline-item">
-                <a href="https://github.com/nowellpoint/nowellpoint-integration-platform-parent" class="btn-floating btn-sm btn-li mx-1">
-                    <i class="fa fa-github"> </i>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!--/.Social buttons-->
 
     <!-- JQuery -->
     <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>

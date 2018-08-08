@@ -27,11 +27,12 @@ import org.modelmapper.config.Configuration.AccessLevel;
 import org.modelmapper.convention.MatchingStrategies;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.Query;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.console.entity.Lead;
-import com.nowellpoint.console.entity.UserProfile;
+import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
@@ -57,7 +58,7 @@ public abstract class AbstractService {
         final Morphia morphia = new Morphia();
         
         morphia.map(Lead.class);
-        morphia.map(UserProfile.class);
+        morphia.map(Identity.class);
         morphia.map(Plan.class);
         morphia.map(Organization.class);
 
@@ -155,7 +156,27 @@ public abstract class AbstractService {
 		return value;
 	}
 	
+	protected <T extends Serializable> void removeEntry(String key) {
+		Jedis jedis = jedisPool.getResource();
+		
+		try {
+			jedis.del(key.getBytes());
+		} finally {
+			jedis.close();
+		}
+	}
+	
 	protected Date getCurrentDateTime() {
 		return Date.from(Instant.now());
+	}
+	
+	protected Identity getSystemAdmin() {
+		Query<Identity> query = datastore.createQuery(Identity.class)
+				.field("username")
+				.equal("system.administrator@nowellpoint.com");
+				 
+		Identity identity = query.get();
+		
+		return identity;
 	}
 }

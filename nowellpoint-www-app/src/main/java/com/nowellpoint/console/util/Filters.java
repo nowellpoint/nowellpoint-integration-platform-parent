@@ -50,7 +50,7 @@ public class Filters {
 			
 			Identity identity = ServiceClient.getInstance()
 					.identity()
-					.getIdentity(token.getId());
+					.get(token.getId());
 			
 			Locale locale =  Optional.ofNullable(identity.getLocale()).orElse(request.attribute(RequestAttributes.LOCALE));
 			

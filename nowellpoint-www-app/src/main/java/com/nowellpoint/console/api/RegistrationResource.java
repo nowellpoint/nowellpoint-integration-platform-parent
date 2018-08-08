@@ -11,7 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.nowellpoint.console.model.RegistrationRequest;
+import com.nowellpoint.console.model.IdentityRequest;
 
 @Path("/registrations")
 public interface RegistrationResource {
@@ -37,7 +37,7 @@ public interface RegistrationResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-    public Response register(RegistrationRequest request);
+    public Response register(IdentityRequest request);
 	
 	@PermitAll
 	@DELETE

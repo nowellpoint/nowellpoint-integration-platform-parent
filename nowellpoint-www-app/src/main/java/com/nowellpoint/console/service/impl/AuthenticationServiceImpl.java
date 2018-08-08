@@ -56,7 +56,7 @@ public class AuthenticationServiceImpl extends AbstractService implements Authen
 				.setId(claims.getBody().getId())
 				.setIssuer(claims.getBody().getIssuer())
 				.setAudience(identity.getOrganization().getId().toString())
-				.setSubject(identity.getUserId())
+				.setSubject(identity.getId())
 				.setExpiration(claims.getBody().getExpiration())
 				.setIssuedAt(claims.getBody().getIssuedAt())
 				.claim("scope", claims.getBody().get("groups"))

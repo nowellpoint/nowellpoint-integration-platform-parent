@@ -13,7 +13,7 @@ public class IdentityResourceImpl implements IdentityResource {
 		
 		Identity identity = ServiceClient.getInstance()
 				.identity()
-				.getIdentity(id);
+				.get(id);
 		
 		return Response.ok(identity)
 				.build();

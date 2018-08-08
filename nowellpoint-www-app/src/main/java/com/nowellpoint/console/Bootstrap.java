@@ -36,7 +36,6 @@ import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.JobController;
 import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.console.view.SalesforceOauthController;
-import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;

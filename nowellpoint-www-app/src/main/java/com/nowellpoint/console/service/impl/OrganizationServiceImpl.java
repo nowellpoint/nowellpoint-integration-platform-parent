@@ -401,7 +401,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	private Organization update(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get().getUserId());
+		entity.setLastUpdatedBy(UserContext.get().getId());
 		organizationDAO.save(entity);
 		return Organization.of(entity);
 	}

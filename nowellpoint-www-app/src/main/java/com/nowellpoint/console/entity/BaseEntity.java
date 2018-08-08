@@ -21,12 +21,12 @@ abstract class BaseEntity implements Serializable {
 	private Date createdOn;
 	
 	@Reference
-	private UserProfile createdBy;
+	private Identity createdBy;
 	
 	private Date lastUpdatedOn;
 	
 	@Reference
-	private UserProfile lastUpdatedBy;
+	private Identity lastUpdatedBy;
 	
 	public BaseEntity() {
 		
@@ -72,31 +72,31 @@ abstract class BaseEntity implements Serializable {
 		this.lastUpdatedOn = lastUpdatedOn;
 	}
 
-	public UserProfile getCreatedBy() {
+	public Identity getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(UserProfile createdBy) {
+	public void setCreatedBy(Identity createdBy) {
 		this.createdBy = createdBy;
 	}
 	
 	public void setCreatedBy(String id) {
-		UserProfile userProfile = new UserProfile();
-		userProfile.setId(new ObjectId(id));
-		setLastUpdatedBy(userProfile);
+		Identity identity = new Identity();
+		identity.setId(new ObjectId(id));
+		setLastUpdatedBy(identity);
 	}
 
-	public UserProfile getLastUpdatedBy() {
+	public Identity getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public void setLastUpdatedBy(UserProfile lastUpdatedBy) {
+	public void setLastUpdatedBy(Identity lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 	}
 	
 	public void setLastUpdatedBy(String id) {
-		UserProfile userProfile = new UserProfile();
-		userProfile.setId(new ObjectId(id));
-		setLastUpdatedBy(userProfile);
+		Identity identity = new Identity();
+		identity.setId(new ObjectId(id));
+		setLastUpdatedBy(identity);
 	}
 }

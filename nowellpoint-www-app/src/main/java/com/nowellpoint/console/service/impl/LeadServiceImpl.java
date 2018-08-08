@@ -1,9 +1,6 @@
 package com.nowellpoint.console.service.impl;
 
-import org.mongodb.morphia.query.Query;
-
 import com.nowellpoint.console.entity.LeadDAO;
-import com.nowellpoint.console.entity.UserProfile;
 import com.nowellpoint.console.model.Lead;
 import com.nowellpoint.console.model.LeadRequest;
 import com.nowellpoint.console.service.AbstractService;
@@ -27,22 +24,16 @@ public class LeadServiceImpl extends AbstractService implements LeadService {
 				.message(request.getMessage())
 				.build();
 		
+		return create(lead);
+	}
+	
+	private Lead create(Lead lead) {
 		com.nowellpoint.console.entity.Lead entity = modelMapper.map(lead, com.nowellpoint.console.entity.Lead.class);
 		entity.setCreatedBy(getSystemAdmin());
 		entity.setCreatedOn(getCurrentDateTime());
-		entity.setLastUpdatedOn(entity.getCreatedOn());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
+		entity.setLastUpdatedOn(entity.getCreatedOn());
 		leadDAO.save(entity);
 		return Lead.of(entity);
-	}
-	
-	private UserProfile getSystemAdmin() {
-		Query<UserProfile> query = datastore.createQuery(UserProfile.class)
-				.field("username")
-				.equal("system.administrator@nowellpoint.com");
-				 
-		UserProfile userProfile = query.get();
-		
-		return userProfile;
 	}
 }

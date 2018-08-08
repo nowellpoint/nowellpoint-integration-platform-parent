@@ -18,7 +18,9 @@
 <body>
 
     <header>
-
+        <nav class="navbar navbar-default fixed-top navbar-dark unique-color navbar-expand-lg">
+            <a class="navbar-brand" href="/"><strong>${messages["application.title"]}</strong></a>
+        </nav>
     </header>
 
     <main>
@@ -27,16 +29,20 @@
         <br>
 
         <div class="container mt-5">
-
-            <!--Section heading-->
-            <h2 class="section-heading h1 pt-4">${labels["contact.us"]}</h2>
-            <!--Section description-->
-            <p class="section-description">${labels["contact.us.headline"]}</p>
-
             <div class="row">
-
+                <div class="col-1"></div>
+                <div class="col-11">
+                    <!--Section heading-->
+                    <h2 class="section-heading h1 pt-4">${labels["contact.us"]}</h2>
+                    <!--Section description-->
+                    <p class="section-description">${labels["contact.us.headline"]}</p>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-1"></div>
                 <!--Grid column-->
-                <div class="col-9">
+                <div class="col-6">
 
                     <!-- <#if lead??> -->
                     <p class="text-success">${lead.successMessage!}</p>
@@ -47,64 +53,26 @@
 
                     <!-- <#else> -->
                     <form id="contact-form" name="contact-form" action="/contact/" method="POST">
-
-                        <!--Grid row-->
-                        <div class="row">
-
-                            <!--Grid column-->
-                            <div class="col-6">
-                                <div class="md-form">
-                                    <input type="text" id="firstName" name="firstName" class="form-control">
-                                    <label for="firstName" class="">${labels['first.name']}</label>
-                                </div>
-                            </div>
-                            <div class="col-6"></div>
-                            <!--Grid column-->
-
+                        <div class="form-group">
+                            <label for="firstName" class="">${labels['first.name']}</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control form-control-lg" autofocus>
                         </div>
-                        <!--Grid row-->
-
-                        <div class="row">
-
-                            <!--Grid column-->
-                            <div class="col-6">
-                                <div class="md-form">
-                                    <input type="text" id="lastName" name="lastName" class="form-control">
-                                    <label for="lastName" class="">${labels['last.name']}</label>
-                                </div>
-                            </div>
-                            <div class="col-6"></div>
-                            <!--Grid column-->
-
-                            <!--Grid column-->
-                            <div class="col-6">
-                                <div class="md-form">
-                                    <input type="text" id="email" name="email" class="form-control">
-                                    <label for="email" class="">${labels['email']}</label>
-                                </div>
-                            </div>
-                            <div class="col-6"></div>
-                            <!--Grid column-->
-
+                        <div class="form-group">
+                            <label for="lastName" class="">${labels['last.name']}</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control form-control-lg">
                         </div>
-                        <!--Grid row-->
-
-                        <!--Grid row-->
-                        <div class="row">
-                            <!--Grid column-->
-                            <div class="col-md-12">
-                                <div class="md-form">
-                                    <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea"></textarea>
-                                    <label for="message">Your message</label>
-                                </div>
-
-                            </div>
+                        <div class="form-group">
+                            <label for="email" class="">${labels['email']}</label>
+                            <input type="text" id="email" name="email" class="form-control form-control-lg">
                         </div>
-                        <!--Grid row-->
-                        <div class="row">
-                            <div class="text-right col-12">
+                        <div class="form-group">
+                            <label for="message">${labels['message']}</label>
+                            <textarea type="text" id="message" name="message" rows="2" class="form-control form-control-lg"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <div class="text-right">
                                 <a href="/">${messages['cancel']}</a>&emsp;
-                                <a class="btn btn-primary" onclick="document.getElementById('contact-form').submit();">${labels['send.message']}</a>&emsp;
+                                <button type="submit" id="submit" class="btn btn-primary">${labels['send.message']}</button>
                             </div>
                         </div>
                     </form>
@@ -113,20 +81,36 @@
                 <!--Grid column-->
 
                 <!--Grid column-->
-                <div class="col-3">
-                    <ul class="contact-icons">
-                        <li><i class="fa fa-map-marker fa-2x"></i>
-                            <p>${labels["address.street"]}, ${labels["address.city"]}, ${labels["address.state"]}</p>
-                        </li>
+                <div class="col-5">
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-map-marker blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <p class="grey-text">${labels["address.street"]}<br>${labels["address.city"]}, ${labels["address.state"]} ${labels["address.postal.code"]}<br>${labels["address.country"]}</p>
+                        </div>
+                    </div>
 
-                        <li><i class="fa fa-phone fa-2x"></i>
-                            <p>${labels["phone.number"]}</p>
-                        </li>
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-phone blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <p class="grey-text">${labels["phone.number"]}</p>
+                        </div>
+                    </div>
 
-                        <li><i class="fa fa-envelope fa-2x"></i>
-                            <p><a href="mailto:${labels['contact.email.address']}">${labels["contact.email.address"]}</a></p>
-                        </li>
-                    </ul>
+                    <!--Grid row-->
+                    <div class="row mb-2">
+                        <div class="col-2 text-center">
+                            <i class="fa fa-2x fa-envelope blue-grey-text"></i>
+                        </div>
+                        <div class="col-10 text-left">
+                            <p class="grey-text"><a href="mailto:${labels['contact.email.address']}">${labels["contact.email.address"]}</a></p>
+                        </div>
+                    </div>
                 </div>
                 <!--Grid column-->
 

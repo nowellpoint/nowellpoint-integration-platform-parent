@@ -118,7 +118,7 @@ public class UserProfileServiceImpl extends AbstractService implements UserProfi
 	private UserProfile create(UserProfile userProfile) {
 		com.nowellpoint.console.entity.UserProfile entity = modelMapper.map(userProfile, com.nowellpoint.console.entity.UserProfile.class);
 		entity.setCreatedOn(getCurrentDateTime());
-		entity.setCreatedBy(UserContext.get().getUserId());
+		entity.setCreatedBy(UserContext.get().getId());
 		entity.setLastUpdatedOn(entity.getCreatedOn());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		userProfileDAO.save(entity);
@@ -128,7 +128,7 @@ public class UserProfileServiceImpl extends AbstractService implements UserProfi
 	private UserProfile update(UserProfile userProfile) {
 		com.nowellpoint.console.entity.UserProfile entity = modelMapper.map(userProfile, com.nowellpoint.console.entity.UserProfile.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get().getUserId());
+		entity.setLastUpdatedBy(UserContext.get().getId());
 		userProfileDAO.save(entity);
 		return UserProfile.of(entity);
 	}
