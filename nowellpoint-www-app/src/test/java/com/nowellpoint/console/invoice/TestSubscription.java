@@ -24,8 +24,6 @@ public class TestSubscription {
         			.identity()
         			.create(identityRequest);
         	
-        	System.out.println(identity.getId());
-        	
         	identity = ServiceClient.getInstance()
         			.identity()
         			.getBySubject(identity.getSubject());
