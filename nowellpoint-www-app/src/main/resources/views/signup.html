@@ -43,7 +43,7 @@
                 <div class="col-1"></div>
                 <!--Grid column-->
                 <div class="col-6">
-                    <form id="signup-form" role="form" method="post" action="/signup">
+                    <form id="signup-form" role="form" method="post" action="${links['sign.up']}/">
                         <input type="hidden" name="planId" value="${plan.planId!}" />
                         <div class="form-group">
                             <label for="firstName" class="">${labels['first.name']}</label>
@@ -59,7 +59,8 @@
                         </div>
                         <div class="form-group">
                             <label for="password" class="">${labels['password']}</label>
-                            <input type="password" name="password" id="password" class="form-control form-control-lg" required>
+                            <input type="password" name="password" id="password" class="form-control form-control-lg" aria-describedby="passwordPolicy" required>
+                            <small id="passwordPolicy" class="text-muted">${labels['password.policy']}</small>
                         </div>
                         <div class="form-group">
                             <div class="text-right">

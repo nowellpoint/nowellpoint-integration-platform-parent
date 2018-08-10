@@ -13,6 +13,8 @@ public interface IdentityService {
 	
 	public Identity activate(String id);
 	
+	public Identity resendActivationEmail(String id);
+	
 	public Identity deactivate(String id);
 	
 	public void delete(String id);

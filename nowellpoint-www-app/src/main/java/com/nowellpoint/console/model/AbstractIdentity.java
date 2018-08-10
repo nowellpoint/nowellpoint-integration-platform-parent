@@ -24,7 +24,22 @@ public abstract class AbstractIdentity {
 	public abstract String getStatus();
 	public abstract @Nullable OrganizationInfo getOrganization();
 	public abstract @Nullable Address getAddress();
+	public abstract @Nullable Photos getPhotos();
 	public abstract @Nullable Resources getResources();
+	
+	/**
+	 * 
+	
+	public abstract String getTitle();
+	
+	public abstract String getPhone();
+	
+	
+	public abstract Preferences getPreferences();
+	
+	
+	 * @return
+	 */
 	
 	@Value.Derived
 	public String getName() {
@@ -42,6 +57,11 @@ public abstract class AbstractIdentity {
 	@Value.Default
 	public String getId() {
 		return new ObjectId().toString();
+	}
+	
+	@Value.Default
+	public Boolean getActive() {
+		return Boolean.FALSE;
 	}
 	
 	@Value.Default

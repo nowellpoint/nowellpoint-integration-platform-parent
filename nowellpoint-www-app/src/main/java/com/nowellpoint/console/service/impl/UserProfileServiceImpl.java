@@ -9,8 +9,8 @@ import org.bson.types.ObjectId;
 
 import com.nowellpoint.console.entity.UserProfileDAO;
 import com.nowellpoint.console.model.Address;
+import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.Preferences;
-import com.nowellpoint.console.model.UserAddressRequest;
 import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
@@ -76,7 +76,7 @@ public class UserProfileServiceImpl extends AbstractService implements UserProfi
 	}
 	
 	@Override
-	public UserProfile update(String id, UserAddressRequest request) {
+	public UserProfile update(String id, AddressRequest request) {
 		UserProfile instance = get(id);
 		
 		Address address = Address.builder()

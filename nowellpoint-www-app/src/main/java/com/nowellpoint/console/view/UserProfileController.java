@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import com.nowellpoint.console.model.Template;
-import com.nowellpoint.console.model.UserAddressRequest;
+import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.UserPreferenceRequest;
 import com.nowellpoint.console.model.UserProfile;
 import com.nowellpoint.console.model.UserProfileRequest;
@@ -128,7 +128,7 @@ public class UserProfileController extends BaseController {
 		String state = request.queryParams("state");
 		String street = request.queryParams("street");
 		
-		UserAddressRequest addressRequest = UserAddressRequest.builder()
+		AddressRequest addressRequest = AddressRequest.builder()
 				.city(city)
 				.countryCode(countryCode)
 				.postalCode(postalCode)

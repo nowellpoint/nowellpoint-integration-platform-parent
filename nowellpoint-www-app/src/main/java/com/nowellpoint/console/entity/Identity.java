@@ -14,12 +14,17 @@ public class Identity extends BaseEntity {
 	
 	private String lastName;
 	
+	private String username;
+	
 	private String email;
 	
 	private String status;
 	
-	@Reference
-	private UserProfile userProfile;
+	private Boolean active;
+	
+	private Address address;
+	
+	private Photos photos;
 	
 	@Reference
 	private Organization organization;
@@ -52,16 +57,20 @@ public class Identity extends BaseEntity {
 		this.lastName = lastName;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public UserProfile getUserProfile() {
-		return userProfile;
 	}
 
 	public String getStatus() {
@@ -72,8 +81,28 @@ public class Identity extends BaseEntity {
 		this.status = status;
 	}
 
-	public void setUserProfile(UserProfile userProfile) {
-		this.userProfile = userProfile;
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+	public Photos getPhotos() {
+		return photos;
+	}
+
+	public void setPhotos(Photos photos) {
+		this.photos = photos;
 	}
 
 	public Organization getOrganization() {

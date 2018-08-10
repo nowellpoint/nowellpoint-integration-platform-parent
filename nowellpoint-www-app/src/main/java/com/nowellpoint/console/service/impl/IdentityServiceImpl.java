@@ -1,10 +1,10 @@
 package com.nowellpoint.console.service.impl;
 
+import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.io.IOException;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +43,6 @@ import com.sendgrid.Mail;
 import com.sendgrid.Method;
 import com.sendgrid.Personalization;
 import com.sendgrid.Request;
-import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 
 public class IdentityServiceImpl extends AbstractService implements IdentityService {
@@ -89,7 +88,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.setFirstName(request.getFirstName())
 				.setLastName(request.getLastName())
 				.setPassword(request.getPassword())
-				.setActive(Boolean.FALSE)
+				.setActive(Boolean.TRUE)
 				.addGroup(System.getenv("OKTA_DEFAULT_GROUP_ID"))
 				.buildAndCreate(client);
 		
@@ -203,10 +202,22 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		Identity identity = Identity.builder()
 				.from(instance)
+				.active(Boolean.TRUE)
 				.status(user.getStatus().name())
 				.build();
 		
 		return update(identity);
+	}
+	
+	public Identity resendActivationEmail(String id) {
+		Identity identity = get(id);
+		
+		sendVerifyEmailMessage(
+				identity.getName(), 
+				identity.getEmail(), 
+				identity.getSubject());
+		
+		return identity;
 	}
 	
 	public Identity deactivate(String id) {
@@ -216,6 +227,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		Identity identity = Identity.builder()
 				.from(instance)
+				.active(Boolean.FALSE)
 				.status(user.getStatus().name())
 				.build();
 		
@@ -301,8 +313,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 			    	request.setMethod(Method.POST);
 			    	request.setEndpoint("mail/send");
 			    	request.setBody(mail.build());
-			    	Response response = sendgrid.api(request);
-			    	LOGGER.info(response.getBody());
+			    	sendgrid.api(request);
 			    } catch (IOException e) {
 			    	LOGGER.severe(e.getMessage());
 			    }

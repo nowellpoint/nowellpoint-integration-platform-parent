@@ -32,15 +32,24 @@ public class Path {
 		public static final String INDEX = "/";
 		public static final String LOGIN = "/login/";
 		public static final String LOGOUT = "/logout/"; 
-		public static final String SIGN_UP = "/signup/";
 		public static final String FREE_ACCOUNT = "/free/";
-		public static final String PLANS = "/plans/";
-		public static final String PROVISION = "/provision/";
+		public static final String RESEND = "/resend/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
-		public static final String VERIFY_EMAIL = "/verify-email/";
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
+		
+		public static final String SIGN_UP = String.format(APPLICATION_CONTEXT, "/signup/");
+		public static final String VERIFY = String.format(APPLICATION_CONTEXT, "/verify/");
+		
+		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
+		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
+		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
+		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card/");
+		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact/");
+		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address/");
+		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber/");
+		
 		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
 		public static final String CONNECTORS_SHOW = String.format(APPLICATION_CONTEXT, "connectors/show");
 		public static final String CONNECTORS_ADD = String.format(APPLICATION_CONTEXT, "connectors/add");
@@ -56,13 +65,7 @@ public class Path {
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id/");
 		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");
 		public static final String USER_PROFILE_PREFERENCES = String.format(APPLICATION_CONTEXT, "user-profile/:id/preferences");
-		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
-		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
-		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
-		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card/");
-		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact/");
-		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address/");
-		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber/");
+		
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
 		public static final String JOBS_UPDATE = String.format(APPLICATION_CONTEXT, "jobs/:id");

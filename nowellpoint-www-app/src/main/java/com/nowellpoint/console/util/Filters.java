@@ -62,6 +62,10 @@ public class Filters {
 			request.attribute(RequestAttributes.TIME_ZONE, timeZone);
 			
 			UserContext.set(identity);
+			
+			if (identity.getActive() == Boolean.FALSE) {
+				response.redirect(Path.Route.VERIFY);
+			}
 
 		} else {
 
