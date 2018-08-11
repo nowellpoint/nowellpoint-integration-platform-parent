@@ -35,10 +35,15 @@
                     <!--Section heading-->
                     <h2 class="section-heading h1 pt-4">${labels['signup.title']}</h2>
                     <!--Section description-->
-                    <p class="section-description">${labels['fill.form']}&nbsp;<a href="/login/">${labels['login']}</a></p>
+                    <p class="section-description">${labels['fill.form']}&nbsp;<a href="${links['login']}/">${labels['login']}</a></p>
                 </div>
             </div>
             <br>
+            <#if errorMessage??>
+                <div class="alert alert-danger" role="alert">
+                    ${errorMessage}
+                </div>
+            </#if>
             <div class="row">
                 <div class="col-1"></div>
                 <!--Grid column-->

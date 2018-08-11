@@ -26,6 +26,7 @@ import com.nowellpoint.oauth.model.OAuthClientException;
 import com.nowellpoint.oauth.model.OktaOAuthProvider;
 import com.nowellpoint.oauth.model.TokenResponse;
 import com.nowellpoint.www.app.util.Path;
+import com.okta.sdk.resource.ResourceException;
 
 import freemarker.template.Configuration;
 import io.jsonwebtoken.Claims;
@@ -49,8 +50,11 @@ public class SignUpController {
 		post(Path.Route.RESEND, (request, response) 
 				-> resend(configuration, request, response));
 		
-		post(Path.Route.VERIFY, (request, response) 
-				-> verify(configuration, request, response));
+		get(Path.Route.ACTIVATE_ACCOUNT, (request, response)
+				-> showActivateAccount(configuration, request, response));
+		
+		post(Path.Route.ACTIVATE_ACCOUNT, (request, response) 
+				-> activateAccount(configuration, request, response));
 	}
 	
 	/**
@@ -103,11 +107,11 @@ public class SignUpController {
     			.password(password)
     			.build();
     	
-    	Identity identity = ServiceClient.getInstance()
-    			.identity()
-    			.create(identityRequest);
-    	
     	try {
+    		
+    		Identity identity = ServiceClient.getInstance()
+        			.identity()
+        			.create(identityRequest);
 			
     		AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
     				.password(password)
@@ -127,6 +131,7 @@ public class SignUpController {
     				.setId(claims.getBody().getId())
     				.setIssuer(claims.getBody().getIssuer())
     				//.setAudience(identity.getOrganization().getId().toString())
+    				.setAudience(claims.getBody().getAudience())
     				.setSubject(identity.getId())
     				.setExpiration(claims.getBody().getExpiration())
     				.setIssuedAt(claims.getBody().getIssuedAt())
@@ -151,30 +156,62 @@ public class SignUpController {
 				throw new InternalServerErrorException(e);
 			}
 			
+			response.redirect(Path.Route.ACTIVATE_ACCOUNT);
+			
+			return "";
+			
     	} catch (OAuthClientException e) {
     		
     		LOGGER.severe(e.getErrorDescription());
     		
     		Map<String, Object> model = new HashMap<>();
 			model.put("errorMessage", e.getErrorDescription());
+	    	
+	    	Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.request(request)
+					.model(model)
+					.templateName(Templates.SIGN_UP)
+					.build();
 			
+			return template.render();
+			
+    	} catch (ResourceException e) {
+    		
+    		LOGGER.severe(e.getMessage());
+    		
+    		Map<String, Object> model = new HashMap<>();
+			model.put("errorMessage", e.getMessage());
+	    	
+	    	Template template = Template.builder()
+					.configuration(configuration)
+					.controllerClass(SignUpController.class)
+					.request(request)
+					.model(model)
+					.templateName(Templates.SIGN_UP)
+					.build();
+			
+			return template.render();
+    		
     	} catch (UnsupportedEncodingException e) {
 			throw new InternalServerErrorException(e);
-		}
-
-    	Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("registration", identity);
+		}		
+	}
+	
+	public static String showActivateAccount(Configuration configuration, Request request, Response response) {
+		
+		Map<String, Object> model = new HashMap<String, Object>();
     	
     	Template template = Template.builder()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
 				.request(request)
 				.model(model)
-				.templateName(Templates.VERIFY)
+				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
 		
 		return template.render();
-		
 	}
 	
 	/**
@@ -185,26 +222,15 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	public static String verify(Configuration configuration, Request request, Response response) {
+	public static String activateAccount(Configuration configuration, Request request, Response response) {
 		
-		String subject = request.queryParams("subject");
+		String activationToken = request.queryParams("activationToken");
 		
-		Identity identity = ServiceClient.getInstance()
-    			.identity()
-    			.getBySubject(subject);
+		ServiceClient.getInstance().identity().activate(activationToken);
 		
-		Map<String, Object> model = new HashMap<String, Object>();
-    	model.put("identity", identity);
+		response.redirect(Path.Route.START);
 		
-    	Template template = Template.builder()
-				.configuration(configuration)
-				.controllerClass(SignUpController.class)
-				.request(request)
-				.model(model)
-				.templateName(Templates.VERIFY)
-				.build();
-		
-		return template.render();
+		return "";
 	}
 	
 	public static String resend(Configuration configuration, Request request, Response response) {
@@ -221,7 +247,7 @@ public class SignUpController {
 				.controllerClass(SignUpController.class)
 				.request(request)
 				.model(model)
-				.templateName(Templates.VERIFY)
+				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
 		
 		return template.render();

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(Include.NON_NULL)
 @JsonSerialize(as = UserProfile.class)
 @JsonDeserialize(as = UserProfile.class)
-public abstract class AbstractUserProfileRef {
+public abstract class AbstractIdentityRef {
 	public abstract String getId();
 	public abstract String getUsername();
 	public abstract String getName();

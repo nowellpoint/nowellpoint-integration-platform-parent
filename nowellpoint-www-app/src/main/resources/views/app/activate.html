@@ -33,7 +33,7 @@
                 </div>
                 <div class="col col-lg-12">
                     <h3 class="text-success text-center">${labels["check.email"]}:</h3>
-                    <h3 class="text-center"><small>${(registration.email)!}</small></h3>
+                    <h3 class="text-center"><small>${identity.email}</small></h3>
                 </div>
             </div>
             <br>
@@ -41,9 +41,9 @@
                 <div class="col-3"></div>
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
-                    <form id="confirm-form" role="form" method="post" action="/signup/">
+                    <form id="confirm-form" role="form" method="post" action="${links['activate.account']}/">
                         <div class="form-group">
-                            <input type="text" name="token" id="token" class="form-control form-control-lg" autofocus>
+                            <input type="text" name="activationToken" id="activationToken" class="form-control form-control-lg" autofocus>
                             <small id="tokenInstruction" class="text-muted">${labels['token.instruction']}</small>
                         </div>
                         <div class="form-group">
@@ -60,7 +60,7 @@
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
                     <form id="resend-form" role="form" method="post" action="/resend/">
-                        <input type="hidden" name="id" id="id" value="${registration.id}" >
+                        <input type="hidden" name="id" id="id" value="${identity.id}" >
                         <div class="form-group">
                             <div class="text-center">
                                 <button type="submit" id="submit" class="btn btn-light">${labels['resend']}</button>

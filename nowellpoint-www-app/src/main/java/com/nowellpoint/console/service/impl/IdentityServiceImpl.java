@@ -88,7 +88,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.setFirstName(request.getFirstName())
 				.setLastName(request.getLastName())
 				.setPassword(request.getPassword())
-				.setActive(Boolean.TRUE)
+				.setActive(Boolean.FALSE)
 				.addGroup(System.getenv("OKTA_DEFAULT_GROUP_ID"))
 				.buildAndCreate(client);
 		
@@ -132,11 +132,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	@Override
 	public Identity getBySubject(String subject) {
 		
-		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
-				.field("subject")
-				.equal(subject);
-		
-		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		com.nowellpoint.console.entity.Identity entity = queryBySubject(subject);
 		
 		Organization organization = entity.getOrganization();
 		
@@ -195,8 +191,11 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return Identity.of(entity);
 	}
 	
-	public Identity activate(String id) {
-		Identity instance = get(id);
+	public Identity activate(String activationToken) {
+		
+		com.nowellpoint.console.entity.Identity entity = queryBySubject(activationToken); 
+		
+		Identity instance = Identity.of(entity);
 		
 		User user = activateUser(instance.getSubject());
 		
@@ -319,6 +318,21 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 			    }
 			}
 		});
+	}
+	
+	private com.nowellpoint.console.entity.Identity queryBySubject(String subject) {
+		
+		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
+				.field("subject")
+				.equal(subject);
+		
+		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		
+		if (entity == null) {
+			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
+		}
+		
+		return entity;
 	}
 	
 	private static class DynamicTemplatePersonalization extends Personalization {

@@ -2,6 +2,8 @@ package com.nowellpoint.console.invoice;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.service.ServiceClient;
@@ -24,6 +26,10 @@ public class TestSubscription {
         			.identity()
         			.create(identityRequest);
         	
+        	System.out.println(new ObjectMapper().writeValueAsString(identity));
+        	
+        	System.out.println(identity.getSubject());
+        	
         	identity = ServiceClient.getInstance()
         			.identity()
         			.getBySubject(identity.getSubject());
@@ -40,6 +46,8 @@ public class TestSubscription {
         	
         } catch (com.okta.sdk.resource.ResourceException e) {
         	System.out.println(e.getMessage());
-        }
+        } catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 }

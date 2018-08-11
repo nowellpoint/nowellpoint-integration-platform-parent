@@ -63,9 +63,11 @@ public class Filters {
 			
 			UserContext.set(identity);
 			
-			if (identity.getActive() == Boolean.FALSE) {
-				response.redirect(Path.Route.VERIFY);
-			}
+			System.out.println(request.pathInfo());
+			
+//			if (identity.getActive() == Boolean.FALSE) {
+//				response.redirect(Path.Route.ACTIVATE_ACCOUNT);
+//			}
 
 		} else {
 

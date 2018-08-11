@@ -11,7 +11,7 @@ public interface IdentityService {
 	
 	public Identity create(IdentityRequest request);
 	
-	public Identity activate(String id);
+	public Identity activate(String activationToken);
 	
 	public Identity resendActivationEmail(String id);
 	

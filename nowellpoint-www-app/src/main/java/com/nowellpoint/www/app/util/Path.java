@@ -31,16 +31,16 @@ public class Path {
 	public static class Route {
 		public static final String INDEX = "/";
 		public static final String LOGIN = "/login/";
-		public static final String LOGOUT = "/logout/"; 
 		public static final String FREE_ACCOUNT = "/free/";
+		public static final String SIGN_UP = ("/signup/");
 		public static final String RESEND = "/resend/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
-		public static final String START = String.format(APPLICATION_CONTEXT, "start");
-		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		
-		public static final String SIGN_UP = String.format(APPLICATION_CONTEXT, "/signup/");
-		public static final String VERIFY = String.format(APPLICATION_CONTEXT, "/verify/");
+		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout/"); 
+		public static final String ACTIVATE_ACCOUNT = String.format(APPLICATION_CONTEXT, "activate/");
+		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
+		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");
 		
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
