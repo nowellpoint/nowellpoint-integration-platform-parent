@@ -1,9 +1,7 @@
 package com.nowellpoint.console.service.impl;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,15 +18,12 @@ import org.mongodb.morphia.query.Query;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nowellpoint.console.entity.Address;
-import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.entity.IdentityDAO;
-import com.nowellpoint.console.model.Organization;
-import com.nowellpoint.console.model.Subscription;
-import com.nowellpoint.console.entity.OrganizationDAO;
-import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
+import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.SubscriptionRequest;
+import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -73,11 +68,9 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private static final SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_API_KEY"));
 	
 	private IdentityDAO identityDAO;
-	private OrganizationDAO organizationDAO;
 	
 	public IdentityServiceImpl() {
 		identityDAO = new IdentityDAO(com.nowellpoint.console.entity.Identity.class, datastore);
-		organizationDAO = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
 	}
 	
 	@Override
@@ -133,47 +126,38 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	@Override
 	public Identity getBySubject(String subject) {
 		
-		Identity identity = queryBySubject2(subject);
+		Identity identity = queryBySubject(subject);
 		
-		Organization organization = ServiceClient.getInstance()
-				.organization()
-				.get(identity.getOrganization().getId());
-		
-		com.braintreegateway.Subscription source = gateway.subscription().find(organization.getSubscription().getNumber());
-		
-		Set<Transaction> transactions = new HashSet<>();
-		
-		source.getTransactions().forEach(t -> {
-			transactions.add(Transaction.of(t));
-		});
-		
-		Subscription subscription = Subscription.builder()
-				.from(organization.getSubscription())
-				.addAllTransactions(transactions)
-				.billingPeriodEndDate(source.getBillingPeriodEndDate().getTime())
-				.billingPeriodStartDate(source.getBillingPeriodStartDate().getTime())
-				.nextBillingDate(source.getNextBillingDate().getTime())
-				.build();
-		
-		ServiceClient.getInstance().organization().update(organization.getId(), subscription);
-		
-//		organization.getSubscription().setBillingPeriodEndDate(subscription.getBillingPeriodEndDate().getTime());
-//		organization.getSubscription().setBillingPeriodStartDate(subscription.getBillingPeriodStartDate().getTime());
-//		organization.getSubscription().setNextBillingDate(subscription.getNextBillingDate().getTime());
-//		organization.setTransactions(transactions);
-		
-//		organizationDAO.save(entity.getOrganization());
-		
-//		putEntry(entity.getId().toString(), entity);
-		
-//		ServiceClient.getInstance().organization().u
+		if (identity.getOrganization() != null) {
+			
+			Organization organization = ServiceClient.getInstance()
+					.organization()
+					.get(identity.getOrganization().getId());
+			
+			com.braintreegateway.Subscription source = gateway.subscription().find(organization.getSubscription().getNumber());
+			
+			Set<Transaction> transactions = new HashSet<>();
+			
+			source.getTransactions().forEach(transaction -> {
+				transactions.add(Transaction.of(transaction));
+			});
+			
+			SubscriptionRequest request = SubscriptionRequest.builder()
+					.billingPeriodEndDate(source.getBillingPeriodEndDate().getTime())
+					.billingPeriodStartDate(source.getBillingPeriodStartDate().getTime())
+					.nextBillingDate(source.getNextBillingDate().getTime())
+					.transactions(transactions)
+					.build();
+			
+			ServiceClient.getInstance().organization().update(organization.getId(), request);
+		}
 		
 		return identity;
 	}
 	
 	public Identity activate(String activationToken) {
 		
-		Identity instance = queryBySubject2(activationToken);
+		Identity instance = getBySubject(activationToken);
 		
 		User user = activateUser(instance.getSubject());
 		
@@ -226,13 +210,13 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private User deactivateUser(String userId) {
 		User user = client.getUser(userId);
 		user.activate(Boolean.FALSE);
-		return user;
+		return client.getUser(userId);
 	}
 	
 	private User activateUser(String userId) {
 		User user = client.getUser(userId);
 		user.activate(Boolean.TRUE);
-		return user;
+		return client.getUser(userId);
 	}
 	
 	private Identity create(Identity identity) {
@@ -298,7 +282,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		});
 	}
 	
-	private Identity queryBySubject2(String subject) {
+	private Identity queryBySubject(String subject) {
 		
 		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
 				.field("subject")
@@ -309,23 +293,10 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		if (entity == null) {
 			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
 		}
+		
+		putEntry(entity.getId().toString(), entity);
 		
 		return Identity.of(entity);
-	}
-	
-	private com.nowellpoint.console.entity.Identity queryBySubject(String subject) {
-		
-		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
-				.field("subject")
-				.equal(subject);
-		
-		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
-		
-		if (entity == null) {
-			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
-		}
-		
-		return entity;
 	}
 	
 	private static class DynamicTemplatePersonalization extends Personalization {

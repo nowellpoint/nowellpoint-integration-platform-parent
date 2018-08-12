@@ -63,9 +63,9 @@ public class Filters {
 			
 			UserContext.set(identity);
 			
-			System.out.println(request.pathInfo());
+			System.out.println(request.pathInfo() + " " + request.pathInfo().endsWith("/app/activate/"));
 			
-//			if (identity.getActive() == Boolean.FALSE) {
+//			if ( identity.getActive() == Boolean.FALSE) {
 //				response.redirect(Path.Route.ACTIVATE_ACCOUNT);
 //			}
 

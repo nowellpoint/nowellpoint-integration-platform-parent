@@ -19,7 +19,6 @@ import org.bson.types.ObjectId;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.braintreegateway.SubscriptionRequest;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -39,6 +38,7 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
+import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
@@ -82,12 +82,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public Organization update(String id, Subscription subscription) {
+	public Organization update(String id, SubscriptionRequest request) {
 		Organization instance = get(id);
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.subscription(subscription)
+				.subscription(Subscription.builder()
+						.from(instance.getSubscription())
+						.billingPeriodEndDate(request.getBillingPeriodEndDate())
+						.billingPeriodStartDate(request.getBillingPeriodStartDate())
+						.nextBillingDate(request.getNextBillingDate())
+						.transactions(request.getTransactions())
+						.build())
 				.build();
 		
 		return update(organization);
@@ -142,7 +148,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization instance = get(id);
 		
-		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+		com.braintreegateway.SubscriptionRequest subscriptionRequest = new com.braintreegateway.SubscriptionRequest()
 				.paymentMethodToken(instance.getSubscription().getCreditCard().getToken())
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));
@@ -171,7 +177,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
-				.addAllTransactions(transactions)
 				.billingFrequency(plan.getBillingFrequency())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
@@ -182,6 +187,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.planCode(plan.getPlanCode())
 				.planId(plan.getId())
 				.planName(plan.getPlanName())
+				.transactions(transactions)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.updatedOn(getCurrentDateTime())
 				.build();
@@ -225,7 +231,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(creditCardResult.getMessage());
 		}
 		
-		SubscriptionRequest subscriptionRequest = new SubscriptionRequest()
+		com.braintreegateway.SubscriptionRequest subscriptionRequest = new com.braintreegateway.SubscriptionRequest()
 				.paymentMethodToken(creditCardResult.getTarget().getToken())
 				.planId(plan.getPlanCode())
 				.price(new BigDecimal(plan.getPrice().getUnitPrice()));

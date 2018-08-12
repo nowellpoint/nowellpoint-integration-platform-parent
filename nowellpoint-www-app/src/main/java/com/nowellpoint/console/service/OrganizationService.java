@@ -7,7 +7,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
-import com.nowellpoint.console.model.Subscription;
+import com.nowellpoint.console.model.SubscriptionRequest;
 
 public interface OrganizationService {
 	
@@ -23,7 +23,7 @@ public interface OrganizationService {
 	
 	public Organization update(String id, ContactRequest request);
 	
-	public Organization update(String id, Subscription subscription);
+	public Organization update(String id, SubscriptionRequest request);
 	
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
 }
