@@ -44,6 +44,8 @@ public class Subscription implements Serializable {
 	
 	private Set<Feature> features;
 	
+	private Set<Transaction> transactions;
+	
 	public Subscription() {
 		
 	}
@@ -190,5 +192,13 @@ public class Subscription implements Serializable {
 
 	public void setFeatures(Set<Feature> features) {
 		this.features = features;
+	}
+	
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(Set<Transaction> transactions) {
+		this.transactions = transactions;
 	}
 }

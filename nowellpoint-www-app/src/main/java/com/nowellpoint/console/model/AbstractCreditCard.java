@@ -27,17 +27,17 @@ public abstract class AbstractCreditCard {
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 	
-	public static CreditCard of(com.nowellpoint.console.entity.CreditCard source) {
-		return source == null ? null : CreditCard.builder()
-				.addedOn(source.getAddedOn())
-				.cardholderName(source.getCardholderName())
-				.cardType(source.getCardType())
-				.expirationMonth(source.getExpirationMonth())
-				.expirationYear(source.getExpirationYear())
-				.imageUrl(source.getImageUrl())
-				.lastFour(source.getLastFour())
-				.token(source.getToken())
-				.updatedOn(source.getUpdatedOn())
+	public static CreditCard of(com.nowellpoint.console.entity.CreditCard entity) {
+		return entity == null ? null : CreditCard.builder()
+				.addedOn(entity.getAddedOn())
+				.cardholderName(entity.getCardholderName())
+				.cardType(entity.getCardType())
+				.expirationMonth(entity.getExpirationMonth())
+				.expirationYear(entity.getExpirationYear())
+				.imageUrl(entity.getImageUrl())
+				.lastFour(entity.getLastFour())
+				.token(entity.getToken())
+				.updatedOn(entity.getUpdatedOn())
 				.build();
 	}
 	

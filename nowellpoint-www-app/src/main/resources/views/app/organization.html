@@ -130,7 +130,7 @@
                                     <span class="grey-text"></span>
                                 </div>
                             </div>
-                            <#if organization.transactions?size==0>
+                            <#if organization.subscription.transactions?size==0>
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">
@@ -138,7 +138,7 @@
                                     </div>
                                 </div>
                             </#if>
-                            <#list organization.transactions?sort_by( "createdOn")?reverse as transaction>
+                            <#list organization.subscription.transactions?sort_by( "createdOn")?reverse as transaction>
                                 <hr>
                                 <div class="row">
                                     <div class="col-2">

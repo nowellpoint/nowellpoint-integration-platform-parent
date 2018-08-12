@@ -82,6 +82,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
+	public Organization update(String id, Subscription subscription) {
+		Organization instance = get(id);
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.subscription(subscription)
+				.build();
+		
+		return update(organization);
+	}
+	
+	@Override
 	public Organization update(String id, CreditCardRequest request) {
 		
 		Organization instance = get(id);
@@ -151,8 +163,15 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
+		Set<Transaction> transactions = new HashSet<>();
+		
+		subscriptionResult.getTarget().getTransactions().stream().forEach(t -> {
+			transactions.add(Transaction.of(t));
+		});
+		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
+				.addAllTransactions(transactions)
 				.billingFrequency(plan.getBillingFrequency())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
 				.currencySymbol(plan.getPrice().getCurrencySymbol())
@@ -167,16 +186,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.updatedOn(getCurrentDateTime())
 				.build();
 		
-		Set<Transaction> transactions = new HashSet<>();
-		
-		subscriptionResult.getTarget().getTransactions().stream().forEach(t -> {
-			transactions.add(Transaction.of(t));
-		});
-		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
-				.transactions(transactions)
 				.build();
 		
 		return update(organization);
@@ -238,6 +250,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Subscription subscription = Subscription.builder()
 				.from(instance.getSubscription())
+				.addTransaction(transaction)
 				.billingFrequency(plan.getBillingFrequency())
 				.creditCard(transaction.getCreditCard())
 				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
@@ -255,7 +268,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.from(instance)
 				.subscription(subscription)
-				.addTransaction(transaction)
 				.build();
 		
 		return update(organization);
@@ -349,7 +361,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = get(id);
 		
-		Optional<Transaction> optional = organization.getTransactions()
+		Optional<Transaction> optional = organization.getSubscription()
+				.getTransactions()
 				.stream()
 				.filter(t -> t.getId().equals(invoiceNumber))
 				.findFirst();

@@ -19,18 +19,19 @@ import org.mongodb.morphia.query.Query;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
-import com.braintreegateway.Subscription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nowellpoint.console.entity.Address;
-import com.nowellpoint.console.entity.CreditCard;
+import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.entity.IdentityDAO;
-import com.nowellpoint.console.entity.Organization;
+import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.entity.OrganizationDAO;
-import com.nowellpoint.console.entity.Transaction;
+import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
@@ -132,70 +133,47 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	@Override
 	public Identity getBySubject(String subject) {
 		
-		com.nowellpoint.console.entity.Identity entity = queryBySubject(subject);
+		Identity identity = queryBySubject2(subject);
 		
-		Organization organization = entity.getOrganization();
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(identity.getOrganization().getId());
 		
-		Subscription subscription = gateway.subscription().find(organization.getSubscription().getNumber());
+		com.braintreegateway.Subscription source = gateway.subscription().find(organization.getSubscription().getNumber());
 		
 		Set<Transaction> transactions = new HashSet<>();
 		
-		subscription.getTransactions().forEach(t -> {
-			CreditCard creditCard = new CreditCard();
-			creditCard.setAddedOn(t.getCreditCard().getCreatedAt() != null ? t.getCreditCard().getCreatedAt().getTime() : Date.from(Instant.now()));
-			creditCard.setCardholderName(t.getCreditCard().getCardholderName());
-			creditCard.setCardType(t.getCreditCard().getCardType());
-			creditCard.setExpirationMonth(t.getCreditCard().getExpirationMonth());
-			creditCard.setExpirationYear(t.getCreditCard().getExpirationYear());
-			creditCard.setImageUrl(t.getCreditCard().getImageUrl());
-			creditCard.setLastFour(t.getCreditCard().getLast4());
-			creditCard.setToken(t.getCreditCard().getToken());
-			creditCard.setUpdatedOn(t.getCreditCard().getUpdatedAt() != null ? t.getCreditCard().getUpdatedAt().getTime() : Date.from(Instant.now()));
-			
-			Address billingAddress = new Address();
-			billingAddress.setAddedOn(t.getBillingAddress().getCreatedAt() != null ? t.getCreditCard().getBillingAddress().getCreatedAt().getTime() : Date.from(Instant.now()));
-			billingAddress.setCity(t.getBillingAddress().getLocality());
-			billingAddress.setCountryCode(t.getBillingAddress().getCountryCodeAlpha2());
-			billingAddress.setId(t.getBillingAddress().getId());
-			billingAddress.setPostalCode(t.getBillingAddress().getPostalCode());
-			billingAddress.setState(t.getBillingAddress().getRegion());
-			billingAddress.setStreet(t.getBillingAddress().getStreetAddress());
-			billingAddress.setUpdatedOn(t.getBillingAddress().getUpdatedAt() != null ? t.getCreditCard().getBillingAddress().getUpdatedAt().getTime() : Date.from(Instant.now()));
-			
-			Transaction transaction = new Transaction();
-			transaction.setBillingAddress(billingAddress);
-			transaction.setBillingPeriodEndDate(t.getSubscriptionDetails().getBillingPeriodEndDate().getTime());
-			transaction.setBillingPeriodStartDate(t.getSubscriptionDetails().getBillingPeriodStartDate().getTime());
-			transaction.setAmount(t.getAmount().doubleValue());
-			transaction.setCreatedOn(t.getCreatedAt().getTime());
-			transaction.setCreditCard(creditCard);
-			transaction.setCurrencyIsoCode(t.getCurrencyIsoCode());
-			transaction.setId(t.getId());
-			transaction.setPlan(t.getPlanId());
-			transaction.setFirstName(t.getCustomer().getFirstName());
-			transaction.setLastName(t.getCustomer().getLastName());
-			transaction.setStatus(t.getStatus().name());
-			transaction.setUpdatedOn(t.getUpdatedAt().getTime());
-			transactions.add(transaction);
+		source.getTransactions().forEach(t -> {
+			transactions.add(Transaction.of(t));
 		});
 		
-		organization.getSubscription().setBillingPeriodEndDate(subscription.getBillingPeriodEndDate().getTime());
-		organization.getSubscription().setBillingPeriodStartDate(subscription.getBillingPeriodStartDate().getTime());
-		organization.getSubscription().setNextBillingDate(subscription.getNextBillingDate().getTime());
-		organization.setTransactions(transactions);
+		Subscription subscription = Subscription.builder()
+				.from(organization.getSubscription())
+				.addAllTransactions(transactions)
+				.billingPeriodEndDate(source.getBillingPeriodEndDate().getTime())
+				.billingPeriodStartDate(source.getBillingPeriodStartDate().getTime())
+				.nextBillingDate(source.getNextBillingDate().getTime())
+				.build();
 		
-		organizationDAO.save(entity.getOrganization());
+		ServiceClient.getInstance().organization().update(organization.getId(), subscription);
 		
-		putEntry(entity.getId().toString(), entity);
+//		organization.getSubscription().setBillingPeriodEndDate(subscription.getBillingPeriodEndDate().getTime());
+//		organization.getSubscription().setBillingPeriodStartDate(subscription.getBillingPeriodStartDate().getTime());
+//		organization.getSubscription().setNextBillingDate(subscription.getNextBillingDate().getTime());
+//		organization.setTransactions(transactions);
 		
-		return Identity.of(entity);
+//		organizationDAO.save(entity.getOrganization());
+		
+//		putEntry(entity.getId().toString(), entity);
+		
+//		ServiceClient.getInstance().organization().u
+		
+		return identity;
 	}
 	
 	public Identity activate(String activationToken) {
 		
-		com.nowellpoint.console.entity.Identity entity = queryBySubject(activationToken); 
-		
-		Identity instance = Identity.of(entity);
+		Identity instance = queryBySubject2(activationToken);
 		
 		User user = activateUser(instance.getSubject());
 		
@@ -318,6 +296,21 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 			    }
 			}
 		});
+	}
+	
+	private Identity queryBySubject2(String subject) {
+		
+		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
+				.field("subject")
+				.equal(subject);
+		
+		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		
+		if (entity == null) {
+			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
+		}
+		
+		return Identity.of(entity);
 	}
 	
 	private com.nowellpoint.console.entity.Identity queryBySubject(String subject) {

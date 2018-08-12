@@ -1,7 +1,6 @@
 package com.nowellpoint.console.model;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -24,7 +23,6 @@ public abstract class AbstractOrganization {
 	public abstract String getDomain();
 	public abstract @Nullable String getName();
 	public abstract Subscription getSubscription();
-	public abstract Set<Transaction> getTransactions();
 	
 	@Value.Default
 	public Meta getMeta() {
@@ -43,7 +41,6 @@ public abstract class AbstractOrganization {
 				.name(source.getName())
 				.number(source.getNumber())
 				.subscription(Subscription.of(source.getSubscription()))
-				.transactions(Transactions.of(source.getTransactions()))
 				.build();
 	}
 }

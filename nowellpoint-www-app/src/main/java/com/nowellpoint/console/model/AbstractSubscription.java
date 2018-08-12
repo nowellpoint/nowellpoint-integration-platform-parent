@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, depluralize = true, depluralizeDictionary = {"feature:features"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, depluralize = true, depluralizeDictionary = {"feature:features, transaction:transactions"})
 @JsonSerialize(as = Subscription.class)
 @JsonDeserialize(as = Subscription.class)
 public abstract class AbstractSubscription {
@@ -35,25 +35,27 @@ public abstract class AbstractSubscription {
 	public abstract @Nullable Address getBillingAddress();
 	public abstract @Nullable Contact getBillingContact();
 	public abstract Set<Feature> getFeatures();
+	public abstract Set<Transaction> getTransactions();
 	
-	public static Subscription of(com.nowellpoint.console.entity.Subscription source) {
-		return source == null ? null : Subscription.builder()
-				.addedOn(source.getAddedOn())
-				.billingAddress(Address.of(source.getBillingAddress()))
-				.billingContact(Contact.of(source.getBillingContact()))
-				.billingFrequency(source.getBillingFrequency())
-				.creditCard(CreditCard.of(source.getCreditCard()))
-				.currencyIsoCode(source.getCurrencyIsoCode())
-				.currencySymbol(source.getCurrencySymbol())
-				.features(AbstractFeatures.of(source.getFeatures()))
-				.nextBillingDate(source.getNextBillingDate())
-				.number(source.getNumber())
-				.planCode(source.getPlanCode())
-				.planId(source.getPlanId())
-				.planName(source.getPlanName())
-				.status(source.getStatus())
-				.unitPrice(source.getUnitPrice())
-				.updatedOn(source.getUpdatedOn())
+	public static Subscription of(com.nowellpoint.console.entity.Subscription entity) {
+		return entity == null ? null : Subscription.builder()
+				.addedOn(entity.getAddedOn())
+				.billingAddress(Address.of(entity.getBillingAddress()))
+				.billingContact(Contact.of(entity.getBillingContact()))
+				.billingFrequency(entity.getBillingFrequency())
+				.creditCard(CreditCard.of(entity.getCreditCard()))
+				.currencyIsoCode(entity.getCurrencyIsoCode())
+				.currencySymbol(entity.getCurrencySymbol())
+				.features(AbstractFeatures.of(entity.getFeatures()))
+				.nextBillingDate(entity.getNextBillingDate())
+				.number(entity.getNumber())
+				.planCode(entity.getPlanCode())
+				.planId(entity.getPlanId())
+				.planName(entity.getPlanName())
+				.status(entity.getStatus())
+				.unitPrice(entity.getUnitPrice())
+				.updatedOn(entity.getUpdatedOn())
+				.transactions(Transactions.of(entity.getTransactions()))
 				.build();
 	}
 }

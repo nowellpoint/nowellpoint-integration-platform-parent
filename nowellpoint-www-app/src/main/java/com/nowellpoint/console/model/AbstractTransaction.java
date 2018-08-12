@@ -35,21 +35,21 @@ public abstract class AbstractTransaction {
 		return getFirstName() != null ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	public static Transaction of(com.nowellpoint.console.entity.Transaction source) {
-		return source == null ? null : Transaction.builder()
-				.amount(source.getAmount())
-				.billingAddress(Address.of(source.getBillingAddress()))
-				.billingPeriodEndDate(source.getBillingPeriodEndDate())
-				.billingPeriodStartDate(source.getBillingPeriodStartDate())
-				.createdOn(source.getCreatedOn())
-				.creditCard(CreditCard.of(source.getCreditCard()))
-				.currencyIsoCode(source.getCurrencyIsoCode())
-				.firstName(source.getFirstName())
-				.lastName(source.getLastName())
-				.id(source.getId())
-				.plan(source.getPlan())
-				.status(source.getStatus())
-				.updatedOn(source.getUpdatedOn())
+	public static Transaction of(com.nowellpoint.console.entity.Transaction entity) {
+		return entity == null ? null : Transaction.builder()
+				.amount(entity.getAmount())
+				.billingAddress(Address.of(entity.getBillingAddress()))
+				.billingPeriodEndDate(entity.getBillingPeriodEndDate())
+				.billingPeriodStartDate(entity.getBillingPeriodStartDate())
+				.createdOn(entity.getCreatedOn())
+				.creditCard(CreditCard.of(entity.getCreditCard()))
+				.currencyIsoCode(entity.getCurrencyIsoCode())
+				.firstName(entity.getFirstName())
+				.lastName(entity.getLastName())
+				.id(entity.getId())
+				.plan(entity.getPlan())
+				.status(entity.getStatus())
+				.updatedOn(entity.getUpdatedOn())
 				.build();
 	}
 	
