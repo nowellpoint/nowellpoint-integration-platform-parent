@@ -34,11 +34,13 @@ public class Path {
 		public static final String FREE_ACCOUNT = "/free/";
 		public static final String SIGN_UP = ("/signup/");
 		public static final String RESEND = "/resend/";
+		public static final String ACTIVATE_ACCOUNT = "/activate/:id/";
+		public static final String SECURE_ACCOUNT = "/secure/:id/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
 		
 		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout/"); 
-		public static final String ACTIVATE_ACCOUNT = String.format(APPLICATION_CONTEXT, "activate");
+		
 		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth");
 		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");

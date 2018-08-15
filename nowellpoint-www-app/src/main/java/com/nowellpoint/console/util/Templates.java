@@ -7,7 +7,8 @@ public class Templates {
 	public static final String CONTACT = "contact.html";
 	public static final String SIGN_UP = "signup.html";
 	public static final String NOT_FOUND = "not-found.html";
-	public static final String ACTIVATE_ACCOUNT = String.format(APPLICATION_CONTEXT, "activate.html");
+	public static final String ACTIVATE_ACCOUNT = "activate.html";
+	public static final String SECURE_ACCOUNT = "secure.html";
 	public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth.html");
 	public static final String CONSOLE = String.format(APPLICATION_CONTEXT, "console.html");
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.html");

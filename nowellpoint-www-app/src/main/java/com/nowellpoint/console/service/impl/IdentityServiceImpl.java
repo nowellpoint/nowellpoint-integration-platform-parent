@@ -31,8 +31,10 @@ import com.nowellpoint.console.util.UserContext;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
+import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserBuilder;
+import com.okta.sdk.resource.user.UserCredentials;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -168,6 +170,18 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.build();
 		
 		return update(identity);
+	}
+	
+	public void changePassword(String id, String password) {
+		Identity instance = get(id);
+		
+		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
+				.setValue(password);
+		
+		UserCredentials userCredentials = client.instantiate(UserCredentials.class)
+				.setPassword(passwordCredential);
+		
+		client.getUser(instance.getSubject()).setCredentials(userCredentials).update();
 	}
 	
 	public Identity resendActivationEmail(String id) {

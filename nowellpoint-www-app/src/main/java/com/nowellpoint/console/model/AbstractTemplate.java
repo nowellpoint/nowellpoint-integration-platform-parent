@@ -70,6 +70,10 @@ public abstract class AbstractTemplate {
 		return request.attribute(RequestAttributes.TIME_ZONE);
 	}
 	
+	public String toHtml() {
+		return render();
+	}
+	
 	public String render() {	
 		Token token = getToken(getRequest());
 		Identity identity = getIdentity(getRequest());
