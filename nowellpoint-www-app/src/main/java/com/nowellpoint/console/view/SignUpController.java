@@ -3,16 +3,23 @@ package com.nowellpoint.console.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import javax.ws.rs.InternalServerErrorException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.oauth.model.OAuthClientException;
 import com.nowellpoint.www.app.util.Path;
@@ -191,9 +198,11 @@ public class SignUpController {
 		
 		String activationToken = request.queryParams("activationToken");
 		
-		ServiceClient.getInstance().identity().activate(activationToken);
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.activate(activationToken);
 		
-		response.redirect(Path.Route.SALESFORCE_OAUTH);
+		response.redirect(Path.Route.SECURE_ACCOUNT.replace(":id", identity.getId()));
 		
 		return "";
 	}
@@ -246,7 +255,7 @@ public class SignUpController {
 				.controllerClass(SignUpController.class)
 				.model(model)
 				.request(request)
-				.templateName(Templates.SECURE_ACCOUNT.replace(":id", identity.getId()))
+				.templateName(Templates.SECURE_ACCOUNT)
 				.build();
 		
 		return template.render();
@@ -254,8 +263,33 @@ public class SignUpController {
 	
 	private static String secure(Configuration configuration, Request request, Response response) {
 		String id = request.params("id");
+		String password = request.queryParams("password");
 		
-		return null;
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.setPassword(id, password);
+		
+		try {
+			
+			Token token = ServiceClient.getInstance()
+					.authentication()
+					.authenticate(identity.getUsername(), password);
+			
+			Long expiresIn = token.getExpiresIn();
+			
+			try {			
+				response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true, true);
+			} catch (IOException e) {
+				throw new InternalServerErrorException(e);
+			}
+			
+			response.redirect(Path.Route.SALESFORCE_OAUTH);
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return "";
 	}
 	
 	/**

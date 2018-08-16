@@ -19,11 +19,14 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nowellpoint.console.entity.IdentityDAO;
+import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
+import com.nowellpoint.console.model.UserPreferenceRequest;
+import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -172,7 +175,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
-	public void changePassword(String id, String password) {
+	public Identity setPassword(String id, String password) {
 		Identity instance = get(id);
 		
 		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
@@ -182,6 +185,24 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.setPassword(passwordCredential);
 		
 		client.getUser(instance.getSubject()).setCredentials(userCredentials).update();
+		
+		Identity identity = Identity.builder()
+				.from(instance)
+				.build();
+		
+		return update(identity);
+	}
+	
+	public Identity update(String id, UserProfileRequest request) {
+		return null;
+	}
+	
+	public Identity update(String id, AddressRequest request) {
+		return null;
+	}
+	
+	public Identity update(String id, UserPreferenceRequest request) {
+		return null;
 	}
 	
 	public Identity resendActivationEmail(String id) {
