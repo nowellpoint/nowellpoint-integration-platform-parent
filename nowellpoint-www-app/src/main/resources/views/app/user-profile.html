@@ -7,18 +7,7 @@
             id: "${userProfile.id!}",
             firstName: "${userProfile.firstName!}",
             lastName: "${userProfile.lastName!}",
-            street: "${(userProfile.address.street)!}",
-            city: "${(userProfile.address.city)!}",
-            state: "${(userProfile.address.state)!}",
-            postalCode: "${(userProfile.address.postalCode)!}",
-            countryCode: "${(userProfile.address.countryCode)!}",
-            company: "${userProfile.company!}",
-            department: "${userProfile.department!}",
-            title: "${userProfile.title!}",
             email: "${userProfile.email!}",
-            mobilePhone: "${userProfile.mobilePhone!}",
-            phone: "${userProfile.phone!}",
-            extension: "${userProfile.extension!}",
             locale: "${userProfile.locale!}",
             timeZone: "${userProfile.timeZone!}"
         }
@@ -47,142 +36,6 @@
                     <#include "user-profile-information.html" />
                 </div>
             </div>
-            <br>
-            <div class="card border-light mb-3">
-                <div class="card-header pt-3">
-                    <div class="row">
-                        <div class="col-6 align-self-center">
-                            <h6><i class="fa fa-address-card-o fa-lg light-blue-text"></i>&emsp;${labels["address"]}</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                            <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-address" tooltip="${labels['update']}"></i></p></h6>
-                        </div>
-                    </div>
-                </div>
-                <div id="address" class="card-body">
-                    <#include "user-profile-address.html" />
-                </div>
-            </div>
-            <br>
-            <div class="card border-light mb-3">
-                <div class="card-header pt-3">
-                    <div class="row">
-                        <div class="col-6 align-self-center">
-                            <h6><i class="fa fa-bolt fa-lg light-blue-text"></i>&emsp;${labels["preferences"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            <h6><p class="pointer"><i class="fa fa-edit fa-lg light-blue-text" data-toggle="modal" data-target="#modal-preferences" tooltip="${labels['update']}"></i></p></h6>
-                        </div>
-                    </div>
-                </div>
-                <div id="address" class="card-body">
-                    <#include "user-profile-preferences.html" />
-                </div>
-            </div>
-        </div>
-
-        <div class="modal" id="modal-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <!--Modal: Contact form-->
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <!--Content-->
-                <div class="modal-content">
-                    <!--Header-->
-                    <div class="modal-header unique-color white-text">
-                        <h5 class="modal-title" id="modalLabel">${labels["edit.address"]}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                            <span class="white-text" aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <!--Body-->
-                    <div class="modal-body">
-                        <form class="form" name="form-address" id="form-address" role="form" method="post" action="${links['user.profile']}/${userProfile.id}/address/">
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" name="street" id="street" placeholder="${labels['street']}" value="${(userProfile.address.street)!}" required />
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" name="city" id="city" placeholder="${labels['city']}" value="${(userProfile.address.city)!}" required/>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" name="state" id="state" placeholder="${labels['state']}" value="${(userProfile.address.state)!}" />
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-lg" name="postalCode" id="postalCode" placeholder="${labels['postal.code']}" value="${(userProfile.address.postalCode)!}" required/>
-                            </div>
-                            <div class="form-group">
-                                <select id="countryCode" name="countryCode" class="form-control form-control-lg">
-                                    <#list countryList as country>
-                                        <#if country.code==userProfile.address.countryCode>
-                                            <option value="${country.code}" selected="selected">${country.name}</option>
-                                        </#if>
-                                        <#if country.code !=userProfile.address.countryCode>
-                                            <option value="${country.code}">${country.name}</option>
-                                        </#if>
-                                    </#list>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
-                        <button class="btn btn-primary" id="save-address">${messages["save"]}</button>
-                    </div>
-                </div>
-                <!--/.Content-->
-            </div>
-            <!--/Modal: Contact form-->
-        </div>
-
-        <div class="modal" id="modal-preferences" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <!--Modal: Contact form-->
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <!--Content-->
-                <div class="modal-content">
-                    <!--Header-->
-                    <div class="modal-header unique-color white-text">
-                        <h5 class="modal-title" id="modalLabel">${labels["edit.user.preferences"]}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="${labels['close']}">
-                            <span class="white-text" aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <!--Body-->
-                    <div class="modal-body">
-                        <form class="form" name="form-preferences" id="form-preferences" role="form" method="POST" action="${links['user.profile']}/${userProfile.id}/preferences/">
-                            <div class="form-group">
-                                <select id="locale" name="locale" class="form-control form-control-lg" required>
-                                    <option value="" disabled selected>${labels["locale.key"]}</option>
-                                    <#list locales?keys as key>
-                                        <#if userProfile.preferences.locale==key>
-                                            <option value="${key}" selected="selected">${locales[key]}</option>
-                                        </#if>
-                                        <#if userProfile.preferences.locale !=key>
-                                            <option value="${key}">${locales[key]}</option>
-                                        </#if>
-                                    </#list>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
-                                    <option value="" disabled selected>${labels["timezone"]}</option>
-                                    <#list timeZones as timeZone>
-                                        <#if userProfile.preferences.timeZone==timeZone>
-                                            <option value="${timeZone}" selected="selected">${timeZone}</option>
-                                        </#if>
-                                        <#if userProfile.preferences.timeZone !=timeZone>
-                                            <option value="${timeZone}">${timeZone}</option>
-                                        </#if>
-                                    </#list>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">${messages["cancel"]}</button>
-                        <button class="btn btn-primary" id="save-preferences">${messages["save"]}</button>
-                    </div>
-                </div>
-                <!--/.Content-->
-            </div>
-            <!--/Modal: Contact form-->
         </div>
 
         <div class="modal" id="modal-user-information" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -210,10 +63,30 @@
                                 <input type="text" name="email" id="email" class="form-control form-control-lg" placeholder="${labels['email']}" value="${userProfile.email!}" required>
                             </div>
                             <div class="form-group">
-                                <input type="text" name="phone" id="phone" class="form-control form-control-lg" placeholder="${labels['phone']}" value="${userProfile.phone!}">
+                                <select id="locale" name="locale" class="form-control form-control-lg" required>
+                                    <option value="" disabled selected>${labels["locale.key"]}</option>
+                                    <#list locales?keys as key>
+                                        <#if userProfile.preferences.locale==key>
+                                            <option value="${key}" selected="selected">${locales[key]}</option>
+                                        </#if>
+                                        <#if userProfile.preferences.locale !=key>
+                                            <option value="${key}">${locales[key]}</option>
+                                        </#if>
+                                    </#list>
+                                </select>
                             </div>
                             <div class="form-group">
-                                <input type="text" name="title" id="title" class="form-control form-control-lg" placeholder="${labels['title']}" value="${userProfile.title!}">
+                                <select id="timeZone" name="timeZone" class="form-control form-control-lg" required>
+                                    <option value="" disabled selected>${labels["timezone"]}</option>
+                                    <#list timeZones as timeZone>
+                                        <#if userProfile.preferences.timeZone==timeZone>
+                                            <option value="${timeZone}" selected="selected">${timeZone}</option>
+                                        </#if>
+                                        <#if userProfile.preferences.timeZone !=timeZone>
+                                            <option value="${timeZone}">${timeZone}</option>
+                                        </#if>
+                                    </#list>
+                                </select>
                             </div>
                         </form>
                     </div>

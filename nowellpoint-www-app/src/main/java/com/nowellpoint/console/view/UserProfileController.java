@@ -22,7 +22,7 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class IdentityController extends BaseController {
+public class UserProfileController extends BaseController {
 		
 	public static void configureRoutes(Configuration configuration) {
 		
@@ -51,8 +51,8 @@ public class IdentityController extends BaseController {
 		
 		Template template = Template.builder()
 				.configuration(configuration)
-				.controllerClass(IdentityController.class)
-				.putModel("identity", identity)
+				.controllerClass(UserProfileController.class)
+				.putModel("userProfile", identity)
 				.putModel("locales", getAvailableLocales())
 				.putModel("timeZones", getAvailableTimeZones())
 				.request(request)
@@ -93,11 +93,11 @@ public class IdentityController extends BaseController {
 				.update(id, identityRequest);
 		
 		Map<String, Object> model = new HashMap<>();
-		model.put("identity", identity);
+		model.put("userProfile", identity);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
-				.controllerClass(IdentityController.class)
+				.controllerClass(UserProfileController.class)
 				.model(model)
 				.request(request)
 				.templateName(Templates.USER_PROFILE_INFORMATION)

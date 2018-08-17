@@ -11,7 +11,7 @@ import com.nowellpoint.console.view.IndexController;
 import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
-import com.nowellpoint.console.view.IdentityController;
+import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.content.model.IsoCountry;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.Plan;
@@ -47,7 +47,7 @@ public class Routes {
 		SignUpController.configureRoutes(configuration);
 		AuthenticationController.configureRoutes(configuration);
 		StartController.configureRoutes(configuration);
-		IdentityController.configureRoutes(configuration);
+		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes(configuration);
 	}
 	
