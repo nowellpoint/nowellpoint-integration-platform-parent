@@ -19,14 +19,11 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nowellpoint.console.entity.IdentityDAO;
-import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
-import com.nowellpoint.console.model.UserPreferenceRequest;
-import com.nowellpoint.console.model.UserProfileRequest;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -38,6 +35,7 @@ import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserBuilder;
 import com.okta.sdk.resource.user.UserCredentials;
+import com.okta.sdk.resource.user.UserProfile;
 import com.sendgrid.Content;
 import com.sendgrid.Email;
 import com.sendgrid.Mail;
@@ -96,6 +94,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
 				.locale(request.getLocale())
+				.timeZone(request.getTimeZone())
 				.subject(user.getId())
 				.status(user.getStatus().name())
 				.build();
@@ -193,16 +192,32 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
-	public Identity update(String id, UserProfileRequest request) {
-		return null;
-	}
-	
-	public Identity update(String id, AddressRequest request) {
-		return null;
-	}
-	
-	public Identity update(String id, UserPreferenceRequest request) {
-		return null;
+	public Identity update(String id, IdentityRequest request) {
+		Identity instance = get(id);
+		
+		User user = client.getUser(instance.getSubject());
+		
+		UserProfile userProfile = user.getProfile()
+				.setEmail(request.getEmail())
+				.setLogin(request.getEmail())
+				.setFirstName(request.getFirstName())
+				.setLastName(request.getLastName());
+		
+		user.setProfile(userProfile);
+		user.update();
+		
+		Identity identity = Identity.builder()
+				.from(instance)
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.locale(request.getLocale())
+				.timeZone(request.getTimeZone())
+				.subject(user.getId())
+				.status(user.getStatus().name())
+				.build();
+		
+		return update(identity);
 	}
 	
 	public Identity resendActivationEmail(String id) {

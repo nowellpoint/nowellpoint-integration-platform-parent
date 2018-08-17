@@ -5,7 +5,6 @@ import com.nowellpoint.console.service.impl.IdentityServiceImpl;
 import com.nowellpoint.console.service.impl.LeadServiceImpl;
 import com.nowellpoint.console.service.impl.OrganizationServiceImpl;
 import com.nowellpoint.console.service.impl.PlanServiceImpl;
-import com.nowellpoint.console.service.impl.UserProfileServiceImpl;
 
 public class ServiceClient {
 	
@@ -16,7 +15,6 @@ public class ServiceClient {
 	private LeadService lead;
 	private OrganizationService organization;
 	private PlanService plan;
-	private UserProfileService userProfile;
 	
 	private ServiceClient() {
 		
@@ -59,12 +57,5 @@ public class ServiceClient {
 			plan = new PlanServiceImpl();
 		}
 		return plan;
-	}
-	
-	public UserProfileService userProfile() {
-		if (userProfile == null) {
-			userProfile = new UserProfileServiceImpl();
-		}
-		return userProfile;
 	}
 }

@@ -23,23 +23,7 @@ public abstract class AbstractIdentity {
 	public abstract String getSubject();
 	public abstract String getStatus();
 	public abstract @Nullable OrganizationInfo getOrganization();
-	public abstract @Nullable Address getAddress();
 	public abstract @Nullable Photos getPhotos();
-	public abstract @Nullable Resources getResources();
-	
-	/**
-	 * 
-	
-	public abstract String getTitle();
-	
-	public abstract String getPhone();
-	
-	
-	public abstract Preferences getPreferences();
-	
-	
-	 * @return
-	 */
 	
 	@Value.Derived
 	public String getName() {
@@ -80,37 +64,17 @@ public abstract class AbstractIdentity {
 	}
 	
 	public static Identity of(com.nowellpoint.console.entity.Identity source) {
-		OrganizationInfo organization = OrganizationInfo.of(source.getOrganization());
-		
-//		String jobsHref = UriBuilder.fromUri("https://localhost:8443")
-//				//.path(JobResource.class)
-//				.build()
-//				.toString();
-//		
-//		String connectorsHref = UriBuilder.fromUri("https://localhost:8443")
-//				//.path(ConnectorResource.class)
-//				.build()
-//				.toString();
-		
-		Identity identity = Identity.builder()
-				//.address(Address.of(source.getUserProfile().getAddress()))
+		return source == null ? null : Identity.builder()
 				.id(source.getId().toString())
 				.email(source.getEmail())
 				.firstName(source.getFirstName())
 				.lastName(source.getLastName())
-				//.locale(source.getLocale())
-				//.timeZone(source.getUserProfile().getPreferences().getTimeZone())
-				.organization(organization)
+				.locale(source.getLocale())
+				.timeZone(source.getTimeZone())
 				.subject(source.getSubject())
 				.status(source.getStatus())
-//				.resources(Resources.builder()
-//						.userProfile(userInfo.getMeta().getHref())
-//						.connectors(connectorsHref)
-//						.organization(organization.getMeta().getHref())
-//						.jobs(jobsHref)
-//						.build())
+				.organization(OrganizationInfo.of(source.getOrganization()))
+				.photos(Photos.of(source.getPhotos()))
 				.build();
-		
-		return identity;
 	}
 }

@@ -45,6 +45,8 @@ public class Path {
 		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");
 		
+		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id/");
+		
 		public static final String ORGANIZATION_VIEW = String.format(APPLICATION_CONTEXT, "organization/:id");
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
@@ -64,9 +66,8 @@ public class Path {
 		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id/update");
 		public static final String CONNECTORS_DELETE = String.format(APPLICATION_CONTEXT, "connectors/:id/delete");
 		public static final String CONNECTORS_REFRESH = String.format(APPLICATION_CONTEXT, "connectors/:id/refresh");
-		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile/:id/");
-		public static final String USER_PROFILE_ADDRESS = String.format(APPLICATION_CONTEXT, "user-profile/:id/address");
-		public static final String USER_PROFILE_PREFERENCES = String.format(APPLICATION_CONTEXT, "user-profile/:id/preferences");
+		
+
 		
 		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
 		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");

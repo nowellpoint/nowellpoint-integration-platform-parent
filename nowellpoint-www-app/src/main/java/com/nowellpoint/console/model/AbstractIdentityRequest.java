@@ -1,6 +1,7 @@
 package com.nowellpoint.console.model;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.immutables.value.Value;
 
@@ -16,5 +17,10 @@ public abstract class AbstractIdentityRequest {
 	@Value.Default
 	public Locale getLocale() {
 		return Locale.getDefault();
+	}
+	
+	@Value.Default
+	public String getTimeZone() {
+		return TimeZone.getDefault().getID();
 	}
 }
