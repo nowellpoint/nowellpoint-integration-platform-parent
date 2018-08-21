@@ -80,7 +80,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	public Identity create(IdentityRequest request) {
 		
 		User user = UserBuilder.instance()
-				.setEmail(request.getEmail())
+				.setEmail("administrator@nowellpoint.com")
 				.setLogin(request.getEmail())
 				.setFirstName(request.getFirstName())
 				.setLastName(request.getLastName())
@@ -175,6 +175,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	}
 	
 	public Identity setPassword(String id, String password) {
+		
 		Identity instance = get(id);
 		
 		PasswordCredential passwordCredential = client.instantiate(PasswordCredential.class)
@@ -183,10 +184,18 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		UserCredentials userCredentials = client.instantiate(UserCredentials.class)
 				.setPassword(passwordCredential);
 		
-		client.getUser(instance.getSubject()).setCredentials(userCredentials).update();
+		User user = client.getUser(instance.getSubject());
+		UserProfile userProfile = user.getProfile();
+		
+		userProfile.setEmail(instance.getEmail());
+		
+		user.setProfile(userProfile);
+		user.setCredentials(userCredentials);
+		user.update();
 		
 		Identity identity = Identity.builder()
 				.from(instance)
+				.status(user.getStatus().name())
 				.build();
 		
 		return update(identity);
@@ -282,7 +291,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private Identity update(Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get().getId());
+		entity.setLastUpdatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
 		identityDAO.save(entity);
 		return Identity.of(entity);
 	}

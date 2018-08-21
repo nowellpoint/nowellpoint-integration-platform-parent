@@ -32,8 +32,7 @@
                     <p class="text-success text-center"><span class="icon icon-check fa fa-4x"></span></p>
                 </div>
                 <div class="col col-lg-12">
-                    <h3 class="text-success text-center">${labels["check.email"]}:</h3>
-                    <h3 class="text-center"><small>${identity.email}</small></h3>
+                    <h3 class="text-center">${labels["secure.account"]}</h3>
                 </div>
             </div>
             <!-- <#if errorMessage??> -->
@@ -55,7 +54,7 @@
                 <div class="col-3"></div>
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
-                    <form id="confirm-form" role="form" method="post" action="${links['activate.account']}/">
+                    <form id="confirm-form" role="form" method="post" action="${links['secure.account']}/${registration.id}/">
                         <div class="form-group">
                             <label for="password" class="">${labels['password']}</label>
                             <input type="password" name="password" id="password" class="form-control form-control-lg" aria-describedby="passwordPolicy" required>
@@ -63,22 +62,7 @@
                         </div>
                         <div class="form-group">
                             <div class="text-center">
-                                <button type="submit" id="submit" class="btn btn-primary">${labels['activate']}</button>
-                            </div>    
-                        </div>
-                    </form>
-                </div>
-                <div class="col-3"></div>
-            </div>   
-            <div class="row">
-                <div class="col-3"></div>
-                <!--Grid column-->
-                <div class="col-6 justify-content-md-center">
-                    <form id="resend-form" role="form" method="post" action="/resend/">
-                        <input type="hidden" name="id" id="id" value="${identity.id}" >
-                        <div class="form-group">
-                            <div class="text-center">
-                                <button type="submit" id="submit" class="btn btn-light">${labels['resend']}</button>
+                                <button type="submit" id="submit" class="btn btn-primary">${labels['secure']}</button>
                             </div>    
                         </div>
                     </form>

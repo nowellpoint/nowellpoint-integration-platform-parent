@@ -32,7 +32,8 @@
                     <p class="text-success text-center"><span class="icon icon-check fa fa-4x"></span></p>
                 </div>
                 <div class="col col-lg-12">
-                    <h3 class="text-center">${labels["secure.account"]}:</h3>
+                    <h3 class="text-success text-center">${labels["check.email"]}:</h3>
+                    <h3 class="text-center"><small>${registration.email}</small></h3>
                 </div>
             </div>
             <!-- <#if errorMessage??> -->
@@ -54,7 +55,7 @@
                 <div class="col-3"></div>
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
-                    <form id="confirm-form" role="form" method="post" action="${links['activate.account']}/">
+                    <form id="confirm-form" role="form" method="post" action="${links['activate.account']}/${registration.id}/">
                         <div class="form-group">
                             <input type="text" name="activationToken" id="activationToken" class="form-control form-control-lg" autofocus>
                             <small id="tokenInstruction" class="text-muted">${labels['token.instruction']}</small>
@@ -73,7 +74,7 @@
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
                     <form id="resend-form" role="form" method="post" action="/resend/">
-                        <input type="hidden" name="id" id="id" value="${identity.id}" >
+                        <input type="hidden" name="id" id="id" value="${registration.id}" >
                         <div class="form-group">
                             <div class="text-center">
                                 <button type="submit" id="submit" class="btn btn-light">${labels['resend']}</button>

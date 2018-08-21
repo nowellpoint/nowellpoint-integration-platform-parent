@@ -175,10 +175,20 @@ public class SignUpController {
 	 */
 	
 	private static String showActivateAccount(Configuration configuration, Request request, Response response) {
+		
+		String id = request.params(":id");
+		
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.get(id);
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("registration", identity);
     	
     	Template template = Template.builder()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
+				.model(model)
 				.request(request)
 				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
@@ -241,14 +251,14 @@ public class SignUpController {
 	
 	private static String showSecureAccount(Configuration configuration, Request request, Response response) {
 		
-		String id = request.params("id");
+		String id = request.params(":id");
 		
 		Identity identity = ServiceClient.getInstance()
 				.identity()
 				.get(id);
 		
 		Map<String, Object> model = new HashMap<>();
-		model.put("identity", identity);
+		model.put("registration", identity);
     	
     	Template template = Template.builder()
 				.configuration(configuration)
@@ -262,7 +272,8 @@ public class SignUpController {
 	}
 	
 	private static String secure(Configuration configuration, Request request, Response response) {
-		String id = request.params("id");
+		
+		String id = request.params(":id");
 		String password = request.queryParams("password");
 		
 		Identity identity = ServiceClient.getInstance()
@@ -301,6 +312,16 @@ public class SignUpController {
 	 */
 	
 	private static String showSalesforceOauth(Configuration configuration, Request request, Response response) {
+		
+		String id = request.params(":id");
+		
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.get(id);
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("registration", identity);
+		
     	return Template.builder()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
