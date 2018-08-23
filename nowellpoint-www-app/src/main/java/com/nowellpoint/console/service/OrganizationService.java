@@ -6,12 +6,15 @@ import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.SubscriptionRequest;
 
 public interface OrganizationService {
 	
 	public Organization get(String id);
+	
+	public Organization create(OrganizationRequest request);
 	
 	public Organization update(String id, CreditCardRequest request);
 	

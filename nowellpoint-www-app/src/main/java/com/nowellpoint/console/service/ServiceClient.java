@@ -1,16 +1,16 @@
 package com.nowellpoint.console.service;
 
-import com.nowellpoint.console.service.impl.AuthenticationServiceImpl;
 import com.nowellpoint.console.service.impl.IdentityServiceImpl;
 import com.nowellpoint.console.service.impl.LeadServiceImpl;
 import com.nowellpoint.console.service.impl.OrganizationServiceImpl;
 import com.nowellpoint.console.service.impl.PlanServiceImpl;
+import com.nowellpoint.console.service.impl.ConsoleServiceImpl;
 
 public class ServiceClient {
 	
 	private static final ServiceClient INSTANCE = new ServiceClient();
 	
-	private AuthenticationService authentication;
+	private ConsoleService console;
 	private IdentityService identity;
 	private LeadService lead;
 	private OrganizationService organization;
@@ -19,16 +19,16 @@ public class ServiceClient {
 	private ServiceClient() {
 		
 	}
-
+	
 	public static ServiceClient getInstance() {
 		return INSTANCE;
 	}
 	
-	public AuthenticationService authentication() {
-		if (authentication == null) {
-			authentication = new AuthenticationServiceImpl();
+	public ConsoleService console() {
+		if (console == null) {
+			console = new ConsoleServiceImpl();
 		}
-		return authentication;
+		return console;
 	}
 	
 	public IdentityService identity() {

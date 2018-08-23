@@ -4,26 +4,23 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import javax.ws.rs.InternalServerErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.console.exception.ConsoleException;
 import com.nowellpoint.console.model.Identity;
-import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.Plan;
+import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.oauth.model.OAuthClientException;
 import com.nowellpoint.www.app.util.Path;
-import com.okta.sdk.resource.ResourceException;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -71,7 +68,7 @@ public class SignUpController {
 		
 		Plan plan = ServiceClient.getInstance()
 				.plan()
-				.getByCode("FREE");
+				.getFreePlan();
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("plan", plan);
@@ -100,57 +97,35 @@ public class SignUpController {
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
 		String email = request.queryParams("email");
-		String password = UUID.randomUUID().toString(); //request.queryParams("password");
-
-		IdentityRequest identityRequest = IdentityRequest.builder()
-    			.email(email)
-    			.firstName(firstName)
-    			.lastName(lastName)
-    			.password(password)
-    			.build();
+		String planId = request.queryParams("planId");
     	
     	try {
     		
+    		SignUpRequest signUpRequest = SignUpRequest.builder()
+        			.email(email)
+        			.firstName(firstName)
+        			.lastName(lastName)
+        			.planId(planId)
+        			.build();
+    		
     		Identity identity = ServiceClient.getInstance()
-        			.identity()
-        			.create(identityRequest);
+        			.console()
+        			.signUp(signUpRequest);
 			
 			response.redirect(Path.Route.ACTIVATE_ACCOUNT.replace(":id", identity.getId()));
 			
 			return "";
 			
-    	} catch (OAuthClientException e) {
-    		
-    		LOGGER.severe(e.getErrorDescription());
-    		
-    		Plan plan = ServiceClient.getInstance()
-    				.plan()
-    				.getByCode("FREE");
-    		
-    		Map<String, Object> model = new HashMap<>();
-			model.put("errorMessage", e.getErrorDescription());
-			model.put("plan", plan);
-	    	
-	    	Template template = Template.builder()
-					.configuration(configuration)
-					.controllerClass(SignUpController.class)
-					.request(request)
-					.model(model)
-					.templateName(Templates.SIGN_UP)
-					.build();
-			
-			return template.render();
-			
-    	} catch (ResourceException e) {
+    	} catch (ConsoleException e) {
     		
     		LOGGER.severe(e.getMessage());
     		
     		Plan plan = ServiceClient.getInstance()
     				.plan()
-    				.getByCode("FREE");
+    				.getFreePlan();
     		
     		Map<String, Object> model = new HashMap<>();
-			model.put("errorMessage", e.getOktaError().getMessage());
+			model.put("errorMessage", e.getMessage());
 			model.put("plan", plan);
 	    	
 	    	Template template = Template.builder()
@@ -162,8 +137,7 @@ public class SignUpController {
 					.build();
 			
 			return template.render();
-    		
-    	}		
+    	}
 	}
 	
 	/**
@@ -271,6 +245,14 @@ public class SignUpController {
 		return template.render();
 	}
 	
+	/**
+	 * 
+	 * @param configuration
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
 	private static String secure(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
@@ -283,7 +265,7 @@ public class SignUpController {
 		try {
 			
 			Token token = ServiceClient.getInstance()
-					.authentication()
+					.console()
 					.authenticate(identity.getUsername(), password);
 			
 			Long expiresIn = token.getExpiresIn();
@@ -294,10 +276,10 @@ public class SignUpController {
 				throw new InternalServerErrorException(e);
 			}
 			
-			response.redirect(Path.Route.SALESFORCE_OAUTH);
+			response.redirect(Path.Route.SALESFORCE_OAUTH.replace(":id", identity.getId()));
 			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		} catch (ConsoleException e) {
+			throw new InternalServerErrorException(e);
 		}
 		
 		return "";

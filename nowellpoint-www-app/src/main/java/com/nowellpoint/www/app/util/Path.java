@@ -40,8 +40,8 @@ public class Path {
 		public static final String HEALTH_CHECK = "/healthcheck/";
 		
 		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout/"); 
+		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth/:id/");
 		
-		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth");
 		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");
 		

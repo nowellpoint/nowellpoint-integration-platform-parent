@@ -36,6 +36,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
@@ -63,6 +64,49 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	public OrganizationServiceImpl() {
 		organizationDAO = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
+	}
+	
+	@Override
+	public Organization create(OrganizationRequest request) {
+		
+		Plan plan = ServiceClient.getInstance()
+				.plan()
+				.get(request.getPlanId());
+		
+		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
+				.company(request.getName())
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName());
+		
+		Result<com.braintreegateway.Customer> customerResult = gateway.customer().create(customerRequest);
+		
+		if ( ! customerResult.isSuccess() ) {
+			throw new ValidationException(customerResult.getMessage());
+		}
+		
+		Subscription subscription = Subscription.builder()
+				.addedOn(getCurrentDateTime())
+				.billingFrequency(plan.getBillingFrequency())
+				.currencyIsoCode(plan.getPrice().getCurrencyIsoCode())
+				.currencySymbol(plan.getPrice().getCurrencySymbol())
+				.features(plan.getFeatures())
+				.planCode(plan.getPlanCode())
+				.planId(plan.getId())
+				.planName(plan.getPlanName())
+				.unitPrice(plan.getPrice().getUnitPrice())
+				.updatedOn(getCurrentDateTime())
+				.status(com.braintreegateway.Subscription.Status.ACTIVE.name())
+				.build();
+		
+		Organization organization = Organization.builder()
+				.subscription(subscription)
+				.domain(request.getDomain())
+				.name(request.getName())
+				.number(customerResult.getTarget().getId())
+				.build();
+		
+		return create(organization);
 	}
 
 	@Override
@@ -115,7 +159,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
 		
-		if (creditCardResult.getMessage() != null) {
+		if ( ! creditCardResult.isSuccess() ) {
 			throw new ValidationException(creditCardResult.getMessage());
 		}
 		
@@ -165,7 +209,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			subscriptionResult = gateway.subscription().create(subscriptionRequest);
 		}
 		
-		if (subscriptionResult.getMessage() != null) {
+		if ( ! subscriptionResult.isSuccess() ) {
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
@@ -187,6 +231,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.planCode(plan.getPlanCode())
 				.planId(plan.getId())
 				.planName(plan.getPlanName())
+				.status(subscriptionResult.getTarget().getStatus().name())
 				.transactions(transactions)
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.updatedOn(getCurrentDateTime())
@@ -227,7 +272,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			creditCardResult = gateway.creditCard().create(creditCardRequest);
 		}
 		
-		if (creditCardResult.getMessage() != null) {
+		if (! creditCardResult.isSuccess()) {
 			throw new ValidationException(creditCardResult.getMessage());
 		}
 		
@@ -248,7 +293,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			subscriptionResult = gateway.subscription().create(subscriptionRequest);
 		}
 		
-		if (subscriptionResult.getMessage() != null) {
+		if ( ! subscriptionResult.isSuccess() ) {
 			throw new ValidationException(subscriptionResult.getMessage());
 		}
 		
@@ -267,6 +312,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.planCode(plan.getPlanCode())
 				.planId(plan.getId())
 				.planName(plan.getPlanName())
+				.status(subscriptionResult.getTarget().getStatus().name())
 				.unitPrice(plan.getPrice().getUnitPrice())
 				.updatedOn(getCurrentDateTime())
 				.build();
@@ -304,7 +350,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			addressResult = gateway.address().create(instance.getNumber(), addressRequest);
 		}
 		
-		if (addressResult.getMessage() != null) {
+		if ( ! addressResult.isSuccess() ) {
 			throw new ValidationException(addressResult.getMessage());
 		}
 		
@@ -346,7 +392,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
 		
-		if (customerResult.getMessage() != null) {
+		if ( ! customerResult.isSuccess() ) {
 			throw new ValidationException(customerResult.getMessage());
 		}
 		
@@ -415,6 +461,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 		
 		return null;
+	}
+	
+	private Organization create(Organization organization) {
+		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
+		entity.setCreatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
+		entity.setLastUpdatedBy(entity.getCreatedBy());
+		organizationDAO.save(entity);
+		return Organization.of(entity);
 	}
 	
 	private Organization update(Organization organization) {

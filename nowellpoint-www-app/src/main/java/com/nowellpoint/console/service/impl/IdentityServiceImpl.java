@@ -101,7 +101,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		sendVerifyEmailMessage(identity.getName(), identity.getEmail(), identity.getSubject());
 		
-		return create(identity);
+		return create(request.getOrganizationId(), identity);
 	}
 
 	@Override
@@ -132,11 +132,11 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		Identity identity = queryBySubject(subject);
 		
-		if (identity.getOrganization() != null) {
-			
-			Organization organization = ServiceClient.getInstance()
-					.organization()
-					.get(identity.getOrganization().getId());
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(identity.getOrganization().getId());
+		
+		if (! "FREE".equals(organization.getSubscription().getPlanCode())) {
 			
 			com.braintreegateway.Subscription source = gateway.subscription().find(organization.getSubscription().getNumber());
 			
@@ -278,13 +278,16 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return client.getUser(userId);
 	}
 	
-	private Identity create(Identity identity) {
+	private Identity create(String organizationId, Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
-		entity.setCreatedBy(getSystemAdmin());
+		entity.setOrganization(new com.nowellpoint.console.entity.Organization(organizationId));
+		entity.setCreatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
 		entity.setCreatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		entity.setLastUpdatedOn(entity.getCreatedOn());
 		identityDAO.save(entity);
+		entity = identityDAO.get(entity.getId());
+		putEntry(entity.getId().toString(), entity);
 		return Identity.of(entity);
 	}
 	
@@ -293,6 +296,8 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		entity.setLastUpdatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
 		identityDAO.save(entity);
+		entity = identityDAO.get(entity.getId());
+		putEntry(entity.getId().toString(), entity);
 		return Identity.of(entity);
 	}
 	

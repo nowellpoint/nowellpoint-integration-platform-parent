@@ -33,9 +33,10 @@
                 <div class="col-1"></div>
                 <div class="col-11">
                     <!--Section heading-->
-                    <h2 class="section-heading h1 pt-4">${labels['signup.title']}</h2>
+                    <h2 class="section-heading h1 pt-4">${labels['login.salesforce']}</h2>
                     <!--Section description-->
-                    <p class="section-description">${labels['fill.form']}&nbsp;<a href="${links['login']}/">${labels['login']}</a></p>
+                    <p class="section-description">In the log in form, enter the connector user's Salesforce credentials and click Log in to Salesforce.
+step3=Once you've logged in, click Allow to give the connector permission to access your account.</p>
                 </div>
             </div>
             <br>
@@ -44,7 +45,16 @@
                     ${errorMessage}
                 </div>
             </#if>
-            
+            <div class="row">
+                <div class="col-3"></div>
+                <!--Grid column-->
+                <div class="col-6 justify-content-md-center">
+                    <div class="text-center">
+                        <button type="submit" id="submit" class="btn btn-primary" onclick="window.open('https://login.salesforce.com', '_blank', 'toolbar=no,scrollbars=no,resizable=yes,top=100,left=500,width=600,height=800');">${labels['login.salesforce']}</button>
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
         </div>
     </main>
 

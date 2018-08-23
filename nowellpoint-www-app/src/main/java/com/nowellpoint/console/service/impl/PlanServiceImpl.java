@@ -41,6 +41,11 @@ public class PlanServiceImpl extends AbstractService implements PlanService {
 	}
 	
 	@Override
+	public Plan getFreePlan() {
+		return getByCode("FREE");
+	}
+	
+	@Override
 	public Plan getByCode(String planCode) {
 		
 		Query<com.nowellpoint.console.entity.Plan> query = planDAO.createQuery()

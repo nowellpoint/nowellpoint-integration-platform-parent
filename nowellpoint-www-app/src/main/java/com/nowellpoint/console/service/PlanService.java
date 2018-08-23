@@ -8,6 +8,8 @@ public interface PlanService {
 		
 	public Plan get(String id);
 	
+	public Plan getFreePlan();
+	
 	public Plan getByCode(String planCode);
 
 	public List<Plan> getPlans(String language);

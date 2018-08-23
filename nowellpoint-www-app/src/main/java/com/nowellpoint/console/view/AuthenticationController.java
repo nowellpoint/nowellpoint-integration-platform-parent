@@ -1,6 +1,7 @@
 package com.nowellpoint.console.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.console.exception.ConsoleException;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
@@ -17,7 +18,6 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +53,7 @@ public class AuthenticationController {
 		try {
 			
 			Token token = ServiceClient.getInstance()
-					.authentication()
+					.console()
 					.authenticate(username, password);
 			
 			Long expiresIn = token.getExpiresIn();
@@ -97,7 +97,7 @@ public class AuthenticationController {
 			
 			return template.render();
 
-		} catch (UnsupportedEncodingException e) {
+		} catch (ConsoleException e) {
 			throw new InternalServerErrorException(e);
 		}
 	}
@@ -124,7 +124,7 @@ public class AuthenticationController {
 
 			try {
 				Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
-				ServiceClient.getInstance().authentication().revoke(token.getAccessToken());
+				ServiceClient.getInstance().console().revoke(token.getAccessToken());
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			}
