@@ -4,12 +4,15 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ws.rs.InternalServerErrorException;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.exception.ConsoleException;
 import com.nowellpoint.console.model.Identity;
@@ -20,6 +23,9 @@ import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -52,8 +58,14 @@ public class SignUpController {
 		post(Path.Route.SECURE_ACCOUNT, (request, response) 
 				-> secure(configuration, request, response));
 		
-		get(Path.Route.SALESFORCE_OAUTH, (request, response)
-				-> showSalesforceOauth(configuration, request, response));
+		get(Path.Route.SALESFORCE, (request, response)
+				-> showSalesforce(configuration, request, response));
+		
+		post(Path.Route.SALESFORCE, (request, response)
+				-> link(configuration, request, response));
+		
+		get(Path.Route.SALESFORCE_OAUTH_CALLBACK, (request, response) 
+				-> oauthCallback(configuration, request, response));
 	}
 	
 	/**
@@ -276,7 +288,7 @@ public class SignUpController {
 				throw new InternalServerErrorException(e);
 			}
 			
-			response.redirect(Path.Route.SALESFORCE_OAUTH.replace(":id", identity.getId()));
+			response.redirect(Path.Route.SALESFORCE.replace(":id", identity.getId()));
 			
 		} catch (ConsoleException e) {
 			throw new InternalServerErrorException(e);
@@ -293,7 +305,7 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	private static String showSalesforceOauth(Configuration configuration, Request request, Response response) {
+	private static String showSalesforce(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -301,15 +313,87 @@ public class SignUpController {
 				.identity()
 				.get(id);
 		
+		String authUrl = new StringBuilder(System.getenv("SALESFORCE_AUTHORIZE_URI"))
+				.append("?response_type=token")
+				.append("&client_id=")
+				.append(System.getenv("SALESFORCE_CLIENT_ID"))
+				.append("&client_secret=")
+				.append(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.append("&redirect_uri=")
+				.append(System.getenv("SALESFORCE_REDIRECT_URI"))
+				.append("&scope=api")
+				.append("&display=popup")
+				.append("&state=")
+				.append(identity.getId())
+				.toString();
+		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
+		model.put("SALESFORCE_AUTHORIZE_URI", authUrl);
 		
-    	return Template.builder()
+		Template template = Template.builder()
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.model(model)
+				.request(request)
+				.templateName(Templates.SALESFORCE_OAUTH)
+				.build();
+		
+		return template.render();
+	}
+	
+	private static String oauthCallback(Configuration configuration, Request request, Response response) {
+		return Template.builder()
 				.configuration(configuration)
 				.controllerClass(SignUpController.class)
 				.request(request)
-				.templateName(Templates.SALESFORCE_OAUTH)
+				.templateName(Templates.SALESFORCE_OAUTH_CALLBACK)
 				.build()
 				.toHtml();
+	}
+	
+	private static String link(Configuration configuration, Request request, Response response) {
+		String id = request.params(":id");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode token = mapper.readTree(request.body());
+			
+			String accessToken = URLDecoder.decode(token.get("access_token").asText(), "UTF-8");
+			
+			HttpResponse identityResponse = RestResource.get(URLDecoder.decode(token.get("id").asText(), "UTF-8"))
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(accessToken)
+					.queryParameter("version", "latest")
+					.execute();
+			
+			JsonNode identityNode = mapper.readTree(identityResponse.getAsString());
+			
+			HttpResponse organizationResponse = RestResource.get(identityNode.get("urls").get("sobjects").asText())
+					.bearerAuthorization(accessToken)
+	     			.path("Organization")
+	     			.path(identityNode.get("organization_id").asText())
+	     			.queryParameter("fields", "Name,Division")
+	     			.queryParameter("version", "latest")
+	     			.execute();
+			
+			JsonNode organization = mapper.readTree(organizationResponse.getAsString());
+			
+			Identity identity = ServiceClient.getInstance()
+					.identity()
+					.get(id);
+			
+			ServiceClient.getInstance().organization().update(
+					identity.getOrganization().getId(), 
+					organization.get("Name").asText(), 
+					organization.get("Id").asText());
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	   
+		return "";
 	}
 }

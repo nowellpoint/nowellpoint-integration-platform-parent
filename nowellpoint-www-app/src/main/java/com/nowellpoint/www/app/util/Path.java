@@ -36,11 +36,12 @@ public class Path {
 		public static final String RESEND = "/resend/";
 		public static final String ACTIVATE_ACCOUNT = "/activate/:id/";
 		public static final String SECURE_ACCOUNT = "/secure/:id/";
+		public static final String SALESFORCE = "/salesforce/:id/";
+		public static final String SALESFORCE_OAUTH_CALLBACK = "/salesforce/oauth/callback/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
 		
 		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout/"); 
-		public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth/:id/");
 		
 		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");

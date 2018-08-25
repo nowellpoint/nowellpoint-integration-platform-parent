@@ -50,7 +50,7 @@ step3=Once you've logged in, click Allow to give the connector permission to acc
                 <!--Grid column-->
                 <div class="col-6 justify-content-md-center">
                     <div class="text-center">
-                        <button type="submit" id="submit" class="btn btn-primary" onclick="window.open('https://login.salesforce.com', '_blank', 'toolbar=no,scrollbars=no,resizable=yes,top=100,left=500,width=600,height=800');">${labels['login.salesforce']}</button>
+                        <button type="submit" id="submit" class="btn btn-primary" onclick="window.open('${SALESFORCE_AUTHORIZE_URI}', '_blank', 'toolbar=no,location=no,scrollbars=no,resizable=no,top=100,left=500,width=600,height=800');">${labels['login.salesforce']}</button>
                     </div>
                 </div>
                 <div class="col-3"></div>

@@ -108,6 +108,29 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return create(organization);
 	}
+	
+	@Override
+	public Organization update(String id, String name, String domain) {
+		
+		Organization instance = get(id);
+		
+		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
+				.company(name);
+		
+		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
+		
+		if ( ! customerResult.isSuccess() ) {
+			throw new ValidationException(customerResult.getMessage());
+		}
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.domain(domain)
+				.name(name)
+				.build();
+		
+		return update(organization);
+	}
 
 	@Override
 	public Organization get(String id) {
@@ -474,7 +497,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	private Organization update(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get().getId());
+		entity.setLastUpdatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
 		organizationDAO.save(entity);
 		return Organization.of(entity);
 	}

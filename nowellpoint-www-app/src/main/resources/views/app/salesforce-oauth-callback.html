@@ -32,7 +32,6 @@
 
 <body>
 
-
     <br>
     <br>
     <br>
@@ -44,10 +43,36 @@
     </div>
 
     <script>
-       console.log(1);
-            var params = location.search.substr(1);
-            console.log(params);
-            window.location.replace("${links['salesforce.oauth']}/token?" + params);
+        var hash = location.hash.replace("#", "");
+        var params = {};
+        hash.split('&').map(hk => {
+            let temp = hk.split('=');
+            params[temp[0]] = temp[1];
+        });
+        
+        var token = {
+            "id" : decodeURI(params.id),
+            "access_token" : params.access_token,
+            "signature" : params.signature,
+            "instance_url" : params.instance_url,
+            "token_type" : params.token_type,
+            "issued_at" : params.issued_at
+        };
+        
+        $.ajax({
+        	type: "POST",
+            url: "${links['salesforce']}/" + params.state + "/",
+            dataType: "json",
+            data: JSON.stringify(token),
+            complete: function (response) {                
+                if (response.status == 200) {
+                	window.close();
+                } else {
+                   
+                }
+            }
+        });
+
     </script>
 
 </body>

@@ -35,7 +35,6 @@ import com.nowellpoint.console.view.ConnectorController;
 import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.JobController;
 import com.nowellpoint.console.view.NotificationController;
-import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -103,15 +102,6 @@ public class Bootstrap implements SparkApplication {
 				(request, response) -> AdministrationController.showManageCache(configuration, request, response));
 		get(Path.Route.ADMINISTRATION.concat("/cache/purge"),
 				(request, response) -> AdministrationController.purgeCache(configuration, request, response));
-
-		//
-		// salesforce oauth routes
-		//
-
-		get(Path.Route.SALESFORCE_OAUTH,
-				(request, response) -> SalesforceOauthController.oauth(configuration, request, response));
-		get(Path.Route.SALESFORCE_OAUTH.concat("/callback"),
-				(request, response) -> SalesforceOauthController.callback(configuration, request, response));
 
 		//
 		// connector routes

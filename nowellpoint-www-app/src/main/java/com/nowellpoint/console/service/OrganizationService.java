@@ -16,6 +16,8 @@ public interface OrganizationService {
 	
 	public Organization create(OrganizationRequest request);
 	
+	public Organization update(String id, String name, String domain);
+	
 	public Organization update(String id, CreditCardRequest request);
 	
 	public Organization setPlan(String id, Plan plan);
