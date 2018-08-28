@@ -1,0 +1,29 @@
+<header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default fixed-top navbar-dark unique-color navbar-expand-lg">
+        <div class="navbar-brand">${messages["application.title"]}</div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="nav navbar-nav nav-flex-icons mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['start']}">
+                        <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
+                </li>
+            </ul>
+            <#include "navbar-menu.html" />
+        </div>
+    </nav>
+    <!-- /.Navbar -->
+</header>

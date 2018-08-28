@@ -33,16 +33,16 @@ public class Path {
 		public static final String LOGIN = "/login/";
 		public static final String FREE_ACCOUNT = "/free/";
 		public static final String SIGN_UP = ("/signup/");
-		public static final String RESEND = "/resend/";
-		public static final String ACTIVATE_ACCOUNT = "/activate/:id/";
-		public static final String SECURE_ACCOUNT = "/secure/:id/";
-		public static final String SALESFORCE = "/salesforce/:id/";
+		public static final String ACCOUNT_ACTIVATE = "/signup/:id/activate/";
+		public static final String ACCOUNT_SECURE = "/signup/:id/secure/";
+		public static final String ACCOUNT_LINK = "/signup/:id/link/";
+		public static final String ACCOUNT_ACTIVATION_RESEND = "/signup/:id/resend/";
 		public static final String SALESFORCE_OAUTH_CALLBACK = "/salesforce/oauth/callback/";
+		public static final String SALESFORCE_OAUTH_SUCCESS = "/salesforce/oauth/success/:id/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
 		
 		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout/"); 
-		
 		public static final String START = String.format(APPLICATION_CONTEXT, "start/");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard/");
 		

@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <title>${messages["application.title"]}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="/css/mdb.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="/css/custom.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <#include "header.html" />
+
+    <!--Main Layout-->
+    <main>
+
+        <div class="container mt-5">
+            
+            <br>
+            <br>
+
+            <#if action=="listPlans">
+
+                <div id="plans-list">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4><b>${labels["select.plan"]}</b></h4>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive w-100 d-block d-md-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <#list plans as plan>
+                                            <#if plan.recommendedPlan==true>
+                                                <th class="text-center">
+                                                    <div>
+                                                        <span>${labels["recommended"]}</span>
+                                                        <div>${plan.planName}</div>
+                                                        <div>
+                                                            ${plan.price.currencySymbol}${plan.price.unitPrice?string["0.##"]}
+                                                        </div>
+                                                        <div>${plan.billingFrequency}</div>
+                                                    </div>
+                                                </th>
+                                            </#if>
+                                            <#if plan.recommendedPlan==false && plan.price.unitPrice==0>
+                                                <th class="text-center">
+                                                    <div>${plan.planName}</div>
+                                                    <div>
+                                                        ${plan.price.currencySymbol}${plan.price.unitPrice?string["0.##"]}
+                                                    </div>
+                                                    <div>${plan.billingFrequency}</div>
+                                                </th>
+                                            </#if>
+                                            <#if plan.recommendedPlan==false && plan.price.unitPrice gt 0>
+                                                <th class="text-center">
+                                                    <div>${plan.planName}</div>
+                                                    <div>
+                                                        ${plan.price.currencySymbol}${plan.price.unitPrice?string["0.##"]}
+                                                    </div>
+                                                    <div>${plan.billingFrequency}</div>
+                                                </th>
+                                            </#if>
+                                        </#list>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <#list plans as plan>
+                                            <td class="align-middle text-center">
+                                                <!-- <#if organization.subscription?? && plan.id==organization.subscription.planId> -->
+                                                ${labels["current.plan"]}
+                                                <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice gt organization.subscription.unitPrice> -->
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-success" role="button">${labels["upgrade"]}</a>
+                                                <!-- <#elseif plan.recommendedPlan==true && plan.price.unitPrice lt organization.subscription.unitPrice> -->
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-light" role="button">${labels["downgrade"]}</a>
+                                                <!-- <#elseif organization.subscription?? && plan.price.unitPrice gt organization.subscription.unitPrice> -->
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-primary" role="button">${labels["upgrade"]}</a>
+                                                <!-- <#else> -->
+                                                <a href="${links['organization']}/${organization.id}/plans/${plan.id}/" class="btn btn-light" role="button">${labels["downgrade"]}</a>
+                                                <!-- </#if> -->
+                                            </td>
+                                        </#list>
+                                    </tr>
+                                    <#list plans[0].features?sort_by( "sortOrder") as feature>
+                                        <tr id="${feature?index}">
+                                            <td>${feature.name}</td>
+                                            <#list plans as plan>
+                                                <#assign x=plan.features?sort_by( "sortOrder")[feature?index] />
+                                                <td class="text-center">
+                                                    <#if x.enabled?? && x.enabled==true>
+                                                        <span class="icon-yes glyphicon glyphicon-ok-circle"></span>
+                                                    </#if>
+                                                    <#if x.enabled?? && x.enabled==false>
+                                                        <span class="icon-no glyphicon glyphicon-remove-circle"></span>
+                                                    </#if>
+                                                    <#if x.quantity??>
+                                                        ${x.quantity}
+                                                    </#if>
+                                                </td>
+                                            </#list>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <a href="${links['organization']}/${organization.id}" id="back" class="btn btn-light" role="button">${labels["cancel"]}</a>
+                    </div>
+                </div>
+            </#if>
+
+            <#if action=="reviewPlan">
+                <div class="row">
+                    <div class="col-12">
+                        <h4><b>${labels["review.plan"]}</b></h4>
+                    </div>
+                </div>
+                <hr>
+                <div id="error"></div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>${labels["plan.name"]}</th>
+                                        <th>${labels["feature"]}</th>
+                                        <th class="text-center">${labels["quantity"]}</th>
+                                        <th class="text-right">${labels["price"]}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <#list plan.features?sort_by( "sortOrder") as feature>
+                                        <tr>
+                                            <#if feature?index==0>
+                                                <td>${(plan.planName)!}</td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td class="text-right">${(plan.billingFrequency)!}&nbsp;${(plan.price.currencySymbol)!}&nbsp;${(plan.price.unitPrice?string["0.00"])!}</td>
+                                            </#if>
+                                            <#if feature?index gt 0>
+                                                <td></td>
+                                                <td>${feature.name}</td>
+                                                <td class="text-center">${feature.quantity}</td>
+                                                <td></td>
+                                            </#if>
+                                        </tr>
+                                    </#list>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <form id="change-plan-form" name="change-plan-form" class="form-vertical" method="post" action="${links['organization']}/${organization.id}/plans/${plan.id}/">
+                    <#if plan.price.unitPrice gt 0>
+                        <!-- <#if ! organization.subscription.creditCard??> -->
+                        <br>
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><b>${labels["payment.method"]}</b></h4>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="offset-4 col-4">
+
+                                <div class="form-group">
+                                    <input type="text" name="cardholderName" id="cardholderName" class="form-control" placeholder="${labels['name.on.card']}" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" name="number" id="number" class="form-control" placeholder="${labels['number']}">
+                                </div>
+                                <div class="row no-gutters">
+                                    <div class="form-group col-3">
+                                        <input type="text" name="expirationMonth" id="expirationMonth" class="form-control" required placeholder="${labels['month']}">
+                                    </div>
+                                    <div class="form-group col-1"></div>
+                                    <div class="form-group col-3">
+                                        <input type="text" name="expirationYear" id="expirationYear" class="form-control" required placeholder="${labels['year']}">
+                                    </div>
+                                    <div class="form-group col-2"></div>
+                                    <div class="form-group col-3">
+                                        <input type="text" name="cvv" id="cvv" class="form-control" required placeholder="${labels['cvv']}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- </#if> -->
+                    </#if>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <a href="${links['organization']}/${organization.id}/" class="btn btn-light" role="button">${labels["cancel"]}</a>
+                            <a href="${links['organization']}/${organization.id}/plans/" class="btn btn-light" role="button">${labels["back"]}</a>
+                            <button type="button" id="change-plan" class="btn btn-primary"><i id="wait" class="fa fa-spinner fa-spin" style="display: none"></i> ${labels["set.plan"]}</button>
+                        </div>
+                    </div>
+                </form>
+            </#if>
+        </div>
+
+        <div class="modal" id="change-plan-success-popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-notify modal-success" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Header-->
+                    <div class="modal-header">
+                        <p class="heading lead">${messages["success"]}</p>
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <i class="fa fa-check fa-4x mb-3 animated rotateIn"></i>
+                            <p>${labels["plan.change.success"]}</p>
+                        </div>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="/js/mdb.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script type="text/javascript" src="/js/organization.js"></script>
+
+</body>
+
+</html>

@@ -15,8 +15,10 @@ import org.immutables.value.Value;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.util.RequestAttributes;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.core.Environment;
+import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -41,8 +43,10 @@ public abstract class AbstractTemplate {
 	private String buildTemplate(Configuration configuration, Locale locale, TimeZone timeZone, ModelAndView modelAndView) {
 		Writer output = new StringWriter();
 		try {
+			BeansWrapperBuilder wrapperBuilder = new BeansWrapperBuilder(Configuration.VERSION_2_3_28);
+			wrapperBuilder.setExposeFields(true);
 			Template template = configuration.getTemplate(modelAndView.getViewName());
-			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output);
+			Environment environment = template.createProcessingEnvironment(modelAndView.getModel(), output, wrapperBuilder.build());
 			environment.setLocale(locale);
 			environment.setTimeZone(timeZone);
 			environment.process();
@@ -84,6 +88,7 @@ public abstract class AbstractTemplate {
 		model.putAll(getModel());
 		model.put("token", token);
 		model.put("identity", identity);
+		model.put("LOGOUT_URI", Path.Route.LOGOUT);
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 			model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(getControllerClass().getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

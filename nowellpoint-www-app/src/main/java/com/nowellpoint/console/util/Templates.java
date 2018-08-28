@@ -9,8 +9,9 @@ public class Templates {
 	public static final String NOT_FOUND = "not-found.html";
 	public static final String ACTIVATE_ACCOUNT = "activate.html";
 	public static final String SECURE_ACCOUNT = "secure.html";
-	public static final String SALESFORCE_OAUTH = String.format(APPLICATION_CONTEXT, "salesforce-oauth.html");
-	public static final String SALESFORCE_OAUTH_CALLBACK = String.format(APPLICATION_CONTEXT, "salesforce-oauth-callback.html");
+	public static final String SALESFORCE_OAUTH = "salesforce-oauth.html";
+	public static final String SALESFORCE_OAUTH_CALLBACK = "salesforce-oauth-callback.html";
+	public static final String SALESFORCE_OAUTH_SUCCESS = "salesforce-oauth-success.html";
 	public static final String CONSOLE = String.format(APPLICATION_CONTEXT, "console.html");
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.html");
 	public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.html");

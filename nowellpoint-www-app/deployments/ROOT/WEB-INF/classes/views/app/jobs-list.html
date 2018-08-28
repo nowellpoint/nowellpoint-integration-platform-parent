@@ -1,0 +1,80 @@
+<#import "template.html" as t>
+
+    <@t.page>
+
+        <div class="dashhead">
+            <div class="dashhead-titles">
+                <h6 class="dashhead-subtitle">&emsp;</h6>
+                <h2 class="dashhead-title">${labels["jobs"]}</h2>
+            </div>
+            <#if jobList?size gt 0>
+                <div class="dashhead-toolbar">
+                    <p class="pull-right">
+                        <a href="${links['jobs']}/new" class="btn btn-outline-primary" role="button">${labels["create.job"]}</a>
+                    </p>
+                </div>
+            </#if>
+        </div>
+        <#if jobList?size==0>
+            <br>
+            <br>
+            <br>
+            <p class="text-center">
+                <span class="icon icon-clock fa fa-4x"></span>
+            </p>
+            <h4 class="text-muted text-center">${labels["no.records"]}</h4>
+            <p class="text-center">
+            <a href="${links['jobs']}" class="btn btn-outline-primary btn-lg" role="button">${labels["create.job"]}</a>
+            </p>
+        </#if>
+        <#if jobList?size gt 0>
+            <br>
+            <div class="content table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>${labels["job.name"]}</th>
+                        <th>${labels["last.run.date"]}</th>
+                        <th>${labels["status"]}</th>
+                        <th class="text-right">${labels["number.executions"]}</th>
+                        <th class="text-right">${labels["job.outputs"]}</th>
+                    </thead>
+                    <tbody>
+                        <#list jobList?sort_by( "createdOn") as job>
+                            <tr>
+                                <td><a href="${links['jobs']}/${job.id}">${job.jobName}</a></td>
+                                <td>${(job.fireTime?date?string.iso)!} ${(job.fireTime?time?string["HH:mm"])!}</td>
+                                <td>
+                                    <h6>
+                                    <#if job.status=="COMPLETED" >
+                                        <span class="badge badge-pill badge-success">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status=="RUNNING">
+                                        <span class="badge badge-pill badge-default">${job.status}</span>
+                                    </#if>    
+                                    <#if job.status=="SCHEDULED" >
+                                        <span class="badge badge-pill badge-info">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status=="SUBMITTED" >
+                                        <span class="badge badge-pill badge-info">${job.status}</span>
+                                    </#if> 
+                                    <#if job.status=="TERMINATED" || job.status=="STOPPED">
+                                        <span class="badge badge-pill badge-default">${job.status}</span>
+                                    </#if>     
+                                    <#if job.status=="FAILED">
+                                        <span class="badge badge-pill badge-danger">${job.status}</span>
+                                    </#if>
+                                    </h6>
+                                </td>
+                                <td class="text-right">${job.numberOfExecutions}</td>
+                                <td class="text-right"><a href="${links['jobs']}/${job.id}/outputs"><span class="icon icon-folder"></span></a></td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
+            <h4><small class="text-muted">${labels["history.message"]}</small></h4>
+            <br>
+            <br>
+        </#if>
+
+    </@t.page>

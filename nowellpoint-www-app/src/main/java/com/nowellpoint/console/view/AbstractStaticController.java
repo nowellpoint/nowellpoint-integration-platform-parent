@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.model.Identity;
 import com.nowellpoint.client.model.Result;
 import com.nowellpoint.client.model.Token;
+import com.nowellpoint.www.app.util.Path;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.ResourceBundleModel;
@@ -94,6 +95,7 @@ public class AbstractStaticController {
 		Locale locale = getLocale(request);
 		TimeZone timeZone = getTimeZone(request);
 		model.put("identity", identity);
+		model.put("LOGOUT_URI", Path.Route.LOGOUT);
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 			model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(controllerClass.getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

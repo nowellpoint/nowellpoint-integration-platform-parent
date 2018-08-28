@@ -19,6 +19,7 @@ import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.TemplateProcessRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
@@ -38,34 +39,38 @@ public class SignUpController {
 	
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.FREE_ACCOUNT, (request, response) 
-				-> freeAccount(configuration, request, response));
+				-> showSignUp(configuration, request, response));
 		
 		post(Path.Route.SIGN_UP, (request, response) 
 				-> signUp(configuration, request, response));
 		
-		post(Path.Route.RESEND, (request, response) 
-				-> resend(configuration, request, response));
+		get(Path.Route.ACCOUNT_ACTIVATION_RESEND, (request, response) 
+				-> resendAccountActivation(configuration, request, response));
 		
-		get(Path.Route.ACTIVATE_ACCOUNT, (request, response)
+		get(Path.Route.ACCOUNT_ACTIVATE, (request, response)
 				-> showActivateAccount(configuration, request, response));
 		
-		post(Path.Route.ACTIVATE_ACCOUNT, (request, response) 
+		post(Path.Route.ACCOUNT_ACTIVATE, (request, response) 
 				-> activateAccount(configuration, request, response));
 		
-		get(Path.Route.SECURE_ACCOUNT, (request, response)
+		get(Path.Route.ACCOUNT_SECURE, (request, response)
 				-> showSecureAccount(configuration, request, response));
 		
-		post(Path.Route.SECURE_ACCOUNT, (request, response) 
-				-> secure(configuration, request, response));
+		post(Path.Route.ACCOUNT_SECURE, (request, response) 
+				-> secureAccount(configuration, request, response));
 		
-		get(Path.Route.SALESFORCE, (request, response)
-				-> showSalesforce(configuration, request, response));
+		get(Path.Route.ACCOUNT_LINK, (request, response)
+				-> showLinkAccount(configuration, request, response));
 		
-		post(Path.Route.SALESFORCE, (request, response)
-				-> link(configuration, request, response));
+		post(Path.Route.ACCOUNT_LINK, (request, response)
+				-> linkAccount(configuration, request, response));
 		
 		get(Path.Route.SALESFORCE_OAUTH_CALLBACK, (request, response) 
 				-> oauthCallback(configuration, request, response));
+		
+		get(Path.Route.SALESFORCE_OAUTH_SUCCESS, (request, response) 
+				-> oauthSuccess(configuration, request, response));
+
 	}
 	
 	/**
@@ -76,7 +81,7 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	private static String freeAccount(Configuration configuration, Request request, Response response) {
+	private static String showSignUp(Configuration configuration, Request request, Response response) {
 		
 		Plan plan = ServiceClient.getInstance()
 				.plan()
@@ -84,6 +89,7 @@ public class SignUpController {
 		
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("plan", plan);
+		model.put("ACCOUNT_SIGNUP_URI", Path.Route.SIGN_UP);
 		
 		Template template = Template.builder()
 				.configuration(configuration)
@@ -124,7 +130,7 @@ public class SignUpController {
         			.console()
         			.signUp(signUpRequest);
 			
-			response.redirect(Path.Route.ACTIVATE_ACCOUNT.replace(":id", identity.getId()));
+			response.redirect(Path.Route.ACCOUNT_ACTIVATE.replace(":id", identity.getId()));
 			
 			return "";
 			
@@ -170,6 +176,8 @@ public class SignUpController {
 		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
+		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", id));
+		model.put("ACCOUNT_ACTIVATION_RESEND_URI", Path.Route.ACCOUNT_ACTIVATION_RESEND.replace(":id", id));
     	
     	Template template = Template.builder()
 				.configuration(configuration)
@@ -198,7 +206,7 @@ public class SignUpController {
 				.identity()
 				.activate(activationToken);
 		
-		response.redirect(Path.Route.SECURE_ACCOUNT.replace(":id", identity.getId()));
+		response.redirect(Path.Route.ACCOUNT_SECURE.replace(":id", identity.getId()));
 		
 		return "";
 	}
@@ -211,9 +219,9 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	private static String resend(Configuration configuration, Request request, Response response) {
+	private static String resendAccountActivation(Configuration configuration, Request request, Response response) {
 		
-		String id = request.queryParams("id");
+		String id = request.params(":id");
 		
 		ServiceClient.getInstance().identity().resendActivationEmail(id);
 		
@@ -243,18 +251,20 @@ public class SignUpController {
 				.identity()
 				.get(id);
 		
+		TemplateManager templateManager = new TemplateManager();
+		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
-    	
-    	Template template = Template.builder()
-				.configuration(configuration)
+		model.put("ACCOUNT_SECURE_URI", Path.Route.ACCOUNT_SECURE.replace(":id", id));
+		
+		TemplateProcessRequest templateProcessRequest = TemplateProcessRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
 				.request(request)
 				.templateName(Templates.SECURE_ACCOUNT)
 				.build();
 		
-		return template.render();
+		return templateManager.processTemplate(templateProcessRequest);
 	}
 	
 	/**
@@ -265,7 +275,7 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	private static String secure(Configuration configuration, Request request, Response response) {
+	private static String secureAccount(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		String password = request.queryParams("password");
@@ -288,7 +298,7 @@ public class SignUpController {
 				throw new InternalServerErrorException(e);
 			}
 			
-			response.redirect(Path.Route.SALESFORCE.replace(":id", identity.getId()));
+			response.redirect(Path.Route.ACCOUNT_LINK.replace(":id", identity.getId()));
 			
 		} catch (ConsoleException e) {
 			throw new InternalServerErrorException(e);
@@ -305,7 +315,7 @@ public class SignUpController {
 	 * @return
 	 */
 	
-	private static String showSalesforce(Configuration configuration, Request request, Response response) {
+	private static String showLinkAccount(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -352,7 +362,7 @@ public class SignUpController {
 				.toHtml();
 	}
 	
-	private static String link(Configuration configuration, Request request, Response response) {
+	private static String linkAccount(Configuration configuration, Request request, Response response) {
 		String id = request.params(":id");
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -389,11 +399,22 @@ public class SignUpController {
 					organization.get("Name").asText(), 
 					organization.get("Id").asText());
 			
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	   
 		return "";
+	}
+	
+	private static String oauthSuccess(Configuration configuration, Request request, Response response) {
+		String id = request.params(":id");
+		
+		return Template.builder()
+				.configuration(configuration)
+				.controllerClass(SignUpController.class)
+				.request(request)
+				.templateName(Templates.SALESFORCE_OAUTH_SUCCESS)
+				.build()
+				.toHtml();
 	}
 }
