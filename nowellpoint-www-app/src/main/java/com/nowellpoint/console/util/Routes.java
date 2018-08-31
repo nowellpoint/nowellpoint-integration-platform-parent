@@ -44,7 +44,7 @@ public class Routes {
 		}
 		
 		IndexController.configureRoutes(configuration);
-		SignUpController.configureRoutes(configuration);
+		SignUpController.configureRoutes();
 		AuthenticationController.configureRoutes(configuration);
 		StartController.configureRoutes(configuration);
 		UserProfileController.configureRoutes(configuration);

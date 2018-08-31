@@ -7,12 +7,12 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import com.nowellpoint.console.model.Identity;
-import com.nowellpoint.console.model.TemplateProcessRequest;
-import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.core.Environment;
@@ -25,10 +25,6 @@ import spark.ModelAndView;
 
 public class TemplateManager {
     private Configuration configuration;
-    private static final String TOKEN = "com.nowellpoint.auth.token";
-    private static final String IDENTITY = "com.nowellpoint.auth.identity";
-    private static final String LOCALE = "com.nowellpoint.default.locale";
-    private static final String TIME_ZONE = "com.nowellpoint.default.timezone";
 
     public TemplateManager() {
     	configuration = new Configuration(Configuration.VERSION_2_3_28);
@@ -39,16 +35,21 @@ public class TemplateManager {
     	configuration.setObjectWrapper(new BeansWrapperBuilder(Configuration.VERSION_2_3_28).build());
     }
 
-    public String processTemplate(TemplateProcessRequest request) {
-    	Token token = request.getRequest().attribute(TOKEN);
-		Identity identity = request.getRequest().attribute(IDENTITY);
-		Locale locale = request.getRequest().attribute(LOCALE);
-		TimeZone timeZone = request.getRequest().attribute(TIME_ZONE);
+    public String processTemplate(ProcessTemplateRequest request) {
+    	
+		Identity identity = request.getIdentity();
+		
+		Locale locale = Optional.ofNullable(identity)
+				.map(i -> i.getLocale())
+				.orElse(Locale.getDefault());
+		
+		TimeZone timeZone = Optional.ofNullable(identity)
+				.map(i -> TimeZone.getTimeZone(i.getTimeZone()))
+				.orElse(TimeZone.getDefault());
 		
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.putAll(request.getModel());
 		model.put("LOGOUT_URI", Path.Route.LOGOUT);
-		model.put("token", token);
 		model.put("identity", identity);
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));

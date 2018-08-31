@@ -63,11 +63,11 @@ public class Filters {
 			
 			UserContext.set(identity);
 			
-			System.out.println(request.pathInfo() + " " + request.pathInfo().endsWith("/app/activate/"));
+			System.out.println(request.pathInfo() + " " + request.pathInfo().endsWith("/activate/"));
 			
-//			if ( identity.getActive() == Boolean.FALSE) {
-//				response.redirect(Path.Route.ACTIVATE_ACCOUNT);
-//			}
+		//	if (!request.pathInfo().equals(Path.Route.ACCOUNT_ACTIVATE) && identity.getActive() == Boolean.FALSE) {
+		//		response.redirect(Path.Route.ACCOUNT_ACTIVATE);
+		//	}
 
 		} else {
 

@@ -2,6 +2,7 @@ package com.nowellpoint.console.entity;
 
 import java.util.Locale;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Reference;
 
@@ -35,6 +36,14 @@ public class Identity extends BaseEntity {
 	
 	public Identity() {
 		
+	}
+	
+	public Identity(ObjectId id) {
+		super(id);
+	}
+	
+	public Identity(String id) {
+		super(id);
 	}
 
 	public String getSubject() {

@@ -1,10 +1,7 @@
 package com.nowellpoint.console.model;
 
-import java.util.Date;
 import java.util.Locale;
-import java.time.Instant;
 
-import org.bson.types.ObjectId;
 import org.immutables.value.Value;
 
 @Value.Immutable
@@ -16,25 +13,8 @@ public abstract class AbstractLeadRequest {
 	public abstract String getEmail();
 	public abstract String getMessage();
 	
-	private final Date now = Date.from(Instant.now());
-	
-	@Value.Default
-	public ObjectId getId() {
-		return new ObjectId();
-	}
-	
 	@Value.Default
 	public Locale getLocale() {
 		return Locale.getDefault();
-	}
-	
-	@Value.Default
-	public Date getCreatedOn() {
-		return now;
-	}
-	
-	@Value.Default
-	public Date getLastUpdatedOn() {
-		return now;
 	}
 }

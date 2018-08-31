@@ -1,9 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.time.Instant;
-import java.util.Date;
-
-import org.bson.types.ObjectId;
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -15,23 +11,11 @@ import com.nowellpoint.console.api.OrganizationResource;
 @Value.Style(typeImmutable = "*", jdkOnly=true, create = "new")
 @JsonSerialize(as = Organization.class)
 @JsonDeserialize(as = Organization.class)
-public abstract class AbstractOrganization {
+public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getNumber();
 	public abstract String getDomain();
 	public abstract String getName();
 	public abstract Subscription getSubscription();
-	
-	private Date now = Date.from(Instant.now());
-	
-	@Value.Default
-	public Date getCreatedOn() {
-		return now;
-	}
-	
-	@Value.Default
-	public Date getLastUpdatedOn() {
-		return now;
-	}
 	
 	@Value.Default
 	public Meta getMeta() {
@@ -41,20 +25,15 @@ public abstract class AbstractOrganization {
 				.build();
 	}
 	
-	@Value.Default
-	public String getId() {
-		return new ObjectId().toString();
-	}
-	
-	public static Organization of(com.nowellpoint.console.entity.Organization source) {
+	public static Organization of(com.nowellpoint.console.entity.Organization entity) {
 		return Organization.builder()
-				.createdOn(source.getCreatedOn())
-				.domain(source.getDomain())
-				.id(source.getId().toString())
-				.lastUpdatedOn(source.getLastUpdatedOn())
-				.name(source.getName())
-				.number(source.getNumber())
-				.subscription(Subscription.of(source.getSubscription()))
+				.id(entity.getId().toString())
+				.createdOn(entity.getCreatedOn())
+				.domain(entity.getDomain())
+				.lastUpdatedOn(entity.getLastUpdatedOn())
+				.name(entity.getName())
+				.number(entity.getNumber())
+				.subscription(Subscription.of(entity.getSubscription()))
 				.build();
 	}
 }

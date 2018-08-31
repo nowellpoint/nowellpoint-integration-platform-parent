@@ -11,7 +11,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = Photos.class)
 @JsonDeserialize(as = Photos.class)
 public abstract class AbstractPhotos {
-	public abstract String getProfilePicture();
+	
+	@Value.Default
+	public String getProfilePicture() {
+		return "/images/person-generic.jpg";
+	}
 	
 	public static Photos of(com.nowellpoint.console.entity.Photos source) {
 		return source == null ? null : Photos.builder()

@@ -5,7 +5,6 @@ import java.util.TimeZone;
 
 import javax.annotation.Nullable;
 
-import org.bson.types.ObjectId;
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,14 +15,14 @@ import com.nowellpoint.console.api.IdentityResource;
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 @JsonSerialize(as = Identity.class)
 @JsonDeserialize(as = Identity.class)
-public abstract class AbstractIdentity {
+public abstract class AbstractIdentity extends AbstractResource {
 	public abstract String getEmail();
-	public abstract String getFirstName();
+	public abstract @Nullable String getFirstName();
 	public abstract String getLastName();
 	public abstract String getSubject();
 	public abstract String getStatus();
-	public abstract @Nullable OrganizationInfo getOrganization();
-	public abstract @Nullable Photos getPhotos();
+	public abstract OrganizationInfo getOrganization();
+	public abstract Photos getPhotos();
 	
 	@Value.Derived
 	public String getName() {
@@ -36,11 +35,6 @@ public abstract class AbstractIdentity {
 				.id(getId())
 				.resourceClass(IdentityResource.class)
 				.build();
-	}
-	
-	@Value.Default
-	public String getId() {
-		return new ObjectId().toString();
 	}
 	
 	@Value.Default
@@ -63,18 +57,20 @@ public abstract class AbstractIdentity {
 		return getEmail();
 	}
 	
-	public static Identity of(com.nowellpoint.console.entity.Identity source) {
-		return source == null ? null : Identity.builder()
-				.id(source.getId().toString())
-				.email(source.getEmail())
-				.firstName(source.getFirstName())
-				.lastName(source.getLastName())
-				.locale(source.getLocale())
-				.timeZone(source.getTimeZone())
-				.subject(source.getSubject())
-				.status(source.getStatus())
-				.organization(OrganizationInfo.of(source.getOrganization()))
-				.photos(Photos.of(source.getPhotos()))
+	public static Identity of(com.nowellpoint.console.entity.Identity entity) {
+		return entity == null ? null : Identity.builder()
+				.id(entity.getId().toString())
+				.createdOn(entity.getCreatedOn())
+				.email(entity.getEmail())
+				.firstName(entity.getFirstName())
+				.lastName(entity.getLastName())
+				.lastUpdatedOn(entity.getLastUpdatedOn())
+				.locale(entity.getLocale())
+				.timeZone(entity.getTimeZone())
+				.subject(entity.getSubject())
+				.status(entity.getStatus())
+				.organization(OrganizationInfo.of(entity.getOrganization()))
+				.photos(Photos.of(entity.getPhotos()))
 				.build();
 	}
 }

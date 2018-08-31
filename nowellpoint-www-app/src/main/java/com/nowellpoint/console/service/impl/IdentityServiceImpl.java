@@ -281,7 +281,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private Identity create(String organizationId, Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
 		entity.setOrganization(new com.nowellpoint.console.entity.Organization(organizationId));
-		entity.setCreatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
+		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		entity.setCreatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		entity.setLastUpdatedOn(entity.getCreatedOn());
@@ -294,7 +294,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private Identity update(Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
+		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		identityDAO.save(entity);
 		entity = identityDAO.get(entity.getId());
 		putEntry(entity.getId().toString(), entity);

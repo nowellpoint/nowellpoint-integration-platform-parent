@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.nowellpoint.console.model.Identity;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.util.RequestAttributes;
 
@@ -21,5 +22,9 @@ public class BaseController {
 	
 	public static Map<String, Object> getModel() {
 		return new HashMap<String, Object>();
+	}
+	
+	public static String processTemplate(ProcessTemplateRequest request) {
+		return new TemplateManager().processTemplate(request);
 	}
 }

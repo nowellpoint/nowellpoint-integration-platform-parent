@@ -18,8 +18,7 @@ import com.nowellpoint.console.exception.ConsoleException;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.SignUpRequest;
-import com.nowellpoint.console.model.Template;
-import com.nowellpoint.console.model.TemplateProcessRequest;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
@@ -29,59 +28,57 @@ import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.www.app.util.Path;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class SignUpController {
+public class SignUpController extends BaseController {
 	
 	private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
 	
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		get(Path.Route.FREE_ACCOUNT, (request, response) 
-				-> showSignUp(configuration, request, response));
+				-> showSignUp(request, response));
 		
 		post(Path.Route.SIGN_UP, (request, response) 
-				-> signUp(configuration, request, response));
+				-> signUp(request, response));
 		
 		get(Path.Route.ACCOUNT_ACTIVATION_RESEND, (request, response) 
-				-> resendAccountActivation(configuration, request, response));
+				-> resendAccountActivation(request, response));
 		
 		get(Path.Route.ACCOUNT_ACTIVATE, (request, response)
-				-> showActivateAccount(configuration, request, response));
+				-> showActivateAccount(request, response));
 		
 		post(Path.Route.ACCOUNT_ACTIVATE, (request, response) 
-				-> activateAccount(configuration, request, response));
+				-> activateAccount(request, response));
 		
 		get(Path.Route.ACCOUNT_SECURE, (request, response)
-				-> showSecureAccount(configuration, request, response));
+				-> showSecureAccount(request, response));
 		
 		post(Path.Route.ACCOUNT_SECURE, (request, response) 
-				-> secureAccount(configuration, request, response));
+				-> secureAccount(request, response));
 		
 		get(Path.Route.ACCOUNT_LINK, (request, response)
-				-> showLinkAccount(configuration, request, response));
+				-> showLinkAccount(request, response));
 		
 		post(Path.Route.ACCOUNT_LINK, (request, response)
-				-> linkAccount(configuration, request, response));
+				-> linkAccount(request, response));
 		
 		get(Path.Route.SALESFORCE_OAUTH_CALLBACK, (request, response) 
-				-> oauthCallback(configuration, request, response));
+				-> oauthCallback(request, response));
 		
 		get(Path.Route.SALESFORCE_OAUTH_SUCCESS, (request, response) 
-				-> oauthSuccess(configuration, request, response));
+				-> oauthSuccess(request, response));
 
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String showSignUp(Configuration configuration, Request request, Response response) {
+	private static String showSignUp(Request request, Response response) {
 		
 		Plan plan = ServiceClient.getInstance()
 				.plan()
@@ -91,26 +88,23 @@ public class SignUpController {
 		model.put("plan", plan);
 		model.put("ACCOUNT_SIGNUP_URI", Path.Route.SIGN_UP);
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
-				.request(request)
 				.model(model)
 				.templateName(Templates.SIGN_UP)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String signUp(Configuration configuration, Request request, Response response) {
+	private static String signUp(Request request, Response response) {
 
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
@@ -145,28 +139,25 @@ public class SignUpController {
     		Map<String, Object> model = new HashMap<>();
 			model.put("errorMessage", e.getMessage());
 			model.put("plan", plan);
-	    	
-	    	Template template = Template.builder()
-					.configuration(configuration)
+			
+			ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 					.controllerClass(SignUpController.class)
-					.request(request)
 					.model(model)
 					.templateName(Templates.SIGN_UP)
 					.build();
 			
-			return template.render();
+			return processTemplate(templateProcessRequest);
     	}
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String showActivateAccount(Configuration configuration, Request request, Response response) {
+	private static String showActivateAccount(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -178,27 +169,24 @@ public class SignUpController {
 		model.put("registration", identity);
 		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", id));
 		model.put("ACCOUNT_ACTIVATION_RESEND_URI", Path.Route.ACCOUNT_ACTIVATION_RESEND.replace(":id", id));
-    	
-    	Template template = Template.builder()
-				.configuration(configuration)
+		
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String activateAccount(Configuration configuration, Request request, Response response) {
+	private static String activateAccount(Request request, Response response) {
 		
 		String activationToken = request.queryParams("activationToken");
 		
@@ -213,37 +201,41 @@ public class SignUpController {
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String resendAccountActivation(Configuration configuration, Request request, Response response) {
+	private static String resendAccountActivation(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
-		ServiceClient.getInstance().identity().resendActivationEmail(id);
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.resendActivationEmail(id);
 		
-    	Template template = Template.builder()
-				.configuration(configuration)
+		Map<String, Object> model = new HashMap<>();
+		model.put("registration", identity);
+		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", id));
+		model.put("ACCOUNT_ACTIVATION_RESEND_URI", Path.Route.ACCOUNT_ACTIVATION_RESEND.replace(":id", id));
+		
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
-				.request(request)
+				.model(model)
 				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String showSecureAccount(Configuration configuration, Request request, Response response) {
+	private static String showSecureAccount(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -251,31 +243,27 @@ public class SignUpController {
 				.identity()
 				.get(id);
 		
-		TemplateManager templateManager = new TemplateManager();
-		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
 		model.put("ACCOUNT_SECURE_URI", Path.Route.ACCOUNT_SECURE.replace(":id", id));
 		
-		TemplateProcessRequest templateProcessRequest = TemplateProcessRequest.builder()
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.SECURE_ACCOUNT)
 				.build();
 		
-		return templateManager.processTemplate(templateProcessRequest);
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String secureAccount(Configuration configuration, Request request, Response response) {
+	private static String secureAccount(Request request, Response response) {
 		
 		String id = request.params(":id");
 		String password = request.queryParams("password");
@@ -309,13 +297,12 @@ public class SignUpController {
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String showLinkAccount(Configuration configuration, Request request, Response response) {
+	private static String showLinkAccount(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -341,28 +328,39 @@ public class SignUpController {
 		model.put("registration", identity);
 		model.put("SALESFORCE_AUTHORIZE_URI", authUrl);
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.SALESFORCE_OAUTH)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
-	private static String oauthCallback(Configuration configuration, Request request, Response response) {
-		return Template.builder()
-				.configuration(configuration)
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String oauthCallback(Request request, Response response) {
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
-				.request(request)
 				.templateName(Templates.SALESFORCE_OAUTH_CALLBACK)
-				.build()
-				.toHtml();
+				.build();
+		
+		return processTemplate(templateProcessRequest);
 	}
 	
-	private static String linkAccount(Configuration configuration, Request request, Response response) {
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String linkAccount(Request request, Response response) {
 		String id = request.params(":id");
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -406,15 +404,21 @@ public class SignUpController {
 		return "";
 	}
 	
-	private static String oauthSuccess(Configuration configuration, Request request, Response response) {
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String oauthSuccess(Request request, Response response) {
 		String id = request.params(":id");
 		
-		return Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
-				.request(request)
 				.templateName(Templates.SALESFORCE_OAUTH_SUCCESS)
-				.build()
-				.toHtml();
+				.build();
+		
+		return processTemplate(templateProcessRequest);
 	}
 }

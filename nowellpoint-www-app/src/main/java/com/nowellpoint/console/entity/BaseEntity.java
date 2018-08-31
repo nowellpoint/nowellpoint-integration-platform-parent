@@ -79,12 +79,6 @@ abstract class BaseEntity implements Serializable {
 	public void setCreatedBy(Identity createdBy) {
 		this.createdBy = createdBy;
 	}
-	
-	public void setCreatedBy(String id) {
-		Identity identity = new Identity();
-		identity.setId(new ObjectId(id));
-		setLastUpdatedBy(identity);
-	}
 
 	public Identity getLastUpdatedBy() {
 		return lastUpdatedBy;
@@ -92,11 +86,5 @@ abstract class BaseEntity implements Serializable {
 
 	public void setLastUpdatedBy(Identity lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
-	}
-	
-	public void setLastUpdatedBy(String id) {
-		Identity identity = new Identity();
-		identity.setId(new ObjectId(id));
-		setLastUpdatedBy(identity);
 	}
 }

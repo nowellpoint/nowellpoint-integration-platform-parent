@@ -1,33 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>${messages["application.title"]}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
-    <link href="/css/mdb.min.css" rel="stylesheet">
-
-</head>
-
-<body>
-
-    <header>
-        <nav class="navbar navbar-default fixed-top navbar-dark unique-color navbar-expand-lg">
-            <a class="navbar-brand" href="/"><strong>${messages["application.title"]}</strong></a>
-        </nav>
-    </header>
-
-    <main>
-        <br>
-        <br>
-        <br>
-        <div class="container mt-5">
+<#import "template.html" as t>
+    <@t.page>
+        <div class="container pt-5">
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-10">
@@ -55,7 +28,7 @@
             <div class="row">
                 <div class="col-2"></div>
                 <!--Grid column-->
-                <div class="col-6">
+                <div class="col-5">
                     <form id="confirm-form" role="form" method="post" action="${ACCOUNT_SECURE_URI}">
                         <div class="form-group">
                             <label for="password" class="">${labels['password']}</label>
@@ -68,6 +41,7 @@
                         </div>
                     </form>
                 </div>
+                <div class="col-1"></div>
                 <div class="col-4">
                     <!--Grid row-->
                     <div class="row mb-2">
@@ -114,23 +88,4 @@
                 </div>
             </div>   
         </div>
-    </main>
-
-    <br>
-    <br>
-    <br>
-
-    <hr>
-
-    <!-- JQuery -->
-    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
-    <!-- Bootstrap tooltips -->
-    <script type="text/javascript" src="/js/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
-    <script type="text/javascript" src="/js/mdb.min.js"></script>
-
-</body>
-
-</html>
+    </@t.page>

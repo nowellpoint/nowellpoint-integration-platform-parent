@@ -488,7 +488,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private Organization create(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
-		entity.setCreatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
+		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		organizationDAO.save(entity);
 		return Organization.of(entity);
@@ -497,7 +497,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	private Organization update(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
-		entity.setLastUpdatedBy(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString());
+		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		organizationDAO.save(entity);
 		return Organization.of(entity);
 	}
