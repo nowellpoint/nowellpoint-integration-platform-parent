@@ -165,18 +165,20 @@ public class SignUpController extends BaseController {
 				.identity()
 				.get(id);
 		
+		System.out.println(Path.Route.ACCOUNT_ACTIVATE.replace(":id", identity.getId()));
+		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
-		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", id));
-		model.put("ACCOUNT_ACTIVATION_RESEND_URI", Path.Route.ACCOUNT_ACTIVATION_RESEND.replace(":id", id));
+		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", identity.getId()));
+		model.put("ACCOUNT_ACTIVATION_RESEND_URI", Path.Route.ACCOUNT_ACTIVATION_RESEND.replace(":id", identity.getId()));
 		
-		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+		ProcessTemplateRequest processTemplateRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
 				.templateName(Templates.ACTIVATE_ACCOUNT)
 				.build();
 		
-		return processTemplate(templateProcessRequest);
+		return processTemplate(processTemplateRequest);
 	}
 	
 	/**

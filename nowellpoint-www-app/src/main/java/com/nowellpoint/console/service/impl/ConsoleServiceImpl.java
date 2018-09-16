@@ -64,6 +64,8 @@ public class ConsoleServiceImpl implements ConsoleService {
 			return identity;
 			
     	} catch (ResourceException e) {
+    		System.out.println("caught resource exception");
+    		e.printStackTrace();
     		throw new ConsoleException(e.getOktaError().getMessage());
     	} catch (ValidationException e) {
     		throw new ConsoleException(e.getMessage());

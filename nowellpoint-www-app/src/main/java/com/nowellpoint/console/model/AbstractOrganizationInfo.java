@@ -1,5 +1,7 @@
 package com.nowellpoint.console.model;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,10 +15,10 @@ import com.nowellpoint.console.api.OrganizationResource;
 @JsonDeserialize(as = OrganizationInfo.class)
 public abstract class AbstractOrganizationInfo {
 	public abstract String getId();
-	public abstract String getNumber();
-	public abstract String getDomain();
-	public abstract String getPlan();
-	public abstract String getName();
+	public abstract @Nullable String getNumber();
+	public abstract @Nullable String getDomain();
+	public abstract @Nullable String getPlan();
+	public abstract @Nullable String getName();
 	
 	@Value.Default
 	public Meta getMeta() {

@@ -34,6 +34,7 @@ import com.mongodb.MongoClientURI;
 import com.nowellpoint.console.entity.Lead;
 import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
+import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.www.app.util.EnvironmentVariables;
@@ -89,6 +90,12 @@ public abstract class AbstractService {
 			@Override
 			protected com.nowellpoint.console.entity.Identity convert(UserInfo source) {
 				return source == null ? null : new com.nowellpoint.console.entity.Identity(source.getId());
+			}
+		});
+		modelMapper.addConverter(new AbstractConverter<OrganizationInfo, com.nowellpoint.console.entity.Organization>() {		
+			@Override
+			protected com.nowellpoint.console.entity.Organization convert(OrganizationInfo source) {
+				return source == null ? null : new com.nowellpoint.console.entity.Organization(source.getId());
 			}
 		});
 	}

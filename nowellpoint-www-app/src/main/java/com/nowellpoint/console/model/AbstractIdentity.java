@@ -22,7 +22,6 @@ public abstract class AbstractIdentity extends AbstractResource {
 	public abstract String getSubject();
 	public abstract String getStatus();
 	public abstract OrganizationInfo getOrganization();
-	public abstract Photos getPhotos();
 	
 	@Value.Derived
 	public String getName() {
@@ -55,6 +54,11 @@ public abstract class AbstractIdentity extends AbstractResource {
 	@Value.Default
 	public String getUsername() {
 		return getEmail();
+	}
+	
+	@Value.Default
+	public Photos getPhotos() {
+		return Photos.builder().build();
 	}
 	
 	public static Identity of(com.nowellpoint.console.entity.Identity entity) {

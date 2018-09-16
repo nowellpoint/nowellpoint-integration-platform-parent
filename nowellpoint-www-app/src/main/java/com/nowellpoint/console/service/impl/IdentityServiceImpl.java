@@ -22,6 +22,7 @@ import com.nowellpoint.console.entity.IdentityDAO;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
@@ -94,6 +95,9 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.firstName(request.getFirstName())
 				.lastName(request.getLastName())
 				.locale(request.getLocale())
+				.organization(OrganizationInfo.builder()
+						.id(request.getOrganizationId())
+						.build())
 				.timeZone(request.getTimeZone())
 				.subject(user.getId())
 				.status(user.getStatus().name())
@@ -101,7 +105,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		sendVerifyEmailMessage(identity.getName(), identity.getEmail(), identity.getSubject());
 		
-		return create(request.getOrganizationId(), identity);
+		return create(identity);
 	}
 
 	@Override
@@ -153,7 +157,11 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 					.transactions(transactions)
 					.build();
 			
-			ServiceClient.getInstance().organization().update(organization.getId(), request);
+			@SuppressWarnings("unused")
+			Organization instance = ServiceClient.getInstance()
+					.organization()
+					.update(organization.getId(), request);
+			
 		}
 		
 		return identity;
@@ -278,9 +286,8 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return client.getUser(userId);
 	}
 	
-	private Identity create(String organizationId, Identity identity) {
+	private Identity create(Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
-		entity.setOrganization(new com.nowellpoint.console.entity.Organization(organizationId));
 		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		entity.setCreatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
