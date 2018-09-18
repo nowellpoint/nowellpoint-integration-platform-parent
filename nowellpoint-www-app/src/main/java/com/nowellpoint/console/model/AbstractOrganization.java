@@ -4,7 +4,6 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.console.api.OrganizationResource;
 
 @Value.Immutable
 @Value.Modifiable
@@ -21,7 +20,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())
-				.resourceClass(OrganizationResource.class)
+				//.resourceClass(OrganizationResource.class)
 				.build();
 	}
 	

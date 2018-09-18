@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import com.nowellpoint.console.api.IdentityResource;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.IndexController;
 import com.nowellpoint.console.view.OrganizationController;
@@ -49,6 +50,7 @@ public class Routes {
 		StartController.configureRoutes(configuration);
 		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes(configuration);
+		IdentityResource.configureRoutes();
 	}
 	
 	/**

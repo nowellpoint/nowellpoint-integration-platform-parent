@@ -9,7 +9,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.console.api.IdentityResource;
+import com.nowellpoint.www.app.util.Path;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -32,7 +32,7 @@ public abstract class AbstractIdentity extends AbstractResource {
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())
-				.resourceClass(IdentityResource.class)
+				.resourcePath(Path.Resource.IDENTITIES)
 				.build();
 	}
 	

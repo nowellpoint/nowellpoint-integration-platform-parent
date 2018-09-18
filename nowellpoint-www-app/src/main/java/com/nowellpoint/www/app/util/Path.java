@@ -84,4 +84,9 @@ public class Path {
 		public static final String JOBS_CREATE = String.format(APPLICATION_CONTEXT, "jobs/:connectorId/metadata-backup");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 	}
+	
+	public static class Resource {
+		public static final String IDENTITIES = "/resource/identities/:id/";
+		public static final String ORANIZATIONS = "/resource/organizations/:id/";
+	}
 }
