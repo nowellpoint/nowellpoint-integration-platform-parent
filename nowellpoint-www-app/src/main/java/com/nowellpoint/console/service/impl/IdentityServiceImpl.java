@@ -167,6 +167,12 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return identity;
 	}
 	
+	public Identity getByUsername(String username) {
+		Identity identity = queryByUsername(username);
+		
+		return identity;
+	}
+	
 	public Identity activate(String activationToken) {
 		
 		Identity instance = getBySubject(activationToken);
@@ -363,6 +369,23 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		
 		if (entity == null) {
 			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
+		}
+		
+		putEntry(entity.getId().toString(), entity);
+		
+		return Identity.of(entity);
+	}
+	
+	private Identity queryByUsername(String username) {
+		
+		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
+				.field("username")
+				.equal(username);
+		
+		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		
+		if (entity == null) {
+			throw new NotFoundException(String.format("Identity was not found for username: %s", username));
 		}
 		
 		putEntry(entity.getId().toString(), entity);

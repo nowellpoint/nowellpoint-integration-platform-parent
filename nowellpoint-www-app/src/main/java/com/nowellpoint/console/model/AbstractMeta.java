@@ -24,7 +24,7 @@ public abstract class AbstractMeta {
 	public abstract @JsonIgnore @Nullable String getId();
 	
 	public String getHref() {		
-		return new StringBuilder().append("https://localhost:8443")
+		return new StringBuilder().append(System.getProperty("hostname"))
 				.append(getResourcePath())
 				.toString()
 				.replace(":id", getId());

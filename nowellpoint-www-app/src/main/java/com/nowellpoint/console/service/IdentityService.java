@@ -9,6 +9,8 @@ public interface IdentityService {
 	
 	public Identity getBySubject(String subject);
 	
+	public Identity getByUsername(String username);
+	
 	public Identity create(IdentityRequest request);
 	
 	public Identity activate(String activationToken);
