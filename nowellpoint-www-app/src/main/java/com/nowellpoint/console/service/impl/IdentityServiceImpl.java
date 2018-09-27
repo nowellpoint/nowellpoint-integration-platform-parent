@@ -110,11 +110,8 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 
 	@Override
 	public Identity get(String id) {
-		
 		com.nowellpoint.console.entity.Identity entity = getEntry(id);
-		
 		if (entity == null) {
-			
 			try {
 				entity = identityDAO.get(new ObjectId(id));
 			} catch (IllegalArgumentException e) {
@@ -124,7 +121,6 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 			if (entity == null) {
 				throw new NotFoundException(String.format("Identity Id: %s was not found", id));
 			}
-			
 			putEntry(entity.getId().toString(), entity);
 		}
 		

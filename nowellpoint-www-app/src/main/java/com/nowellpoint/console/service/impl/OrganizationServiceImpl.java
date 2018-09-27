@@ -134,17 +134,19 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 
 	@Override
 	public Organization get(String id) {
-		com.nowellpoint.console.entity.Organization entity = null;
-		try {
-			entity = organizationDAO.get(new ObjectId(id));
-		} catch (IllegalArgumentException e) {
-			throw new BadRequestException(String.format("Invalid Organization Id: %s", id));
+		com.nowellpoint.console.entity.Organization entity = getEntry(id);
+		if (entity == null) {
+			try {
+				entity = organizationDAO.get(new ObjectId(id));
+			} catch (IllegalArgumentException e) {
+				throw new BadRequestException(String.format("Invalid Organization Id: %s", id));
+			}
+			
+			if (Assert.isNull(entity)) {
+				throw new NotFoundException(String.format("Organization Id: %s was not found",id));
+			}
 		}
-		
-		if (Assert.isNull(entity)) {
-			throw new NotFoundException(String.format("Organization Id: %s was not found",id));
-		}
-		
+
 		return Organization.of(entity);
 	}
 	
@@ -506,6 +508,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		entity.setLastUpdatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		organizationDAO.save(entity);
+		entity = organizationDAO.get(entity.getId());
+		putEntry(entity.getId().toString(), entity);
 		return Organization.of(entity);
 	}
 	
