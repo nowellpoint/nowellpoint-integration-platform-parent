@@ -432,6 +432,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
+	public void delete(String id) {
+		Organization organization = get(id);
+		deleteCustomer(organization.getNumber());
+		delete(organization);
+	}
+	
+	@Override
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException {
 		
 		Organization organization = get(id);
@@ -585,5 +592,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	    cell.setHorizontalAlignment(alignment);
 	    cell.setBorder(PdfPCell.BOTTOM);
 	    return cell;
+	}
+	
+	private void deleteCustomer(String number) {
+		gateway.customer().delete(number);
+	}
+	
+	private void delete(Organization organization) {
+		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
+		organizationDAO.delete(entity);
 	}
 }

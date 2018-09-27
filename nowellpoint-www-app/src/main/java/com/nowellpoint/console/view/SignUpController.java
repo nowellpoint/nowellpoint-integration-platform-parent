@@ -346,9 +346,14 @@ public class SignUpController extends BaseController {
 	 * @return
 	 */
 	
-	private static String oauthCallback(Request request, Response response) {
+	private static String oauthCallback(Request request, Response response) {		
+		Map<String, Object> model = new HashMap<>();
+		model.put("LINK_ACCOUNT_URI", Path.Route.ACCOUNT_LINK);
+		model.put("LINK_ACCOUNT_SUCCESS_URI", Path.Route.SALESFORCE_OAUTH_SUCCESS);
+		
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
+				.model(model)
 				.templateName(Templates.SALESFORCE_OAUTH_CALLBACK)
 				.build();
 		

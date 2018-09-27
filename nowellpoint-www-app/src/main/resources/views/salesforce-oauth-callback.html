@@ -68,12 +68,12 @@
 
         $.ajax({
             type: "POST",
-            url: "${links['salesforce']}/" + state + "/",
+            url: "${LINK_ACCOUNT_URI}".replace(":id", state),
             dataType: "json",
             data: JSON.stringify(token),
             complete: function(response) {
                 if (response.status == 200) {
-                    window.opener.location = "${links['salesforce.oauth.success']}/" + state + "/";
+                    window.opener.location = "${LINK_ACCOUNT_SUCCESS_URI}".replace(":id", state);
                     window.close();
                 } else {
                     $("#status").html(response.responseText);

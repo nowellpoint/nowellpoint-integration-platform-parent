@@ -30,5 +30,7 @@ public interface OrganizationService {
 	
 	public Organization update(String id, SubscriptionRequest request);
 	
+	public void delete(String id);
+	
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
 }

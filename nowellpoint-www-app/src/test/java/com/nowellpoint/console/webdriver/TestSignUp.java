@@ -1,5 +1,6 @@
 package com.nowellpoint.console.webdriver;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -89,9 +90,11 @@ public class TestSignUp {
 	    		.identity()
 	    		.getByUsername(emailAddress);
 	    
-	    System.out.println(identity.getId());
+	    assertNotNull(identity.getId());
 	    
 	    ServiceClient.getInstance().identity().delete(identity.getId());
+	    
+	    ServiceClient.getInstance().organization().delete(identity.getOrganization().getId());
 	}
 	
 //	private void readEmail(String emailAddress) {
