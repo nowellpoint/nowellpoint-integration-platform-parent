@@ -5,11 +5,13 @@ import com.nowellpoint.console.service.impl.LeadServiceImpl;
 import com.nowellpoint.console.service.impl.OrganizationServiceImpl;
 import com.nowellpoint.console.service.impl.PlanServiceImpl;
 import com.nowellpoint.console.service.impl.ConsoleServiceImpl;
+import com.nowellpoint.console.service.impl.DashboardServiceImpl;
 
 public class ServiceClient {
 	
 	private static final ServiceClient INSTANCE = new ServiceClient();
 	
+	private DashboardService dashboard;
 	private ConsoleService console;
 	private IdentityService identity;
 	private LeadService lead;
@@ -29,6 +31,13 @@ public class ServiceClient {
 			console = new ConsoleServiceImpl();
 		}
 		return console;
+	}
+	
+	public DashboardService dashboard() {
+		if (dashboard == null) {
+			dashboard = new DashboardServiceImpl();
+		}
+		return dashboard;
 	}
 	
 	public IdentityService identity() {

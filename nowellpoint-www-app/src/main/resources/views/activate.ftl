@@ -10,7 +10,7 @@
                     <p class="section-description">${labels["check.email"]}:&nbsp;${registration.email}. ${labels['token.instruction']}&nbsp;${labels['misplaced.activation.email']}&nbsp;<a href="${ACCOUNT_ACTIVATION_RESEND_URI}">${labels['send.activation.email']}</a></p>
                 </div>
             </div>
-            <!-- <#if errorMessage??> -->
+            <#if errorMessage??>
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-10">
@@ -22,9 +22,9 @@
                     </div>
                 </div>
             </div>
-            <!-- <#else> -->
+            <#else>
             <br>
-            <!-- </#if> -->
+            </#if>
             <div class="row">
                 <div class="col-2"></div>
                 <!--Grid column-->
@@ -52,7 +52,6 @@
                             <p class="grey-text">${labels['step1']}</p>
                         </div>
                     </div>
-
                     <!--Grid row-->
                     <div class="row mb-2">
                         <div class="col-2 text-center">
@@ -63,7 +62,6 @@
                             <p class="grey-text">${labels['step2']}</p>
                         </div>
                     </div>
-
                     <div class="row mb-2">
                         <div class="col-2 text-center">
                             <i class="fa fa-2x fa-square-o blue-grey-text"></i>

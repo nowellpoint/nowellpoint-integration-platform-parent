@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
@@ -22,14 +23,14 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class UserProfileController extends BaseController {
+public class IdentityController extends BaseController {
 		
 	public static void configureRoutes(Configuration configuration) {
 		
-		get(Path.Route.USER_PROFILE, (request, response) 
-				-> viewUserProfile(configuration, request, response));
+		get(Path.Route.IDENTITY, (request, response) 
+				-> viewIdentity(request, response));
 		
-		post(Path.Route.USER_PROFILE, (request, response) 
+		post(Path.Route.IDENTITY, (request, response) 
 				-> updateUserProfile(configuration, request, response));
 	}
 	
@@ -41,7 +42,7 @@ public class UserProfileController extends BaseController {
 	 * @return
 	 */
 	
-	private static String viewUserProfile(Configuration configuration, Request request, Response response) {
+	private static String viewIdentity(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -49,17 +50,18 @@ public class UserProfileController extends BaseController {
 				.identity()
 				.get(id);
 		
-		Template template = Template.builder()
-				.configuration(configuration)
-				.controllerClass(UserProfileController.class)
-				.putModel("userProfile", identity)
-				.putModel("locales", getAvailableLocales())
-				.putModel("timeZones", getAvailableTimeZones())
-				.request(request)
-				.templateName(Templates.USER_PROFILE)
+		Map<String, Object> model = getModel();
+		model.put("identity", identity);
+		model.put("locales", getAvailableLocales());
+		model.put("timeZones", getAvailableTimeZones());
+		
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(IdentityController.class)
+				.model(model)
+				.templateName(Templates.IDENTITY)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
@@ -97,10 +99,10 @@ public class UserProfileController extends BaseController {
 		
 		Template template = Template.builder()
 				.configuration(configuration)
-				.controllerClass(UserProfileController.class)
+				.controllerClass(IdentityController.class)
 				.model(model)
 				.request(request)
-				.templateName(Templates.USER_PROFILE_INFORMATION)
+				.templateName(Templates.IDENTITY_INFORMATION)
 				.build();
 		
 		return template.render();

@@ -2,28 +2,26 @@ package com.nowellpoint.console.view;
 
 import static spark.Spark.get;
 
-import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.www.app.util.Path;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class StartController {
+public class StartController extends BaseController {
 	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.START, (request, response) -> viewStartPage(configuration, request, response));
+	public static void configureRoutes() {
+		get(Path.Route.START, (request, response) -> viewStartPage(request, response));
 	}
 
-	private static String viewStartPage(Configuration configuration, Request request, Response response) {
-    	Template template = Template.builder()
-				.configuration(configuration)
+	private static String viewStartPage(Request request, Response response) {
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StartController.class)
-				.request(request)
 				.templateName(Templates.START)
 				.build();
-    	
-    	return template.render();
+		
+		return processTemplate(templateProcessRequest);
 	};	
 }

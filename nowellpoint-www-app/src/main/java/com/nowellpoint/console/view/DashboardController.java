@@ -1,41 +1,41 @@
 package com.nowellpoint.console.view;
 
+import static spark.Spark.get;
+
 import java.util.Map;
 
-import com.nowellpoint.client.NowellpointClient;
-import com.nowellpoint.client.model.Dashboard;
-import com.nowellpoint.client.model.Token;
-import com.nowellpoint.www.app.util.TemplateBuilder;
+import com.nowellpoint.console.model.Dashboard;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
+import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.www.app.util.Path;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class DashboardController extends AbstractStaticController {
+public class DashboardController extends BaseController {
 	
-	public static class Template {
-		public static final String DASHBOARD = secureTemplate("dashboard.html");
+	public static void configureRoutes() {
+
+		get(Path.Route.DASHBOARD, (request, response) 
+				-> DashboardController.showDashboard(request, response));
 	}
 	
-	public static String showDashboard(Configuration configuration, Request request, Response response) {
+	public static String showDashboard(Request request, Response response) {
 		
-		Token token = getToken(request);
-		
-		Dashboard dashboard = NowellpointClient.defaultClient(token)
+		Dashboard dashboard = ServiceClient.getInstance()
 				.dashboard()
-				.get();
+				.get("593a08c5f1667d5ee654397d");
 		
 		Map<String, Object> model = getModel();
 		model.put("dashboard", dashboard);
 		
-		return TemplateBuilder.template()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(DashboardController.class)
-				.identity(getIdentity(request))
-				.locale(getLocale(request))
 				.model(model)
-				.templateName(Template.DASHBOARD)
-				.timeZone(getTimeZone(request))
+				.templateName(Templates.DASHBOARD)
 				.build();
+		
+		return processTemplate(templateProcessRequest);
 	};
 }

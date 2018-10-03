@@ -49,8 +49,15 @@ public class TemplateManager {
 		
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.putAll(request.getModel());
-		model.put("LOGOUT_URI", Path.Route.LOGOUT);
-		model.put("identity", identity);
+		
+		if (identity != null) {
+			model.put("LOGOUT_URI", Path.Route.LOGOUT);
+			model.put("IDENTITY_URI", Path.Route.IDENTITY.replace(":id", identity.getId()));
+			if (! model.containsKey("identity")) {
+				model.put("identity", identity);
+			}
+		}
+		
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 			model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(request.getControllerClass().getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
@@ -59,8 +66,10 @@ public class TemplateManager {
 			e.printStackTrace();
 		}
     	
-		ModelAndView modelAndView = new ModelAndView(model, (request.getTemplateName().endsWith(".html") ? 
-				request.getTemplateName() : request.getTemplateName() + ".html"));
+//		ModelAndView modelAndView = new ModelAndView(model, (request.getTemplateName().endsWith(".html") ? 
+//				request.getTemplateName() : request.getTemplateName() + ".html"));
+		
+		ModelAndView modelAndView = new ModelAndView(model, request.getTemplateName());
     	
     	Writer output = new StringWriter();
 		try {

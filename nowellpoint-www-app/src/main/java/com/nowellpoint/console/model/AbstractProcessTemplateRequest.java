@@ -7,12 +7,19 @@ import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
 
+import com.nowellpoint.console.util.UserContext;
+
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 public abstract class AbstractProcessTemplateRequest {
 	public abstract String getTemplateName();
 	public abstract Class<?> getControllerClass();
-	public abstract @Nullable Identity getIdentity();
+	
+	@Nullable
+	@Value.Default
+	public Identity getIdentity() {
+		return UserContext.get();
+	};
 
 	@Value.Default
 	public Map<String,Object> getModel() {

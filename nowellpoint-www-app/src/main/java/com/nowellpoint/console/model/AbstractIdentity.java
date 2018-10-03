@@ -64,10 +64,12 @@ public abstract class AbstractIdentity extends AbstractResource {
 	public static Identity of(com.nowellpoint.console.entity.Identity entity) {
 		return entity == null ? null : Identity.builder()
 				.id(entity.getId().toString())
+				.createdBy(UserInfo.of(entity.getCreatedBy()))
 				.createdOn(entity.getCreatedOn())
 				.email(entity.getEmail())
 				.firstName(entity.getFirstName())
 				.lastName(entity.getLastName())
+				.lastUpdatedBy(UserInfo.of(entity.getLastUpdatedBy()))
 				.lastUpdatedOn(entity.getLastUpdatedOn())
 				.locale(entity.getLocale())
 				.timeZone(entity.getTimeZone())

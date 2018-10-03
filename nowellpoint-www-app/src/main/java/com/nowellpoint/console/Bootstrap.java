@@ -32,7 +32,6 @@ import javax.ws.rs.NotFoundException;
 
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.ConnectorController;
-import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.JobController;
 import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.www.app.util.Path;
@@ -77,13 +76,6 @@ public class Bootstrap implements SparkApplication {
 		//
 		
 		configureRoutes(configuration);
-
-		//
-		// dashboard controller
-		//
-
-		get(Path.Route.DASHBOARD,
-				(request, response) -> DashboardController.showDashboard(configuration, request, response));
 
 		//
 		// notifications controller
@@ -192,7 +184,7 @@ public class Bootstrap implements SparkApplication {
 			response.body(exception.getMessage());
 		});
 		
-		configureExceptionRoutes(configuration);
+		configureExceptionRoutes();
 
 		//
 		// exception handlers

@@ -26,10 +26,12 @@ public abstract class AbstractOrganization extends AbstractResource {
 	}
 	
 	public static Organization of(com.nowellpoint.console.entity.Organization entity) {
-		return Organization.builder()
+		return entity == null ? null : Organization.builder()
 				.id(entity.getId().toString())
+				.createdBy(UserInfo.of(entity.getCreatedBy()))
 				.createdOn(entity.getCreatedOn())
 				.domain(entity.getDomain())
+				.lastUpdatedBy(UserInfo.of(entity.getLastUpdatedBy()))
 				.lastUpdatedOn(entity.getLastUpdatedOn())
 				.name(entity.getName())
 				.number(entity.getNumber())

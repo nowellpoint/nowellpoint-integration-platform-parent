@@ -5,36 +5,34 @@ import static spark.Spark.get;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jetty.http.HttpStatus;
-
-import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.view.AuthenticationController;
+import com.nowellpoint.console.view.BaseController;
 import com.nowellpoint.www.app.util.MessageProvider;
 
-import freemarker.template.Configuration;
+import org.eclipse.jetty.http.HttpStatus;
+
 import spark.Request;
 import spark.Response;
 
-public class Exceptions {
+public class Exceptions extends BaseController {
 	
-	public static void configureExceptionRoutes(Configuration configuration) {
-		get("*", (request, response) -> serveNotFoundPage(configuration, request, response));
+	public static void configureExceptionRoutes() {
+		get("*", (request, response) -> serveNotFoundPage(request, response));
 	}
 	
-	private static String serveNotFoundPage(Configuration configuration, Request request, Response response) {
+	private static String serveNotFoundPage(Request request, Response response) {
 		response.status(HttpStatus.NOT_FOUND_404);
 		
 		Map<String, Object> model = new HashMap<String,Object>();
 		model.put("errorMessage", MessageProvider.getMessage(request.attribute(RequestAttributes.LOCALE), "page.not.found"));
-		
-		Template template = Template.builder()
-				.configuration(configuration)
+
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(AuthenticationController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.NOT_FOUND)
 				.build();
-		
-		return template.render();
+
+		return processTemplate(templateProcessRequest);
     };
 }

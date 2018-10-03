@@ -71,10 +71,10 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	private static final SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_API_KEY"));
 	
-	private IdentityDAO identityDAO;
+	private IdentityDAO dao;
 	
 	public IdentityServiceImpl() {
-		identityDAO = new IdentityDAO(com.nowellpoint.console.entity.Identity.class, datastore);
+		dao = new IdentityDAO(com.nowellpoint.console.entity.Identity.class, datastore);
 	}
 	
 	@Override
@@ -113,7 +113,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		com.nowellpoint.console.entity.Identity entity = getEntry(id);
 		if (entity == null) {
 			try {
-				entity = identityDAO.get(new ObjectId(id));
+				entity = dao.get(new ObjectId(id));
 			} catch (IllegalArgumentException e) {
 				throw new BadRequestException(String.format("Invalid Identity Id: %s", id));
 			}
@@ -164,9 +164,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	}
 	
 	public Identity getByUsername(String username) {
-		Identity identity = queryByUsername(username);
-		
-		return identity;
+		return queryByUsername(username);
 	}
 	
 	public Identity activate(String activationToken) {
@@ -294,8 +292,8 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		entity.setCreatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		entity.setLastUpdatedOn(entity.getCreatedOn());
-		identityDAO.save(entity);
-		entity = identityDAO.get(entity.getId());
+		dao.save(entity);
+		entity = dao.get(entity.getId());
 		putEntry(entity.getId().toString(), entity);
 		return Identity.of(entity);
 	}
@@ -304,15 +302,15 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
-		identityDAO.save(entity);
-		entity = identityDAO.get(entity.getId());
+		dao.save(entity);
+		entity = dao.get(entity.getId());
 		putEntry(entity.getId().toString(), entity);
 		return Identity.of(entity);
 	}
 	
 	private void delete(Identity identity) {
 		com.nowellpoint.console.entity.Identity entity = modelMapper.map(identity, com.nowellpoint.console.entity.Identity.class);
-		identityDAO.delete(entity);
+		dao.delete(entity);
 	}
 	
 	private void sendVerifyEmailMessage(String name, String email, String subject) {
@@ -357,11 +355,11 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	private Identity queryBySubject(String subject) {
 		
-		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
+		Query<com.nowellpoint.console.entity.Identity> query = dao.createQuery()
 				.field("subject")
 				.equal(subject);
 		
-		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		com.nowellpoint.console.entity.Identity entity = dao.findOne(query);
 		
 		if (entity == null) {
 			throw new NotFoundException(String.format("Identity was not found for subject: %s", subject));
@@ -374,11 +372,11 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	private Identity queryByUsername(String username) {
 		
-		Query<com.nowellpoint.console.entity.Identity> query = identityDAO.createQuery()
+		Query<com.nowellpoint.console.entity.Identity> query = dao.createQuery()
 				.field("username")
 				.equal(username);
 		
-		com.nowellpoint.console.entity.Identity entity = identityDAO.findOne(query);
+		com.nowellpoint.console.entity.Identity entity = dao.findOne(query);
 		
 		if (entity == null) {
 			throw new NotFoundException(String.format("Identity was not found for username: %s", username));
