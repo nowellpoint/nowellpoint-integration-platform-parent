@@ -15,6 +15,8 @@ header {
 main {
     margin-top: 75px;
     margin-bottom: 75px;
+    transition: margin-left .5s;
+    padding: 20px;
 }
 footer {
     position: fixed; /* Set the navbar to fixed position */
@@ -24,6 +26,9 @@ footer {
     padding-top: 20px;
     border-top: 1px solid lightGray;
 }
+
+
+
 .hidden {
     display: none;
 }
@@ -45,34 +50,47 @@ footer {
     box-shadow: none;
 }
 
-
-/*
- * Off Canvas
- * --------------------------------------------------
- */
-
-@media screen and (max-width: 768px) {
-    .row-offcanvas {
-        position: relative;
-        -webkit-transition: all 0.25s ease-out;
-        -moz-transition: all 0.25s ease-out;
-        transition: all 0.25s ease-out;
-        background: #ecf0f1;
-    }
-    .row-offcanvas-left .sidebar-offcanvas {
-        left: -40%;
-    }
-    .row-offcanvas-left.active {
-        left: 40%;
-    }
-    .sidebar-offcanvas {
-        position: absolute;
-        top: 0;
-        width: 40%;
-        margin-left: 12px;
-    }
+.content {
+    position: absolute;
+    bottom: 0px;
+    left: 250px;
+    right: 0;
+    top: 0;
+    margin-top: 75px; 
 }
-#sidebar {
-    padding: 15px;
-    margin-top: 10px;
+
+/* The side navigation menu */
+.sidebar {
+    bottom: 0px;
+    width: 250px; /* 0 width - change this with JavaScript */
+    position: absolute;
+    top: 0;
+    margin-top: 75px; 
+    left: 0;
+    padding-top: 30px;
+    border-right: 1px solid lightGray;
+    overflow-x: hidden;
+}
+
+/* The navigation menu links */
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    display: block;
+    transition: 0.3s;
+}
+
+/* Position and style the close button (top right corner) */
+.sidebar .title {
+    position: absolute;
+    top: 18px;
+    font-size: 24px;
+    left: 25px;
+    font-family: "Georgia, serif";
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
 }

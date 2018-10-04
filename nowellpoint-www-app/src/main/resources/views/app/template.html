@@ -19,9 +19,37 @@
     </head>
 
     <body>
+        <script>
+            var identity = {
+                name = "${identity.name}",
+                showSidebar = true
+            }    
+            sessionStorage.setItem("identity", JSON.stringify(identity));
+        </script>    
+
         <#include "header.html" />
         <main>
-            <#nested />
+                <div id="sidebar" class="sidebar">
+                        <ul class="nav flex-column nav-flex-icons">
+                            <li class="nav-item">
+                                <a class="nav-link" href="${links['start']}">
+                                    <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${links['connectors']}">${messages["connectors"]}</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="${links['jobs']}">${messages["jobs"]}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="content" class="content">
+                            <#nested />
+                    </div>
         </main>
         <!-- JQuery -->
         <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
@@ -31,6 +59,8 @@
         <script type="text/javascript" src="/js/bootstrap.min.js"></script>
         <!-- MDB core JavaScript -->
         <script type="text/javascript" src="/js/mdb.min.js"></script>
+        <!-- Custom JavaScript -->
+        <script type="text/javascript" src="/js/common.js"></script>
 
     </body>
 
