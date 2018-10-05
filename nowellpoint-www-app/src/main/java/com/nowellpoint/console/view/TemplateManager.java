@@ -50,12 +50,21 @@ public class TemplateManager {
 		Map<String,Object> model = new HashMap<String,Object>();
 		model.putAll(request.getModel());
 		
+		/**
+		 * Identity check - if authenticated then add all protected URIs else add public URIs
+		 */
+
 		if (identity != null) {
 			model.put("LOGOUT_URI", Path.Route.LOGOUT);
+			model.put("START_URI", Path.Route.START);
+			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
 			model.put("IDENTITY_URI", Path.Route.IDENTITY.replace(":id", identity.getId()));
+			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION_VIEW.replace(":id", identity.getOrganization().getId()));
 			if (! model.containsKey("identity")) {
 				model.put("identity", identity);
 			}
+		} else {
+			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}
 		
 		try {
@@ -83,6 +92,7 @@ public class TemplateManager {
 			e.printStackTrace();
 			halt();
 		}
+
 		return output.toString();
     }
 }

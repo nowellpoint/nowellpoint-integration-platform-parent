@@ -19,20 +19,12 @@
     </head>
 
     <body>
-        <script>
-            var identity = {
-                name = "${identity.name}",
-                showSidebar = true
-            }    
-            sessionStorage.setItem("identity", JSON.stringify(identity));
-        </script>    
-
-        <#include "header.html" />
+        <#include "header.ftl" />
         <main>
                 <div id="sidebar" class="sidebar">
                         <ul class="nav flex-column nav-flex-icons">
                             <li class="nav-item">
-                                <a class="nav-link" href="${links['start']}">
+                                <a class="nav-link" href="${START_URI}">
                                     <i class="fa fa-star"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["start"]}</span>
                                 </a>
                             </li>
