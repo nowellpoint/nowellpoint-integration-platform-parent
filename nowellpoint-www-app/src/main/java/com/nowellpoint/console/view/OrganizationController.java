@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
@@ -15,6 +16,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Alert;
@@ -28,8 +30,8 @@ import spark.Response;
 public class OrganizationController extends BaseController {
 	
 	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.ORGANIZATION_VIEW, (request, response) 
-				-> viewOrganization(configuration, request, response));
+		get(Path.Route.ORGANIZATION, (request, response) 
+				-> viewOrganization(request, response));
 		
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 				-> listPlans(configuration, request, response));
@@ -58,23 +60,26 @@ public class OrganizationController extends BaseController {
 				-> getInvoice(configuration, request, response));
 	}
 	
-	private static String viewOrganization(Configuration configuration, Request request, Response response) {
+	private static String viewOrganization(Request request, Response response) {
 
-		String id = request.params(":id");
+		String organizationId = getIdentity(request).getOrganization().getId();
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
-				.get(id);
+				.get(organizationId);
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		System.out.println(organization.getId());
+		
+		Map<String,Object> model = getModel();
+		model.put("organization", organization);
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
-				.putModel("organization", organization)
-				.request(request)
+				.model(model)
 				.templateName(Templates.ORGANIZATION)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**

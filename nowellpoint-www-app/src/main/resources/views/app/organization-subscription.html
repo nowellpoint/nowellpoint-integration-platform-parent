@@ -6,13 +6,13 @@
         ${organization.subscription.planName}
     </div>
     <div class="col-3">
-        <a href="${links['organization']}/${organization.id}/plans/" class="pull-right">${labels["change.plan"]}</a>
+        <a href="${ORGANIZATION_URI}/${organization.id}/plans/" class="pull-right">${labels["change.plan"]}</a>
     </div>
 </div>
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["price"]} (${organization.subscription.billingFrequency})</span>
+        <span class="grey-text">${labels["price"]} (${organization.subscription.billingFrequency}!)</span>
     </div>
     <div class="col-9">
         ${organization.subscription.currencySymbol}${organization.subscription.unitPrice?string["0.00"]}
@@ -24,6 +24,10 @@
         <span class="grey-text">${labels["next.billing.date"]}</span>
     </div>
     <div class="col-9">
-        ${organization.subscription.nextBillingDate?date?string.long}
+        <#if organization.subscription.nextBillingDate??>
+            ${organization.subscription.nextBillingDate?date?string.long}
+        <#else>
+            &nbsp;
+        </#if>
     </div>
 </div>

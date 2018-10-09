@@ -14,7 +14,9 @@ import javax.ws.rs.InternalServerErrorException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.nowellpoint.console.model.ConnectorRequest;
 import com.nowellpoint.console.exception.ConsoleException;
+import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.SignUpRequest;
@@ -372,11 +374,11 @@ public class SignUpController extends BaseController {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			JsonNode token = mapper.readTree(request.body());
+			JsonNode tokenNode = mapper.readTree(request.body());
 			
-			String accessToken = URLDecoder.decode(token.get("access_token").asText(), "UTF-8");
+			String accessToken = URLDecoder.decode(tokenNode.get("access_token").asText(), "UTF-8");
 			
-			HttpResponse identityResponse = RestResource.get(URLDecoder.decode(token.get("id").asText(), "UTF-8"))
+			HttpResponse identityResponse = RestResource.get(URLDecoder.decode(tokenNode.get("id").asText(), "UTF-8"))
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(accessToken)
@@ -393,16 +395,22 @@ public class SignUpController extends BaseController {
 	     			.queryParameter("version", "latest")
 	     			.execute();
 			
-			JsonNode organization = mapper.readTree(organizationResponse.getAsString());
+			JsonNode organizationNode = mapper.readTree(organizationResponse.getAsString());
 			
 			Identity identity = ServiceClient.getInstance()
 					.identity()
 					.get(id);
 			
+			ConnectionRequest connectorRequest = ConnectionRequest.builder()
+					.connectedUser(identityNode.get("Username").asText())
+					.domain(organizationNode.get("Id").asText())
+					.instanceUrl(tokenNode.get("instance_url").asText())
+					.name(organizationNode.get("Name").asText())
+					.build();
+			
 			ServiceClient.getInstance().organization().update(
 					identity.getOrganization().getId(), 
-					organization.get("Name").asText(), 
-					organization.get("Id").asText());
+					connectorRequest);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

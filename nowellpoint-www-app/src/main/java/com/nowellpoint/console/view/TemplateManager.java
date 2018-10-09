@@ -59,7 +59,7 @@ public class TemplateManager {
 			model.put("START_URI", Path.Route.START);
 			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
 			model.put("IDENTITY_URI", Path.Route.IDENTITY.replace(":id", identity.getId()));
-			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION_VIEW.replace(":id", identity.getOrganization().getId()));
+			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			if (! model.containsKey("identity")) {
 				model.put("identity", identity);
 			}

@@ -12,6 +12,10 @@ public class Organization extends BaseEntity {
 	private String name;
 	
 	private String domain;
+
+	private String instanceUrl;
+
+	private String connectedUser;
 	
 	private Subscription subscription;
 	
@@ -47,6 +51,22 @@ public class Organization extends BaseEntity {
 		this.domain = domain;
 	}
 
+	public String getInstanceUrl() {
+		return instanceUrl;
+	}
+
+	public void setInstanceUrl(String instanceUrl) {
+		this.instanceUrl = instanceUrl;
+	}
+
+	public String getConnectedUser() {
+		return connectedUser;
+	}
+
+	public void setConnectedUser(String connectedUser) {
+		this.connectedUser = connectedUser;
+	}
+	
 	public Subscription getSubscription() {
 		return subscription;
 	}

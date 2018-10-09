@@ -15,6 +15,8 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getNumber();
 	public abstract String getDomain();
 	public abstract String getName();
+	public abstract String getInstanceUrl();
+	public abstract String getConnectedUser();
 	public abstract Subscription getSubscription();
 	
 	@Value.Default
@@ -28,11 +30,13 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public static Organization of(com.nowellpoint.console.entity.Organization entity) {
 		return entity == null ? null : Organization.builder()
 				.id(entity.getId().toString())
+				.connectedUser(entity.getConnectedUser())
 				.createdBy(UserInfo.of(entity.getCreatedBy()))
 				.createdOn(entity.getCreatedOn())
 				.domain(entity.getDomain())
 				.lastUpdatedBy(UserInfo.of(entity.getLastUpdatedBy()))
 				.lastUpdatedOn(entity.getLastUpdatedOn())
+				.instanceUrl(entity.getInstanceUrl())
 				.name(entity.getName())
 				.number(entity.getNumber())
 				.subscription(Subscription.of(entity.getSubscription()))

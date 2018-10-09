@@ -32,6 +32,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
+import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
@@ -110,12 +111,12 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public Organization update(String id, String name, String domain) {
+	public Organization update(String id, ConnectionRequest request) {
 		
 		Organization instance = get(id);
 		
 		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
-				.company(name);
+				.company(request.getName());
 		
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
 		
@@ -125,8 +126,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.domain(domain)
-				.name(name)
+				.connectedUser(request.getConnectedUser())
+				.domain(request.getDomain())
+				.instanceUrl(request.getInstanceUrl())
+				.name(request.getName())
 				.build();
 		
 		return update(organization);

@@ -1,4 +1,4 @@
-<#import "template.html" as t>
+<#import "template.ftl" as t>
     <@t.page>
         <div class="container pt-5">
             <div class="row">
