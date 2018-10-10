@@ -47,6 +47,11 @@ public abstract class AbstractIdentity extends AbstractResource {
 	}
 	
 	@Value.Default
+	public String getLocaleDisplayName() {
+		return getLocale().getDisplayName();
+	}
+	
+	@Value.Default
 	public String getTimeZone() {
 		return TimeZone.getDefault().getID();
 	}

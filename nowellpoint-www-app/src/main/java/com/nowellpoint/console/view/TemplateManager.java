@@ -58,7 +58,7 @@ public class TemplateManager {
 			model.put("LOGOUT_URI", Path.Route.LOGOUT);
 			model.put("START_URI", Path.Route.START);
 			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
-			model.put("IDENTITY_URI", Path.Route.IDENTITY.replace(":id", identity.getId()));
+			model.put("IDENTITY_URI", Path.Route.IDENTITY);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			if (! model.containsKey("identity")) {
 				model.put("identity", identity);

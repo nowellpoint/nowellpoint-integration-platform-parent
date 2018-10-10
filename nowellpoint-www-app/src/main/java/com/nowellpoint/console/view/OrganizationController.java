@@ -68,8 +68,6 @@ public class OrganizationController extends BaseController {
 				.organization()
 				.get(organizationId);
 		
-		System.out.println(organization.getId());
-		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
     	

@@ -46,7 +46,7 @@ public class Path {
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		
-		public static final String IDENTITY = String.format(APPLICATION_CONTEXT, "identity/:id");
+		public static final String IDENTITY = String.format(APPLICATION_CONTEXT, "identity");
 		
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");

@@ -31,7 +31,7 @@ public class IdentityController extends BaseController {
 				-> viewIdentity(request, response));
 		
 		post(Path.Route.IDENTITY, (request, response) 
-				-> updateUserProfile(configuration, request, response));
+				-> updateUserInformation(configuration, request, response));
 	}
 	
 	/**
@@ -44,11 +44,11 @@ public class IdentityController extends BaseController {
 	
 	private static String viewIdentity(Request request, Response response) {
 		
-		String id = request.params(":id");
+		String identityId = getIdentity(request).getId();
 		
 		Identity identity = ServiceClient.getInstance()
 				.identity()
-				.get(id);
+				.get(identityId);
 		
 		Map<String, Object> model = getModel();
 		model.put("identity", identity);
@@ -72,7 +72,7 @@ public class IdentityController extends BaseController {
 	 * @return
 	 */
 	
-	private static String updateUserProfile(Configuration configuration, Request request, Response response) {
+	private static String updateUserInformation(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
