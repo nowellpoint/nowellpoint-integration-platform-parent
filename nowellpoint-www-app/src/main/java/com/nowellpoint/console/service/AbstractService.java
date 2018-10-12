@@ -46,6 +46,7 @@ import redis.clients.jedis.Protocol;
 
 public abstract class AbstractService {
 	
+	private static final MongoClientURI mongoClientUri;
 	protected static final Datastore datastore;
 	protected static final ModelMapper modelMapper;
 	protected static JedisPool jedisPool;
@@ -54,7 +55,7 @@ public abstract class AbstractService {
 	private static IvParameterSpec iv;
 	
 	static {
-		final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
+		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
 		MongoClient mongoClient = new MongoClient(mongoClientUri);
         
         final Morphia morphia = new Morphia();
@@ -106,12 +107,14 @@ public abstract class AbstractService {
 		
 		jedisPool = new JedisPool(
 				poolConfig, 
-				System.getenv("REDIS_HOST"), 
-				Integer.valueOf(System.getenv("REDIS_PORT")), 
+				EnvironmentVariables.getRedisHost(), 
+				Integer.valueOf(EnvironmentVariables.getRedisPort()), 
 				Protocol.DEFAULT_TIMEOUT, 
-				System.getenv("REDIS_PASSWORD"));
+				EnvironmentVariables.getRedisPassword());
 		
-		String keyString = System.getenv("REDIS_ENCRYPTION_KEY");
+		jedisPool.getResource().flushDB();
+		
+		String keyString = EnvironmentVariables.getRedisEncryptionKey();
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");

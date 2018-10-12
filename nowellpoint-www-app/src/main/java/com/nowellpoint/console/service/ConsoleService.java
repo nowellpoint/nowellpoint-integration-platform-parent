@@ -7,5 +7,5 @@ import com.nowellpoint.console.model.Token;
 public interface ConsoleService {
 	public Identity signUp(SignUpRequest request);
 	public void revoke(String accessToken);
-	public Token authenticate(String username, String password);
+	public Token authenticate(String username, char[] password);
 }

@@ -8,13 +8,14 @@ import java.util.Optional;
 
 import com.nowellpoint.console.api.IdentityResource;
 import com.nowellpoint.console.api.OrganizationResource;
+import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.DashboardController;
 import com.nowellpoint.console.view.IndexController;
 import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
-import com.nowellpoint.console.view.IdentityController;
+import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.content.model.IsoCountry;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.Plan;
@@ -46,12 +47,13 @@ public class Routes {
 			}
 		}
 		
+		AdministrationController.configureRoutes();
 		IndexController.configureRoutes(configuration);
 		SignUpController.configureRoutes();
 		AuthenticationController.configureRoutes(configuration);
 		StartController.configureRoutes();
 		DashboardController.configureRoutes();
-		IdentityController.configureRoutes(configuration);
+		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes(configuration);
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();

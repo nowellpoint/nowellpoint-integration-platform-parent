@@ -32,6 +32,7 @@ public class AuthenticationController {
 	private static final String REDIRECT_URI = "redirect_uri";
 
 	public static void configureRoutes(Configuration configuration) {
+		
 		get(Path.Route.LOGIN, (request, response) 
 				-> serveLoginPage(configuration, request, response));
 		
@@ -54,7 +55,7 @@ public class AuthenticationController {
 			
 			Token token = ServiceClient.getInstance()
 					.console()
-					.authenticate(username, password);
+					.authenticate(username, password.toCharArray());
 			
 			Long expiresIn = token.getExpiresIn();
 			

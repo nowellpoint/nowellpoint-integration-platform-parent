@@ -34,7 +34,7 @@
                         ${identity.name}
                     </a>
                     <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${IDENTITY_URI}">${messages["user.profile"]}</a>
+                        <a class="dropdown-item" href="${USER_PROFILE_URI}">${messages["user.profile"]}</a>
                         <a class="dropdown-item" href="${LOGOUT_URI}">${messages["log.out"]}</a>
                     </div>
                 </li>

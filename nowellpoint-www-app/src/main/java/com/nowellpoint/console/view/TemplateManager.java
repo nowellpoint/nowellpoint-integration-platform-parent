@@ -55,14 +55,12 @@ public class TemplateManager {
 		 */
 
 		if (identity != null) {
+			model.put("identity", identity);
 			model.put("LOGOUT_URI", Path.Route.LOGOUT);
 			model.put("START_URI", Path.Route.START);
 			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
-			model.put("IDENTITY_URI", Path.Route.IDENTITY);
+			model.put("USER_PROFILE_URI", Path.Route.USER_PROFILE);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
-			if (! model.containsKey("identity")) {
-				model.put("identity", identity);
-			}
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}

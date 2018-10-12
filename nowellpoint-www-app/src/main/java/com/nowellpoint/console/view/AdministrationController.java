@@ -1,70 +1,41 @@
 package com.nowellpoint.console.view;
 
-import com.nowellpoint.client.model.Token;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.RestResource;
-import com.nowellpoint.http.Status;
+import static spark.Spark.get;
 
-import freemarker.log.Logger;
-import freemarker.template.Configuration;
+import java.util.Map;
+
+import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
+import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.www.app.util.Path;
+
 import spark.Request;
 import spark.Response;
 
-public class AdministrationController extends AbstractStaticController {
+public class AdministrationController extends BaseController {
 	
-	private static final Logger LOGGER = Logger.getLogger(AdministrationController.class.getName());
-	
-	public static class Template {
-		public static final String ADMINISTRATION_HOME = String.format(APPLICATION_CONTEXT, "administration-home.html");
-		public static final String CACHE_MANAGER = String.format(APPLICATION_CONTEXT, "cache.html");
+	public static void configureRoutes() {
+		get(Path.Route.ADMINISTRATION, (request, response) -> viewStartPage(request, response));
 	}
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String serveAdminHomePage(Configuration configuration, Request request, Response response) {
-		return render(AdministrationController.class, configuration, request, response, getModel(), Template.ADMINISTRATION_HOME);
+
+	private static String viewStartPage(Request request, Response response) {
 		
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String showManageCache(Configuration configuration, Request request, Response response) {
-		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
+		String organizationId = getIdentity(request).getOrganization().getId();
+				
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(organizationId);
 		
-	};
-	
-	/**
-	 * 
-	 * @param configuration
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	public static String purgeCache(Configuration configuration, Request request, Response response) {
-		Token token = getToken(request);
+		Map<String,Object> model = getModel();
+		model.put("organization", organization);
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(StartController.class)
+				.model(model)
+				.templateName(Templates.ADMINISTRATION)
+				.build();
 		
-		HttpResponse httpResponse = RestResource.delete(token.getEnvironmentUrl())
-				.bearerAuthorization(token.getAccessToken())
-				.path("cache")
-				.execute();
-		
-		if (httpResponse.getStatusCode() != Status.OK) {
-			LOGGER.error(httpResponse.getAsString());
-		}
-		
-		return render(AdministrationController.class, configuration, request, response, getModel(), Template.CACHE_MANAGER);
-	};
+		return processTemplate(templateProcessRequest);
+	};	
 }

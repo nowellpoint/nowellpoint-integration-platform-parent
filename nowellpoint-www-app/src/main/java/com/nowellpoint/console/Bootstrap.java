@@ -21,19 +21,13 @@ package com.nowellpoint.console;
 import static com.nowellpoint.console.util.Exceptions.configureExceptionRoutes;
 import static com.nowellpoint.console.util.Filters.setupFilters;
 import static com.nowellpoint.console.util.Routes.configureRoutes;
-import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
-import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.console.view.AdministrationController;
-import com.nowellpoint.console.view.ConnectorController;
-import com.nowellpoint.console.view.JobController;
-import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
@@ -76,95 +70,6 @@ public class Bootstrap implements SparkApplication {
 		//
 		
 		configureRoutes(configuration);
-
-		//
-		// notifications controller
-		//
-
-		get(Path.Route.NOTIFICATIONS,
-				(request, response) -> NotificationController.serveNotificationsPage(configuration, request, response));
-
-		//
-		// administration routes
-		//
-
-		get(Path.Route.ADMINISTRATION,
-				(request, response) -> AdministrationController.serveAdminHomePage(configuration, request, response));
-		get(Path.Route.ADMINISTRATION.concat("/cache"),
-				(request, response) -> AdministrationController.showManageCache(configuration, request, response));
-		get(Path.Route.ADMINISTRATION.concat("/cache/purge"),
-				(request, response) -> AdministrationController.purgeCache(configuration, request, response));
-
-		//
-		// connector routes
-		//
-
-		get(Path.Route.CONNECTORS_LIST, (request, response) 
-				-> ConnectorController.listConnectors(configuration, request, response));
-		
-		get(Path.Route.CONNECTORS_SHOW, (request, response) 
-				-> ConnectorController.showConnectors(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_ADD, (request, response) 
-				-> ConnectorController.addConnector(configuration, request, response));
-		
-		get(Path.Route.CONNECTORS_EDIT, (request, response) 
-				-> ConnectorController.editConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_CONNECT, (request, response) 
-				-> ConnectorController.connectConnector(configuration, request, response));
-		
-		get(Path.Route.CONNECTORS_VIEW, (request, response) 
-				-> ConnectorController.viewConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_UPDATE, (request, response) 
-				-> ConnectorController.updateConnector(configuration, request, response));
-		
-		delete(Path.Route.CONNECTORS_DELETE, (request, response) 
-				-> ConnectorController.deleteConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_DISCONNECT, (request, response) 
-				-> ConnectorController.disconnectConnector(configuration, request, response));
-		
-		post(Path.Route.CONNECTORS_REFRESH, (request, response) 
-				-> ConnectorController.refreshConnector(configuration, request, response));
-
-		//
-		// jobs routes
-		//
-
-		get(Path.Route.JOBS_LIST, (request, response) 
-				-> JobController.listJobs(configuration, request, response));
-		
-		get(Path.Route.JOBS_VIEW, (request, response) 
-				-> JobController.viewJob(configuration, request, response));
-		
-		post(Path.Route.JOBS_UPDATE, (request, response) 
-				-> JobController.updateJob(configuration, request, response));
-		
-		get(Path.Route.JOBS_OUTPUTS, (request, response) 
-				-> JobController.viewOutputs(configuration, request, response));
-		
-		get(Path.Route.JOBS_OUTPUTS_DOWNLOAD, (request, response) 
-				-> JobController.downloadOutputFile(configuration, request, response));
-		
-		post(Path.Route.JOBS_SUBMIT, (request, response) 
-				-> JobController.submitJob(configuration, request, response));
-		
-		post(Path.Route.JOBS_RUN, (request, response) 
-				-> JobController.runJob(configuration, request, response));
-		
-		post(Path.Route.JOBS_STOP, (request, response) 
-				-> JobController.stopJob(configuration, request, response));
-		
-		post(Path.Route.JOBS_TERMINATE, (request, response) 
-				-> JobController.terminateJob(configuration, request, response));
-		
-		post(Path.Route.JOBS_WEBHOOK_URL_TEST, (request, response) 
-				-> JobController.testWebhookUrl(configuration, request, response));
-
-		post(Path.Route.JOBS_CREATE, (request, response) 
-				-> JobController.createJob(configuration, request, response));
 
 		//
 		// health check route

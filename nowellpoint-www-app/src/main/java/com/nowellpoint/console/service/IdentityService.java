@@ -15,7 +15,7 @@ public interface IdentityService {
 	
 	public Identity activate(String activationToken);
 	
-	public Identity setPassword(String id, String password);
+	public Identity setPassword(String id, char[] password);
 	
 	public Identity update(String id, IdentityRequest request);
 	

@@ -270,7 +270,7 @@ public class SignUpController extends BaseController {
 	private static String secureAccount(Request request, Response response) {
 		
 		String id = request.params(":id");
-		String password = request.queryParams("password");
+		char[] password = request.queryParams("password").toCharArray();
 		
 		Identity identity = ServiceClient.getInstance()
 				.identity()

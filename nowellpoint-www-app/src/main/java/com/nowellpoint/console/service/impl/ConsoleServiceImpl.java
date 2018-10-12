@@ -64,9 +64,8 @@ public class ConsoleServiceImpl implements ConsoleService {
 			return identity;
 			
     	} catch (ResourceException e) {
-    		System.out.println("caught resource exception");
     		e.printStackTrace();
-    		throw new ConsoleException(e.getOktaError().getMessage());
+    		throw new ConsoleException(e.getError().getMessage());
     	} catch (ValidationException e) {
     		throw new ConsoleException(e.getMessage());
     	}
@@ -82,9 +81,9 @@ public class ConsoleServiceImpl implements ConsoleService {
 	}
 
 	@Override
-	public Token authenticate(String username, String password) {	
+	public Token authenticate(String username, char[] password) {	
 		AuthenticationRequest request = AuthenticationRequest.builder()
-				.password(password)
+				.password(new String(password))
 				.username(username)
 				.build();
 		

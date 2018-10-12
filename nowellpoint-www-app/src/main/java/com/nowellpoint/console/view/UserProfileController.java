@@ -23,15 +23,15 @@ import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class IdentityController extends BaseController {
+public class UserProfileController extends BaseController {
 		
 	public static void configureRoutes(Configuration configuration) {
 		
-		get(Path.Route.IDENTITY, (request, response) 
-				-> viewIdentity(request, response));
+		get(Path.Route.USER_PROFILE, (request, response) 
+				-> viewUserProfile(request, response));
 		
-		post(Path.Route.IDENTITY, (request, response) 
-				-> updateUserInformation(configuration, request, response));
+		post(Path.Route.USER_PROFILE, (request, response) 
+				-> updateUserProfile(configuration, request, response));
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class IdentityController extends BaseController {
 	 * @return
 	 */
 	
-	private static String viewIdentity(Request request, Response response) {
+	private static String viewUserProfile(Request request, Response response) {
 		
 		String identityId = getIdentity(request).getId();
 		
@@ -56,9 +56,9 @@ public class IdentityController extends BaseController {
 		model.put("timeZones", getAvailableTimeZones());
 		
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(IdentityController.class)
+				.controllerClass(UserProfileController.class)
 				.model(model)
-				.templateName(Templates.IDENTITY)
+				.templateName(Templates.USER_PROFILE)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -72,7 +72,7 @@ public class IdentityController extends BaseController {
 	 * @return
 	 */
 	
-	private static String updateUserInformation(Configuration configuration, Request request, Response response) {
+	private static String updateUserProfile(Configuration configuration, Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -99,10 +99,10 @@ public class IdentityController extends BaseController {
 		
 		Template template = Template.builder()
 				.configuration(configuration)
-				.controllerClass(IdentityController.class)
+				.controllerClass(UserProfileController.class)
 				.model(model)
 				.request(request)
-				.templateName(Templates.IDENTITY_INFORMATION)
+				.templateName(Templates.USER_PROFILE_INFORMATION)
 				.build();
 		
 		return template.render();

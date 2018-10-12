@@ -29,6 +29,7 @@ import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.IdentityService;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
+import com.nowellpoint.www.app.util.EnvironmentVariables;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
@@ -50,10 +51,10 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	private static final Logger LOGGER = Logger.getLogger(IdentityServiceImpl.class.getName());
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
-			Environment.parseEnvironment(System.getenv("BRAINTREE_ENVIRONMENT")),
-			System.getenv("BRAINTREE_MERCHANT_ID"),
-			System.getenv("BRAINTREE_PUBLIC_KEY"),
-			System.getenv("BRAINTREE_PRIVATE_KEY")
+			Environment.parseEnvironment(EnvironmentVariables.getBraintreeEnvironment()),
+			EnvironmentVariables.getBraintreeMerchantId(),
+			EnvironmentVariables.getBraintreePublicKey(),
+			EnvironmentVariables.getBraintreePrivateKey()
 	);
 	
 	static {
@@ -64,12 +65,12 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	static {
 		client = Clients.builder()
-	    		.setClientCredentials(new TokenClientCredentials(System.getenv("OKTA_API_KEY")))
-	    		.setOrgUrl(System.getenv("OKTA_ORG_URL"))
+	    		.setClientCredentials(new TokenClientCredentials(EnvironmentVariables.getOktaApiKey()))
+	    		.setOrgUrl(EnvironmentVariables.getOktaOrgUrl())
 	    		.build();	
 	}
 	
-	private static final SendGrid sendgrid = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+	private static final SendGrid sendgrid = new SendGrid(EnvironmentVariables.getSendGridApiKey());
 	
 	private IdentityDAO dao;
 	
@@ -85,9 +86,9 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 				.setLogin(request.getEmail())
 				.setFirstName(request.getFirstName())
 				.setLastName(request.getLastName())
-				.setPassword(request.getPassword())
+				.setPassword(request.getPassword().toCharArray())
 				.setActive(Boolean.FALSE)
-				.addGroup(System.getenv("OKTA_DEFAULT_GROUP_ID"))
+				.addGroup(EnvironmentVariables.getOktaDefaultGroupId())
 				.buildAndCreate(client);
 		
 		Identity identity = Identity.builder()
@@ -182,7 +183,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
-	public Identity setPassword(String id, String password) {
+	public Identity setPassword(String id, char[] password) {
 		
 		Identity instance = get(id);
 		

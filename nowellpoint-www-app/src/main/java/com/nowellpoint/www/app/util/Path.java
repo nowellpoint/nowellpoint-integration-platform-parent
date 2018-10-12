@@ -45,44 +45,16 @@ public class Path {
 		public static final String LOGOUT = String.format(APPLICATION_CONTEXT, "logout"); 
 		public static final String START = String.format(APPLICATION_CONTEXT, "start");
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
-		
-		public static final String IDENTITY = String.format(APPLICATION_CONTEXT, "identity");
-		
+		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
+		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
+		
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
 		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card");
 		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact");
 		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address");
 		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber");
-		
-		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
-		public static final String CONNECTORS_SHOW = String.format(APPLICATION_CONTEXT, "connectors/show");
-		public static final String CONNECTORS_ADD = String.format(APPLICATION_CONTEXT, "connectors/add");
-		public static final String CONNECTORS_EDIT = String.format(APPLICATION_CONTEXT, "connectors/:id/edit");
-		public static final String CONNECTORS_CONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/connect");
-		public static final String CONNECTORS_LIST = String.format(APPLICATION_CONTEXT, "connectors");
-		public static final String CONNECTORS_VIEW = String.format(APPLICATION_CONTEXT, "connectors/:id/view");
-		public static final String CONNECTORS_DISCONNECT = String.format(APPLICATION_CONTEXT, "connectors/:id/disconnect");
-		public static final String CONNECTORS_UPDATE = String.format(APPLICATION_CONTEXT, "connectors/:id/update");
-		public static final String CONNECTORS_DELETE = String.format(APPLICATION_CONTEXT, "connectors/:id/delete");
-		public static final String CONNECTORS_REFRESH = String.format(APPLICATION_CONTEXT, "connectors/:id/refresh");
-		
-
-		
-		public static final String JOBS_LIST = String.format(APPLICATION_CONTEXT, "jobs");
-		public static final String JOBS_VIEW = String.format(APPLICATION_CONTEXT, "jobs/:id");
-		public static final String JOBS_UPDATE = String.format(APPLICATION_CONTEXT, "jobs/:id");
-		public static final String JOBS_OUTPUTS = String.format(APPLICATION_CONTEXT, "jobs/:id/outputs");
-		public static final String JOBS_OUTPUTS_DOWNLOAD = String.format(APPLICATION_CONTEXT, "jobs/:id/download");
-		public static final String JOBS_WEBHOOK_URL_TEST = String.format(APPLICATION_CONTEXT, "jobs/:id/webhook-test");
-		public static final String JOBS_EDIT = String.format(APPLICATION_CONTEXT, "jobs/:id/edit");
-		public static final String JOBS_SUBMIT = String.format(APPLICATION_CONTEXT, "jobs/:id/submit");
-		public static final String JOBS_RUN = String.format(APPLICATION_CONTEXT, "jobs/:id/run");
-		public static final String JOBS_STOP = String.format(APPLICATION_CONTEXT, "jobs/:id/stop");
-		public static final String JOBS_TERMINATE = String.format(APPLICATION_CONTEXT, "jobs/:id/terminate");
-		public static final String JOBS_CREATE = String.format(APPLICATION_CONTEXT, "jobs/:connectorId/metadata-backup");
-		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 	}
 	
 	public static class Resource {

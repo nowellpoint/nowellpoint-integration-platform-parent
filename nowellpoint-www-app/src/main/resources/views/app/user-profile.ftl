@@ -5,7 +5,7 @@
                 <div class="card-header pt-3 unique-color">
                     <div class="row">
                         <div class="col-6">
-                            <h4 class="text-white font-weight-bold">${labels["user.information"]}</h4>
+                            <h4 class="text-white font-weight-bold">${labels["user.profile"]}</h4>
                         </div>
                         <div class="col-6 text-right">
                             &nbsp;
