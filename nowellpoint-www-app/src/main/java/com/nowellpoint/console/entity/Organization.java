@@ -15,6 +15,8 @@ public class Organization extends BaseEntity {
 
 	private String instanceUrl;
 
+	private String encryptedToken;
+
 	private String connectedUser;
 	
 	private Subscription subscription;
@@ -57,6 +59,14 @@ public class Organization extends BaseEntity {
 
 	public void setInstanceUrl(String instanceUrl) {
 		this.instanceUrl = instanceUrl;
+	}
+
+	public String getEncryptedToken() {
+		return encryptedToken;
+	}
+
+	public void setEncryptedToken(String encryptedToken) {
+		this.encryptedToken = encryptedToken;
 	}
 
 	public String getConnectedUser() {

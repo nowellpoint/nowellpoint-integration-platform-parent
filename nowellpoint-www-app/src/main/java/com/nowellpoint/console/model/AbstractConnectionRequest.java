@@ -10,4 +10,5 @@ public abstract class AbstractConnectionRequest {
     public abstract String getDomain();
     public abstract String getConnectedUser();
     public abstract String getInstanceUrl();
+    public abstract String getEncryptedToken();
 }

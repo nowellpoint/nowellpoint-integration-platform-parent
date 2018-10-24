@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -14,13 +15,12 @@ import javax.ws.rs.InternalServerErrorException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.nowellpoint.console.model.ConnectorRequest;
 import com.nowellpoint.console.exception.ConsoleException;
 import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
-import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
+import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.RequestAttributes;
@@ -325,7 +325,7 @@ public class SignUpController extends BaseController {
 				.append("&scope=api")
 				.append("&display=popup")
 				.append("&state=")
-				.append(identity.getId())
+				.append(identity.getOrganization().getId())
 				.toString();
 		
 		Map<String, Object> model = new HashMap<>();
@@ -370,15 +370,18 @@ public class SignUpController extends BaseController {
 	 */
 	
 	private static String linkAccount(Request request, Response response) {
-		String id = request.params(":id");
+		
+		String organizationId = request.params(":id");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode tokenNode = mapper.readTree(request.body());
 			
+			String id = URLDecoder.decode(tokenNode.get("id").asText(), "UTF-8");
 			String accessToken = URLDecoder.decode(tokenNode.get("access_token").asText(), "UTF-8");
+			String instanceUrl = URLDecoder.decode(tokenNode.get("instance_url").asText(), "UTF-8");
 			
-			HttpResponse identityResponse = RestResource.get(URLDecoder.decode(tokenNode.get("id").asText(), "UTF-8"))
+			HttpResponse identityResponse = RestResource.get(id)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.bearerAuthorization(accessToken)
@@ -397,19 +400,16 @@ public class SignUpController extends BaseController {
 			
 			JsonNode organizationNode = mapper.readTree(organizationResponse.getAsString());
 			
-			Identity identity = ServiceClient.getInstance()
-					.identity()
-					.get(id);
-			
 			ConnectionRequest connectorRequest = ConnectionRequest.builder()
-					.connectedUser(identityNode.get("Username").asText())
+					.connectedUser(identityNode.get("username").asText())
 					.domain(organizationNode.get("Id").asText())
-					.instanceUrl(tokenNode.get("instance_url").asText())
+					.encryptedToken(Base64.getEncoder().encodeToString(tokenNode.toString().getBytes()))
+					.instanceUrl(instanceUrl)
 					.name(organizationNode.get("Name").asText())
 					.build();
 			
 			ServiceClient.getInstance().organization().update(
-					identity.getOrganization().getId(), 
+					organizationId, 
 					connectorRequest);
 			
 		} catch (IOException e) {

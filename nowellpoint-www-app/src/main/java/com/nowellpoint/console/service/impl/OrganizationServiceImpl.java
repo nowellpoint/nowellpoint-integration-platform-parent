@@ -128,6 +128,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.from(instance)
 				.connectedUser(request.getConnectedUser())
 				.domain(request.getDomain())
+				.encryptedToken(request.getEncryptedToken())
 				.instanceUrl(request.getInstanceUrl())
 				.name(request.getName())
 				.build();

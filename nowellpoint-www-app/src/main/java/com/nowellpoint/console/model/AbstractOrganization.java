@@ -1,10 +1,12 @@
 package com.nowellpoint.console.model;
 
-import org.immutables.value.Value;
+import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.www.app.util.Path;
+
+import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Modifiable
@@ -15,8 +17,9 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getNumber();
 	public abstract String getDomain();
 	public abstract String getName();
-	public abstract String getInstanceUrl();
-	public abstract String getConnectedUser();
+	public abstract @Nullable String getInstanceUrl();
+	public abstract @Nullable String getEncryptedToken();
+	public abstract @Nullable String getConnectedUser();
 	public abstract Subscription getSubscription();
 	
 	@Value.Default
@@ -37,6 +40,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.lastUpdatedBy(UserInfo.of(entity.getLastUpdatedBy()))
 				.lastUpdatedOn(entity.getLastUpdatedOn())
 				.instanceUrl(entity.getInstanceUrl())
+				.encryptedToken(entity.getEncryptedToken())
 				.name(entity.getName())
 				.number(entity.getNumber())
 				.subscription(Subscription.of(entity.getSubscription()))

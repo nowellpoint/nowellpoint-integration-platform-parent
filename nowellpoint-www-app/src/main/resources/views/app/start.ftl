@@ -15,7 +15,7 @@
                         <dl class="text-muted">${organization.instanceUrl}</dl>
                         </dl>
                     </div>
-                    <div class="card-footer bg-transparent"><a href="#"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['change.connected.user']}</a></div>
+                    <div class="card-footer bg-transparent"><a href="#" onclick="window.open('${SALESFORCE_AUTHORIZE_URI}', '_blank', 'toolbar=no,location=no,scrollbars=no,resizable=no,top=100,left=500,width=600,height=800'); return false;"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['change.connected.user']}</a></div>
                 </div>
             </div>    
         </div>
