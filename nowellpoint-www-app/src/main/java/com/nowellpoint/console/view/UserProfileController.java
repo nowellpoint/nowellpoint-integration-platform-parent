@@ -16,8 +16,8 @@ import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;

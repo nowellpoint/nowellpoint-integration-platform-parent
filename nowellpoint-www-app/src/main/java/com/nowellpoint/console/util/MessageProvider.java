@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.util;
+package com.nowellpoint.console.util;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

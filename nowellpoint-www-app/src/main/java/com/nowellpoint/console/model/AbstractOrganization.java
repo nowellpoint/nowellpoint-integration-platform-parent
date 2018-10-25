@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 import org.immutables.value.Value;
 

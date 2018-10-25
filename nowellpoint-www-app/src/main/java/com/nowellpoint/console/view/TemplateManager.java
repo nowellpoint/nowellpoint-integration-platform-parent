@@ -13,7 +13,7 @@ import java.util.TimeZone;
 
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapperBuilder;

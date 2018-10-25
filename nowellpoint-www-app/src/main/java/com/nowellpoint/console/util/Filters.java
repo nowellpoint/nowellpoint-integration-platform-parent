@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.www.app.util.Path;
 
 import spark.Request;
 import spark.Response;

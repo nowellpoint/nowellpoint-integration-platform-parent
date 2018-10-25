@@ -28,7 +28,7 @@ import static spark.Spark.staticFileLocation;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 import freemarker.template.Configuration;
 import spark.Request;

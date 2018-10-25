@@ -36,8 +36,8 @@ import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
 import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
+import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.entity.Organization;
-import com.nowellpoint.www.app.util.EnvironmentVariables;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

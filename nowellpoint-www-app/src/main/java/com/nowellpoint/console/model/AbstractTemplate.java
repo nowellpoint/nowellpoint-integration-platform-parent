@@ -14,8 +14,8 @@ import org.immutables.value.Value;
 
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
-import com.nowellpoint.www.app.util.Path;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapperBuilder;
