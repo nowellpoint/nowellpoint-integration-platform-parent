@@ -5,6 +5,9 @@
 	metadata-complete="false" version="3.1">
 	<session-config>
 		<session-timeout>120</session-timeout>
+		<cookie-config>
+			<http-only>true</http-only>
+		</cookie-config>
 	</session-config>
 	<filter>
 		<filter-name>SparkFilter</filter-name>

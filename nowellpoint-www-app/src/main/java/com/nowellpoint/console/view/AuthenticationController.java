@@ -18,6 +18,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -60,7 +61,7 @@ public class AuthenticationController {
 			Long expiresIn = token.getExpiresIn();
 			
 			try {			
-				response.cookie("/", RequestAttributes.AUTH_TOKEN, new ObjectMapper().writeValueAsString(token), expiresIn.intValue(), true, true);
+				response.cookie("localhost", "/", RequestAttributes.AUTH_TOKEN, Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(token).getBytes()), expiresIn.intValue(), true, true);
 			} catch (IOException e) {
 				throw new InternalServerErrorException(e);
 			}
@@ -124,7 +125,7 @@ public class AuthenticationController {
 		if (cookie.isPresent()) {
 
 			try {
-				Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
+				Token token = new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), Token.class);
 				ServiceClient.getInstance().console().revoke(token.getAccessToken());
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, e.getMessage(), e);

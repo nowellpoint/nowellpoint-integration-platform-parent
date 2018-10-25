@@ -5,6 +5,7 @@ import static spark.Spark.halt;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -45,8 +46,8 @@ public class Filters {
 		Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 		
 		if (cookie.isPresent()) {
-			
-			Token token = new ObjectMapper().readValue(cookie.get(), Token.class);
+
+			Token token = new ObjectMapper().readValue(Base64.getDecoder().decode(cookie.get()), Token.class);
 			
 			Identity identity = ServiceClient.getInstance()
 					.identity()
