@@ -9,7 +9,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)

@@ -8,7 +8,6 @@ import java.util.Map;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.BaseController;
-import com.nowellpoint.www.app.util.MessageProvider;
 
 import org.eclipse.jetty.http.HttpStatus;
 

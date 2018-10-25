@@ -5,7 +5,7 @@ import static spark.Spark.get;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.JsonTransformer;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 import spark.Request;
 import spark.Response;

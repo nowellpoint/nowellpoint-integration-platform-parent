@@ -1,4 +1,4 @@
-package com.nowellpoint.www.app.util;
+package com.nowellpoint.console.util;
 
 public class EnvironmentVariables {
 	

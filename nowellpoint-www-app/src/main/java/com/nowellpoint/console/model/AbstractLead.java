@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.nowellpoint.www.app.util.MessageProvider;
+import com.nowellpoint.console.util.MessageProvider;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)

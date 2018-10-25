@@ -23,12 +23,12 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
-import com.nowellpoint.www.app.util.Path;
 
 import spark.Request;
 import spark.Response;

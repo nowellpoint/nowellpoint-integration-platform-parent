@@ -6,7 +6,7 @@ import static spark.Spark.delete;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.JsonTransformer;
-import com.nowellpoint.www.app.util.Path;
+import com.nowellpoint.console.util.Path;
 
 import spark.Request;
 import spark.Response;
