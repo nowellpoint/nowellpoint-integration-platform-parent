@@ -348,10 +348,34 @@ public class SignUpController extends BaseController {
 	 * @return
 	 */
 	
-	private static String oauthCallback(Request request, Response response) {		
+	private static String oauthCallback(Request request, Response response) {	
+
+		System.out.println(request.queryString());
+		
+		String authorizationCode = request.queryParams("code");
+		String state = request.queryParams("state");
+
+		System.out.println(authorizationCode);
+
+		String tokenUrl = new StringBuilder(System.getenv("SALESFORCE_AUTHORIZE_URI"))
+				.append("&client_id=")
+				.append(System.getenv("SALESFORCE_CLIENT_ID"))
+				.append("&client_secret=")
+				.append(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.append("&redirect_uri=")
+				.append(System.getenv("SALESFORCE_REDIRECT_URI"))
+				.append("&grant_type=authorization_code")
+				.append("&code=")
+				.append(authorizationCode)
+				.toString();
+
+				System.out.println(tokenUrl);
+
 		Map<String, Object> model = new HashMap<>();
 		model.put("LINK_ACCOUNT_URI", Path.Route.ACCOUNT_LINK);
 		model.put("LINK_ACCOUNT_SUCCESS_URI", Path.Route.SALESFORCE_OAUTH_SUCCESS);
+		model.put("TOKEN_URL", tokenUrl);
+		model.put("ORGANIZATION_ID", state);
 		
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)

@@ -48,27 +48,30 @@
     </main>
 
     <script type="text/javascript">
-        var hash = location.hash.replace("#", "");
-        var params = {};
-        hash.split('&').map(hk => {
-            let temp = hk.split('=');
-            params[temp[0]] = temp[1];
-        });
+        //var hash = location.hash.replace("#", "");
+        //var params = {};
+        //hash.split('&').map(hk => {
+            //let temp = hk.split('=');
+            //params[temp[0]] = temp[1];
+        //});
 
-        var token = {
+        $.ajax({
+            type: "POST",
+            url: "${TOKEN_URL}",
+            complete: function(response) {
+                var token = {
             "id": params.id,
             "access_token": params.access_token,
+            "refresh_token": params.refresh_token,
             "signature": params.signature,
             "instance_url": params.instance_url,
             "token_type": params.token_type,
             "issued_at": params.issued_at
         };
 
-        var state = params.state;
-
         $.ajax({
             type: "POST",
-            url: "${LINK_ACCOUNT_URI}".replace(":id", state),
+            url: "${LINK_ACCOUNT_URI}".replace(":id", ${ORGANIZATION_ID}),
             dataType: "json",
             data: JSON.stringify(token),
             complete: function(response) {
@@ -80,6 +83,10 @@
                 }
             }
         });
+            }
+        });
+
+        
     </script>
 
 </body>
