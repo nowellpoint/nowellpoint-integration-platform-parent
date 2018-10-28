@@ -20,6 +20,11 @@ public class EnvironmentVariables {
 	private static final String BRAINTREE_MERCHANT_ID = "BRAINTREE_MERCHANT_ID";
 	private static final String BRAINTREE_PUBLIC_KEY = "BRAINTREE_PUBLIC_KEY";
 	private static final String BRAINTREE_PRIVATE_KEY = "BRAINTREE_PRIVATE_KEY";
+	private static final String SALESFORCE_CLIENT_ID = "SALESFORCE_CLIENT_ID";
+	private static final String SALESFORCE_TOKEN_URI = "SALESFORCE_TOKEN_URI";
+	private static final String SALESFORCE_CLIENT_SECRET = "SALESFORCE_CLIENT_SECRET";
+	private static final String SALESFORCE_AUTHORIZE_URI = "SALESFORCE_AUTHORIZE_URI";
+	private static final String SALESFORCE_CALLBACK_URI = "SALESFORCE_CALLBACK_URI";
 	
 	public static String getMongoClientUri() {
 		return getenv(MONGO_CLIENT_URI);
@@ -91,6 +96,26 @@ public class EnvironmentVariables {
 	
 	public static String getBraintreePrivateKey() {
 		return getenv(BRAINTREE_PRIVATE_KEY);
+	}
+
+	public static String getSalesforceClientId() {
+		return getenv(SALESFORCE_CLIENT_ID);
+	}
+
+	public static String getSalesforceClientSecret() {
+		return getenv(SALESFORCE_CLIENT_SECRET);
+	}
+
+	public static String getSalesforceTokenUri() {
+		return getenv(SALESFORCE_TOKEN_URI);
+	}
+
+	public static String getSalesforceAuthorizeUri() {
+		return getenv(SALESFORCE_AUTHORIZE_URI);
+	}
+
+	public static String getSalesforceCallbackUri() {
+		return getenv(SALESFORCE_CALLBACK_URI);
 	}
 	
 	private static String getenv(String name) {

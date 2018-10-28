@@ -49,6 +49,8 @@ public class Path {
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
 		
+		public static final String ORGANIZATION_CONNECTED_USER = String.format(APPLICATION_CONTEXT, "organization/:id/connected-user");
+		
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
 		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
 		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card");

@@ -59,32 +59,11 @@
             type: "POST",
             url: "${TOKEN_URL}",
             complete: function(response) {
-                var token = {
-            "id": params.id,
-            "access_token": params.access_token,
-            "refresh_token": params.refresh_token,
-            "signature": params.signature,
-            "instance_url": params.instance_url,
-            "token_type": params.token_type,
-            "issued_at": params.issued_at
-        };
+                console.log(response);
+                
+            }
+        });
 
-        $.ajax({
-            type: "POST",
-            url: "${LINK_ACCOUNT_URI}".replace(":id", ${ORGANIZATION_ID}),
-            dataType: "json",
-            data: JSON.stringify(token),
-            complete: function(response) {
-                if (response.status == 200) {
-                    window.opener.location = "${LINK_ACCOUNT_SUCCESS_URI}".replace(":id", state);
-                    window.close();
-                } else {
-                    $("#status").html(response.responseText);
-                }
-            }
-        });
-            }
-        });
 
         
     </script>

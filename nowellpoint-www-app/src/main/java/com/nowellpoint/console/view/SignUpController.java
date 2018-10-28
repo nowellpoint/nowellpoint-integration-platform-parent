@@ -4,31 +4,24 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ws.rs.InternalServerErrorException;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.exception.ConsoleException;
-import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
 
 import spark.Request;
 import spark.Response;
@@ -61,12 +54,6 @@ public class SignUpController extends BaseController {
 		
 		get(Path.Route.ACCOUNT_LINK, (request, response)
 				-> showLinkAccount(request, response));
-		
-		post(Path.Route.ACCOUNT_LINK, (request, response)
-				-> linkAccount(request, response));
-		
-		get(Path.Route.SALESFORCE_OAUTH_CALLBACK, (request, response) 
-				-> oauthCallback(request, response));
 		
 		get(Path.Route.SALESFORCE_OAUTH_SUCCESS, (request, response) 
 				-> oauthSuccess(request, response));
@@ -313,16 +300,15 @@ public class SignUpController extends BaseController {
 		Identity identity = ServiceClient.getInstance()
 				.identity()
 				.get(id);
-		
-		String authUrl = new StringBuilder(System.getenv("SALESFORCE_AUTHORIZE_URI"))
-				.append("?response_type=token")
+
+		String authUrl = new StringBuilder(EnvironmentVariables.getSalesforceAuthorizeUri())
+				.append("?response_type=code")
 				.append("&client_id=")
-				.append(System.getenv("SALESFORCE_CLIENT_ID"))
-				.append("&client_secret=")
-				.append(System.getenv("SALESFORCE_CLIENT_SECRET"))
+				.append(EnvironmentVariables.getSalesforceClientId())
 				.append("&redirect_uri=")
-				.append(System.getenv("SALESFORCE_REDIRECT_URI"))
-				.append("&scope=api")
+				.append(EnvironmentVariables.getSalesforceCallbackUri())
+				.append("&scope=refresh_token")
+				.append("&prompt=login")
 				.append("&display=popup")
 				.append("&state=")
 				.append(identity.getOrganization().getId())
@@ -384,63 +370,6 @@ public class SignUpController extends BaseController {
 				.build();
 		
 		return processTemplate(templateProcessRequest);
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String linkAccount(Request request, Response response) {
-		
-		String organizationId = request.params(":id");
-		
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			JsonNode tokenNode = mapper.readTree(request.body());
-			
-			String id = URLDecoder.decode(tokenNode.get("id").asText(), "UTF-8");
-			String accessToken = URLDecoder.decode(tokenNode.get("access_token").asText(), "UTF-8");
-			String instanceUrl = URLDecoder.decode(tokenNode.get("instance_url").asText(), "UTF-8");
-			
-			HttpResponse identityResponse = RestResource.get(id)
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(accessToken)
-					.queryParameter("version", "latest")
-					.execute();
-			
-			JsonNode identityNode = mapper.readTree(identityResponse.getAsString());
-			
-			HttpResponse organizationResponse = RestResource.get(identityNode.get("urls").get("sobjects").asText())
-					.bearerAuthorization(accessToken)
-	     			.path("Organization")
-	     			.path(identityNode.get("organization_id").asText())
-	     			.queryParameter("fields", "Name,Division")
-	     			.queryParameter("version", "latest")
-	     			.execute();
-			
-			JsonNode organizationNode = mapper.readTree(organizationResponse.getAsString());
-			
-			ConnectionRequest connectorRequest = ConnectionRequest.builder()
-					.connectedUser(identityNode.get("username").asText())
-					.domain(organizationNode.get("Id").asText())
-					.encryptedToken(Base64.getEncoder().encodeToString(tokenNode.toString().getBytes()))
-					.instanceUrl(instanceUrl)
-					.name(organizationNode.get("Name").asText())
-					.build();
-			
-			ServiceClient.getInstance().organization().update(
-					organizationId, 
-					connectorRequest);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	   
-		return "";
 	}
 	
 	/**

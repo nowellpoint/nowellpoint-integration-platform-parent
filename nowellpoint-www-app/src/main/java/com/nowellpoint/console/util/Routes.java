@@ -16,6 +16,7 @@ import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
 import com.nowellpoint.console.view.UserProfileController;
+import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.content.model.IsoCountry;
 import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.Plan;
@@ -57,6 +58,7 @@ public class Routes {
 		OrganizationController.configureRoutes(configuration);
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
+		SalesforceOauthController.configureRoutes();
 	}
 	
 	/**
