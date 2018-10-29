@@ -21,7 +21,7 @@
                 <!--Grid column-->
                 <div class="col-5 justify-content-md-center">
                     <div class="text-center">
-                        <button type="button" id="oauth" class="btn btn-primary" onclick="window.open('${SALESFORCE_AUTHORIZE_URI}', '_blank', 'toolbar=no,location=no,scrollbars=no,resizable=no,top=100,left=500,width=600,height=800');">${labels['login.salesforce']}</button>
+                        <a href="${CONNECT_USER_URI}" class="btn btn-primary" role="button">${labels['login.salesforce']}</a>
                     </div>
                 </div>
                 <div class="col-1"></div>

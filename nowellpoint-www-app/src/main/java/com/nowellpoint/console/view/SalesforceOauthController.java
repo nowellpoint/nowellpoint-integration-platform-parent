@@ -50,6 +50,8 @@ public class SalesforceOauthController extends BaseController {
                     .queryParameter("client_secret", EnvironmentVariables.getSalesforceClientSecret())
                     .queryParameter("redirect_uri", EnvironmentVariables.getSalesforceCallbackUri())
                     .execute();
+            
+            //Token token = tokenResponse.getEntity(Token.)
                     
             JsonNode tokenNode = mapper.readTree(tokenResponse.getAsString());
 			
@@ -91,6 +93,8 @@ public class SalesforceOauthController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		response.redirect(Path.Route.START);
 	   
 		return "";
 	}

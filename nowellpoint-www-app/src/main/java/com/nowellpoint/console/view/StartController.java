@@ -76,6 +76,5 @@ public class StartController extends BaseController {
 		}
 		
 		return "";
-
 	};
 }

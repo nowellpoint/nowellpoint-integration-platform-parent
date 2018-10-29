@@ -35,10 +35,10 @@ public class Path {
 		public static final String SIGN_UP = ("/signup/");
 		public static final String ACCOUNT_ACTIVATE = "/signup/:id/activate/";
 		public static final String ACCOUNT_SECURE = "/signup/:id/secure/";
-		public static final String ACCOUNT_LINK = "/signup/:id/link/";
+		public static final String ACCOUNT_CONNECT_USER = "/signup/:id/connected-user/";
+		public static final String ACCOUNT_CONNECT_USER_ADD = "/signup/:id/connected-user/add/";
 		public static final String ACCOUNT_ACTIVATION_RESEND = "/signup/:id/resend/";
 		public static final String SALESFORCE_OAUTH_CALLBACK = "/salesforce/oauth/callback/";
-		public static final String SALESFORCE_OAUTH_SUCCESS = "/salesforce/oauth/success/:id/";
 		public static final String CONTACT = "/contact/";
 		public static final String HEALTH_CHECK = "/healthcheck/";
 		

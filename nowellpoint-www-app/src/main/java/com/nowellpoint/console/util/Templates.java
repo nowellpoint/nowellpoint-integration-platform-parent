@@ -10,9 +10,7 @@ public class Templates {
 	public static final String NOT_FOUND = "not-found.ftl";
 	public static final String ACTIVATE_ACCOUNT = "activate.ftl";
 	public static final String SECURE_ACCOUNT = "secure.ftl";
-	public static final String SALESFORCE_OAUTH = "salesforce-oauth.ftl";
-	public static final String SALESFORCE_OAUTH_CALLBACK = "salesforce-oauth-callback.ftl";
-	public static final String SALESFORCE_OAUTH_SUCCESS = "salesforce-oauth-success.html";
+	public static final String CONNECT_USER = "connect-user.ftl";
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.ftl");
 	public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 	public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration.html");

@@ -4,6 +4,8 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ public class SignUpController extends BaseController {
 	private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
 	
 	public static void configureRoutes() {
+		
 		get(Path.Route.FREE_ACCOUNT, (request, response) 
 				-> showSignUp(request, response));
 		
@@ -52,12 +55,12 @@ public class SignUpController extends BaseController {
 		post(Path.Route.ACCOUNT_SECURE, (request, response) 
 				-> secureAccount(request, response));
 		
-		get(Path.Route.ACCOUNT_LINK, (request, response)
-				-> showLinkAccount(request, response));
+		get(Path.Route.ACCOUNT_CONNECT_USER, (request, response)
+				-> showConnectUser(request, response));
 		
-		get(Path.Route.SALESFORCE_OAUTH_SUCCESS, (request, response) 
-				-> oauthSuccess(request, response));
-
+		get(Path.Route.ACCOUNT_CONNECT_USER_ADD, (request, response)
+				-> connectUser(request, response));
+		
 	}
 	
 	/**
@@ -277,7 +280,7 @@ public class SignUpController extends BaseController {
 				throw new InternalServerErrorException(e);
 			}
 			
-			response.redirect(Path.Route.ACCOUNT_LINK.replace(":id", identity.getId()));
+			response.redirect(Path.Route.ACCOUNT_CONNECT_USER.replace(":id", identity.getId()));
 			
 		} catch (ConsoleException e) {
 			throw new InternalServerErrorException(e);
@@ -293,35 +296,22 @@ public class SignUpController extends BaseController {
 	 * @return
 	 */
 	
-	private static String showLinkAccount(Request request, Response response) {
+	private static String showConnectUser(Request request, Response response) {
 		
-		String id = request.params(":id");
+		String identityId = request.params(":id");
 		
 		Identity identity = ServiceClient.getInstance()
 				.identity()
-				.get(id);
-
-		String authUrl = new StringBuilder(EnvironmentVariables.getSalesforceAuthorizeUri())
-				.append("?response_type=code")
-				.append("&client_id=")
-				.append(EnvironmentVariables.getSalesforceClientId())
-				.append("&redirect_uri=")
-				.append(EnvironmentVariables.getSalesforceCallbackUri())
-				.append("&scope=refresh_token")
-				.append("&prompt=login")
-				.append("&display=popup")
-				.append("&state=")
-				.append(identity.getOrganization().getId())
-				.toString();
+				.get(identityId);
 		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
-		model.put("SALESFORCE_AUTHORIZE_URI", authUrl);
+		model.put("CONNECT_USER_URI", Path.Route.ACCOUNT_CONNECT_USER_ADD.replace(":id", identity.getId()));
 		
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(SignUpController.class)
 				.model(model)
-				.templateName(Templates.SALESFORCE_OAUTH)
+				.templateName(Templates.CONNECT_USER)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -334,59 +324,36 @@ public class SignUpController extends BaseController {
 	 * @return
 	 */
 	
-	private static String oauthCallback(Request request, Response response) {	
-
-		System.out.println(request.queryString());
+	private static String connectUser(Request request, Response response) {
 		
-		String authorizationCode = request.queryParams("code");
-		String state = request.queryParams("state");
+		String identityId = request.params(":id");
 
-		System.out.println(authorizationCode);
-
-		String tokenUrl = new StringBuilder(System.getenv("SALESFORCE_AUTHORIZE_URI"))
-				.append("&client_id=")
-				.append(System.getenv("SALESFORCE_CLIENT_ID"))
-				.append("&client_secret=")
-				.append(System.getenv("SALESFORCE_CLIENT_SECRET"))
-				.append("&redirect_uri=")
-				.append(System.getenv("SALESFORCE_REDIRECT_URI"))
-				.append("&grant_type=authorization_code")
-				.append("&code=")
-				.append(authorizationCode)
-				.toString();
-
-				System.out.println(tokenUrl);
-
-		Map<String, Object> model = new HashMap<>();
-		model.put("LINK_ACCOUNT_URI", Path.Route.ACCOUNT_LINK);
-		model.put("LINK_ACCOUNT_SUCCESS_URI", Path.Route.SALESFORCE_OAUTH_SUCCESS);
-		model.put("TOKEN_URL", tokenUrl);
-		model.put("ORGANIZATION_ID", state);
+		Identity identity = ServiceClient.getInstance()
+				.identity()
+				.get(identityId);
 		
-		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(SignUpController.class)
-				.model(model)
-				.templateName(Templates.SALESFORCE_OAUTH_CALLBACK)
-				.build();
+		try {
+			
+			String authUrl = new StringBuilder(EnvironmentVariables.getSalesforceAuthorizeUri())
+					.append("?response_type=code")
+					.append("&client_id=")
+					.append(EnvironmentVariables.getSalesforceClientId())
+					.append("&redirect_uri=")
+					.append(EnvironmentVariables.getSalesforceCallbackUri())
+					.append("&scope=")
+					.append(URLEncoder.encode("refresh_token api", "UTF-8"))
+					.append("&prompt=login")
+					.append("&display=popup")
+					.append("&state=")
+					.append(identity.getOrganization().getId())
+					.toString();
+			
+			response.redirect(authUrl);	
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		
-		return processTemplate(templateProcessRequest);
-	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-	
-	private static String oauthSuccess(Request request, Response response) {
-		String id = request.params(":id");
-		
-		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(SignUpController.class)
-				.templateName(Templates.SALESFORCE_OAUTH_SUCCESS)
-				.build();
-		
-		return processTemplate(templateProcessRequest);
+		return "";
 	}
 }

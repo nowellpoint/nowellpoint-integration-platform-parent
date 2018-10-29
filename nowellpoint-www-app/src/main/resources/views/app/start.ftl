@@ -15,7 +15,7 @@
                         <dl class="text-muted">${organization.instanceUrl}</dl>
                         </dl>
                     </div>
-                    <div class="card-footer bg-transparent"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;<a href="${CHANGE_CONNECTED_USER_URI}">${labels['change.connected.user']}</a></div>
+                    <div class="card-footer bg-transparent"><a href="${CHANGE_CONNECTED_USER_URI}"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['change.connected.user']}</a></div>
                 </div>
             </div>    
         </div>
