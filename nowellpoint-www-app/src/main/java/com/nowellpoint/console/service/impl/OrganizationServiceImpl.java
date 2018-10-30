@@ -3,22 +3,32 @@ package com.nowellpoint.console.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.query.Query;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -45,10 +55,17 @@ import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.UserContext;
+import com.nowellpoint.http.HttpRequestException;
+import com.nowellpoint.http.HttpResponse;
+import com.nowellpoint.http.MediaType;
+import com.nowellpoint.http.RestResource;
 import com.nowellpoint.util.Assert;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
+	
+	//private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(System.getenv("BRAINTREE_ENVIRONMENT")),
@@ -61,10 +78,45 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		gateway.clientToken().generate();
 	}
 	
-	private OrganizationDAO organizationDAO;
+	private OrganizationDAO dao;
 	
 	public OrganizationServiceImpl() {
-		organizationDAO = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
+		dao = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
+
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 2);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.SECOND, 0);
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			public void run() {
+				List<com.nowellpoint.console.entity.Organization> organizations = dao.createQuery()
+						.field("encryptedToken")
+						.notEqual(null)
+						.asList();
+				
+				organizations.stream().forEach(instance -> {
+					System.out.println(new java.util.Date() + " " + instance.getName());
+					
+					JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getEncryptedToken())));
+					
+					System.out.println(tokenNode.toString());
+					
+					Organization organization = Organization.builder()
+							.from(Organization.of(instance))
+							.connectedAt(getCurrentDateTime())
+							.connectedStatus(Organization.CONNECTED)
+							.encryptedToken(Base64.getEncoder().encodeToString(tokenNode.toString().getBytes()))
+							.build();
+					
+					update(organization);
+					
+					
+				});
+					
+			}
+		}, today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 	}
 	
 	@Override
@@ -126,7 +178,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
+				.connectedAt(getCurrentDateTime())
 				.connectedUser(request.getConnectedUser())
+				.connectedStatus(Organization.CONNECTED)
 				.domain(request.getDomain())
 				.encryptedToken(request.getEncryptedToken())
 				.instanceUrl(request.getInstanceUrl())
@@ -141,7 +195,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		com.nowellpoint.console.entity.Organization entity = getEntry(id);
 		if (entity == null) {
 			try {
-				entity = organizationDAO.get(new ObjectId(id));
+				entity = dao.get(new ObjectId(id));
 			} catch (IllegalArgumentException e) {
 				throw new BadRequestException(String.format("Invalid Organization Id: %s", id));
 			}
@@ -499,11 +553,30 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return null;
 	}
 	
+	private JsonNode refreshToken(String refreshToken) {
+		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+                .queryParameter("grant_type", "refresh_token")
+                .queryParameter("client_id", EnvironmentVariables.getSalesforceClientId())
+                .queryParameter("client_secret", EnvironmentVariables.getSalesforceClientSecret())
+                .execute();
+		
+		try {
+			JsonNode tokenNode = new ObjectMapper().readTree(tokenResponse.getAsString());
+			return tokenNode;
+		} catch (HttpRequestException | IOException e) {
+			e.printStackTrace();
+		}
+		 
+		return null;
+	}
+	
 	private Organization create(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		entity.setLastUpdatedBy(entity.getCreatedBy());
-		organizationDAO.save(entity);
+		dao.save(entity);
 		return Organization.of(entity);
 	}
 	
@@ -511,8 +584,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
 		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
-		organizationDAO.save(entity);
-		entity = organizationDAO.get(entity.getId());
+		dao.save(entity);
+		entity = dao.get(entity.getId());
 		putEntry(entity.getId().toString(), entity);
 		return Organization.of(entity);
 	}
@@ -608,6 +681,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private void delete(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
-		organizationDAO.delete(entity);
+		dao.delete(entity);
 	}
 }

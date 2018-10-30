@@ -39,6 +39,7 @@ public class SalesforceOauthController extends BaseController {
         String authorizationCode = request.queryParams("code");
 		
 		ObjectMapper mapper = new ObjectMapper();
+		
 		try {
 
             HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())

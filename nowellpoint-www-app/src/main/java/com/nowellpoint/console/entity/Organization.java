@@ -1,5 +1,7 @@
 package com.nowellpoint.console.entity;
 
+import java.util.Date;
+
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity(value = "organizations")
@@ -18,6 +20,10 @@ public class Organization extends BaseEntity {
 	private String encryptedToken;
 
 	private String connectedUser;
+	
+	private Date connectedAt;
+	
+	private String connectedStatus;
 	
 	private Subscription subscription;
 	
@@ -77,6 +83,22 @@ public class Organization extends BaseEntity {
 		this.connectedUser = connectedUser;
 	}
 	
+	public Date getConnectedAt() {
+		return connectedAt;
+	}
+
+	public void setConnectedAt(Date connectedAt) {
+		this.connectedAt = connectedAt;
+	}
+
+	public String getConnectedStatus() {
+		return connectedStatus;
+	}
+
+	public void setConnectedStatus(String connectedStatus) {
+		this.connectedStatus = connectedStatus;
+	}
+
 	public Subscription getSubscription() {
 		return subscription;
 	}

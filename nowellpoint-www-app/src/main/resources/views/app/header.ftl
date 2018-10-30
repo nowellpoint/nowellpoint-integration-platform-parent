@@ -29,15 +29,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${ORGANIZATION_URI}">${(identity.organization.name)!}</a>
                 </li> 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        ${identity.name}
-                    </a>
-                    <div class="dropdown-menu  dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="${USER_PROFILE_URI}">${messages["user.profile"]}</a>
-                        <a class="dropdown-item" href="${LOGOUT_URI}">${messages["log.out"]}</a>
-                    </div>
-                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${USER_PROFILE_URI}">${(identity.name)!}</a>
+                </li> 
+                <li class="nav-item">
+                    <a class="nav-link" href="${LOGOUT_URI}">${messages["log.out"]}</a>
+                </li> 
             </ul>
             <!-- /navbar menu -->
         </div>

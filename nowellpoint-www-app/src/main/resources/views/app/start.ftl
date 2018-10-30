@@ -11,6 +11,8 @@
                         <dl class="text-muted">${organization.name}</dl>
                         <dt>${labels['connected.user']}</dt>
                         <dl class="text-muted">${organization.connectedUser}</dl>
+                        <dt>${labels['connected.at']}</dt>
+                        <dl class="text-muted"><#if organization.connectedAt??>${organization.connectedAt?date?string.long} ${organization.connectedAt?time?string.medium}<#else>&nbsp;</#if></dl>
                         <dt>${labels['instance.url']}</dt>
                         <dl class="text-muted">${organization.instanceUrl}</dl>
                         </dl>
