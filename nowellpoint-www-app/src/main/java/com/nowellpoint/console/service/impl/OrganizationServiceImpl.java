@@ -22,7 +22,6 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.query.Query;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
@@ -175,6 +174,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		if ( ! customerResult.isSuccess() ) {
 			throw new ValidationException(customerResult.getMessage());
 		}
+		
+		
 		
 		Organization organization = Organization.builder()
 				.from(instance)

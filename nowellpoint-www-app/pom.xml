@@ -126,6 +126,11 @@
 			<version>4.3.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.cometd.java</groupId>
+			<artifactId>cometd-java-websocket-jetty-client</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
 			<version>${project.version}</version>
@@ -133,6 +138,11 @@
 		<dependency>
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-admin</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-sforce</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

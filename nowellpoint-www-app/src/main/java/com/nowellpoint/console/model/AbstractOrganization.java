@@ -23,6 +23,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract @Nullable String getEncryptedToken();
 	public abstract @Nullable String getConnectedUser();
 	public abstract @Nullable Date getConnectedAt();
+	public abstract @Nullable Connection getConnection();
 	public abstract Subscription getSubscription();
 	
 	public static final String CONNECTED = "Connected";

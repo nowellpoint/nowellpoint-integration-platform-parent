@@ -25,6 +25,8 @@ public class Organization extends BaseEntity {
 	
 	private String connectedStatus;
 	
+	private Connection connection;
+	
 	private Subscription subscription;
 	
 	public Organization() {
@@ -97,6 +99,14 @@ public class Organization extends BaseEntity {
 
 	public void setConnectedStatus(String connectedStatus) {
 		this.connectedStatus = connectedStatus;
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
 	}
 
 	public Subscription getSubscription() {
