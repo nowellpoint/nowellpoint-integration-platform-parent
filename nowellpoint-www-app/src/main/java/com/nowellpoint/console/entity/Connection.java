@@ -14,7 +14,7 @@ public class Connection implements Serializable {
 	public String instanceUrl;
 	public String refreshToken;
 	public String tokenType;
-	public Long issuedAt;
+	public String issuedAt;
 	public String connectedAs;
 	public Date connectedAt;
 	public String status;
@@ -64,11 +64,11 @@ public class Connection implements Serializable {
 		this.tokenType = tokenType;
 	}
 
-	public Long getIssuedAt() {
+	public String getIssuedAt() {
 		return issuedAt;
 	}
 
-	public void setIssuedAt(Long issuedAt) {
+	public void setIssuedAt(String issuedAt) {
 		this.issuedAt = issuedAt;
 	}
 

@@ -41,6 +41,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
+import com.nowellpoint.console.model.Connection;
 import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
@@ -175,10 +176,20 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ValidationException(customerResult.getMessage());
 		}
 		
-		
-		
 		Organization organization = Organization.builder()
 				.from(instance)
+				.connection(Connection.builder()
+						.accessToken(request.getToken().getAccessToken())
+						.connectedAs(request.getIdentity().getUsername())
+						.connectedAt(getCurrentDateTime())
+						.id(request.getToken().getId())
+						.instanceUrl(request.getToken().getInstanceUrl())
+						.isConnected(Boolean.TRUE)
+						.issuedAt(request.getToken().getIssuedAt())
+						.refreshToken(request.getToken().getRefreshToken())
+						.status(Connection.CONNECTED)
+						.tokenType(request.getToken().getTokenType())
+						.build())
 				.connectedAt(getCurrentDateTime())
 				.connectedUser(request.getConnectedUser())
 				.connectedStatus(Organization.CONNECTED)

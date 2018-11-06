@@ -18,7 +18,7 @@ public abstract class AbstractConnection {
 	public abstract String getInstanceUrl();
 	public abstract String getRefreshToken();
 	public abstract String getTokenType();
-	public abstract Long getIssuedAt();
+	public abstract String getIssuedAt();
 	public abstract String getConnectedAs();
 	public abstract Date getConnectedAt();
 	
