@@ -92,29 +92,19 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		timer.schedule(new TimerTask() {
 			public void run() {
 				List<com.nowellpoint.console.entity.Organization> organizations = dao.createQuery()
-						.field("encryptedToken")
+						.field("connection")
 						.notEqual(null)
 						.asList();
 				
 				organizations.stream().forEach(instance -> {
 					System.out.println(new java.util.Date() + " " + instance.getName());
 					
-					JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getEncryptedToken())));
+					//JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getConnection().getRefreshToken())));
 					
-					System.out.println(tokenNode.toString());
-					
-					Organization organization = Organization.builder()
-							.from(Organization.of(instance))
-							.connectedAt(getCurrentDateTime())
-							.connectedStatus(Organization.CONNECTED)
-							.encryptedToken(Base64.getEncoder().encodeToString(tokenNode.toString().getBytes()))
-							.build();
-					
-					update(organization);
+					//System.out.println(tokenNode.toString());
 					
 					
 				});
-					
 			}
 		}, today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 	}
@@ -179,23 +169,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.from(instance)
 				.connection(Connection.builder()
-						.accessToken(request.getToken().getAccessToken())
-						.connectedAs(request.getIdentity().getUsername())
+						.accessToken(request.getAccessToken())
+						.connectedAs(request.getUsername())
 						.connectedAt(getCurrentDateTime())
-						.id(request.getToken().getId())
-						.instanceUrl(request.getToken().getInstanceUrl())
+						.id(request.getIdentityUrl())
+						.instanceUrl(request.getInstanceUrl())
 						.isConnected(Boolean.TRUE)
-						.issuedAt(request.getToken().getIssuedAt())
-						.refreshToken(request.getToken().getRefreshToken())
+						.issuedAt(request.getIssuedAt())
+						.refreshToken(request.getRefreshToken())
 						.status(Connection.CONNECTED)
-						.tokenType(request.getToken().getTokenType())
+						.tokenType(request.getTokenType())
 						.build())
-				.connectedAt(getCurrentDateTime())
-				.connectedUser(request.getConnectedUser())
-				.connectedStatus(Organization.CONNECTED)
 				.domain(request.getDomain())
-				.encryptedToken(request.getEncryptedToken())
-				.instanceUrl(request.getInstanceUrl())
 				.name(request.getName())
 				.build();
 		

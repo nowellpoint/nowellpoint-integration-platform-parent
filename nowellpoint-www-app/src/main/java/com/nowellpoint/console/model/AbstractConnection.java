@@ -35,7 +35,7 @@ public abstract class AbstractConnection {
 		return Boolean.FALSE;
 	}
 	
-	public Connection of(com.nowellpoint.console.entity.Connection entity) {
+	public static Connection of(com.nowellpoint.console.entity.Connection entity) {
 		return entity == null ? null : Connection.builder()
 				.id(entity.getId())
 				.accessToken(entity.getAccessToken())

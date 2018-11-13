@@ -1,7 +1,5 @@
 package com.nowellpoint.console.entity;
 
-import java.util.Date;
-
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity(value = "organizations")
@@ -14,16 +12,6 @@ public class Organization extends BaseEntity {
 	private String name;
 	
 	private String domain;
-
-	private String instanceUrl;
-
-	private String encryptedToken;
-
-	private String connectedUser;
-	
-	private Date connectedAt;
-	
-	private String connectedStatus;
 	
 	private Connection connection;
 	
@@ -59,46 +47,6 @@ public class Organization extends BaseEntity {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
-	}
-
-	public String getInstanceUrl() {
-		return instanceUrl;
-	}
-
-	public void setInstanceUrl(String instanceUrl) {
-		this.instanceUrl = instanceUrl;
-	}
-
-	public String getEncryptedToken() {
-		return encryptedToken;
-	}
-
-	public void setEncryptedToken(String encryptedToken) {
-		this.encryptedToken = encryptedToken;
-	}
-
-	public String getConnectedUser() {
-		return connectedUser;
-	}
-
-	public void setConnectedUser(String connectedUser) {
-		this.connectedUser = connectedUser;
-	}
-	
-	public Date getConnectedAt() {
-		return connectedAt;
-	}
-
-	public void setConnectedAt(Date connectedAt) {
-		this.connectedAt = connectedAt;
-	}
-
-	public String getConnectedStatus() {
-		return connectedStatus;
-	}
-
-	public void setConnectedStatus(String connectedStatus) {
-		this.connectedStatus = connectedStatus;
 	}
 
 	public Connection getConnection() {

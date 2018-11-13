@@ -127,8 +127,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.cometd.java</groupId>
-			<artifactId>cometd-java-websocket-jetty-client</artifactId>
+			<artifactId>cometd-java-client</artifactId>
 			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-secretsmanager</artifactId>
+			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.nowellpoint</groupId>
