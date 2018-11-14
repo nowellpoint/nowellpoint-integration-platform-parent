@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SecretsManager {
 	
 	public String getSecret(String secretName) {
-		AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard().build();
+		AWSSecretsManager client = AWSSecretsManagerClientBuilder.defaultClient();
 
-	    GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId("sandbox/console/mongo");
+	    GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId("sandbox/console");
 
 	    GetSecretValueResult getSecretValueResult = client.getSecretValue(getSecretValueRequest);
 	    
