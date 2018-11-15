@@ -56,6 +56,7 @@ import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.EnvironmentVariables;
+import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
@@ -68,10 +69,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	//private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
-			Environment.parseEnvironment(System.getenv("BRAINTREE_ENVIRONMENT")),
-			System.getenv("BRAINTREE_MERCHANT_ID"),
-			System.getenv("BRAINTREE_PUBLIC_KEY"),
-			System.getenv("BRAINTREE_PRIVATE_KEY")
+			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
+			SecretsManager.getBraintreeMerchantId(),
+			SecretsManager.getBraintreePublicKey(),
+			SecretsManager.getBraintreePrivateKey()
 	);
 	
 	static {
@@ -83,30 +84,30 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public OrganizationServiceImpl() {
 		dao = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
 
-		Calendar today = Calendar.getInstance();
-		today.set(Calendar.HOUR_OF_DAY, 2);
-		today.set(Calendar.MINUTE, 0);
-		today.set(Calendar.SECOND, 0);
-		
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			public void run() {
-				List<com.nowellpoint.console.entity.Organization> organizations = dao.createQuery()
-						.field("connection")
-						.notEqual(null)
-						.asList();
-				
-				organizations.stream().forEach(instance -> {
-					System.out.println(new java.util.Date() + " " + instance.getName());
-					
-					//JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getConnection().getRefreshToken())));
-					
-					//System.out.println(tokenNode.toString());
-					
-					
-				});
-			}
-		}, today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
+//		Calendar today = Calendar.getInstance();
+//		today.set(Calendar.HOUR_OF_DAY, 2);
+//		today.set(Calendar.MINUTE, 0);
+//		today.set(Calendar.SECOND, 0);
+//		
+//		Timer timer = new Timer();
+//		timer.schedule(new TimerTask() {
+//			public void run() {
+//				List<com.nowellpoint.console.entity.Organization> organizations = dao.createQuery()
+//						.field("connection")
+//						.notEqual(null)
+//						.asList();
+//				
+//				organizations.stream().forEach(instance -> {
+//					System.out.println(new java.util.Date() + " " + instance.getName());
+//					
+//					//JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getConnection().getRefreshToken())));
+//					
+//					//System.out.println(tokenNode.toString());
+//					
+//					
+//				});
+//			}
+//		}, today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 	}
 	
 	@Override
@@ -555,8 +556,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
                 .queryParameter("grant_type", "refresh_token")
-                .queryParameter("client_id", EnvironmentVariables.getSalesforceClientId())
-                .queryParameter("client_secret", EnvironmentVariables.getSalesforceClientSecret())
+                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
+                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
                 .execute();
 		
 		try {

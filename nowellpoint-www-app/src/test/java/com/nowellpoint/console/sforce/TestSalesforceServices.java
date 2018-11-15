@@ -23,19 +23,16 @@ import org.jboss.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.EnvironmentVariables;
+import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
@@ -50,18 +47,12 @@ public class TestSalesforceServices {
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
 	
-	private static Datastore datastore;
-	
 	private AtomicLong replayId = new AtomicLong();
 	private ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
 	
 	@BeforeClass
 	public static void start() {
-		MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
-		MongoClient mongoClient = new MongoClient(mongoClientUri);
-		Morphia morphia = new Morphia();
 		
-		datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
 	}
 	
 	@Test
@@ -81,8 +72,8 @@ public class TestSalesforceServices {
 				.accept(MediaType.APPLICATION_JSON)
                 .queryParameter("grant_type", "refresh_token")
                 .queryParameter("refresh_token", organization.getConnection().getRefreshToken())
-                .queryParameter("client_id", EnvironmentVariables.getSalesforceClientId())
-                .queryParameter("client_secret", EnvironmentVariables.getSalesforceClientSecret())
+                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
+                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
                 .execute();
 		
 		Token token = tokenResponse.getEntity(Token.class);
@@ -311,7 +302,7 @@ public class TestSalesforceServices {
 	
 	@AfterClass
 	public static void stop() {
-		datastore.getMongo().close();
+		
 	}
 	
 	private Long getReplayId(Message.Mutable message) {

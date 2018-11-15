@@ -2,16 +2,17 @@ package com.nowellpoint.console.view;
 
 import static spark.Spark.get;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.Path;
+import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -37,63 +38,61 @@ public class SalesforceOauthController extends BaseController {
 
         String organizationId = request.queryParams("state");
         String authorizationCode = request.queryParams("code");
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		try {
+        
+        try {
 
             HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
                     .queryParameter("grant_type", "authorization_code")
                     .queryParameter("code", authorizationCode)
-                    .queryParameter("client_id", EnvironmentVariables.getSalesforceClientId())
-                    .queryParameter("client_secret", EnvironmentVariables.getSalesforceClientSecret())
-                    .queryParameter("redirect_uri", EnvironmentVariables.getSalesforceCallbackUri())
+                    .queryParameter("client_id", SecretsManager.getSalesforceClientId())
+                    .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
+                    .queryParameter("redirect_uri", EnvironmentVariables.getSalesforceRedirectUri())
                     .execute();
             
-            //Token token = tokenResponse.getEntity(Token.)
-                    
-            JsonNode tokenNode = mapper.readTree(tokenResponse.getAsString());
+            Token token = tokenResponse.getEntity(Token.class);
 			
-			String accessToken = tokenNode.get("access_token").asText();
-			
-			HttpResponse identityResponse = RestResource.get(tokenNode.get("id").asText())
+			HttpResponse identityResponse = RestResource.get(token.getId())
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(accessToken)
+					.bearerAuthorization(token.getAccessToken())
 					.queryParameter("version", "latest")
 					.execute();
 			
-			JsonNode identityNode = mapper.readTree(identityResponse.getAsString());
+			Identity identity = identityResponse.getEntity(Identity.class);
 			
-			HttpResponse organizationResponse = RestResource.get(identityNode.get("urls").get("sobjects").asText())
+			HttpResponse organizationResponse = RestResource.get(identity.getUrls().getSobjects())
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(accessToken)
+					.bearerAuthorization(token.getAccessToken())
 	     			.path("Organization")
-	     			.path(identityNode.get("organization_id").asText())
+	     			.path(identity.getOrganizationId())
 	     			.queryParameter("fields", "Id,Name")
 	     			.queryParameter("version", "latest")
 	     			.execute();
 			
-			JsonNode organizationNode = mapper.readTree(organizationResponse.getAsString());
+			Organization organization = organizationResponse.getEntity(Organization.class);
 			
 			ConnectionRequest connectorRequest = ConnectionRequest.builder()
-					.connectedUser(identityNode.get("username").asText())
-					.domain(organizationNode.get("Id").asText())
-					.encryptedToken(Base64.getEncoder().encodeToString(tokenNode.toString().getBytes()))
-					.instanceUrl(tokenNode.get("instance_url").asText())
-					.name(organizationNode.get("Name").asText())
+					.accessToken(token.getAccessToken())
+					.domain(organization.getId())
+					.identityUrl(token.getId())
+					.instanceUrl(token.getInstanceUrl())
+					.issuedAt(token.getIssuedAt())
+					.name(organization.getName())
+					.refreshToken(token.getRefreshToken())
+					.tokenType(token.getTokenType())
+					.username(identity.getUsername())
 					.build();
 			
 			ServiceClient.getInstance().organization().update(
 					organizationId, 
 					connectorRequest);
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        } catch (HttpRequestException e) {
+        	e.printStackTrace();
+        }
 		
 		response.redirect(Path.Route.START);
 	   

@@ -36,7 +36,7 @@ import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
 import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
-import com.nowellpoint.console.util.EnvironmentVariables;
+import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.console.entity.Organization;
 
 import redis.clients.jedis.Jedis;
@@ -55,7 +55,7 @@ public abstract class AbstractService {
 	private static IvParameterSpec iv;
 	
 	static {
-		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", EnvironmentVariables.getMongoClientUri()));
+		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
 		MongoClient mongoClient = new MongoClient(mongoClientUri);
         
         final Morphia morphia = new Morphia();
@@ -107,14 +107,14 @@ public abstract class AbstractService {
 		
 		jedisPool = new JedisPool(
 				poolConfig, 
-				EnvironmentVariables.getRedisHost(), 
-				Integer.valueOf(EnvironmentVariables.getRedisPort()), 
+				SecretsManager.getRedisHost(), 
+				Integer.valueOf(SecretsManager.getRedisPort()), 
 				Protocol.DEFAULT_TIMEOUT, 
-				EnvironmentVariables.getRedisPassword());
+				SecretsManager.getRedisPassword());
 		
 		jedisPool.getResource().flushDB();
 		
-		String keyString = EnvironmentVariables.getRedisEncryptionKey();
+		String keyString = SecretsManager.getRedisEncryptionKey();
 		
 		try {
 			byte[] key = keyString.getBytes("UTF-8");

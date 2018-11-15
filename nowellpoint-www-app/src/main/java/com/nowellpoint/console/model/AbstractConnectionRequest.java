@@ -8,12 +8,6 @@ import org.immutables.value.Value;
 public abstract class AbstractConnectionRequest {
     public abstract String getName();
     public abstract String getDomain();
-    public abstract String getConnectedUser();
-    
-    public abstract String getEncryptedToken();
-    
-
-    
     public abstract String getAccessToken();
     public abstract String getUsername();
     public abstract String getInstanceUrl();
@@ -21,5 +15,4 @@ public abstract class AbstractConnectionRequest {
     public abstract String getIssuedAt();
     public abstract String getRefreshToken();
     public abstract String getTokenType();
-    
 }

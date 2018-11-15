@@ -11,6 +11,7 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.Path;
+import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.console.util.Templates;
 
 import spark.Request;
@@ -58,9 +59,9 @@ public class StartController extends BaseController {
 			String authUrl = new StringBuilder(EnvironmentVariables.getSalesforceAuthorizeUri())
 					.append("?response_type=code")
 					.append("&client_id=")
-					.append(EnvironmentVariables.getSalesforceClientId())
+					.append(SecretsManager.getSalesforceClientId())
 					.append("&redirect_uri=")
-					.append(EnvironmentVariables.getSalesforceCallbackUri())
+					.append(EnvironmentVariables.getSalesforceRedirectUri())
 					.append("&scope=")
 					.append(URLEncoder.encode("refresh_token api", "UTF-8"))
 					.append("&prompt=login")
