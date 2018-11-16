@@ -12,6 +12,7 @@ public class Templates {
 	public static final String SECURE_ACCOUNT = "secure.ftl";
 	public static final String CONNECT_USER = "connect-user.ftl";
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.ftl");
+	public static final String EVENT_LISTENERS = String.format(APPLICATION_CONTEXT, "organization-event-listeners.ftl");
 	public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard.html");
 	public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration.html");
 	public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.ftl");

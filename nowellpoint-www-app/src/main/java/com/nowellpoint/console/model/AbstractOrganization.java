@@ -1,5 +1,7 @@
 package com.nowellpoint.console.model;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,6 +21,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getName();
 	public abstract @Nullable Connection getConnection();
 	public abstract Subscription getSubscription();
+	public abstract Set<EventListener> getEventListeners();
 	
 	@Value.Default
 	public Meta getMeta() {
@@ -40,6 +43,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.number(entity.getNumber())
 				.connection(Connection.of(entity.getConnection()))
 				.subscription(Subscription.of(entity.getSubscription()))
+				.eventListeners(EventListeners.of(entity.getEventListeners()))
 				.build();
 	}
 }

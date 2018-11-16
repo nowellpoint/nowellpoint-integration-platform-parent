@@ -33,6 +33,9 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION, (request, response) 
 				-> viewOrganization(request, response));
 		
+		get(Path.Route.ORGANIZATION_EVENT_LISTENERS, (request, response) 
+				-> viewEventListeners(request, response));
+		
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 				-> listPlans(configuration, request, response));
 		
@@ -79,6 +82,32 @@ public class OrganizationController extends BaseController {
 		
 		return processTemplate(templateProcessRequest);
 	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String viewEventListeners(Request request, Response response) {
+		
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(getIdentity(request).getOrganization().getId());
+		
+		Map<String,Object> model = getModel();
+		model.put("organization", organization);
+		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER.replace(":id", organization.getId()));
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(OrganizationController.class)
+				.model(model)
+				.templateName(Templates.EVENT_LISTENERS)
+				.build();
+		
+		return processTemplate(templateProcessRequest);
+	};	
 	
 	/**
 	 * 
