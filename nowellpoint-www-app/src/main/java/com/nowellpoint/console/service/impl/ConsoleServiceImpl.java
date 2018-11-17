@@ -13,6 +13,7 @@ import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.oauth.OAuthClient;
 import com.nowellpoint.oauth.model.AuthenticationRequest;
 import com.nowellpoint.oauth.model.OktaOAuthProvider;
@@ -88,7 +89,11 @@ public class ConsoleServiceImpl implements ConsoleService {
 				.build();
 		
 		OAuthClient client = OAuthClient.builder()
-				.provider(OktaOAuthProvider.builder().build())
+				.provider(OktaOAuthProvider.builder()
+						.authorizationServer(SecretsManager.getOktaAuthorizationServer())
+						.clientId(SecretsManager.getOktaClientId())
+						.clientSecret(SecretsManager.getOktaClientSecret())
+						.build())
 				.build();
 		
 		TokenResponse response = client.authenticate(request);
