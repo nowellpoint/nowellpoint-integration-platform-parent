@@ -14,7 +14,6 @@ import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
-import com.nowellpoint.util.Properties;
 
 public class TestCreate {
 	
@@ -22,15 +21,15 @@ public class TestCreate {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		
 	}
 	
 	@Test
 	public void testCreateLead() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setClientId("")
+				.setClientSecret("")
 				.setUsername(System.getenv("SALESFORCE_USERNAME"))
 				.setPassword(System.getenv("SALESFORCE_PASSWORD"))
 				.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))

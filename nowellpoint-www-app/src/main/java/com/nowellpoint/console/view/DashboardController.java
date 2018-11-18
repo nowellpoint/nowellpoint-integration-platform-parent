@@ -24,8 +24,9 @@ public class DashboardController extends BaseController {
 	public static String showDashboard(Request request, Response response) {
 		
 		Dashboard dashboard = ServiceClient.getInstance()
-				.dashboard()
-				.get("593a08c5f1667d5ee654397d");
+				.organization()
+				.get(getIdentity(request).getOrganization().getId())
+				.getDashboard();
 		
 		Map<String, Object> model = getModel();
 		model.put("dashboard", dashboard);

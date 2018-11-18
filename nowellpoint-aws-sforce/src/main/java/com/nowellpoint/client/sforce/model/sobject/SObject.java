@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Sobject implements Serializable {
+public class SObject implements Serializable {
 
 	/**
 	 * 
@@ -57,7 +57,7 @@ public class Sobject implements Serializable {
 	
 	private Urls urls;
 
-	public Sobject() {
+	public SObject() {
 		
 	}
 

@@ -11,8 +11,8 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -138,16 +138,16 @@ public class Client {
 	 * 
 	 */
 	
-	public DescribeGlobalSobjectsResult describeGlobal(DescribeGlobalSobjectsRequest request) {
+	public DescribeGlobalResult describeGlobal(DescribeGlobalSobjectsRequest request) {
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl())
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
 		
-		DescribeGlobalSobjectsResult result = null;
+		DescribeGlobalResult result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			result = httpResponse.getEntity(DescribeGlobalSobjectsResult.class);
+			result = httpResponse.getEntity(DescribeGlobalResult.class);
 		} else {
 			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
@@ -164,17 +164,17 @@ public class Client {
 	 * 
 	 */
 	
-	public DescribeSobjectResult describeSobject(DescribeSobjectRequest request) {
+	public DescribeResult describeSobject(DescribeSobjectRequest request) {
 		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
 				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(request.getAccessToken())
 				.execute();
 		
-		DescribeSobjectResult result = null;
+		DescribeResult result = null;
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			result = httpResponse.getEntity(DescribeSobjectResult.class);
+			result = httpResponse.getEntity(DescribeResult.class);
 		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
 			return null;
 		} else {

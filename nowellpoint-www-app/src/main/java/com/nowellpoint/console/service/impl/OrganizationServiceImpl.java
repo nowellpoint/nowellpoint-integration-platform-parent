@@ -3,19 +3,13 @@ package com.nowellpoint.console.service.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Calendar;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
@@ -26,8 +20,6 @@ import org.bson.types.ObjectId;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -38,14 +30,16 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.Connection;
-import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.Dashboard;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -55,13 +49,8 @@ import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.console.util.UserContext;
-import com.nowellpoint.http.HttpRequestException;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
 import com.nowellpoint.util.Assert;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
@@ -143,8 +132,12 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.status(com.braintreegateway.Subscription.Status.ACTIVE.name())
 				.build();
 		
+		Dashboard dashboard = Dashboard.builder()
+				.build();
+		
 		Organization organization = Organization.builder()
 				.subscription(subscription)
+				.dashboard(dashboard)
 				.domain(request.getDomain())
 				.name(request.getName())
 				.number(customerResult.getTarget().getId())
@@ -154,12 +147,25 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public Organization update(String id, ConnectionRequest request) {
+	public Organization update(String id, String authorizationCode) {
+		Token token = ServiceClient.getInstance()
+        		.salesforce()
+        		.getToken(authorizationCode);
+		
+		return update(id, token);
+	}
+	
+	@Override
+	public Organization update(String id, Token token) {
 		
 		Organization instance = get(id);
 		
+		com.nowellpoint.client.sforce.model.Organization salesforceOrganization = ServiceClient.getInstance()
+				.salesforce()
+				.getOrganization(token);
+		
 		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
-				.company(request.getName());
+				.company(salesforceOrganization.getName());
 		
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
 		
@@ -169,20 +175,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.connection(Connection.builder()
-						.accessToken(request.getAccessToken())
-						.connectedAs(request.getUsername())
-						.connectedAt(getCurrentDateTime())
-						.id(request.getIdentityUrl())
-						.instanceUrl(request.getInstanceUrl())
-						.isConnected(Boolean.TRUE)
-						.issuedAt(request.getIssuedAt())
-						.refreshToken(request.getRefreshToken())
-						.status(Connection.CONNECTED)
-						.tokenType(request.getTokenType())
-						.build())
-				.domain(request.getDomain())
-				.name(request.getName())
+				.dashboard(buildDashboard(token))
+				.connection(buildConnection(token))
+				.domain(salesforceOrganization.getId())
+				.name(salesforceOrganization.getName())
 				.build();
 		
 		return update(organization);
@@ -551,23 +547,47 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return null;
 	}
 	
-	private JsonNode refreshToken(String refreshToken) {
-		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-                .queryParameter("grant_type", "refresh_token")
-                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
-                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
-                .execute();
+	private Connection buildConnection(Token token) {
 		
-		try {
-			JsonNode tokenNode = new ObjectMapper().readTree(tokenResponse.getAsString());
-			return tokenNode;
-		} catch (HttpRequestException | IOException e) {
-			e.printStackTrace();
-		}
-		 
-		return null;
+//		com.nowellpoint.client.sforce.model.Organization organization = ServiceClient.getInstance()
+//				.salesforce()
+//				.getOrganization(token);
+		
+		com.nowellpoint.client.sforce.model.Identity identity = ServiceClient.getInstance()
+				.salesforce()
+				.getIdentity(token);
+		
+		return Connection.builder()
+				.accessToken(token.getAccessToken())
+				.connectedAs(identity.getUsername())
+				.connectedAt(getCurrentDateTime())
+				.id(identity.getId())
+				.instanceUrl(token.getInstanceUrl())
+				.isConnected(Boolean.TRUE)
+				.issuedAt(token.getIssuedAt())
+				.refreshToken(token.getRefreshToken())
+				.status(Connection.CONNECTED)
+				.tokenType(token.getTokenType())
+				.build();
+	}
+	
+	private Dashboard buildDashboard(Token token) {
+		DescribeGlobalResult describeGlobalResult = ServiceClient.getInstance()
+				.salesforce()
+				.describeGlobal(token);
+		
+		AtomicInteger customObjectCount = new AtomicInteger(0);
+		
+		describeGlobalResult.getSobjects().stream().forEach(sobject -> {
+			if (sobject.getCustom()) {
+				customObjectCount.getAndIncrement();
+			}
+		});
+		
+		return Dashboard.builder()
+				.customObjectCount(customObjectCount.get())
+				.lastRefreshedOn(getCurrentDateTime())
+				.build();
 	}
 	
 	private Organization create(Organization organization) {

@@ -7,9 +7,8 @@ import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
 import com.nowellpoint.client.sforce.model.Theme;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
-import com.nowellpoint.util.Properties;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
 
 public class TestAutheticators {
 	
@@ -17,15 +16,15 @@ public class TestAutheticators {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		
 	}
 	
 	@Test
 	public void testUsernamePasswordAuthentication() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setClientId(System.getProperty(""))
+				.setClientSecret(System.getProperty(""))
 				.setUsername(System.getenv("SALESFORCE_USERNAME"))
 				.setPassword(System.getenv("SALESFORCE_PASSWORD"))
 				.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))
@@ -52,7 +51,7 @@ public class TestAutheticators {
 					.setAccessToken(response.getToken().getAccessToken())
 					.setSobjectsUrl(response.getIdentity().getUrls().getSobjects());
 			
-			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+			DescribeGlobalResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 			
 			assertNotNull(describeGlobalSobjectsResult.getSobjects());
 			
@@ -61,7 +60,7 @@ public class TestAutheticators {
 					.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
 					.withSobject(describeGlobalSobjectsResult.getSobjects().get(0).getName());
 			
-			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+			DescribeResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			
 			assertNotNull(describeSobjectResult.getName());
 

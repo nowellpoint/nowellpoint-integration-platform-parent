@@ -46,9 +46,9 @@ import com.nowellpoint.client.sforce.ThemeRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalSobjectsResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
-import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -121,14 +121,14 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	// DescribeGlobal
 	    	//
 			
-			DescribeGlobalSobjectsResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(token.getAccessToken(), identity.getUrls().getSobjects());
+			DescribeGlobalResult describeGlobalSobjectsResult = describeGlobalSobjectsRequest(token.getAccessToken(), identity.getUrls().getSobjects());
 
 			//
 			// Save result to S3 and add link to the job
 			//
 	    	
 	    	job.addJobOutput(saveJobOutput(
-	    			DescribeGlobalSobjectsResult.class.getSimpleName(), 
+	    			DescribeGlobalResult.class.getSimpleName(), 
 	    			context.getFireInstanceId(), 
 	    			identity.getOrganizationId(), 
 	    			describeGlobalSobjectsResult));
@@ -137,7 +137,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	    	// DescribeSobjectResult - build full description first run, capture changes for each subsequent run
 	    	//
 
-	    	List<DescribeSobjectResult> describeSobjectResults = describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, job.getFireTime());
+	    	List<DescribeResult> describeSobjectResults = describeSobjects(token.getAccessToken(), identity.getUrls().getSobjects(), describeGlobalSobjectsResult, job.getFireTime());
 	    	
 	    	//
 	    	// if describeSobjectResults is not empty then save to S3
@@ -150,7 +150,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 				//
 		    	
 		    	job.addJobOutput(saveJobOutput(
-		    			DescribeSobjectResult.class.getSimpleName(), 
+		    			DescribeResult.class.getSimpleName(), 
 		    			context.getFireInstanceId(), 
 		    			identity.getOrganizationId(), 
 		    			describeSobjectResults));
@@ -368,13 +368,13 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	 * 
 	 */
 	
-	private DescribeGlobalSobjectsResult describeGlobalSobjectsRequest(String accessToken, String sobjectsUrl) throws JsonProcessingException {
+	private DescribeGlobalResult describeGlobalSobjectsRequest(String accessToken, String sobjectsUrl) throws JsonProcessingException {
 
 		DescribeGlobalSobjectsRequest describeGlobalSobjectsRequest = new DescribeGlobalSobjectsRequest()
 				.setAccessToken(accessToken)
 				.setSobjectsUrl(sobjectsUrl);
 		
-		DescribeGlobalSobjectsResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
+		DescribeGlobalResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 		
 		return describeGlobalSobjectsResult;
 	}
@@ -394,21 +394,21 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 	 * 
 	 */
 	
-	private List<DescribeSobjectResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalSobjectsResult describeGlobalSobjectsResult, Date modifiedSince) throws InterruptedException, ExecutionException, JsonProcessingException {
-		List<DescribeSobjectResult> describeResults = new ArrayList<DescribeSobjectResult>();
-		List<Future<DescribeSobjectResult>> tasks = new ArrayList<Future<DescribeSobjectResult>>();
+	private List<DescribeResult> describeSobjects(String accessToken, String sobjectsUrl, DescribeGlobalResult describeGlobalSobjectsResult, Date modifiedSince) throws InterruptedException, ExecutionException, JsonProcessingException {
+		List<DescribeResult> describeResults = new ArrayList<DescribeResult>();
+		List<Future<DescribeResult>> tasks = new ArrayList<Future<DescribeResult>>();
 				
 		ExecutorService executor = Executors.newFixedThreadPool(describeGlobalSobjectsResult.getSobjects().size());
 		
-		for (Sobject sobject : describeGlobalSobjectsResult.getSobjects()) {
-			Future<DescribeSobjectResult> task = executor.submit(() -> {
+		for (SObject sobject : describeGlobalSobjectsResult.getSobjects()) {
+			Future<DescribeResult> task = executor.submit(() -> {
 				DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 						.withAccessToken(accessToken)
 						.withSobjectsUrl(sobjectsUrl)
 						.withSobject(sobject.getName())
 						.withIfModifiedSince(modifiedSince);
 
-				DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+				DescribeResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 
 				return describeSobjectResult;
 			});
@@ -419,7 +419,7 @@ public class SalesforceMetadataBackupJob extends AbstractCacheService implements
 		executor.shutdown();
 		executor.awaitTermination(30, TimeUnit.SECONDS);
 		
-		for (Future<DescribeSobjectResult> task : tasks) {
+		for (Future<DescribeResult> task : tasks) {
 			if (Assert.isNotNull(task.get())) {
 				describeResults.add(task.get());
 			}

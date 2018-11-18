@@ -1,27 +1,18 @@
 package com.nowellpoint.console.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-
-@Entity(value = "dashboards")
-public class Dashboard extends BaseEntity {
+public class Dashboard implements Serializable {
 	
 	private static final long serialVersionUID = -6196431095732154837L;
 
 	private Date lastRefreshedOn;
 	
+	private Integer customObjectCount;
+	
 	public Dashboard() {
 		
-	}
-	
-	public Dashboard(ObjectId id) {
-		super(id);
-	}
-	
-	public Dashboard(String id) {
-		super(id);
 	}
 
 	public Date getLastRefreshedOn() {
@@ -30,5 +21,13 @@ public class Dashboard extends BaseEntity {
 
 	public void setLastRefreshedOn(Date lastRefreshedOn) {
 		this.lastRefreshedOn = lastRefreshedOn;
+	}
+
+	public Integer getCustomObjectCount() {
+		return customObjectCount;
+	}
+
+	public void setCustomObjectCount(Integer customObjectCount) {
+		this.customObjectCount = customObjectCount;
 	}
 }

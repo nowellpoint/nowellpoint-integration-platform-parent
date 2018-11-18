@@ -20,6 +20,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getDomain();
 	public abstract String getName();
 	public abstract @Nullable Connection getConnection();
+	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
 	public abstract Set<EventListener> getEventListeners();
 	
@@ -42,6 +43,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.name(entity.getName())
 				.number(entity.getNumber())
 				.connection(Connection.of(entity.getConnection()))
+				.dashboard(Dashboard.of(entity.getDashboard()))
 				.subscription(Subscription.of(entity.getSubscription()))
 				.eventListeners(EventListeners.of(entity.getEventListeners()))
 				.build();

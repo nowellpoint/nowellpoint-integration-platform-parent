@@ -2,8 +2,8 @@ package com.nowellpoint.console.service;
 
 import java.io.IOException;
 
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.model.AddressRequest;
-import com.nowellpoint.console.model.ConnectionRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Organization;
@@ -17,7 +17,9 @@ public interface OrganizationService {
 	
 	public Organization create(OrganizationRequest request);
 	
-	public Organization update(String id, ConnectionRequest request);
+	public Organization update(String id, String authorizationCode);
+	
+	public Organization update(String id, Token token);
 	
 	public Organization update(String id, CreditCardRequest request);
 	

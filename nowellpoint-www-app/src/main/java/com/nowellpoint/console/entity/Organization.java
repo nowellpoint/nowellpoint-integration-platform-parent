@@ -17,6 +17,8 @@ public class Organization extends BaseEntity {
 	
 	private Connection connection;
 	
+	private Dashboard dashboard;
+	
 	private Subscription subscription;
 	
 	private Set<EventListener> eventListeners;
@@ -59,6 +61,14 @@ public class Organization extends BaseEntity {
 
 	public void setConnection(Connection connection) {
 		this.connection = connection;
+	}
+
+	public Dashboard getDashboard() {
+		return dashboard;
+	}
+
+	public void setDashboard(Dashboard dashboard) {
+		this.dashboard = dashboard;
 	}
 
 	public Subscription getSubscription() {

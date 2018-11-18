@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.cometd.bayeux.Channel;
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.EnvironmentVariables;
@@ -56,6 +58,37 @@ public class TestSalesforceServices {
 	}
 	
 	@Test
+	public void testDashboardComponents() {
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get("5bac3c0e0626b951816064f5");
+		
+		assertNotNull(organization.getName());
+		assertNotNull(organization.getNumber());
+		
+		logger.info(organization.getConnection().getRefreshToken());
+		
+		Token token = ServiceClient.getInstance()
+				.salesforce()
+				.refreshToken(organization.getConnection().getRefreshToken());
+		
+		DescribeGlobalResult describeGlobalResult = ServiceClient.getInstance()
+				.salesforce()
+				.describeGlobal(token);
+		
+		AtomicInteger customObjectCount = new AtomicInteger(0);
+		
+		describeGlobalResult.getSobjects().stream().forEach(sobject -> {
+			if (sobject.getCustom()) {
+				customObjectCount.getAndIncrement();
+			}
+		});
+		
+		logger.info(customObjectCount);
+		
+	}
+	
+	//@Test
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = ServiceClient.getInstance()

@@ -32,12 +32,11 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.OutboundEvent;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.client.sforce.model.sobject.DescribeSobjectResult;
+import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
 import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
-import com.nowellpoint.util.Properties;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -45,7 +44,7 @@ public class TestSObjectToCSV {
 	
 	@BeforeClass
 	public static void init() {
-		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
+		
 	}
 	
 	@Test
@@ -53,8 +52,8 @@ public class TestSObjectToCSV {
 	public void testCreateCSV() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(Properties.SALESFORCE_CLIENT_ID))
-				.setClientSecret(System.getProperty(Properties.SALESFORCE_CLIENT_SECRET))
+				.setClientId("")
+				.setClientSecret("")
 				.setUsername(System.getenv("SALESFORCE_USERNAME"))
 				.setPassword(System.getenv("SALESFORCE_PASSWORD"))
 				.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))
@@ -91,7 +90,7 @@ public class TestSObjectToCSV {
 					.withSobjectsUrl(identity.getUrls().getSobjects())
 					.withSobject(outboundEvent.getObject());
 			
-			DescribeSobjectResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+			DescribeResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			
 			String queryString = "Select %s From %s Where Id = '%s'";
 			queryString = String.format(queryString, describeSobjectResult

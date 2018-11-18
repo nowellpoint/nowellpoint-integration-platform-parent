@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DescribeGlobalSobjectsResult implements Serializable {
+public class DescribeGlobalResult implements Serializable {
 
 	/**
 	 * 
@@ -18,9 +18,9 @@ public class DescribeGlobalSobjectsResult implements Serializable {
 	
 	private Integer maxBatchSize;
 	
-	private List<Sobject> sobjects;
+	private List<SObject> sobjects;
 	
-	public DescribeGlobalSobjectsResult() {
+	public DescribeGlobalResult() {
 		
 	}
 	
@@ -40,11 +40,11 @@ public class DescribeGlobalSobjectsResult implements Serializable {
 		this.maxBatchSize = maxBatchSize;
 	}
 
-	public List<Sobject> getSobjects() {
+	public List<SObject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(List<Sobject> sobjects) {
+	public void setSobjects(List<SObject> sobjects) {
 		this.sobjects = sobjects;
 	}
 }

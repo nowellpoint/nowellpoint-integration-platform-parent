@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.client.sforce.model.Theme;
-import com.nowellpoint.client.sforce.model.sobject.Sobject;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 import com.nowellpoint.mongodb.document.DateDeserializer;
 import com.nowellpoint.mongodb.document.DateSerializer;
 
@@ -83,7 +83,7 @@ public class Instance implements Serializable {
 	
 	private String email;
 	
-	private Set<Sobject> sobjects;
+	private Set<SObject> sobjects;
 	
 	private Theme theme;
 	
@@ -257,11 +257,11 @@ public class Instance implements Serializable {
 		this.email = email;
 	}
 
-	public Set<Sobject> getSobjects() {
+	public Set<SObject> getSobjects() {
 		return sobjects;
 	}
 
-	public void setSobjects(Set<Sobject> sobjects) {
+	public void setSobjects(Set<SObject> sobjects) {
 		this.sobjects = sobjects;
 	}
 

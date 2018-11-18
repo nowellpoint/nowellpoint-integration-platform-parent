@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DescribeSobjectResult {
+public class DescribeResult {
 	
 	private String networkScopeFieldName;
 	
@@ -71,7 +71,7 @@ public class DescribeSobjectResult {
 	
 	private List<NamedLayoutInfo> namedLayoutInfos;
 	
-	public DescribeSobjectResult() {
+	public DescribeResult() {
 		
 	}
 	
