@@ -11,4 +11,12 @@ public class ConsoleException extends RuntimeException {
 	public ConsoleException(String message) {
 		super(message);
 	}
+	
+	public ConsoleException(Throwable cause) {
+		super(cause);
+	}
+	
+	public ConsoleException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

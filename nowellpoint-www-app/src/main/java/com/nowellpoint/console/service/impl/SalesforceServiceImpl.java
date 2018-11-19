@@ -6,6 +6,8 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
+import com.nowellpoint.console.exception.ServiceException;
+import com.nowellpoint.console.model.SalesforceApiError;
 import com.nowellpoint.console.service.SalesforceService;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
@@ -28,7 +30,15 @@ public class SalesforceServiceImpl implements SalesforceService {
                 .queryParameter("redirect_uri", EnvironmentVariables.getSalesforceRedirectUri())
                 .execute();
         
-        return response.getEntity(Token.class);
+		Token token = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			token = response.getEntity(Token.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return token;
 	}
 	
 	@Override
@@ -47,7 +57,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 		if (response.getStatusCode() == Status.OK) {
 			token = response.getEntity(Token.class);
 		} else {
-			
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
 		}
 		
 		return token;
@@ -55,14 +65,22 @@ public class SalesforceServiceImpl implements SalesforceService {
 	
 	@Override
 	public Identity getIdentity(Token token) {
-		HttpResponse identityResponse = RestResource.get(token.getId())
+		HttpResponse response = RestResource.get(token.getId())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
 				.queryParameter("version", "latest")
 				.execute();
 		
-		return identityResponse.getEntity(Identity.class);
+		Identity identity = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			identity = response.getEntity(Identity.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return identity;
 	}
 	
 	@Override
@@ -80,7 +98,15 @@ public class SalesforceServiceImpl implements SalesforceService {
      			.queryParameter("version", "latest")
      			.execute();
 		
-		return response.getEntity(Organization.class);
+		Organization organization = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			organization = response.getEntity(Organization.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return organization;
 	}
 	
 	@Override
@@ -94,6 +120,14 @@ public class SalesforceServiceImpl implements SalesforceService {
 				.bearerAuthorization(token.getAccessToken())
 				.execute();
 		
-		return response.getEntity(DescribeGlobalResult.class);
+		DescribeGlobalResult describeGlobalResult = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return describeGlobalResult;
 	}
 }
