@@ -1,6 +1,7 @@
+<hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["name"]}</span>
+        <span class="text-muted">${labels["name"]}</span>
     </div>
     <div class="col-9">
         ${organization.name}
@@ -9,7 +10,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["account.number"]}</span>
+        <span class="text-muted">${labels["account.number"]}</span>
     </div>
     <div class="col-9">
         ${organization.number}
@@ -18,7 +19,7 @@
 <hr> 
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["domain"]}</span>
+        <span class="text-muted">${labels["domain"]}</span>
     </div>
     <div class="col-9">
         ${organization.domain}
@@ -27,7 +28,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["created.on"]}</span>
+        <span class="text-muted">${labels["created.on"]}</span>
     </div>
     <div class="col-9">
         ${organization.createdOn?date?string.long} - ${organization.createdOn?time?string.medium}

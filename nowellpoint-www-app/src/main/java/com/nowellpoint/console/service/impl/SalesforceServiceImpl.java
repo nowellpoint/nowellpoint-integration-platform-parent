@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.UserLicenseQueryResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.SalesforceApiError;
@@ -94,7 +95,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 				.bearerAuthorization(token.getAccessToken())
      			.path("Organization")
      			.path(identity.getOrganizationId())
-     			.queryParameter("fields", "Id,Name")
+     			.queryParameter("fields", "Id,Name,Address")
      			.queryParameter("version", "latest")
      			.execute();
 		
@@ -129,5 +130,29 @@ public class SalesforceServiceImpl implements SalesforceService {
 		}
 		
 		return describeGlobalResult;
+	}
+	
+	@Override
+	public UserLicenseQueryResult getUserLicenses(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", "Select Id,Name,MasterLabel,LicenseDefinitionKey,Status,TotalLicenses,UsedLicenses From UserLicense")
+     			.execute();
+		
+		UserLicenseQueryResult userLicenses = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			userLicenses = response.getEntity(UserLicenseQueryResult.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return userLicenses;
+		
 	}
 }

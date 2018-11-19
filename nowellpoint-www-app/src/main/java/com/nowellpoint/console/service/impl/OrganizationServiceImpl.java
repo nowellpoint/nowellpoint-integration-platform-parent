@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.validation.ValidationException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
@@ -33,6 +32,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.Connection;
@@ -46,6 +46,7 @@ import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
+import com.nowellpoint.console.model.OrganizationSyncResponse;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -115,7 +116,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().create(customerRequest);
 		
 		if ( ! customerResult.isSuccess() ) {
-			throw new ValidationException(customerResult.getMessage());
+			throw new ServiceException(customerResult.getMessage());
 		}
 		
 		Subscription subscription = Subscription.builder()
@@ -160,25 +161,24 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization instance = get(id);
 		
-		com.nowellpoint.client.sforce.model.Organization salesforceOrganization = ServiceClient.getInstance()
-				.salesforce()
-				.getOrganization(token);
+		OrganizationSyncResponse organizationSyncResponse = syncOrganization(token);
 		
 		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
-				.company(salesforceOrganization.getName());
+				.company(organizationSyncResponse.getName());
 		
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
 		
 		if ( ! customerResult.isSuccess() ) {
-			throw new ValidationException(customerResult.getMessage());
+			throw new ServiceException(customerResult.getMessage());
 		}
 		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.dashboard(buildDashboard(token))
 				.connection(buildConnection(token))
-				.domain(salesforceOrganization.getId())
-				.name(salesforceOrganization.getName())
+				.domain(organizationSyncResponse.getDomain())
+				.name(organizationSyncResponse.getName())
+				.address(organizationSyncResponse.getAddress())
 				.build();
 		
 		return update(organization);
@@ -237,7 +237,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Result<com.braintreegateway.CreditCard> creditCardResult = gateway.creditCard().update(instance.getSubscription().getCreditCard().getToken(), creditCardRequest);
 		
 		if ( ! creditCardResult.isSuccess() ) {
-			throw new ValidationException(creditCardResult.getMessage());
+			throw new ServiceException(creditCardResult.getMessage());
 		}
 		
 		CreditCard creditCard = CreditCard.builder()
@@ -287,7 +287,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 		
 		if ( ! subscriptionResult.isSuccess() ) {
-			throw new ValidationException(subscriptionResult.getMessage());
+			throw new ServiceException(subscriptionResult.getMessage());
 		}
 		
 		Set<Transaction> transactions = new HashSet<>();
@@ -350,7 +350,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 		
 		if (! creditCardResult.isSuccess()) {
-			throw new ValidationException(creditCardResult.getMessage());
+			throw new ServiceException(creditCardResult.getMessage());
 		}
 		
 		com.braintreegateway.SubscriptionRequest subscriptionRequest = new com.braintreegateway.SubscriptionRequest()
@@ -371,7 +371,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 		
 		if ( ! subscriptionResult.isSuccess() ) {
-			throw new ValidationException(subscriptionResult.getMessage());
+			throw new ServiceException(subscriptionResult.getMessage());
 		}
 		
 		Transaction transaction = Transaction.of(subscriptionResult.getTransaction());
@@ -428,7 +428,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 		
 		if ( ! addressResult.isSuccess() ) {
-			throw new ValidationException(addressResult.getMessage());
+			throw new ServiceException(addressResult.getMessage());
 		}
 		
 		Address billingAddress = Address.builder()
@@ -470,7 +470,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
 		
 		if ( ! customerResult.isSuccess() ) {
-			throw new ValidationException(customerResult.getMessage());
+			throw new ServiceException(customerResult.getMessage());
 		}
 		
 		Subscription subscription = Subscription.builder()
@@ -547,11 +547,32 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return null;
 	}
 	
-	private Connection buildConnection(Token token) {
+	private OrganizationSyncResponse syncOrganization(Token token) {
 		
-//		com.nowellpoint.client.sforce.model.Organization organization = ServiceClient.getInstance()
-//				.salesforce()
-//				.getOrganization(token);
+		com.nowellpoint.client.sforce.model.Organization organization = ServiceClient.getInstance()
+				.salesforce()
+				.getOrganization(token);
+		
+		return OrganizationSyncResponse.builder()
+				.name(organization.getName())
+				.domain(organization.getId())
+				.address(Address.builder()
+						.addedOn(getCurrentDateTime())
+						.city(organization.getAddress().getCity())
+						.countryCode(organization.getAddress().getCountryCode())
+						.latitude(organization.getAddress().getLatitude())
+						.longitude(organization.getAddress().getLongitude())
+						.postalCode(organization.getAddress().getPostalCode())
+						.state(organization.getAddress().getState())
+						.stateCode(organization.getAddress().getStateCode())
+						.street(organization.getAddress().getStreet())
+						.updatedOn(getCurrentDateTime())
+						.build())
+				.build();
+		
+	}
+	
+	private Connection buildConnection(Token token) {
 		
 		com.nowellpoint.client.sforce.model.Identity identity = ServiceClient.getInstance()
 				.salesforce()

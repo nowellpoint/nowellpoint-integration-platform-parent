@@ -23,7 +23,7 @@ public abstract class AbstractAddress {
 	public abstract @Nullable String getStreet();
 	public abstract @Nullable String getCity();
 	public abstract @Nullable String getState();
-	//public abstract @Nullable String getStateCode();
+	public abstract @Nullable String getStateCode();
 	public abstract @Nullable String getPostalCode();
 	public abstract @Nullable String getLatitude();
 	public abstract @Nullable String getLongitude();

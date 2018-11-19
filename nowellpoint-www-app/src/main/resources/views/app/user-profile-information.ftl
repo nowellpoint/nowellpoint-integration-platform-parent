@@ -1,6 +1,7 @@
+<hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["name"]}</span>
+        <span class="text-muted">${labels["name"]}</span>
     </div>
     <div class="col-9">
         ${identity.name!}
@@ -9,7 +10,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["email"]}</span>
+        <span class="text-muted">${labels["email"]}</span>
     </div>
     <div class="col-9">
         ${identity.email!}
@@ -18,7 +19,7 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["locale.key"]}</span>
+        <span class="text-muted">${labels["locale.key"]}</span>
     </div>
     <div class="col-9">
         ${identity.localeDisplayName!}
@@ -27,9 +28,10 @@
 <hr>
 <div class="row">
     <div class="col-3">
-        <span class="grey-text">${labels["timezone"]}</span>
+        <span class="text-muted">${labels["timezone"]}</span>
     </div>
     <div class="col-9">
         ${identity.timeZone!}
     </div>
 </div>
+<hr>

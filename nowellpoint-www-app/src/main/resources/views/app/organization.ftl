@@ -1,18 +1,16 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="container-fluid m-3">
-            <div class="card border-light">
-                <div class="card-header pt-3 unique-color">
-                    <div class="row">
-                        <div class="col-6">
-                            <h4 class="text-white font-weight-bold">${labels["organization"]}</h4>
-                        </div>
-                        <div class="col-6 text-right">
-                            &nbsp;
-                        </div>
-                    </div>
+        <div class="container-fluid p-3">
+            <div class="dashhead">
+                <div class="dashhead-titles">
+                    <h6 class="dashhead-subtitle">${labels["organization"]}</h6>
+                    <h3 class="dashhead-title">${labels["details"]}</h3>
                 </div>
-                <div id="organization-information" class="card-body">
+            </div>
+            <#include "organization-information.ftl" />
+            <!--
+            <div class="card border-light">
+                <div id="organization-information" class="card-body text-secondary">
                     <#include "organization-information.ftl" />
                     <div class="card border-light">
                         <div class="card-header pt-3">
@@ -61,6 +59,7 @@
                     </div>
                 </div>
             </div>
+ -->
         </div>
 
     </@t.page>

@@ -2,6 +2,7 @@ package com.nowellpoint.console.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 public class Dashboard implements Serializable {
 	
@@ -10,6 +11,8 @@ public class Dashboard implements Serializable {
 	private Date lastRefreshedOn;
 	
 	private Integer customObjectCount;
+	
+	private Set<UserLicense> userLicenses;
 	
 	public Dashboard() {
 		
@@ -29,5 +32,13 @@ public class Dashboard implements Serializable {
 
 	public void setCustomObjectCount(Integer customObjectCount) {
 		this.customObjectCount = customObjectCount;
+	}
+
+	public Set<UserLicense> getUserLicenses() {
+		return userLicenses;
+	}
+
+	public void setUserLicenses(Set<UserLicense> userLicenses) {
+		this.userLicenses = userLicenses;
 	}
 }

@@ -56,6 +56,9 @@ public class Organization implements Serializable {
 	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
 	
+	@JsonProperty(value="Address")
+	private Address address;
+	
 	public Organization() {
 		
 	}
@@ -170,5 +173,13 @@ public class Organization implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 }

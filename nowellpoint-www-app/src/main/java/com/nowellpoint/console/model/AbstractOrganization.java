@@ -19,6 +19,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract String getNumber();
 	public abstract String getDomain();
 	public abstract String getName();
+	public abstract @Nullable Address getAddress();
 	public abstract @Nullable Connection getConnection();
 	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
@@ -42,6 +43,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.lastUpdatedOn(entity.getLastUpdatedOn())
 				.name(entity.getName())
 				.number(entity.getNumber())
+				.address(Address.of(entity.getAddress()))
 				.connection(Connection.of(entity.getConnection()))
 				.dashboard(Dashboard.of(entity.getDashboard()))
 				.subscription(Subscription.of(entity.getSubscription()))
