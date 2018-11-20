@@ -7,23 +7,23 @@
                         <h4>${labels['salesforce.information']}</h4>
                         <dl class="dl-horizontal">
                             <dt>${labels['organization.name']}</dt>
-                            <dd class="text-muted">${organization.name}</dd>
+                            <dd>${organization.name}</dd>
                             <dt>${labels['connected.user']}</dt>
-                            <dd class="text-muted">${organization.connection.connectedAs}</dd>
+                            <dd>${organization.connection.connectedAs}</dd>
                             <dt>${labels['connected.at']}</dt>
-                            <dd class="text-muted"><#if organization.connection.connectedAt??>${organization.connection.connectedAt?date?string.long} ${organization.connection.connectedAt?time?string.medium}<#else>&nbsp;</#if></dd>
+                            <dd><#if organization.connection.connectedAt??>${organization.connection.connectedAt?date?string.long} ${organization.connection.connectedAt?time?string.medium}<#else>&nbsp;</#if></dd>
                             <dt>${labels['instance.url']}</dt>
-                            <dd class="text-muted">${organization.connection.instanceUrl}</dd>
+                            <dd>${organization.connection.instanceUrl}</dd>
                         </dl>
                     </div>
-                    <div class="card-footer bg-transparent"><a href="${CHANGE_CONNECTED_USER_URI}"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['change.connected.user']}</a></div>
+                    <div class="card-footer bg-transparent"><a href="${CHANGE_CONNECTED_USER_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['change.connected.user']}</a></div>
                 </div>
                 <div class="card">
                     <div class="card-body">
                         <h4>${labels['event.listeners']}</h4>
-                        <span class="text-muted">${labels['configured.event.listeners']?replace(':size', organization.eventListeners?size)}</span>
+                        <span>${labels['configured.event.listeners']?replace(':size', organization.eventListeners?size)}</span>
                     </div>
-                    <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENT_LISTENERS_URI}"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
+                    <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENT_LISTENERS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
                 </div>
             </div>    
         </div>

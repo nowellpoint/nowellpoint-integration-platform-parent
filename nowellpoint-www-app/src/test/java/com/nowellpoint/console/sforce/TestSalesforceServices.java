@@ -30,7 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.client.sforce.model.UserLicenseQueryResult;
+import com.nowellpoint.client.sforce.model.UserLicense;
+import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
@@ -87,7 +88,7 @@ public class TestSalesforceServices {
 		
 		logger.info(customObjectCount);
 		
-		UserLicenseQueryResult licenses = ServiceClient.getInstance()
+		QueryResult<UserLicense> licenses = ServiceClient.getInstance()
 				.salesforce()
 				.getUserLicenses(token);
 		

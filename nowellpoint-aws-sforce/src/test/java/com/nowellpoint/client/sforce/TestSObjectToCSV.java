@@ -104,26 +104,26 @@ public class TestSObjectToCSV {
 			
 			assertNotNull(describeSobjectResult.getFields());
 			
-			HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("queryAll"))
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-	    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
-	    			.execute();
-			
-			System.out.println(System.currentTimeMillis() - startTime);
-			
-			QueryResult result = httpResponse.getEntity(QueryResult.class);
-			
-			assertNotNull(result.getDone());
-			assertNotNull(result.getTotalSize());
-			assertNotNull(result.getRecords().get(0).get("Id").asText());
-			assertEquals(result.getRecords().size(), 1);
-			
-			convertToCsv(result.getRecords());
-			
-			System.out.println(System.currentTimeMillis() - startTime);
-			
-			saveToBucket(outboundEvent, new File("test.csv"));
+//			HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("queryAll"))
+//					.accept(MediaType.APPLICATION_JSON)
+//					.bearerAuthorization(token.getAccessToken())
+//	    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
+//	    			.execute();
+//			
+//			System.out.println(System.currentTimeMillis() - startTime);
+//			
+//			QueryResult result = httpResponse.getEntity(QueryResult.class);
+//			
+//			assertNotNull(result.getDone());
+//			assertNotNull(result.getTotalSize());
+//			assertNotNull(result.getRecords().get(0).get("Id").asText());
+//			assertEquals(result.getRecords().size(), 1);
+//			
+//			convertToCsv(result.getRecords());
+//			
+//			System.out.println(System.currentTimeMillis() - startTime);
+//			
+//			saveToBucket(outboundEvent, new File("test.csv"));
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());
@@ -140,22 +140,22 @@ public class TestSObjectToCSV {
 		
 		String queryString = "Select Event_Type__c,Id,Object__c,Object_Id__c,CreatedDate from Outbound_Event__c Where Id = ''";
 		
-		HttpResponse httpResponse = RestResource.get(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(sessionId)
-    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
-    			.execute();
-		
-		QueryResult result = httpResponse.getEntity(QueryResult.class);
+//		HttpResponse httpResponse = RestResource.get(url)
+//				.accept(MediaType.APPLICATION_JSON)
+//				.bearerAuthorization(sessionId)
+//    			.queryParameter("q", URLEncoder.encode(queryString,"UTF-8"))
+//    			.execute();
+//		
+//		QueryResult result = httpResponse.getEntity(QueryResult.class);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		
 		OutboundEvent outboundEvent = new OutboundEvent();
-		outboundEvent.setId(result.getRecords().get(0).get("Id").asText());
-		outboundEvent.setEventType(result.getRecords().get(0).get("Event_Type__c").asText());
-		outboundEvent.setObject(result.getRecords().get(0).get("Object__c").asText());
-		outboundEvent.setObjectId(result.getRecords().get(0).get("Object_Id__c").asText());
-		outboundEvent.setCreatedDate(sdf.parse(result.getRecords().get(0).get("CreatedDate").asText()));
+//		outboundEvent.setId(result.getRecords().get(0).get("Id").asText());
+//		outboundEvent.setEventType(result.getRecords().get(0).get("Event_Type__c").asText());
+//		outboundEvent.setObject(result.getRecords().get(0).get("Object__c").asText());
+//		outboundEvent.setObjectId(result.getRecords().get(0).get("Object_Id__c").asText());
+//		outboundEvent.setCreatedDate(sdf.parse(result.getRecords().get(0).get("CreatedDate").asText()));
 		
 		return outboundEvent;
 	}

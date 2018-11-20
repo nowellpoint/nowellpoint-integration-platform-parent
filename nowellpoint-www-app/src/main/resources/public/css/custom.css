@@ -38,7 +38,7 @@ footer {
 }
 
 .navbar.navbar-default {
-    background-color: #99ccff;
+    background-color: transparent;
     border: 0;
     height: 74px;
     -webkit-box-shadow: none;
@@ -58,7 +58,6 @@ footer {
     right: 0;
     top: 0;
     margin-right: 0px; 
-    margin-top: 75px; 
 }
 
 /* The side navigation menu */
@@ -68,7 +67,6 @@ footer {
     position: absolute;
     top: 0;
     left: 0;
-    padding-top: 75px;
     border-right: 1px solid lightGray;
     overflow-x: hidden;
     background-color: rgba(220,220,220,0.3);

@@ -1,14 +1,14 @@
 package com.nowellpoint.client.sforce.model;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.List;
 
-public class QueryResult {
+public class QueryResult<T> {
 	
 	private Integer totalSize;
 	
 	private Boolean done;
 	
-	private ArrayNode records;
+	private List<T> records;
 	
 	public QueryResult() {
 		
@@ -30,11 +30,11 @@ public class QueryResult {
 		this.done = isDone;
 	}
 
-	public ArrayNode getRecords() {
+	public List<T> getRecords() {
 		return records;
 	}
 
-	public void setRecords(ArrayNode records) {
+	public void setRecords(List<T> records) {
 		this.records = records;
 	}
 }
