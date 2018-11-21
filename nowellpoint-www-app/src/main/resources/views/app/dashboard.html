@@ -1,14 +1,54 @@
 <#import "template.html" as t>
-
     <@t.page>
-        <div class="container-fluid p-3">
-            <div class="row">
+        <div class="container-fluid pt-3 pl-3 pr-3">
+            <div class="dashhead">
+                <div class="dashhead-titles">
+                    <h6 class="dashhead-subtitle">${organization.name}</h6>
+                    <h3 class="dashhead-title">${messages['dashboard']}</h3>
+                </div>
+            </div>
+        </div>  
+        <hr>
+        <div class="container p-3">
+            <div class="row mb-3">
                 <div class="col-xl-2 col-lg-3 col-md-4">
-                    <div class="statcard statcard-primary p-4 mb-2">
+                    <div class="statcard statcard-primary text-xs-center p-4 mb-2">
                         <span class="statcard-desc">${labels["custom.object.count"]}</span>
                         <h4 class="statcard-number"><b>${organization.dashboard.customObjectCount}</b></h4>
                     </div>
                 </div>
+                <div class="col-xl-2 col-lg-3 col-md-4">
+                    <div class="statcard statcard-primary text-xs-center p-4 mb-2">
+                        <span class="statcard-desc">${labels["apex.classes"]}</span>
+                        <h4 class="statcard-number"><b>${organization.dashboard.apexClasses}</b></h4>
+                    </div>
+                </div>    
+            </div>
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>${labels['name']}</th>
+                            <th class="text-right">${labels['total.licenses']}</th>
+                            <th class="text-right">${labels['used.licenses']}</th>
+                            <th class="text-right">${labels['available.licenses']}</th>
+                            <th class="text-right">${labels['percent.available']}</th>
+                            <th class="pl-2">${labels['status']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#list organization.dashboard.userLicenses?sort_by("name") as license>
+                            <tr>
+                                <td>${license.name}</td>
+                                <td class="text-right">${license.totalLicenses}</td>
+                                <td class="text-right">${license.usedLicenses}</td>
+                                <td class="text-right">${license.availableLicenses}</td>
+                                <td class="text-right">${license.percentAvailable}</td>
+                                <td class="pl-2">${license.status}</td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>    
             </div>
         </div>
     </@t.page>

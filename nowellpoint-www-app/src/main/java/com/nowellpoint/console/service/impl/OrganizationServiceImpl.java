@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -46,6 +47,7 @@ import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
+import com.nowellpoint.console.model.UserLicense;
 import com.nowellpoint.console.model.OrganizationSyncResponse;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
@@ -605,9 +607,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			}
 		});
 		
+		Set<com.nowellpoint.client.sforce.model.UserLicense> userLicenses = ServiceClient.getInstance()
+				.salesforce()
+				.getUserLicenses(token);
+		
 		return Dashboard.builder()
 				.customObjectCount(customObjectCount.get())
 				.lastRefreshedOn(getCurrentDateTime())
+				.userLicenses(userLicenses.stream()
+						.map(f -> {
+							return UserLicense.of(f);
+						})
+						.collect(Collectors.toSet()))
 				.build();
 	}
 	

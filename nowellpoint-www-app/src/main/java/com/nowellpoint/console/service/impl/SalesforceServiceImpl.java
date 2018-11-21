@@ -1,6 +1,8 @@
 package com.nowellpoint.console.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
@@ -133,9 +135,8 @@ public class SalesforceServiceImpl implements SalesforceService {
 		return describeGlobalResult;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public QueryResult<UserLicense> getUserLicenses(Token token) {
+	public Set<UserLicense> getUserLicenses(Token token) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -146,10 +147,11 @@ public class SalesforceServiceImpl implements SalesforceService {
      			.queryParameter("q", "Select Id,Name,MasterLabel,LicenseDefinitionKey,Status,TotalLicenses,UsedLicenses From UserLicense")
      			.execute();
 		
-		QueryResult<UserLicense> userLicenses = null;
+		Set<UserLicense> userLicenses = Collections.emptySet();
 		
 		if (response.getStatusCode() == Status.OK) {
-			userLicenses = response.getEntity(QueryResult.class);
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			userLicenses = queryResult.getRecords(UserLicense.class);
 		} else {
 			throw new ServiceException(response.getEntity(SalesforceApiError.class));
 		}

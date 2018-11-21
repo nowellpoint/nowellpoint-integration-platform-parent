@@ -1,14 +1,20 @@
 package com.nowellpoint.client.sforce.model;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class QueryResult<T> {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class QueryResult {
 	
 	private Integer totalSize;
 	
 	private Boolean done;
 	
-	private List<T> records;
+	private JsonNode[] records;
 	
 	public QueryResult() {
 		
@@ -30,11 +36,25 @@ public class QueryResult<T> {
 		this.done = isDone;
 	}
 
-	public List<T> getRecords() {
+	public JsonNode[] getRecords() {
 		return records;
 	}
 
-	public void setRecords(List<T> records) {
+	public void setRecords(JsonNode[] records) {
 		this.records = records;
+	}
+	
+	public <T> Set<T> getRecords(Class<T> valueType) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		return Arrays.asList(records).stream()
+				.map(r -> {
+					try {
+						return objectMapper.readValue(r.toString(), valueType);
+					} catch (IOException e) {
+						e.printStackTrace();
+						return null;
+					}
+		})
+		.collect(Collectors.toSet());
 	}
 }

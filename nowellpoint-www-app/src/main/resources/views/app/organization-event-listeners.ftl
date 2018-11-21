@@ -58,7 +58,7 @@
                             <#else>
                                 <#list organization.eventListeners as listener>
                                     <tr>
-                                        <th scope="row">${listener.id}</th>
+                                        <td>${listener.id}</td>
                                         <td>${listener.name}</td>
                                         <td>
                                             <#if listener.enabled>

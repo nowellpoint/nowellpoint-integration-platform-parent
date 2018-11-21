@@ -1,7 +1,14 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="container-fluid">  
-            <div class="card-columns pt-3 m-2">     
+        <div class="container-fluid p-3">  
+            <div class="dashhead mb-3">
+                <div class="dashhead-titles">
+                    <h6 class="dashhead-subtitle">${organization.name}</h6>
+                    <h3 class="dashhead-title">${messages['start']}</h3>
+                </div>
+            </div>
+            <hr>
+            <div class="card-columns">     
                 <div class="card">
                     <div class="card-body">
                         <h4>${labels['salesforce.information']}</h4>

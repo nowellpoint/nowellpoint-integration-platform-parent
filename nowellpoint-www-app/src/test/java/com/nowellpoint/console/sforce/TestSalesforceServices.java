@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,6 @@ import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
-import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
@@ -88,13 +88,13 @@ public class TestSalesforceServices {
 		
 		logger.info(customObjectCount);
 		
-		QueryResult<UserLicense> licenses = ServiceClient.getInstance()
+		Set<UserLicense> licenses = ServiceClient.getInstance()
 				.salesforce()
 				.getUserLicenses(token);
 		
-		logger.info(licenses.getDone());
-		logger.info(licenses.getTotalSize());
-		logger.info(licenses.getRecords().size());
+		logger.info(licenses.size());
+		
+		licenses.stream().forEach(l -> logger.info(l.getName()));
 		
 	}
 	
