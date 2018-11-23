@@ -13,6 +13,17 @@ public class ApexClass {
 	@JsonProperty("Body")
 	private String body;
 	
+	@JsonProperty("IsValid")
+	private Boolean isValid;
+	
+	@JsonProperty("ApiVersion")
+	private Double apiVersion;
+	
+	@JsonProperty("Name")
+	private String name;
+	
+	//BodyCrc, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate, LengthWithoutComments, Name, NamespacePrefix, Status, SystemModstamp
+	
 	public ApexClass() {
 		
 	}
@@ -27,5 +38,25 @@ public class ApexClass {
 
 	public String getBody() {
 		return body;
+	}
+
+	public Boolean getIsValid() {
+		return isValid;
+	}
+
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

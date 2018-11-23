@@ -28,12 +28,13 @@ public abstract class AbstractDashboard {
 	}
 	
 	@Value.Default
-	public Integer getApexClasses() {
+	public Integer getApexClassCount() {
 		return 0;
 	}
 	
 	public static Dashboard of(com.nowellpoint.console.entity.Dashboard entity) {
 		return entity == null ? null : Dashboard.builder()
+				.apexClassCount(entity.getApexClassCount())
 				.customObjectCount(entity.getCustomObjectCount())
 				.userLicenses(UserLicenses.of(entity.getUserLicenses()))
 				.lastRefreshedOn(entity.getLastRefreshedOn())

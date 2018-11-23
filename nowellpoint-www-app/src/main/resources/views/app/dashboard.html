@@ -1,54 +1,90 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="container-fluid pt-3 pl-3 pr-3">
+        <div class="container-fluid pt-3 pl-3 pr-3 border-bottom">
             <div class="dashhead">
                 <div class="dashhead-titles">
                     <h6 class="dashhead-subtitle">${organization.name}</h6>
                     <h3 class="dashhead-title">${messages['dashboard']}</h3>
                 </div>
-            </div>
-        </div>  
-        <hr>
-        <div class="container p-3">
-            <div class="row mb-3">
-                <div class="col-xl-2 col-lg-3 col-md-4">
-                    <div class="statcard statcard-primary text-xs-center p-4 mb-2">
-                        <span class="statcard-desc">${labels["custom.object.count"]}</span>
-                        <h4 class="statcard-number"><b>${organization.dashboard.customObjectCount}</b></h4>
+                <div class="dashhead-toolbar">
+                    <div class="dashhead-toolbar-item">
+                        ${organization.dashboard.lastRefreshedOn?date?string.long} - ${organization.dashboard.lastRefreshedOn?time?string.medium}
                     </div>
                 </div>
-                <div class="col-xl-2 col-lg-3 col-md-4">
-                    <div class="statcard statcard-primary text-xs-center p-4 mb-2">
-                        <span class="statcard-desc">${labels["apex.classes"]}</span>
-                        <h4 class="statcard-number"><b>${organization.dashboard.apexClasses}</b></h4>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div class="row mb-5">
+                <div class="card-deck">
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.customObjectCount}</b></h4>
+                            <span class="statcard-desc">${labels["custom.object.count"]}</span>
+                        </div>
                     </div>
-                </div>    
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
+                            <span class="statcard-desc">${labels["apex.classes"]}</span>
+                        </div>
+                    </div>
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
+                            <span class="statcard-desc">Page Layouts</span>
+                        </div>
+                    </div>
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
+                            <span class="statcard-desc">Record Types</span>
+                        </div>
+                    </div>
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
+                            <span class="statcard-desc">${labels["apex.classes"]}</span>
+                        </div>
+                    </div>
+                    <div class="card border-primary">
+                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
+                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
+                            <span class="statcard-desc">${labels["apex.classes"]}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>${labels['name']}</th>
-                            <th class="text-right">${labels['total.licenses']}</th>
-                            <th class="text-right">${labels['used.licenses']}</th>
-                            <th class="text-right">${labels['available.licenses']}</th>
-                            <th class="text-right">${labels['percent.available']}</th>
-                            <th class="pl-2">${labels['status']}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <#list organization.dashboard.userLicenses?sort_by("name") as license>
-                            <tr>
-                                <td>${license.name}</td>
-                                <td class="text-right">${license.totalLicenses}</td>
-                                <td class="text-right">${license.usedLicenses}</td>
-                                <td class="text-right">${license.availableLicenses}</td>
-                                <td class="text-right">${license.percentAvailable}</td>
-                                <td class="pl-2">${license.status}</td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </table>    
+            <div class="row mb-5">
+                    <div class="card w-50">
+                        <div class="card-body">
+                            <h5 class="card-title">${labels['user.licenses']}</h5>
+                            <table class="table table-sm">
+                            <tbody>
+                                <caption>${labels['active.licenses']}</caption>
+                                <#list organization.dashboard.userLicenses?sort_by("name") as license>
+                                    <#if license.status=="Active">
+                                        <tr class="d-flex">
+                                            <td class="col-6">${license.name}</td>
+                                            <td class="col-4">
+                                                <#if license.percentAvailable lt 6>
+                                                    <div class="p2 bg-danger text-white text-center border border-danger rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
+                                                    <#elseif license.percentAvailable gt 10>
+                                                        <div class="p2 bg-success text-white text-center border border-success rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
+                                                        <#else>
+                                                            <div class="p2 bg-warning text-white text-center border border-warning rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
+                                                </#if>
+                                            </td>
+                                            <td class="col-2 text-right">${license.percentAvailable}%</td>
+                                        </tr>
+                                    </#if>
+                                </#list>
+                            </tbody>
+                        </table>
+                        </div>
+
+                    </div>
+
             </div>
+        </div>
         </div>
     </@t.page>

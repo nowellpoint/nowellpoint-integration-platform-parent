@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Set;
 
+import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
@@ -138,13 +139,26 @@ public class SalesforceServiceImpl implements SalesforceService {
 	@Override
 	public Set<UserLicense> getUserLicenses(Token token) {
 		
+		String query = "Select "
+				+ "CreatedDate, "
+				+ "Id, "
+				+ "LastModifiedDate, "
+				+ "LicenseDefinitionKey, "
+				+ "MasterLabel, "
+				+ "Name, "
+				+ "Status, "
+				+ "TotalLicenses, "
+				+ "UsedLicenses, "
+				+ "UsedLicensesLastUpdated "
+				+ "From UserLicense";
+		
 		Identity identity = getIdentity(token);
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
-     			.queryParameter("q", "Select Id,Name,MasterLabel,LicenseDefinitionKey,Status,TotalLicenses,UsedLicenses From UserLicense")
+     			.queryParameter("q", query)
      			.execute();
 		
 		Set<UserLicense> userLicenses = Collections.emptySet();
@@ -158,5 +172,44 @@ public class SalesforceServiceImpl implements SalesforceService {
 		
 		return userLicenses;
 		
+	}
+	
+	@Override
+	public Set<ApexClass> getApexClasses(Token token) {
+		
+		String query = "Select "
+				+ "ApiVersion, "
+				+ "Body, "
+				+ "BodyCrc, "
+				+ "CreatedById, "
+				+ "CreatedDate, "
+				+ "Id, "
+				+ "IsValid, "
+				+ "LastModifiedById, "
+				+ "LastModifiedDate, "
+				+ "LengthWithoutComments, "
+				+ "Name, NamespacePrefix, "
+				+ "Status "
+				+ "From ApexClass";
+	
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", query)
+     			.execute();
+		
+		Set<ApexClass> apexClasses = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			apexClasses = queryResult.getRecords(ApexClass.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return apexClasses;
 	}
 }

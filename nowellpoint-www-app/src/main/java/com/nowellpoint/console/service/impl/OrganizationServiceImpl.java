@@ -30,6 +30,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
@@ -595,11 +596,16 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	private Dashboard buildDashboard(Token token) {
+		
+		/**
+		 * custom objects
+		 */
+		
+		AtomicInteger customObjectCount = new AtomicInteger(0);
+		
 		DescribeGlobalResult describeGlobalResult = ServiceClient.getInstance()
 				.salesforce()
 				.describeGlobal(token);
-		
-		AtomicInteger customObjectCount = new AtomicInteger(0);
 		
 		describeGlobalResult.getSobjects().stream().forEach(sobject -> {
 			if (sobject.getCustom()) {
@@ -607,11 +613,31 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			}
 		});
 		
+		//describeGlobalResult.getSobjects().stream().filter(s -> s.getCustom()).count();
+		
+		/**
+		 * apexClasses
+		 */
+		
+		Set<ApexClass> classes = ServiceClient.getInstance()
+				.salesforce()
+				.getApexClasses(token);
+		
+		
+		/**
+		 * user licenses
+		 */
+		
 		Set<com.nowellpoint.client.sforce.model.UserLicense> userLicenses = ServiceClient.getInstance()
 				.salesforce()
 				.getUserLicenses(token);
 		
+		/**
+		 * build dashboard
+		 */
+		
 		return Dashboard.builder()
+				.apexClassCount(classes.size())
 				.customObjectCount(customObjectCount.get())
 				.lastRefreshedOn(getCurrentDateTime())
 				.userLicenses(userLicenses.stream()

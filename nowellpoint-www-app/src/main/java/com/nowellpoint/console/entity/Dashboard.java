@@ -12,6 +12,8 @@ public class Dashboard implements Serializable {
 	
 	private Integer customObjectCount;
 	
+	private Integer apexClassCount;
+	
 	private Set<UserLicense> userLicenses;
 	
 	public Dashboard() {
@@ -32,6 +34,14 @@ public class Dashboard implements Serializable {
 
 	public void setCustomObjectCount(Integer customObjectCount) {
 		this.customObjectCount = customObjectCount;
+	}
+
+	public Integer getApexClassCount() {
+		return apexClassCount;
+	}
+
+	public void setApexClassCount(Integer apexClassCount) {
+		this.apexClassCount = apexClassCount;
 	}
 
 	public Set<UserLicense> getUserLicenses() {

@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.sforce.CreateResult;
+import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
@@ -94,7 +95,11 @@ public class TestSalesforceServices {
 		
 		logger.info(licenses.size());
 		
-		licenses.stream().forEach(l -> logger.info(l.getName()));
+		Set<ApexClass> classes = ServiceClient.getInstance()
+				.salesforce()
+				.getApexClasses(token);
+		
+		logger.info(classes.size());
 		
 	}
 	
