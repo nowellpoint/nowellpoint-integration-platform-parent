@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.ApexClass;
+import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
@@ -100,6 +101,12 @@ public class TestSalesforceServices {
 				.getApexClasses(token);
 		
 		logger.info(classes.size());
+		
+		Set<ApexTrigger> triggers = ServiceClient.getInstance()
+				.salesforce()
+				.getApexTriggers(token);
+		
+		logger.info(triggers.size());
 		
 	}
 	

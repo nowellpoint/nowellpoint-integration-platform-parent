@@ -3,6 +3,7 @@ package com.nowellpoint.console.service;
 import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.ApexClass;
+import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
@@ -17,4 +18,5 @@ public interface SalesforceService {
 	public DescribeGlobalResult describeGlobal(Token token);
 	public Set<UserLicense> getUserLicenses(Token token);
 	public Set<ApexClass> getApexClasses(Token token);
+	public Set<ApexTrigger> getApexTriggers(Token token);
 }

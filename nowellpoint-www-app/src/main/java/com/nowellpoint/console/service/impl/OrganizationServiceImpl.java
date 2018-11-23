@@ -31,6 +31,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.client.sforce.model.ApexClass;
+import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
@@ -624,6 +625,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.getApexClasses(token);
 		
 		
+		Set<ApexTrigger> triggers = ServiceClient.getInstance()
+				.salesforce()
+				.getApexTriggers(token);
+		
+		
 		/**
 		 * user licenses
 		 */
@@ -638,6 +644,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return Dashboard.builder()
 				.apexClassCount(classes.size())
+				.apexTriggerCount(triggers.size())
 				.customObjectCount(customObjectCount.get())
 				.lastRefreshedOn(getCurrentDateTime())
 				.userLicenses(userLicenses.stream()

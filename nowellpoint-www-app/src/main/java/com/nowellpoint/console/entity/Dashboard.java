@@ -14,6 +14,8 @@ public class Dashboard implements Serializable {
 	
 	private Integer apexClassCount;
 	
+	private Integer apexTriggerCount;
+	
 	private Set<UserLicense> userLicenses;
 	
 	public Dashboard() {
@@ -42,6 +44,14 @@ public class Dashboard implements Serializable {
 
 	public void setApexClassCount(Integer apexClassCount) {
 		this.apexClassCount = apexClassCount;
+	}
+
+	public Integer getApexTriggerCount() {
+		return apexTriggerCount;
+	}
+
+	public void setApexTriggerCount(Integer apexTriggerCount) {
+		this.apexTriggerCount = apexTriggerCount;
 	}
 
 	public Set<UserLicense> getUserLicenses() {
