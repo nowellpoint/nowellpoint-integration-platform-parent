@@ -11,6 +11,7 @@ import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.QueryResult;
+import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.SalesforceApiError;
@@ -177,21 +178,6 @@ public class SalesforceServiceImpl implements SalesforceService {
 	
 	@Override
 	public Set<ApexClass> getApexClasses(Token token) {
-		
-		String query = "Select "
-				+ "ApiVersion, "
-				+ "Body, "
-				+ "BodyCrc, "
-				+ "CreatedById, "
-				+ "CreatedDate, "
-				+ "Id, "
-				+ "IsValid, "
-				+ "LastModifiedById, "
-				+ "LastModifiedDate, "
-				+ "LengthWithoutComments, "
-				+ "Name, NamespacePrefix, "
-				+ "Status "
-				+ "From ApexClass";
 	
 		Identity identity = getIdentity(token);
 		
@@ -199,7 +185,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
-     			.queryParameter("q", query)
+     			.queryParameter("q", ApexClass.QUERY)
      			.execute();
 		
 		Set<ApexClass> apexClasses = Collections.emptySet();
@@ -217,38 +203,13 @@ public class SalesforceServiceImpl implements SalesforceService {
 	@Override
 	public Set<ApexTrigger> getApexTriggers(Token token) {
 		
-		String query = "Select "
-				+ "ApiVersion, "
-				+ "Body, "
-				+ "BodyCrc, "
-				+ "CreatedById, "
-				+ "CreatedDate, "
-				+ "Id, "
-				+ "IsValid, "
-				+ "LastModifiedById, "
-				+ "LastModifiedDate, "
-				+ "LengthWithoutComments, "
-				+ "Name, "
-				+ "NamespacePrefix, "
-				+ "Status, "
-				+ "TableEnumOrId, "
-				+ "UsageAfterDelete, "
-				+ "UsageAfterInsert, "
-				+ "UsageAfterUndelete, "
-				+ "UsageAfterUpdate, "
-				+ "UsageBeforeDelete, "
-				+ "UsageBeforeInsert, "
-				+ "UsageBeforeUpdate, "
-				+ "UsageIsBulk "
-				+ "From ApexTrigger";
-		
 		Identity identity = getIdentity(token);
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
-     			.queryParameter("q", query)
+     			.queryParameter("q", ApexTrigger.QUERY)
      			.execute();
 		
 		Set<ApexTrigger> apexTriggers = Collections.emptySet();
@@ -261,5 +222,29 @@ public class SalesforceServiceImpl implements SalesforceService {
 		}
 		
 		return apexTriggers;
+	}
+	
+	@Override
+	public Set<RecordType> getRecordTypes(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", RecordType.QUERY)
+     			.execute();
+		
+		Set<RecordType> recordTypes = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			recordTypes = queryResult.getRecords(RecordType.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return recordTypes;
 	}
 }

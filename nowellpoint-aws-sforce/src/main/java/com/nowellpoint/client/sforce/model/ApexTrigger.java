@@ -4,11 +4,32 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApexTrigger {
-	private Attributes attributes;
+public class ApexTrigger extends SObject {
 	
-	@JsonProperty("Id")
-	private String id;
+	public static final String QUERY = "Select "
+			+ "ApiVersion, "
+			+ "Body, "
+			+ "BodyCrc, "
+			+ "CreatedById, "
+			+ "CreatedDate, "
+			+ "Id, "
+			+ "IsValid, "
+			+ "LastModifiedById, "
+			+ "LastModifiedDate, "
+			+ "LengthWithoutComments, "
+			+ "Name, "
+			+ "NamespacePrefix, "
+			+ "Status, "
+			+ "TableEnumOrId, "
+			+ "UsageAfterDelete, "
+			+ "UsageAfterInsert, "
+			+ "UsageAfterUndelete, "
+			+ "UsageAfterUpdate, "
+			+ "UsageBeforeDelete, "
+			+ "UsageBeforeInsert, "
+			+ "UsageBeforeUpdate, "
+			+ "UsageIsBulk "
+			+ "From ApexTrigger";
 	
 	@JsonProperty("Body")
 	private String body;
@@ -22,18 +43,8 @@ public class ApexTrigger {
 	@JsonProperty("Name")
 	private String name;
 	
-	//BodyCrc, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate, LengthWithoutComments, Name, NamespacePrefix, Status, SystemModstamp
-	
 	public ApexTrigger() {
 		
-	}
-
-	public Attributes getAttributes() {
-		return attributes;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public String getBody() {
@@ -44,19 +55,7 @@ public class ApexTrigger {
 		return isValid;
 	}
 
-	public void setIsValid(Boolean isValid) {
-		this.isValid = isValid;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }

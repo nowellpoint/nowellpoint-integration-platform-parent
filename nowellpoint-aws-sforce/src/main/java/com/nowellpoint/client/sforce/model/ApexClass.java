@@ -4,11 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApexClass {
-	private Attributes attributes;
+public class ApexClass extends SObject {
 	
-	@JsonProperty("Id")
-	private String id;
+	public static final String QUERY = "Select "
+			+ "ApiVersion, "
+			+ "Body, "
+			+ "BodyCrc, "
+			+ "CreatedById, "
+			+ "CreatedDate, "
+			+ "Id, "
+			+ "IsValid, "
+			+ "LastModifiedById, "
+			+ "LastModifiedDate, "
+			+ "LengthWithoutComments, "
+			+ "Name, NamespacePrefix, "
+			+ "Status "
+			+ "From ApexClass";
 	
 	@JsonProperty("Body")
 	private String body;
@@ -22,18 +33,8 @@ public class ApexClass {
 	@JsonProperty("Name")
 	private String name;
 	
-	//BodyCrc, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate, LengthWithoutComments, Name, NamespacePrefix, Status, SystemModstamp
-	
 	public ApexClass() {
 		
-	}
-
-	public Attributes getAttributes() {
-		return attributes;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public String getBody() {
@@ -44,19 +45,7 @@ public class ApexClass {
 		return isValid;
 	}
 
-	public void setIsValid(Boolean isValid) {
-		this.isValid = isValid;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 }

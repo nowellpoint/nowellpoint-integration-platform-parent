@@ -36,8 +36,8 @@
                     </div>
                     <div class="card border-primary">
                         <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
-                            <span class="statcard-desc">Record Types</span>
+                            <h4 class="statcard-number"><b>${organization.dashboard.recordTypeCount}</b></h4>
+                            <span class="statcard-desc">${labels["record.types"]}</span>
                         </div>
                     </div>
                     <div class="card border-primary">
@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div class="row mb-5">
-                    <div class="card w-50">
+                    <div class="card w-100">
                         <div class="card-body">
                             <h5 class="card-title">${labels['user.licenses']}</h5>
                             <table class="table table-sm">

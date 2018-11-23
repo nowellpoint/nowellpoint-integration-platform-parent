@@ -37,13 +37,19 @@ public abstract class AbstractDashboard {
 		return 0;
 	}
 	
+	@Value.Default
+	public Integer getRecordTypeCount() {
+		return 0;
+	}
+	
 	public static Dashboard of(com.nowellpoint.console.entity.Dashboard entity) {
 		return entity == null ? null : Dashboard.builder()
 				.apexClassCount(entity.getApexClassCount())
 				.apexTriggerCount(entity.getApexTriggerCount())
 				.customObjectCount(entity.getCustomObjectCount())
-				.userLicenses(UserLicenses.of(entity.getUserLicenses()))
 				.lastRefreshedOn(entity.getLastRefreshedOn())
+				.userLicenses(UserLicenses.of(entity.getUserLicenses()))
+				.recordTypeCount(entity.getRecordTypeCount())
 				.build();
 	}
 }

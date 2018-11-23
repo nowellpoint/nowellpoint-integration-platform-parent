@@ -32,6 +32,7 @@ import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
@@ -107,6 +108,12 @@ public class TestSalesforceServices {
 				.getApexTriggers(token);
 		
 		logger.info(triggers.size());
+		
+		Set<RecordType> recordTypes = ServiceClient.getInstance()
+				.salesforce()
+				.getRecordTypes(token);
+		
+		logger.info(recordTypes.size());
 		
 	}
 	
