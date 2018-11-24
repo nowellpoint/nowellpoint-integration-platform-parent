@@ -53,12 +53,12 @@ public class TestAutheticators {
 			
 			DescribeGlobalResult describeGlobalSobjectsResult = client.describeGlobal(describeGlobalSobjectsRequest);
 			
-			assertNotNull(describeGlobalSobjectsResult.getSobjects());
+			assertNotNull(describeGlobalSobjectsResult.getSObjects());
 			
 			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
 					.withAccessToken(response.getToken().getAccessToken())
 					.withSobjectsUrl(response.getIdentity().getUrls().getSobjects())
-					.withSobject(describeGlobalSobjectsResult.getSobjects().get(0).getName());
+					.withSobject(describeGlobalSobjectsResult.getSObjects().get(0).getName());
 			
 			DescribeResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
 			

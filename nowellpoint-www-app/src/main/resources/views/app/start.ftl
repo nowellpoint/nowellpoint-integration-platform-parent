@@ -15,6 +15,8 @@
                         <dl class="dl-horizontal">
                             <dt>${labels['organization.name']}</dt>
                             <dd>${organization.name}</dd>
+                            <dt>${labels['organization.type']}</dt>
+                            <dd>${organization.organizationType}</dd>
                             <dt>${labels['connected.user']}</dt>
                             <dd>${organization.connection.connectedAs}</dd>
                             <dt>${labels['connected.at']}</dt>

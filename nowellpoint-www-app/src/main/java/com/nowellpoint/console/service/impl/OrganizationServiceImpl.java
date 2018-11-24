@@ -9,8 +9,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -30,13 +29,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.nowellpoint.client.sforce.model.ApexClass;
-import com.nowellpoint.client.sforce.model.ApexTrigger;
-import com.nowellpoint.client.sforce.model.Profile;
-import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.client.sforce.model.UserRole;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
@@ -48,12 +41,11 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
+import com.nowellpoint.console.model.OrganizationSyncResponse;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
-import com.nowellpoint.console.model.UserLicense;
-import com.nowellpoint.console.model.OrganizationSyncResponse;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -179,17 +171,25 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			throw new ServiceException(customerResult.getMessage());
 		}
 		
-		Organization organization = Organization.builder()
-				.from(instance)
-				.dashboard(buildDashboard(token))
-				.connection(buildConnection(token))
-				.domain(organizationSyncResponse.getDomain())
-				.name(organizationSyncResponse.getName())
-				.organizationType(organizationSyncResponse.getOrganizationType())
-				.address(organizationSyncResponse.getAddress())
-				.build();
+		try {
+			
+			Organization organization = Organization.builder()
+					.from(instance)
+					.dashboard(Dashboard.of(token))
+					.connection(Connection.of(token))
+					.domain(organizationSyncResponse.getDomain())
+					.name(organizationSyncResponse.getName())
+					.organizationType(organizationSyncResponse.getOrganizationType())
+					.address(organizationSyncResponse.getAddress())
+					.build();
+			
+			return update(organization);
+			
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
 		
-		return update(organization);
+		return null;
 	}
 
 	@Override
@@ -579,114 +579,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.build())
 				.build();
 		
-	}
-	
-	private Connection buildConnection(Token token) {
-		
-		com.nowellpoint.client.sforce.model.Identity identity = ServiceClient.getInstance()
-				.salesforce()
-				.getIdentity(token);
-		
-		return Connection.builder()
-				.accessToken(token.getAccessToken())
-				.connectedAs(identity.getUsername())
-				.connectedAt(getCurrentDateTime())
-				.id(identity.getId())
-				.instanceUrl(token.getInstanceUrl())
-				.isConnected(Boolean.TRUE)
-				.issuedAt(token.getIssuedAt())
-				.refreshToken(token.getRefreshToken())
-				.status(Connection.CONNECTED)
-				.tokenType(token.getTokenType())
-				.build();
-	}
-	
-	private Dashboard buildDashboard(Token token) {
-		
-		/**
-		 * custom objects
-		 */
-		
-		AtomicInteger customObjectCount = new AtomicInteger(0);
-		
-		DescribeGlobalResult describeGlobalResult = ServiceClient.getInstance()
-				.salesforce()
-				.describeGlobal(token);
-		
-		describeGlobalResult.getSobjects().stream().forEach(sobject -> {
-			if (sobject.getCustom()) {
-				customObjectCount.getAndIncrement();
-			}
-		});
-		
-		//describeGlobalResult.getSobjects().stream().filter(s -> s.getCustom()).count();
-		
-		/**
-		 * apexClasses
-		 */
-		
-		Set<ApexClass> classes = ServiceClient.getInstance()
-				.salesforce()
-				.getApexClasses(token);
-		
-		/**
-		 * apexTriggers
-		 */
-		
-		Set<ApexTrigger> triggers = ServiceClient.getInstance()
-				.salesforce()
-				.getApexTriggers(token);
-		
-		/**
-		 * recordTypes
-		 */
-		
-		Set<RecordType> recordTypes = ServiceClient.getInstance()
-				.salesforce()
-				.getRecordTypes(token);
-		
-		/**
-		 * userRoles
-		 */
-		
-		Set<UserRole> userRoles = ServiceClient.getInstance()
-				.salesforce()
-				.getUserRoles(token);
-		
-		/**
-		 * user licenses
-		 */
-		
-		Set<com.nowellpoint.client.sforce.model.UserLicense> userLicenses = ServiceClient.getInstance()
-				.salesforce()
-				.getUserLicenses(token);
-		
-		/**
-		 * profiles
-		 */
-		
-		Set<Profile> profiles = ServiceClient.getInstance()
-				.salesforce()
-				.getProfiles(token);
-		
-		/**
-		 * build dashboard
-		 */
-		
-		return Dashboard.builder()
-				.apexClassCount(classes.size())
-				.apexTriggerCount(triggers.size())
-				.customObjectCount(customObjectCount.get())
-				.lastRefreshedOn(getCurrentDateTime())
-				.profileCount(profiles.size())
-				.recordTypeCount(recordTypes.size())
-				.userLicenses(userLicenses.stream()
-						.map(f -> {
-							return UserLicense.of(f);
-						})
-						.collect(Collectors.toSet()))
-				.userRoleCount(userRoles.size())
-				.build();
 	}
 	
 	private Organization create(Organization organization) {

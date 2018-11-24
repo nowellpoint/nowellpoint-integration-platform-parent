@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.cometd.bayeux.Channel;
@@ -72,6 +76,8 @@ public class TestSalesforceServices {
 		
 		assertNotNull(organization.getName());
 		assertNotNull(organization.getNumber());
+		assertNotNull(organization.getConnection());
+		assertNotNull(organization.getConnection().getRefreshToken());
 		
 		logger.info(organization.getConnection().getRefreshToken());
 		
@@ -79,55 +85,124 @@ public class TestSalesforceServices {
 				.salesforce()
 				.refreshToken(organization.getConnection().getRefreshToken());
 		
-		DescribeGlobalResult describeGlobalResult = ServiceClient.getInstance()
-				.salesforce()
-				.describeGlobal(token);
+		long startTime = System.currentTimeMillis();
 		
-		AtomicInteger customObjectCount = new AtomicInteger(0);
+		ExecutorService executor = Executors.newFixedThreadPool(7);
 		
-		describeGlobalResult.getSobjects().stream().forEach(sobject -> {
-			if (sobject.getCustom()) {
-				customObjectCount.getAndIncrement();
-			}
-		});
+		FutureTask<DescribeGlobalResult> describeGlobalTask = new FutureTask<DescribeGlobalResult>(
+				new Callable<DescribeGlobalResult>() {
+					@Override
+					public DescribeGlobalResult call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+				 				.describeGlobal(token);
+				   }
+				}
+		);
 		
-		logger.info("Custom Objects: " + customObjectCount);
+		executor.execute(describeGlobalTask);
 		
-		Set<UserLicense> licenses = ServiceClient.getInstance()
-				.salesforce()
-				.getUserLicenses(token);
+		FutureTask<Set<UserLicense>> getLicensesTask = new FutureTask<Set<UserLicense>>(
+				new Callable<Set<UserLicense>>() {
+					@Override
+					public Set<UserLicense> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserLicenses(token);
+				   }
+				}
+		);
 		
-		logger.info("Licenses: " + licenses.size());
+		executor.execute(getLicensesTask);
 		
-		Set<ApexClass> classes = ServiceClient.getInstance()
-				.salesforce()
-				.getApexClasses(token);
+		FutureTask<Set<ApexClass>> getClassesTask = new FutureTask<Set<ApexClass>>(
+				new Callable<Set<ApexClass>>() {
+					@Override
+					public Set<ApexClass> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexClasses(token);
+				   }
+				}
+		);
 		
-		logger.info("ApexClasses: " + classes.size());
+		executor.execute(getClassesTask);
 		
-		Set<ApexTrigger> triggers = ServiceClient.getInstance()
-				.salesforce()
-				.getApexTriggers(token);
+		FutureTask<Set<ApexTrigger>> getTriggersTask = new FutureTask<Set<ApexTrigger>>(
+				new Callable<Set<ApexTrigger>>() {
+					@Override
+					public Set<ApexTrigger> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexTriggers(token);
+				   }
+				}
+		);
 		
-		logger.info("ApexTriggers: " + triggers.size());
+		executor.execute(getTriggersTask);
 		
-		Set<RecordType> recordTypes = ServiceClient.getInstance()
-				.salesforce()
-				.getRecordTypes(token);
+		FutureTask<Set<RecordType>> getRecordTypesTask = new FutureTask<Set<RecordType>>(
+				new Callable<Set<RecordType>>() {
+					@Override
+					public Set<RecordType> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getRecordTypes(token);
+				   }
+				}
+		);
 		
-		logger.info("RecordTypes: " + recordTypes.size());
+		executor.execute(getRecordTypesTask);
 		
-		Set<UserRole> userRoles = ServiceClient.getInstance()
-				.salesforce()
-				.getUserRoles(token);
+		FutureTask<Set<UserRole>> getUserRolesTask = new FutureTask<Set<UserRole>>(
+				new Callable<Set<UserRole>>() {
+					@Override
+					public Set<UserRole> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserRoles(token);
+				   }
+				}
+		);
 		
-		logger.info("UserRoles: " + userRoles.size());
+		executor.execute(getUserRolesTask);
 		
-		Set<Profile> profiles = ServiceClient.getInstance()
-				.salesforce()
-				.getProfiles(token);
+		FutureTask<Set<Profile>> getProfilesTask = new FutureTask<Set<Profile>>(
+				new Callable<Set<Profile>>() {
+					@Override
+					public Set<Profile> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getProfiles(token);
+				   }
+				}
+		);
 		
-		logger.info("Profiles: " + profiles.size());
+		executor.execute(getProfilesTask);
+		
+		try {
+			logger.info("Custom Objects: " + describeGlobalTask.get().getSObjects().stream().filter(c -> c.getCustom()).count());
+			logger.info("Licenses: " + getLicensesTask.get().size());
+			logger.info("ApexClasses: " + getClassesTask.get().size());
+			logger.info("ApexTriggers: " + getTriggersTask.get().size());
+			logger.info("RecordTypes: " + getRecordTypesTask.get().size());
+			logger.info("UserRoles: " + getUserRolesTask.get().size());
+			logger.info("Profiles: " + getProfilesTask.get().size());
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+		
+		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(System.getenv("SALESFORCE_API_VERSION")))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		System.out.println(response.getAsString());
+		
+		long executionTime = System.currentTimeMillis() - startTime;
+		
+		logger.info("execution time: " + Long.valueOf(executionTime));
 		
 	}
 	

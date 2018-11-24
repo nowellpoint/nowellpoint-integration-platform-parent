@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DescribeGlobalResult implements Serializable {
@@ -14,10 +15,13 @@ public class DescribeGlobalResult implements Serializable {
 	
 	private static final long serialVersionUID = 7907186834504971645L;
 	
+	@JsonProperty("encoding")
 	private String encoding;
 	
+	@JsonProperty("maxBatchSize")
 	private Integer maxBatchSize;
 	
+	@JsonProperty("sobjects")
 	private List<SObject> sobjects;
 	
 	public DescribeGlobalResult() {
@@ -28,23 +32,11 @@ public class DescribeGlobalResult implements Serializable {
 		return encoding;
 	}
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
 	public Integer getMaxBatchSize() {
 		return maxBatchSize;
 	}
-
-	public void setMaxBatchSize(Integer maxBatchSize) {
-		this.maxBatchSize = maxBatchSize;
-	}
-
-	public List<SObject> getSobjects() {
+	
+	public List<SObject> getSObjects() {
 		return sobjects;
-	}
-
-	public void setSobjects(List<SObject> sobjects) {
-		this.sobjects = sobjects;
 	}
 }

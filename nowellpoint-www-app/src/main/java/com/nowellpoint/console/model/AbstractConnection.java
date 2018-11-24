@@ -1,11 +1,14 @@
 package com.nowellpoint.console.model;
 
+import java.time.Instant;
 import java.util.Date;
 
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.console.service.ServiceClient;
 
 @Value.Immutable
 @Value.Modifiable
@@ -47,6 +50,26 @@ public abstract class AbstractConnection {
 				.connectedAt(entity.getConnectedAt())
 				.status(entity.getStatus())
 				.isConnected(entity.getIsConnected())
+				.build();
+	}
+	
+	public static Connection of(Token token) {
+		
+		com.nowellpoint.client.sforce.model.Identity identity = ServiceClient.getInstance()
+				.salesforce()
+				.getIdentity(token);
+		
+		return Connection.builder()
+				.accessToken(token.getAccessToken())
+				.connectedAs(identity.getUsername())
+				.connectedAt(Date.from(Instant.now()))
+				.id(identity.getId())
+				.instanceUrl(token.getInstanceUrl())
+				.isConnected(Boolean.TRUE)
+				.issuedAt(token.getIssuedAt())
+				.refreshToken(token.getRefreshToken())
+				.status(Connection.CONNECTED)
+				.tokenType(token.getTokenType())
 				.build();
 	}
 	

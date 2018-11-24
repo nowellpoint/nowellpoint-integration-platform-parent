@@ -4,11 +4,11 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.immutables.value.Value;
+
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.nowellpoint.console.util.Path;
-
-import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Modifiable
