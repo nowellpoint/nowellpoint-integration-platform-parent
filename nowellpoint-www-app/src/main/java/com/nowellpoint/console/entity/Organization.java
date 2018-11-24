@@ -15,6 +15,8 @@ public class Organization extends BaseEntity {
 	
 	private String domain;
 	
+	private String organizationType;
+	
 	private Address address;
 	
 	private Connection connection;
@@ -55,6 +57,14 @@ public class Organization extends BaseEntity {
 
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+
+	public String getOrganizationType() {
+		return organizationType;
+	}
+
+	public void setOrganizationType(String organizationType) {
+		this.organizationType = organizationType;
 	}
 
 	public Address getAddress() {

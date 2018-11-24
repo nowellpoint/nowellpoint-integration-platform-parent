@@ -185,6 +185,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.connection(buildConnection(token))
 				.domain(organizationSyncResponse.getDomain())
 				.name(organizationSyncResponse.getName())
+				.organizationType(organizationSyncResponse.getOrganizationType())
 				.address(organizationSyncResponse.getAddress())
 				.build();
 		
@@ -563,6 +564,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return OrganizationSyncResponse.builder()
 				.name(organization.getName())
 				.domain(organization.getId())
+				.organizationType(organization.getOrganizationType())
 				.address(Address.builder()
 						.addedOn(getCurrentDateTime())
 						.city(organization.getAddress().getCity())

@@ -26,6 +26,11 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract Set<EventListener> getEventListeners();
 	
 	@Value.Default
+	public String getOrganizationType() {
+		return "Not Available";
+	}
+ 	
+	@Value.Default
 	public Meta getMeta() {
 		return Meta.builder()
 				.id(getId())
@@ -43,6 +48,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.lastUpdatedOn(entity.getLastUpdatedOn())
 				.name(entity.getName())
 				.number(entity.getNumber())
+				.organizationType(entity.getOrganizationType())
 				.address(Address.of(entity.getAddress()))
 				.connection(Connection.of(entity.getConnection()))
 				.dashboard(Dashboard.of(entity.getDashboard()))

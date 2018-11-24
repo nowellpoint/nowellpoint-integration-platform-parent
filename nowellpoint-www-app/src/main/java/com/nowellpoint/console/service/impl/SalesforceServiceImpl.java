@@ -104,7 +104,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 				.bearerAuthorization(token.getAccessToken())
      			.path("Organization")
      			.path(identity.getOrganizationId())
-     			.queryParameter("fields", "Id,Name,Address")
+     			.queryParameter("fields", "Id,Name,OrganizationType,Address")
      			.queryParameter("version", "latest")
      			.execute();
 		

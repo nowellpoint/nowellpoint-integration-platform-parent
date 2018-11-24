@@ -8,11 +8,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Organization implements Serializable {
 	
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -1315510190045597737L;
+	
+	public static final String QUERY = "Select "
+			+ "Address, "
+			+ "ComplianceBccEmail, "
+			+ "CreatedById, "
+			+ "CreatedDate, "
+			+ "DefaultAccountAccess, "
+			+ "DefaultCalendarAccess, "
+			+ "DefaultCampaignAccess, "
+			+ "DefaultCaseAccess, "
+			+ "DefaultContactAccess, "
+			+ "DefaultLeadAccess, "
+			+ "DefaultLocaleSidKey, "
+			+ "DefaultOpportunityAccess, "
+			+ "DefaultPricebookAccess, "
+			+ "Division, "
+			+ "Fax, "
+			+ "FiscalYearStartMonth, "
+			+ "GeocodeAccuracy, "
+			+ "Id, "
+			+ "InstanceName, "
+			+ "IsReadOnly, "
+			+ "IsSandbox, "
+			+ "LanguageLocaleKey, "
+			+ "LastModifiedById, "
+			+ "LastModifiedDate, "
+			+ "MonthlyPageViewsEntitlement,"
+			+ "MonthlyPageViewsUsed, "
+			+ "Name, "
+			+ "NamespacePrefix, "
+			+ "NumKnowledgeService, "
+			+ "OrganizationType, "
+			+ "Phone, "
+			+ "PreferencesConsentManagementEnabled, "
+			+ "PreferencesIndividualAutoCreateEnabled, "
+			+ "PreferencesLightningLoginEnabled, "
+			+ "PreferencesOnlyLLPermUserAllowed, "
+			+ "PreferencesRequireOpportunityProducts, "
+			+ "PreferencesTerminateOldestSession, "
+			+ "PreferencesTransactionSecurityPolicy, "
+			+ "PrimaryContact, "
+			+ "ReceivesAdminInfoEmails, "
+			+ "ReceivesInfoEmails, "
+			+ "SignupCountryIsoCode, "
+			+ "TrialExpirationDate, "
+			+ "UiSkin, "
+			+ "UsesStartDateAsFiscalYearName, "
+			+ "WebToCaseDefaultOrigin "
+			+ "From Organization";
 	
 	@JsonProperty(value="Id")
 	private String id;
