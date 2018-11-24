@@ -18,6 +18,8 @@ public class Dashboard implements Serializable {
 	
 	private Integer recordTypeCount;
 	
+	private Integer userRoleCount;
+	
 	private Set<UserLicense> userLicenses;
 	
 	public Dashboard() {
@@ -62,6 +64,14 @@ public class Dashboard implements Serializable {
 
 	public void setRecordTypeCount(Integer recordTypeCount) {
 		this.recordTypeCount = recordTypeCount;
+	}
+
+	public Integer getUserRoleCount() {
+		return userRoleCount;
+	}
+
+	public void setUserRoleCount(Integer userRoleCount) {
+		this.userRoleCount = userRoleCount;
 	}
 
 	public Set<UserLicense> getUserLicenses() {

@@ -9,6 +9,7 @@ import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
+import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 
 public interface SalesforceService {
@@ -21,4 +22,5 @@ public interface SalesforceService {
 	public Set<ApexClass> getApexClasses(Token token);
 	public Set<ApexTrigger> getApexTriggers(Token token);
 	public Set<RecordType> getRecordTypes(Token token);
+	public Set<UserRole> getUserRoles(Token token);
 }

@@ -42,6 +42,11 @@ public abstract class AbstractDashboard {
 		return 0;
 	}
 	
+	@Value.Default
+	public Integer getUserRoleCount() {
+		return 0;
+	}
+	
 	public static Dashboard of(com.nowellpoint.console.entity.Dashboard entity) {
 		return entity == null ? null : Dashboard.builder()
 				.apexClassCount(entity.getApexClassCount())
@@ -49,6 +54,7 @@ public abstract class AbstractDashboard {
 				.customObjectCount(entity.getCustomObjectCount())
 				.lastRefreshedOn(entity.getLastRefreshedOn())
 				.userLicenses(UserLicenses.of(entity.getUserLicenses()))
+				.userRoleCount(entity.getUserRoleCount())
 				.recordTypeCount(entity.getRecordTypeCount())
 				.build();
 	}

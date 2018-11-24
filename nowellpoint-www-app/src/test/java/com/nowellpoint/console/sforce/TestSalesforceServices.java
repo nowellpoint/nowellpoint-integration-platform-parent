@@ -35,6 +35,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
+import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.service.ServiceClient;
@@ -114,6 +115,12 @@ public class TestSalesforceServices {
 				.getRecordTypes(token);
 		
 		logger.info(recordTypes.size());
+		
+		Set<UserRole> userRoles = ServiceClient.getInstance()
+				.salesforce()
+				.getUserRoles(token);
+		
+		logger.info(userRoles.size());
 		
 	}
 	

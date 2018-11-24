@@ -34,6 +34,7 @@ import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.exception.ServiceException;
@@ -642,6 +643,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.getRecordTypes(token);
 		
 		/**
+		 * userRoles
+		 */
+		
+		Set<UserRole> userRoles = ServiceClient.getInstance()
+				.salesforce()
+				.getUserRoles(token);
+		
+		/**
 		 * user licenses
 		 */
 		
@@ -664,6 +673,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 							return UserLicense.of(f);
 						})
 						.collect(Collectors.toSet()))
+				.userRoleCount(userRoles.size())
 				.build();
 	}
 	

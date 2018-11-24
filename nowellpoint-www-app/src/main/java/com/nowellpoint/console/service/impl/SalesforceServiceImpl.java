@@ -10,6 +10,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
+import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
@@ -246,5 +247,29 @@ public class SalesforceServiceImpl implements SalesforceService {
 		}
 		
 		return recordTypes;
+	}
+	
+	@Override
+	public Set<UserRole> getUserRoles(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", UserRole.QUERY)
+     			.execute();
+		
+		Set<UserRole> userRoles = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			userRoles = queryResult.getRecords(UserRole.class);
+		} else {
+			throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return userRoles;
 	}
 }
