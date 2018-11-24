@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
+import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
@@ -15,7 +16,6 @@ import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.RecordType;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.SalesforceApiError;
 import com.nowellpoint.console.service.SalesforceService;
@@ -144,26 +144,13 @@ public class SalesforceServiceImpl implements SalesforceService {
 	@Override
 	public Set<UserLicense> getUserLicenses(Token token) {
 		
-		String query = "Select "
-				+ "CreatedDate, "
-				+ "Id, "
-				+ "LastModifiedDate, "
-				+ "LicenseDefinitionKey, "
-				+ "MasterLabel, "
-				+ "Name, "
-				+ "Status, "
-				+ "TotalLicenses, "
-				+ "UsedLicenses, "
-				+ "UsedLicensesLastUpdated "
-				+ "From UserLicense";
-		
 		Identity identity = getIdentity(token);
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(token.getAccessToken())
-     			.queryParameter("q", query)
+     			.queryParameter("q", UserLicense.QUERY)
      			.execute();
 		
 		Set<UserLicense> userLicenses = Collections.emptySet();

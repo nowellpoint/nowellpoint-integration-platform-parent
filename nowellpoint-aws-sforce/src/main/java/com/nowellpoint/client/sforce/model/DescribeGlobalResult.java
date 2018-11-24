@@ -1,10 +1,11 @@
-package com.nowellpoint.client.sforce.model.sobject;
+package com.nowellpoint.client.sforce.model;
 
 import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DescribeGlobalResult implements Serializable {

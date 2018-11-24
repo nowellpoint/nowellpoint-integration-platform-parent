@@ -9,7 +9,12 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -41,7 +46,6 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
-import com.nowellpoint.console.model.OrganizationSyncResponse;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
@@ -55,7 +59,7 @@ import com.nowellpoint.util.Assert;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
-	//private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
+	private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
@@ -158,38 +162,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	@Override
 	public Organization update(String id, Token token) {
 		
-		Organization instance = get(id);
-		
-		OrganizationSyncResponse organizationSyncResponse = syncOrganization(token);
+		Organization organization = syncOrganization(id, token);
 		
 		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
-				.company(organizationSyncResponse.getName());
+				.company(organization.getName());
 		
-		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(instance.getNumber(), customerRequest);
+		Result<com.braintreegateway.Customer> customerResult = gateway.customer().update(organization.getNumber(), customerRequest);
 		
 		if ( ! customerResult.isSuccess() ) {
 			throw new ServiceException(customerResult.getMessage());
 		}
 		
-		try {
-			
-			Organization organization = Organization.builder()
-					.from(instance)
-					.dashboard(Dashboard.of(token))
-					.connection(Connection.of(token))
-					.domain(organizationSyncResponse.getDomain())
-					.name(organizationSyncResponse.getName())
-					.organizationType(organizationSyncResponse.getOrganizationType())
-					.address(organizationSyncResponse.getAddress())
-					.build();
-			
-			return update(organization);
-			
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+		return update(organization);
 	}
 
 	@Override
@@ -555,30 +539,54 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return null;
 	}
 	
-	private OrganizationSyncResponse syncOrganization(Token token) {
+	private Organization syncOrganization(String id, Token token) {
 		
-		com.nowellpoint.client.sforce.model.Organization organization = ServiceClient.getInstance()
-				.salesforce()
-				.getOrganization(token);
+		Organization instance = get(id);
 		
-		return OrganizationSyncResponse.builder()
-				.name(organization.getName())
-				.domain(organization.getId())
-				.organizationType(organization.getOrganizationType())
-				.address(Address.builder()
-						.addedOn(getCurrentDateTime())
-						.city(organization.getAddress().getCity())
-						.countryCode(organization.getAddress().getCountryCode())
-						.latitude(organization.getAddress().getLatitude())
-						.longitude(organization.getAddress().getLongitude())
-						.postalCode(organization.getAddress().getPostalCode())
-						.state(organization.getAddress().getState())
-						.stateCode(organization.getAddress().getStateCode())
-						.street(organization.getAddress().getStreet())
-						.updatedOn(getCurrentDateTime())
-						.build())
-				.build();
+		ExecutorService executor = Executors.newFixedThreadPool(1);
 		
+		FutureTask<com.nowellpoint.client.sforce.model.Organization> getOrganizationTask = new FutureTask<com.nowellpoint.client.sforce.model.Organization>(
+				new Callable<com.nowellpoint.client.sforce.model.Organization>() {
+					@Override
+					public com.nowellpoint.client.sforce.model.Organization call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getOrganization(token);
+				   }
+				}
+		);
+		
+		executor.execute(getOrganizationTask);
+		
+		try {
+			
+			Organization organization = Organization.builder()
+					.from(instance)
+					.dashboard(Dashboard.of(token))
+					.connection(Connection.of(token))
+					.domain(getOrganizationTask.get().getId())
+					.name(getOrganizationTask.get().getName())
+					.organizationType(getOrganizationTask.get().getOrganizationType())
+					.address(Address.builder()
+							.from(instance.getAddress())
+							.city(getOrganizationTask.get().getAddress().getCity())
+							.countryCode(getOrganizationTask.get().getAddress().getCountryCode())
+							.latitude(getOrganizationTask.get().getAddress().getLatitude())
+							.longitude(getOrganizationTask.get().getAddress().getLongitude())
+							.postalCode(getOrganizationTask.get().getAddress().getPostalCode())
+							.state(getOrganizationTask.get().getAddress().getState())
+							.stateCode(getOrganizationTask.get().getAddress().getStateCode())
+							.street(getOrganizationTask.get().getAddress().getStreet())
+							.updatedOn(getCurrentDateTime())
+							.build())
+					.build();
+			
+			return organization;
+			
+		} catch (InterruptedException | ExecutionException e) {
+			logger.severe("Unable to sync organization: " + e.getMessage());
+			return instance;
+		}
 	}
 	
 	private Organization create(Organization organization) {

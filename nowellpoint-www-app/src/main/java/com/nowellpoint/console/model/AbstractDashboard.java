@@ -79,10 +79,10 @@ public abstract class AbstractDashboard {
 		
 		ExecutorService executor = Executors.newFixedThreadPool(7);
 		
-		FutureTask<com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult> describeGlobalTask = new FutureTask<com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult>(
-				new Callable<com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult>() {
+		FutureTask<com.nowellpoint.client.sforce.model.DescribeGlobalResult> describeGlobalTask = new FutureTask<com.nowellpoint.client.sforce.model.DescribeGlobalResult>(
+				new Callable<com.nowellpoint.client.sforce.model.DescribeGlobalResult>() {
 					@Override
-					public com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult call() {
+					public com.nowellpoint.client.sforce.model.DescribeGlobalResult call() {
 						return ServiceClient.getInstance()
 								.salesforce()
 				 				.describeGlobal(token);

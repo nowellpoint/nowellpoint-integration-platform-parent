@@ -1,8 +1,14 @@
-package com.nowellpoint.client.sforce.model.sobject;
+package com.nowellpoint.client.sforce.model;
 
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.client.sforce.model.sobject.ActionOverride;
+import com.nowellpoint.client.sforce.model.sobject.ChildRelationship;
+import com.nowellpoint.client.sforce.model.sobject.Field;
+import com.nowellpoint.client.sforce.model.sobject.NamedLayoutInfo;
+import com.nowellpoint.client.sforce.model.sobject.RecordTypeInfo;
+import com.nowellpoint.client.sforce.model.sobject.SupportedScope;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DescribeResult {

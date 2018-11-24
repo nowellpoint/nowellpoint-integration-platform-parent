@@ -6,13 +6,13 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.Count;
+import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
+import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;

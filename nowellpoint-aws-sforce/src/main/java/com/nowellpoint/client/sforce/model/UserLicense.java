@@ -10,6 +10,19 @@ public class UserLicense implements Serializable {
 
 	private static final long serialVersionUID = 7727327086199417077L;
 	
+	public static final String QUERY = "Select "
+			+ "CreatedDate, "
+			+ "Id, "
+			+ "LastModifiedDate, "
+			+ "LicenseDefinitionKey, "
+			+ "MasterLabel, "
+			+ "Name, "
+			+ "Status, "
+			+ "TotalLicenses, "
+			+ "UsedLicenses, "
+			+ "UsedLicensesLastUpdated "
+			+ "From UserLicense";
+	
 	@JsonProperty("attributes")
 	private Attributes attributes;
 

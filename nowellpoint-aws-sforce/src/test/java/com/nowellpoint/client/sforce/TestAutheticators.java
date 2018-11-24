@@ -6,9 +6,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.amazonaws.AmazonClientException;
+import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
+import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Theme;
-import com.nowellpoint.client.sforce.model.sobject.DescribeGlobalResult;
-import com.nowellpoint.client.sforce.model.sobject.DescribeResult;
 
 public class TestAutheticators {
 	
