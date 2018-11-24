@@ -6,6 +6,8 @@ public class ServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = 618375122517080979L;
 	
+	private String errorCode;
+	
 	/**
      * Constructs an <code>ServiceException</code> with no detail message.
      */
@@ -53,6 +55,17 @@ public class ServiceException extends RuntimeException {
      */
 	
 	public ServiceException(SalesforceApiError error) {
-		super(error.getErrorDescription());
+		super(error.getMessage());
+		this.errorCode = error.getErrorCode();
+	}
+	
+	/**
+	 * Returns the error code associated with <code>ServiceException</code>
+	 * 
+	 * @return the Salesforce api errorCode
+	 */
+	
+	public String getErrorCode() {
+		return errorCode;
 	}
 }

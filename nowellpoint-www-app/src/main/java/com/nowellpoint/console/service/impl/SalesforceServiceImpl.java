@@ -2,12 +2,14 @@ package com.nowellpoint.console.service.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
@@ -271,5 +273,30 @@ public class SalesforceServiceImpl implements SalesforceService {
 		}
 		
 		return userRoles;
+	}
+	
+	@Override
+	public Set<Profile> getProfiles(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", Profile.QUERY)
+     			.execute();
+		
+		Set<Profile> profiles = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			profiles = queryResult.getRecords(Profile.class);
+		} else {
+			List<SalesforceApiError> errors = response.getEntityList(SalesforceApiError.class);
+			throw new ServiceException(errors.get(0));
+		}
+		
+		return profiles;
 	}
 }

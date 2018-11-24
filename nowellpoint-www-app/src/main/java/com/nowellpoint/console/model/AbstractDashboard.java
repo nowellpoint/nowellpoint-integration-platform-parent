@@ -47,12 +47,18 @@ public abstract class AbstractDashboard {
 		return 0;
 	}
 	
+	@Value.Default
+	public Integer getProfileCount() {
+		return 0;
+	}
+	
 	public static Dashboard of(com.nowellpoint.console.entity.Dashboard entity) {
 		return entity == null ? null : Dashboard.builder()
 				.apexClassCount(entity.getApexClassCount())
 				.apexTriggerCount(entity.getApexTriggerCount())
 				.customObjectCount(entity.getCustomObjectCount())
 				.lastRefreshedOn(entity.getLastRefreshedOn())
+				.profileCount(entity.getProfileCount())
 				.userLicenses(UserLicenses.of(entity.getUserLicenses()))
 				.userRoleCount(entity.getUserRoleCount())
 				.recordTypeCount(entity.getRecordTypeCount())

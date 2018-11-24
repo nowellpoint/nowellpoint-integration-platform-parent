@@ -32,6 +32,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
+import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserRole;
@@ -659,6 +660,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.getUserLicenses(token);
 		
 		/**
+		 * profiles
+		 */
+		
+		Set<Profile> profiles = ServiceClient.getInstance()
+				.salesforce()
+				.getProfiles(token);
+		
+		/**
 		 * build dashboard
 		 */
 		
@@ -667,6 +676,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.apexTriggerCount(triggers.size())
 				.customObjectCount(customObjectCount.get())
 				.lastRefreshedOn(getCurrentDateTime())
+				.profileCount(profiles.size())
 				.recordTypeCount(recordTypes.size())
 				.userLicenses(userLicenses.stream()
 						.map(f -> {

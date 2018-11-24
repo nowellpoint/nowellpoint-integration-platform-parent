@@ -32,6 +32,7 @@ import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
@@ -90,37 +91,43 @@ public class TestSalesforceServices {
 			}
 		});
 		
-		logger.info(customObjectCount);
+		logger.info("Custom Objects: " + customObjectCount);
 		
 		Set<UserLicense> licenses = ServiceClient.getInstance()
 				.salesforce()
 				.getUserLicenses(token);
 		
-		logger.info(licenses.size());
+		logger.info("Licenses: " + licenses.size());
 		
 		Set<ApexClass> classes = ServiceClient.getInstance()
 				.salesforce()
 				.getApexClasses(token);
 		
-		logger.info(classes.size());
+		logger.info("ApexClasses: " + classes.size());
 		
 		Set<ApexTrigger> triggers = ServiceClient.getInstance()
 				.salesforce()
 				.getApexTriggers(token);
 		
-		logger.info(triggers.size());
+		logger.info("ApexTriggers: " + triggers.size());
 		
 		Set<RecordType> recordTypes = ServiceClient.getInstance()
 				.salesforce()
 				.getRecordTypes(token);
 		
-		logger.info(recordTypes.size());
+		logger.info("RecordTypes: " + recordTypes.size());
 		
 		Set<UserRole> userRoles = ServiceClient.getInstance()
 				.salesforce()
 				.getUserRoles(token);
 		
-		logger.info(userRoles.size());
+		logger.info("UserRoles: " + userRoles.size());
+		
+		Set<Profile> profiles = ServiceClient.getInstance()
+				.salesforce()
+				.getProfiles(token);
+		
+		logger.info("Profiles: " + profiles.size());
 		
 	}
 	
