@@ -179,7 +179,47 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Urls implements Serializable {
 
 	/**
-	 * 
+	 * {
+  "tooling": "/services/data/v44.0/tooling",
+  "metadata": "/services/data/v44.0/metadata",
+  "folders": "/services/data/v44.0/folders",
+  "eclair": "/services/data/v44.0/eclair",
+  "prechatForms": "/services/data/v44.0/prechatForms",
+  "chatter": "/services/data/v44.0/chatter",
+  "tabs": "/services/data/v44.0/tabs",
+  "appMenu": "/services/data/v44.0/appMenu",
+  "quickActions": "/services/data/v44.0/quickActions",
+  "queryAll": "/services/data/v44.0/queryAll",
+  "commerce": "/services/data/v44.0/commerce",
+  "wave": "/services/data/v44.0/wave",
+  "iot": "/services/data/v44.0/iot",
+  "analytics": "/services/data/v44.0/analytics",
+  "search": "/services/data/v44.0/search",
+  "identity": "https://login.salesforce.com/id/00D300000000lnEEAQ/00530000000fo9KAAQ",
+  "composite": "/services/data/v44.0/composite",
+  "parameterizedSearch": "/services/data/v44.0/parameterizedSearch",
+  "fingerprint": "/services/data/v44.0/fingerprint",
+  "theme": "/services/data/v44.0/theme",
+  "nouns": "/services/data/v44.0/nouns",
+  "event": "/services/data/v44.0/event",
+  "serviceTemplates": "/services/data/v44.0/serviceTemplates",
+  "recent": "/services/data/v44.0/recent",
+  "connect": "/services/data/v44.0/connect",
+  "licensing": "/services/data/v44.0/licensing",
+  "limits": "/services/data/v44.0/limits",
+  "process": "/services/data/v44.0/process",
+  "async-queries": "/services/data/v44.0/async-queries",
+  "dedupe": "/services/data/v44.0/dedupe",
+  "query": "/services/data/v44.0/query",
+  "jobs": "/services/data/v44.0/jobs",
+  "emailConnect": "/services/data/v44.0/emailConnect",
+  "consent": "/services/data/v44.0/consent",
+  "compactLayouts": "/services/data/v44.0/compactLayouts",
+  "knowledgeManagement": "/services/data/v44.0/knowledgeManagement",
+  "sobjects": "/services/data/v44.0/sobjects",
+  "actions": "/services/data/v44.0/actions",
+  "support": "/services/data/v44.0/support"
+}
 	 */
 	
 	private static final long serialVersionUID = -329107825780218997L;
