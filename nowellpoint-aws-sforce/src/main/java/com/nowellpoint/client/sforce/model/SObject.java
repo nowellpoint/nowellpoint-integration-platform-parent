@@ -1,11 +1,15 @@
 package com.nowellpoint.client.sforce.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SObject {
+public class SObject implements Serializable {
 	
+	private static final long serialVersionUID = 8436267729392469449L;
+
 	@JsonProperty("attributes")
 	private Attributes attributes;
 	

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Profile extends SObject {
 	
+	private static final long serialVersionUID = 3004892024883616890L;
+
 	public static final String QUERY = "Select "
 			+ "CreatedById, "
 			+ "CreatedDate, "

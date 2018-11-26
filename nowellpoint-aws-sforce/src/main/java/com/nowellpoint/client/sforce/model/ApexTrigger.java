@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApexTrigger extends SObject {
 	
+	private static final long serialVersionUID = -1705806933872559501L;
+
 	public static final String QUERY = "Select "
 			+ "ApiVersion, "
 			+ "Body, "

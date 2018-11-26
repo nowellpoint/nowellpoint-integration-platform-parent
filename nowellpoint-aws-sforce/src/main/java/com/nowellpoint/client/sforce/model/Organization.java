@@ -1,12 +1,10 @@
 package com.nowellpoint.client.sforce.model;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Organization implements Serializable {
+public class Organization extends SObject {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
@@ -59,12 +57,6 @@ public class Organization implements Serializable {
 			+ "WebToCaseDefaultOrigin "
 			+ "From Organization";
 	
-	@JsonProperty(value="Id")
-	private String id;
-	
-	@JsonProperty(value="attributes")
-	private Attributes attributes;
-	
 	@JsonProperty(value="Division")
 	private String division;
 	
@@ -106,22 +98,6 @@ public class Organization implements Serializable {
 	
 	public Organization() {
 		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Attributes getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
 	}
 
 	public String getDivision() {

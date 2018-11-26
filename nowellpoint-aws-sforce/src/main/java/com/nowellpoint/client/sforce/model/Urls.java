@@ -181,7 +181,6 @@ public class Urls implements Serializable {
 	/**
 	 * {
   "tooling": "/services/data/v44.0/tooling",
-  "metadata": "/services/data/v44.0/metadata",
   "folders": "/services/data/v44.0/folders",
   "eclair": "/services/data/v44.0/eclair",
   "prechatForms": "/services/data/v44.0/prechatForms",

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RecordType extends SObject {
 	
+	private static final long serialVersionUID = -5919993493822022243L;
+
 	public static final String QUERY = "Select "
 			+ "BusinessProcessId, "
 			+ "CreatedById, "

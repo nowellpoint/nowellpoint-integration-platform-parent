@@ -1,12 +1,10 @@
 package com.nowellpoint.client.sforce.model;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Serializable {
+public class User extends SObject {
 
 	/**
 	 * 
@@ -14,12 +12,6 @@ public class User implements Serializable {
 
 	private static final long serialVersionUID = 3163086585922281575L;
 	
-	@JsonProperty("Id")
-	private String id;
-	
-	@JsonProperty(value="attributes")
-	private Attributes attributes;
-
 	@JsonProperty("AboutMe")
 	private String aboutMe;
 
@@ -124,22 +116,6 @@ public class User implements Serializable {
 
 	public User() {
 
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public Attributes getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
 	}
 
 	public void setAboutMe(String aboutMe) {
