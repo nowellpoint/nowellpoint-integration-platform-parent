@@ -37,8 +37,10 @@ import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.RecordType;
+import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
@@ -87,122 +89,31 @@ public class TestSalesforceServices {
 		
 		long startTime = System.currentTimeMillis();
 		
-		ExecutorService executor = Executors.newFixedThreadPool(7);
+		logger.info(token.getRefreshToken());
 		
-		FutureTask<DescribeGlobalResult> describeGlobalTask = new FutureTask<DescribeGlobalResult>(
-				new Callable<DescribeGlobalResult>() {
-					@Override
-					public DescribeGlobalResult call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-				 				.describeGlobal(token);
-				   }
-				}
-		);
-		
-		executor.execute(describeGlobalTask);
-		
-		FutureTask<Set<UserLicense>> getLicensesTask = new FutureTask<Set<UserLicense>>(
-				new Callable<Set<UserLicense>>() {
-					@Override
-					public Set<UserLicense> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getUserLicenses(token);
-				   }
-				}
-		);
-		
-		executor.execute(getLicensesTask);
-		
-		FutureTask<Set<ApexClass>> getClassesTask = new FutureTask<Set<ApexClass>>(
-				new Callable<Set<ApexClass>>() {
-					@Override
-					public Set<ApexClass> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getApexClasses(token);
-				   }
-				}
-		);
-		
-		executor.execute(getClassesTask);
-		
-		FutureTask<Set<ApexTrigger>> getTriggersTask = new FutureTask<Set<ApexTrigger>>(
-				new Callable<Set<ApexTrigger>>() {
-					@Override
-					public Set<ApexTrigger> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getApexTriggers(token);
-				   }
-				}
-		);
-		
-		executor.execute(getTriggersTask);
-		
-		FutureTask<Set<RecordType>> getRecordTypesTask = new FutureTask<Set<RecordType>>(
-				new Callable<Set<RecordType>>() {
-					@Override
-					public Set<RecordType> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getRecordTypes(token);
-				   }
-				}
-		);
-		
-		executor.execute(getRecordTypesTask);
-		
-		FutureTask<Set<UserRole>> getUserRolesTask = new FutureTask<Set<UserRole>>(
-				new Callable<Set<UserRole>>() {
-					@Override
-					public Set<UserRole> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getUserRoles(token);
-				   }
-				}
-		);
-		
-		executor.execute(getUserRolesTask);
-		
-		FutureTask<Set<Profile>> getProfilesTask = new FutureTask<Set<Profile>>(
-				new Callable<Set<Profile>>() {
-					@Override
-					public Set<Profile> call() {
-						return ServiceClient.getInstance()
-								.salesforce()
-								.getProfiles(token);
-				   }
-				}
-		);
-		
-		executor.execute(getProfilesTask);
-		
-		try {
-			logger.info("Custom Objects: " + describeGlobalTask.get().getSObjects().stream().filter(c -> c.getCustom()).count());
-			logger.info("Licenses: " + getLicensesTask.get().size());
-			logger.info("ApexClasses: " + getClassesTask.get().size());
-			logger.info("ApexTriggers: " + getTriggersTask.get().size());
-			logger.info("RecordTypes: " + getRecordTypesTask.get().size());
-			logger.info("UserRoles: " + getUserRolesTask.get().size());
-			logger.info("Profiles: " + getProfilesTask.get().size());
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		
-		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(System.getenv("SALESFORCE_API_VERSION")))
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.execute();
-		
-		System.out.println(response.getAsString());
+		Organization updatedOrganization = ServiceClient.getInstance()
+				.organization()
+				.update(organization.getId(), token);
 		
 		long executionTime = System.currentTimeMillis() - startTime;
 		
 		logger.info("execution time: " + Long.valueOf(executionTime));
+		
+		logger.info(updatedOrganization.getLastUpdatedOn());
+		
+		Resources resources = ServiceClient.getInstance()
+				.salesforce()
+				.getResources(token);
+		
+		logger.info(resources.getIdentity());
+		logger.info(resources.getLimits());
+		logger.info(resources.getTooling());
+		
+		Limits limits = ServiceClient.getInstance()
+				.salesforce()
+				.getLimits(token);
+		
+		logger.info(limits.getDailyApiRequests().getMax());
 		
 	}
 	

@@ -176,7 +176,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Urls implements Serializable {
+public class Resources implements Serializable {
 
 	/**
 	 * {
@@ -222,98 +222,119 @@ public class Urls implements Serializable {
 	
 	private static final long serialVersionUID = -329107825780218997L;
 
-	@JsonProperty("enterprise")
-	private String enterprise;
-
-	@JsonProperty("metadata")
-	private String metadata;
-
-	@JsonProperty("partner")
-	private String partner;
-
-	@JsonProperty("rest")
-	private String rest;
-
-	@JsonProperty("sobjects")
-	private String sobjects;
-
-	@JsonProperty("search")
-	private String search;
-
-	@JsonProperty("query")
-	private String query;
-
-	@JsonProperty("recent")
-	private String recent;
-
-	@JsonProperty("profile")
-	private String profile;
-
-	@JsonProperty("feeds")
-	private String feeds;
-
-	@JsonProperty("feed_items")
-	private String feedItems;
-
-	@JsonProperty("groups")
-	private String groups;
-
-	@JsonProperty("users")
-	private String users;
+//	@JsonProperty("enterprise")
+//	private String enterprise;
+//
+//	@JsonProperty("metadata")
+//	private String metadata;
+//
+//	@JsonProperty("partner")
+//	private String partner;
+//
+//	@JsonProperty("rest")
+//	private String rest;
+//
+//	@JsonProperty("sobjects")
+//	private String sobjects;
+//
+//	@JsonProperty("search")
+//	private String search;
+//
+//	@JsonProperty("query")
+//	private String query;
+//
+//	@JsonProperty("recent")
+//	private String recent;
+//
+//	@JsonProperty("profile")
+//	private String profile;
+//
+//	@JsonProperty("feeds")
+//	private String feeds;
+//
+//	@JsonProperty("feed_items")
+//	private String feedItems;
+//
+//	@JsonProperty("groups")
+//	private String groups;
+//
+//	@JsonProperty("users")
+//	private String users;
 	
-	public Urls() {
+	@JsonProperty("identity")
+	private String identity;
+	
+	@JsonProperty("limits")
+	private String limits;
+	
+	@JsonProperty("tooling")
+	private String tooling;
+	
+	public Resources() {
 		
 	}
 
-	public String getEnterprise() {
-		return enterprise;
+//	public String getEnterprise() {
+//		return enterprise;
+//	}
+//
+//	public String getMetadata() {
+//		return metadata;
+//	}
+//
+//	public String getPartner() {
+//		return partner;
+//	}
+//
+//	public String getRest() {
+//		return rest;
+//	}
+//
+//	public String getSobjects() {
+//		return sobjects;
+//	}
+//
+//	public String getSearch() {
+//		return search;
+//	}
+//
+//	public String getQuery() {
+//		return query;
+//	}
+//
+//	public String getRecent() {
+//		return recent;
+//	}
+//
+//	public String getProfile() {
+//		return profile;
+//	}
+//
+//	public String getFeeds() {
+//		return feeds;
+//	}
+//
+//	public String getFeedItems() {
+//		return feedItems;
+//	}
+//
+//	public String getGroups() {
+//		return groups;
+//	}
+//
+//	public String getUsers() {
+//		return users;
+//	}
+	
+	public String getIdentity() {
+		return identity;
 	}
 
-	public String getMetadata() {
-		return metadata;
+	public String getLimits() {
+		return limits;
 	}
 
-	public String getPartner() {
-		return partner;
-	}
-
-	public String getRest() {
-		return rest;
-	}
-
-	public String getSobjects() {
-		return sobjects;
-	}
-
-	public String getSearch() {
-		return search;
-	}
-
-	public String getQuery() {
-		return query;
-	}
-
-	public String getRecent() {
-		return recent;
-	}
-
-	public String getProfile() {
-		return profile;
-	}
-
-	public String getFeeds() {
-		return feeds;
-	}
-
-	public String getFeedItems() {
-		return feedItems;
-	}
-
-	public String getGroups() {
-		return groups;
-	}
-
-	public String getUsers() {
-		return users;
+	public String getTooling() {
+		return tooling;
 	}
 }

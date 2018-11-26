@@ -9,9 +9,11 @@ import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.client.sforce.model.QueryResult;
@@ -285,5 +287,31 @@ public class SalesforceServiceImpl implements SalesforceService {
 		}
 		
 		return profiles;
+	}
+	
+	@Override
+	public Resources getResources(Token token) {
+		
+		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(System.getenv("SALESFORCE_API_VERSION")))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		return response.getEntity(Resources.class);
+	}
+	
+	@Override
+	public Limits getLimits(Token token) {
+		
+		Resources resources = getResources(token);
+		
+		HttpResponse response = RestResource.get(token.getInstanceUrl().concat(resources.getLimits()))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		return response.getEntity(Limits.class);
 	}
 }

@@ -6,10 +6,12 @@ import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 
@@ -25,4 +27,6 @@ public interface SalesforceService {
 	public Set<RecordType> getRecordTypes(Token token);
 	public Set<UserRole> getUserRoles(Token token);
 	public Set<Profile> getProfiles(Token token);
+	public Resources getResources(Token token);
+	public Limits getLimits(Token token);
 }

@@ -543,7 +543,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization instance = get(id);
 		
-		ExecutorService executor = Executors.newFixedThreadPool(1);
+		ExecutorService executor = Executors.newFixedThreadPool(2);
 		
 		FutureTask<com.nowellpoint.client.sforce.model.Organization> getOrganizationTask = new FutureTask<com.nowellpoint.client.sforce.model.Organization>(
 				new Callable<com.nowellpoint.client.sforce.model.Organization>() {
@@ -558,12 +558,36 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		executor.execute(getOrganizationTask);
 		
+		FutureTask<com.nowellpoint.client.sforce.model.Identity> getIdentityTask = new FutureTask<com.nowellpoint.client.sforce.model.Identity>(
+				new Callable<com.nowellpoint.client.sforce.model.Identity>() {
+					@Override
+					public com.nowellpoint.client.sforce.model.Identity call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getIdentity(token);
+				   }
+				}
+		);
+		
+		executor.execute(getIdentityTask);
+		
 		try {
 			
 			Organization organization = Organization.builder()
 					.from(instance)
 					.dashboard(Dashboard.of(token))
-					.connection(Connection.of(token))
+					.connection(Connection.builder()
+							.accessToken(token.getAccessToken())
+							.connectedAs(getIdentityTask.get().getUsername())
+							.connectedAt(getCurrentDateTime())
+							.id(getIdentityTask.get().getId())
+							.instanceUrl(token.getInstanceUrl())
+							.isConnected(Boolean.TRUE)
+							.issuedAt(token.getIssuedAt())
+							.refreshToken(token.getRefreshToken() != null ? token.getRefreshToken() : instance.getConnection().getRefreshToken())
+							.status(Connection.CONNECTED)
+							.tokenType(token.getTokenType())
+							.build())
 					.domain(getOrganizationTask.get().getId())
 					.name(getOrganizationTask.get().getName())
 					.organizationType(getOrganizationTask.get().getOrganizationType())
