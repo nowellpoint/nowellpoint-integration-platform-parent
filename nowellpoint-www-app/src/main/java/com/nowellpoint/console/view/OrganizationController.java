@@ -36,6 +36,9 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION_EVENT_LISTENERS, (request, response) 
 				-> viewEventListeners(request, response));
 		
+		get(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
+				-> setupEventListener(request, response));
+		
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 				-> listPlans(configuration, request, response));
 		
@@ -98,12 +101,52 @@ public class OrganizationController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER.replace(":id", organization.getId()));
+		model.put("ACCOUNT_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Account"));
+		model.put("CASE_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Case"));
+		model.put("CONTACT_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Contact"));
+		model.put("LEAD_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Lead"));
+		model.put("OPPORTUNITY_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Opportunity"));
     	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
 				.templateName(Templates.EVENT_LISTENERS)
+				.build();
+		
+		return processTemplate(templateProcessRequest);
+	};	
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String setupEventListener(Request request, Response response) {
+		
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.get(getIdentity(request).getOrganization().getId());
+		
+		String sobject = request.params(":sobject");
+		
+		System.out.println(sobject);
+		
+		Map<String,Object> model = getModel();
+		model.put("organization", organization);
+		model.put("SOBJECT", sobject);
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS.replace(":id", organization.getId()));
+		model.put("ACCOUNT_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Account"));
+		model.put("CASE_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Case"));
+		model.put("CONTACT_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Contact"));
+		model.put("LEAD_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Lead"));
+		model.put("OPPORTUNITY_EVENT_LISTENER_SETUP", Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject","Opportunity"));
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(OrganizationController.class)
+				.model(model)
+				.templateName(Templates.EVENT_LISTENER_SETUP)
 				.build();
 		
 		return processTemplate(templateProcessRequest);

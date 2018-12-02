@@ -2,37 +2,8 @@
 
     <@t.page>
 
-        <div id="sidebar" class="sidebar">
-            <ul class="nav nav-stacked navbar-light flex-md-column pt-3">
-                <li class="nav-header">${labels["standard.objects"]}</li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-normal grey-text" href="#">
-                        ${labels["account"]}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-normal grey-text" href="#">
-                        ${labels["case"]}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-normal grey-text" href="#">
-                        ${labels["contact"]}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-normal grey-text" href="#">
-                        ${labels["lead"]}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link font-weight-normal grey-text" href="#">
-                        ${labels["opportunity"]}
-                    </a>
-                </li>
-            </ul>
-        </div>
-
+        <#include "event-listener-menu.ftl" />
+                 
         <div id="content" class="content">
             <div class="container-fluid p-3">
                 <div class="dashhead mb-3">
@@ -43,7 +14,7 @@
                 </div>
                 <table class="table">
                     <thead>
-                        <tr class="col-12">
+                        <tr class="d-flex">
                             <th class="col-3">${labels['id']}</th>
                             <th class="col-3">${labels['name']}</th>
                             <th class="col-3">${labels['enabled']}</th>
