@@ -22,7 +22,6 @@ import com.nowellpoint.console.service.ServiceClient;
 @JsonDeserialize(as = Connection.class)
 public abstract class AbstractConnection {
 	public abstract String getId();
-	public abstract String getAccessToken();
 	public abstract String getInstanceUrl();
 	public abstract String getRefreshToken();
 	public abstract String getTokenType();
@@ -46,7 +45,6 @@ public abstract class AbstractConnection {
 	public static Connection of(com.nowellpoint.console.entity.Connection entity) {
 		return entity == null ? null : Connection.builder()
 				.id(entity.getId())
-				.accessToken(entity.getAccessToken())
 				.instanceUrl(entity.getInstanceUrl())
 				.refreshToken(entity.getRefreshToken())
 				.tokenType(entity.getTokenType())
@@ -76,7 +74,6 @@ public abstract class AbstractConnection {
 		executor.execute(getIdentityTask);
 		
 		return Connection.builder()
-				.accessToken(token.getAccessToken())
 				.connectedAs(getIdentityTask.get().getUsername())
 				.connectedAt(Date.from(Instant.now()))
 				.id(getIdentityTask.get().getId())

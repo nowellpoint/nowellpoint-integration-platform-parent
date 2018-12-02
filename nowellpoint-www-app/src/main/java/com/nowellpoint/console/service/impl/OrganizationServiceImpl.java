@@ -577,7 +577,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.from(instance)
 					.dashboard(Dashboard.of(token))
 					.connection(Connection.builder()
-							.accessToken(token.getAccessToken())
 							.connectedAs(getIdentityTask.get().getUsername())
 							.connectedAt(getCurrentDateTime())
 							.id(getIdentityTask.get().getId())

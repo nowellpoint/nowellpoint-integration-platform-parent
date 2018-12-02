@@ -3,7 +3,7 @@
     <@t.page>
 
         <div id="sidebar" class="sidebar">
-            <ul class="nav nav-stacked flex-md-column pt-3">
+            <ul class="nav nav-stacked navbar-light flex-md-column pt-3">
                 <li class="nav-header">${labels["standard.objects"]}</li>
                 <li class="nav-item">
                     <a class="nav-link font-weight-normal grey-text" href="#">

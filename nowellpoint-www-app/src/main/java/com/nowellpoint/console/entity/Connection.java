@@ -4,20 +4,25 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Connection implements Serializable {
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = -8557210889178981333L;
+	
 	public String id;
-	public String accessToken;
+	
 	public String instanceUrl;
+	
 	public String refreshToken;
+	
 	public String tokenType;
+	
 	public String issuedAt;
+	
 	public String connectedAs;
+	
 	public Date connectedAt;
+	
 	public String status;
+	
 	public Boolean isConnected;
 	
 	public Connection() {
@@ -30,14 +35,6 @@ public class Connection implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
 	}
 
 	public String getInstanceUrl() {
