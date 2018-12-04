@@ -162,6 +162,32 @@
     *
     *
     */
+
+   $(document).on('click', 'button#save-event-listener', function () {
+
+       $form = $("#event-listener-setup-form");
+
+       $.ajax({
+       	type: $form.attr('method'),
+           url: $form.attr('action'),
+           dataType: "html",
+           data: $form.serialize(),
+           complete: function (response) {
+               if (response.status == 200) {
+            	   
+               } else {
+                   $form.prepend(response.responseText);
+               }
+           }
+       });
+
+       return false;
+   });
+    
+   /*-----------------------------------------------------------
+    *
+    *
+    */
     
     $( document ).ajaxStart(function() {
     	$( "#wait" ).show();

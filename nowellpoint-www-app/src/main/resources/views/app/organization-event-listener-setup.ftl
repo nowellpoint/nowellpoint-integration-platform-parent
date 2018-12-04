@@ -13,28 +13,28 @@
                     </div>
                 </div>
                 <hr>
-                <form id="event-listener-setup-form" role="form" method="post" action="">
+                <form id="event-listener-setup-form" role="form" method="post" action="${ACCOUNT_EVENT_LISTENER_SETUP}">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" value="create">
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create">
                         <label class="form-check-label" for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" value="update">
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyOn" value="update">
                         <label class="form-check-label" for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" value="detete">
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="detete">
                         <label class="form-check-label" for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" value="undelete">
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyOn" value="undelete">
                         <label class="form-check-label" for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
                     </div>
                     <hr>
                     <div>
                         <div class="text-right">
                             <a href="${ORGANIZATION_EVENT_LISTENERS_URI}">${messages['cancel']}</a>&emsp;
-                            <button type="submit" id="submit" class="btn btn-primary">${messages['save']}</button>
+                            <button id="save-event-listener" class="btn btn-primary">${messages['save']}</button>
                         </div>
                     </div>
                 </form>
