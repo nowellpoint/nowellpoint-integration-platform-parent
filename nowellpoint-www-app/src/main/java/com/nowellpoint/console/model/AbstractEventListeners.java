@@ -16,8 +16,4 @@ public abstract class AbstractEventListeners {
 				})
 				.collect(Collectors.toSet());
 	}
-	
-	public static Set<EventListener> defaultEventListeners() {
-		return Arrays.ass
-	}
 }

@@ -44,6 +44,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
+import com.nowellpoint.console.model.EventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -192,6 +193,19 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 
 		return Organization.of(entity);
+	}
+	
+	@Override
+	public Organization update(String id, EventListenerRequest request) {
+		Organization instance = get(id);
+		
+		logger.info(request.getObject());
+		logger.info(String.valueOf(request.getOnCreate()));
+		logger.info(String.valueOf(request.getOnDelete()));
+		logger.info(String.valueOf(request.getOnUpdate()));
+		logger.info(String.valueOf(request.getOnUndelete()));
+		
+		return instance;
 	}
 	
 	@Override

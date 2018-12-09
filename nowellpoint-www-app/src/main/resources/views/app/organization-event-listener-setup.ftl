@@ -23,7 +23,7 @@
                         <label class="form-check-label" for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="detete">
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="delete">
                         <label class="form-check-label" for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
                     </div>
                     <div class="form-check">

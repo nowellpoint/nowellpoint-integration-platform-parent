@@ -4,19 +4,25 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.EventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
@@ -166,21 +172,47 @@ public class OrganizationController extends BaseController {
 	
 	private static String saveEventListener(Request request, Response response) {
 		
-		Organization organization = ServiceClient.getInstance()
-				.organization()
-				.get(getIdentity(request).getOrganization().getId());
-		
+		String id = request.params(":id");
 		String sobject = request.params(":sobject");
 		
-		System.out.println(sobject);
+		List<NameValuePair> params = Collections.emptyList();
 		
-		String[] notifications = null;
+		if (! request.body().isEmpty()) {
+			params = URLEncodedUtils.parse(request.body(), Charset.forName("UTF-8"));
+		}
 		
-		System.out.println(notifications.length);
+		AtomicBoolean onCreate = new AtomicBoolean(Boolean.FALSE);
+		AtomicBoolean onUpdate = new AtomicBoolean(Boolean.FALSE);
+		AtomicBoolean onDelete = new AtomicBoolean(Boolean.FALSE);
+		AtomicBoolean onUndelete = new AtomicBoolean(Boolean.FALSE);
 		
-		Arrays.asList(notifications).forEach(n -> {
-			System.out.println(n);
+		params.forEach(p -> {
+			System.out.println(p.getName() + " : " + p.getValue());
+			if ("create".equalsIgnoreCase(p.getValue())) {
+				onCreate.set(Boolean.TRUE);
+			}
+			if ("update".equalsIgnoreCase(p.getValue())) {
+				onUpdate.set(Boolean.TRUE);
+			}
+			if ("delete".equalsIgnoreCase(p.getValue())) {
+				onDelete.set(Boolean.TRUE);
+			}
+			if ("undelete".equalsIgnoreCase(p.getValue())) {
+				onUndelete.set(Boolean.TRUE);
+			}
 		});
+		
+		EventListenerRequest eventListenerRequest = EventListenerRequest.builder()
+				.object(sobject)
+				.onCreate(onCreate.get())
+				.onUpdate(onUpdate.get())
+				.onDelete(onDelete.get())
+				.onUndelete(onUndelete.get())
+				.build();
+		
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.update(id, eventListenerRequest);
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
