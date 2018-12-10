@@ -23,6 +23,8 @@ public class Plan extends BaseEntity {
 	
 	private Price price;
 	
+	private Set<EventListener> eventListeners;
+	
 	private Set<Feature> features;
 	
 	public Plan() {
@@ -91,5 +93,13 @@ public class Plan extends BaseEntity {
 
 	public void setFeatures(Set<Feature> features) {
 		this.features = features;
+	}
+
+	public Set<EventListener> getEventListeners() {
+		return eventListeners;
+	}
+
+	public void setEventListeners(Set<EventListener> eventListeners) {
+		this.eventListeners = eventListeners;
 	}
 }

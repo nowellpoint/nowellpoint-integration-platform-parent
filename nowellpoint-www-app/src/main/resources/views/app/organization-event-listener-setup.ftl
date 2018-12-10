@@ -9,11 +9,11 @@
                 <div class="dashhead mb-3">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${labels["setup.event.listener"]}</h6>
-                        <h3 class="dashhead-title">${SOBJECT}</h3>
+                        <h3 class="dashhead-title">${eventListener.name}</h3>
                     </div>
                 </div>
                 <hr>
-                <form id="event-listener-setup-form" role="form" method="post" action="${ACCOUNT_EVENT_LISTENER_SETUP}">
+                <form id="event-listener-setup-form" role="form" method="post" action="${eventListener.href}">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create">
                         <label class="form-check-label" for="notifyForOperationCreate">${labels["notify.on.create"]}</label>

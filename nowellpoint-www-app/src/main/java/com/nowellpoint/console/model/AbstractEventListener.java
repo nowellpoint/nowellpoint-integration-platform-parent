@@ -2,10 +2,14 @@ package com.nowellpoint.console.model;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.console.util.Path;
 
 @Value.Immutable
 @Value.Modifiable
@@ -17,8 +21,14 @@ public abstract class AbstractEventListener {
 	public abstract String getName();
 	public abstract Boolean getEnabled();
 	public abstract String getDescription();
-	public abstract Date getLastEventReceivedOn();
-	public abstract Long getReplyId();
+	public abstract @Nullable Date getLastEventReceivedOn();
+	public abstract @Nullable Long getReplyId();
+	
+	@Value.Derived
+	@JsonIgnore
+	public String getHref() {
+		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getName());
+	}
 	
 	public static EventListener of(com.nowellpoint.console.entity.EventListener source) {
 		return source == null ? null : EventListener.builder()

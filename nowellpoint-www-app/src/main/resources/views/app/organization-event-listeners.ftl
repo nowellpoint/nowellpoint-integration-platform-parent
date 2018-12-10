@@ -27,18 +27,18 @@
                                 <td colspan="4">&nbsp;</td>
                             </tr>
                             <#else>
-                                <#list organization.eventListeners as listener>
-                                    <tr>
-                                        <td>${listener.id}</td>
-                                        <td>${listener.name}</td>
-                                        <td>
+                                <#list organization.eventListeners?sort_by("name") as listener>
+                                    <tr class="d-flex">
+                                        <td class="col-3">${listener.id}</td>
+                                        <td class="col-3">${listener.name}</td>
+                                        <td class="col-3">
                                             <#if listener.enabled>
                                                 <i class="fa fa-check mr-2 green-text" aria-hidden="true"></i>
                                                 <#else>
                                                     <i class="fa fa-close mr-2 red-text" aria-hidden="true"></i>
                                             </#if>
                                         </td>
-                                        <td>
+                                        <td class="col-3">
                                             <#if listener.lastEventReceivedOn??>
                                                 ${listener.lastEventReceivedOn?date?string.long - listener.lastEventReceivedOn?time?string.medium}
                                                 <#else>

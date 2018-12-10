@@ -24,19 +24,21 @@ public abstract class AbstractPlan {
 	public abstract Boolean getIsActive();
 	public abstract String getLanguage();
 	public abstract Price getPrice();
+	public abstract Set<EventListener> getEventListeners();
 	public abstract Set<Feature> getFeatures();
 	
-	public static Plan of(com.nowellpoint.console.entity.Plan source) {
+	public static Plan of(com.nowellpoint.console.entity.Plan entity) {
 		return Plan.builder()
-				.id(source.getId().toString())
-				.billingFrequency(source.getBillingFrequency())
-				.features(Features.of(source.getFeatures()))
-				.isActive(source.getIsActive())
-				.language(source.getLanguage())
-				.planCode(source.getPlanCode())
-				.planName(source.getPlanName())
-				.price(Price.of(source.getPrice()))
-				.recommendedPlan(source.getRecommendedPlan())
+				.id(entity.getId().toString())
+				.billingFrequency(entity.getBillingFrequency())
+				.features(Features.of(entity.getFeatures()))
+				.isActive(entity.getIsActive())
+				.language(entity.getLanguage())
+				.planCode(entity.getPlanCode())
+				.planName(entity.getPlanName())
+				.price(Price.of(entity.getPrice()))
+				.recommendedPlan(entity.getRecommendedPlan())
+				.eventListeners(EventListeners.of(entity.getEventListeners()))
 				.build();
 	}
 }

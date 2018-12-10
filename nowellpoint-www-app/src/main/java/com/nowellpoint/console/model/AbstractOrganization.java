@@ -1,6 +1,6 @@
 package com.nowellpoint.console.model;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -23,7 +23,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract @Nullable Connection getConnection();
 	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
-	public abstract Set<EventListener> getEventListeners();
+	public abstract List<EventListener> getEventListeners();
 	
 	@Value.Default
 	public String getOrganizationType() {

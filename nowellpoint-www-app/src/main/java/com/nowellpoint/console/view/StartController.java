@@ -36,7 +36,7 @@ public class StartController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER.replace(":id", organization.getId()));
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS.replace(":id", organization.getId()));
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS);
     	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StartController.class)

@@ -5,12 +5,11 @@ import static spark.Spark.post;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +21,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.EventListener;
 import com.nowellpoint.console.model.EventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
@@ -37,16 +37,6 @@ import spark.Request;
 import spark.Response;
 
 public class OrganizationController extends BaseController {
-	
-	private static final Map<String, String> EVENT_LISTENERS = new HashMap<String,String>();
-	
-	static {
-		EVENT_LISTENERS.put("ACCOUNT_EVENT_LISTENER_SETUP", "Account");
-		EVENT_LISTENERS.put("CASE_EVENT_LISTENER_SETUP", "Case");
-		EVENT_LISTENERS.put("CONTACT_EVENT_LISTENER_SETUP", "Contact");
-		EVENT_LISTENERS.put("LEAD_EVENT_LISTENER_SETUP", "Lead");
-		EVENT_LISTENERS.put("OPPORTUNITY_EVENT_LISTENER_SETUP", "Opportunity");
-	}
 	
 	public static void configureRoutes(Configuration configuration) {
 		get(Path.Route.ORGANIZATION, (request, response) 
@@ -124,10 +114,6 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		
-		EVENT_LISTENERS.keySet().stream().forEach(e -> {
-			model.put(e, Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject", EVENT_LISTENERS.get(e)));
-		});
-		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
@@ -152,15 +138,16 @@ public class OrganizationController extends BaseController {
 		
 		String sobject = request.params(":sobject");
 		
+		Optional<EventListener> eventListener = organization.getEventListeners()
+				.stream()
+				.filter(e -> sobject.equals(e.getName()))
+				.findFirst();
+		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("SOBJECT", sobject);
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS.replace(":id", organization.getId()));
+		model.put("eventListener", eventListener.get());
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS);
 		
-		EVENT_LISTENERS.keySet().stream().forEach(e -> {
-			model.put(e, Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject", EVENT_LISTENERS.get(e)));
-		});
-    	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
@@ -172,7 +159,6 @@ public class OrganizationController extends BaseController {
 	
 	private static String saveEventListener(Request request, Response response) {
 		
-		String id = request.params(":id");
 		String sobject = request.params(":sobject");
 		
 		List<NameValuePair> params = Collections.emptyList();
@@ -212,17 +198,13 @@ public class OrganizationController extends BaseController {
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
-				.update(id, eventListenerRequest);
+				.update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("SOBJECT", sobject);
 		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS.replace(":id", organization.getId()));
 		
-		EVENT_LISTENERS.keySet().stream().forEach(e -> {
-			model.put(e, Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":id", organization.getId()).replace(":sobject", EVENT_LISTENERS.get(e)));
-		});
-    	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)

@@ -141,11 +141,12 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.build();
 		
 		Organization organization = Organization.builder()
-				.subscription(subscription)
 				.dashboard(dashboard)
 				.domain(request.getDomain())
+				.eventListeners(plan.getEventListeners())
 				.name(request.getName())
 				.number(customerResult.getTarget().getId())
+				.subscription(subscription)
 				.build();
 		
 		return create(organization);
@@ -322,6 +323,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
+				.eventListeners(plan.getEventListeners())
 				.subscription(subscription)
 				.build();
 		
@@ -402,6 +404,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
+				.eventListeners(plan.getEventListeners())
 				.subscription(subscription)
 				.build();
 		
