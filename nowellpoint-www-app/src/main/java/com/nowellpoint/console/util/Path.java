@@ -48,8 +48,8 @@ public class Path {
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
-		public static final String ORGANIZATION_CONNECTED_USER = String.format(APPLICATION_CONTEXT, "organization/:id/connected-user");
-		public static final String ORGANIZATION_EVENT_LISTENERS = String.format(APPLICATION_CONTEXT, "organization/event-listeners");
+		public static final String ORGANIZATION_CONNECTED_USER = String.format(APPLICATION_CONTEXT, "organization/connected-user");
+		public static final String ORGANIZATION_EVENT_LISTENERS_OVERVIEW = String.format(APPLICATION_CONTEXT, "organization/event-listeners/overview");
 		public static final String ORGANIZATION_EVENT_LISTENER_SETUP = String.format(APPLICATION_CONTEXT, "organization/event-listeners/setup/:sobject");
 		
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");

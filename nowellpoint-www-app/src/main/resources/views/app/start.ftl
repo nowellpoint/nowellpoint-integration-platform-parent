@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4>${labels['event.listeners']}</h4>
-                        <span>${labels['configured.event.listeners']?replace(':size', organization.eventListeners?size)}</span>
+                        <span>${ORGANIZATION_EVENT_LISTENER_LABEL}</span>
                     </div>
                     <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENT_LISTENERS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
                 </div>

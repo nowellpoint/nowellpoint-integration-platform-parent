@@ -42,8 +42,8 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION, (request, response) 
 				-> viewOrganization(request, response));
 		
-		get(Path.Route.ORGANIZATION_EVENT_LISTENERS, (request, response) 
-				-> viewEventListeners(request, response));
+		get(Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW, (request, response) 
+				-> eventListenersOverview(request, response));
 		
 		get(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
 				-> setupEventListener(request, response));
@@ -105,7 +105,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	private static String viewEventListeners(Request request, Response response) {
+	private static String eventListenersOverview(Request request, Response response) {
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
@@ -113,11 +113,12 @@ public class OrganizationController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
-				.templateName(Templates.EVENT_LISTENERS)
+				.templateName(Templates.ORGANIZATION_EVENT_LISTENERS_OVERVIEW)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -132,11 +133,11 @@ public class OrganizationController extends BaseController {
 	
 	private static String setupEventListener(Request request, Response response) {
 		
+		String sobject = request.params(":sobject");
+		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
 				.get(getIdentity(request).getOrganization().getId());
-		
-		String sobject = request.params(":sobject");
 		
 		Optional<EventListener> eventListener = organization.getEventListeners()
 				.stream()
@@ -146,7 +147,7 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS);
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
@@ -156,6 +157,13 @@ public class OrganizationController extends BaseController {
 		
 		return processTemplate(templateProcessRequest);
 	};	
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	
 	private static String saveEventListener(Request request, Response response) {
 		
@@ -173,7 +181,6 @@ public class OrganizationController extends BaseController {
 		AtomicBoolean onUndelete = new AtomicBoolean(Boolean.FALSE);
 		
 		params.forEach(p -> {
-			System.out.println(p.getName() + " : " + p.getValue());
 			if ("create".equalsIgnoreCase(p.getValue())) {
 				onCreate.set(Boolean.TRUE);
 			}
@@ -203,7 +210,7 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("SOBJECT", sobject);
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS.replace(":id", organization.getId()));
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)

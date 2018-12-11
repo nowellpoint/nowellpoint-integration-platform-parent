@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
@@ -33,10 +34,16 @@ public class StartController extends BaseController {
 				.organization()
 				.get(getIdentity(request).getOrganization().getId());
 		
+		String eventListenerLabel = String.format(
+				ResourceBundle.getBundle(StartController.class.getName(), getIdentity(request).getLocale()).getString("configured.event.listeners"),
+				organization.getEventListeners().stream().filter(e -> e.getEnabled()).count(),
+				organization.getEventListeners().size());
+		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER.replace(":id", organization.getId()));
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS);
+		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER);
+		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
+		model.put("ORGANIZATION_EVENT_LISTENER_LABEL", eventListenerLabel);
     	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StartController.class)
@@ -49,11 +56,9 @@ public class StartController extends BaseController {
 
 	private static String changeConnectedUser(Request request, Response response) {
 
-		String organizationId = request.params(":id");
-
 		Organization organization = ServiceClient.getInstance()
 				.organization()
-				.get(organizationId);
+				.get(getIdentity(request).getOrganization().getId());
 		
 		try {
 			
