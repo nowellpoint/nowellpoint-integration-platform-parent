@@ -12,53 +12,62 @@
                         <h3 class="dashhead-title">${labels['event.listeners']}</h3>
                     </div>
                 </div>
-                <div class="container-fluid pt-3 mb-1">
-                    <div class="card-columns">
-                        <div class="card">
-                            <div class="card-body">
-                                <div id="curve_chart"></div>
-                            </div>
+                <div class="card-columns">
+                    <div class="card border-success border-right-0 border-bottom-0 border-left-0">
+                        <div class="card-body">
+                            <h5 class="card-title">${labels['events.received.last.n.days']?replace(':s1','7')}</h5>
+                            <div id="curve_chart"></div>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script type="text/javascript">
+                google.charts.load('current', {
+                    'packages': ['corechart']
+                });
+                google.charts.setOnLoadCallback(drawChart);
 
-                <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-                <script type="text/javascript">
-                    google.charts.load('current', {
-                        'packages': ['corechart']
-                    });
-                    google.charts.setOnLoadCallback(drawChart);
+                function drawChart() {
+                    var data = new google.visualization.DataTable();
+                    data.addColumn('string', 'Days');
+                    data.addColumn('number', 'Events');
+                    data.addRows([
+                        ['7d', 1000],
+                        ['6d', 3890],
+                        ['5d', 17],
+                        ['4d', 4211],
+                        ['3d', 3290],
+                        ['2d', 4011],
+                        ['1d', 89],
+                        ['Today', 0]
+                    ]);
 
-                    function drawChart() {
-                        var data = google.visualization.arrayToDataTable([
-                            ['Days', 'Events'],
-                            ['7d', 15],
-                            ['6d', 23],
-                            ['5d', 28],
-                            ['4d', 30],
-                            ['3d', 37],
-                            ['2d', 45],
-                            ['1d', 17],
-                            ['Today', 0],
-                        ]);
-
-                        var options = {
-                            title: 'Events received the last 7 days',
-                            curveType: 'function',
-                            pointSize: 3,
-                            lineWidth : 0,
-                            legend: {
-                                position: 'bottom'
+                    var options = {
+                        curveType: 'function',
+                        pointSize: 3,
+                        lineWidth: 0,
+                        legend: 'none',
+                        vAxis: {
+                            viewWindow: {
+                                min: 0
                             }
-                        };
+                        },
+                        width: '100%',
+                        chartArea: {
+                            left: 40,
+                            width: '100%'
+                        }
+                    };
 
-                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-                        chart.draw(data, options);
-                    }
-                </script>
+                    chart.draw(data, options);
+                }
+            </script>
 
-                <!--
+            <!--
                 <table class="table">
                     <thead>
                         <tr class="d-flex">
@@ -98,6 +107,5 @@
                     </tbody>
                 </table>
 -->
-            </div>
         </div>
     </@t.page>
