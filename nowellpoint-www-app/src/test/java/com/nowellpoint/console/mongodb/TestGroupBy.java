@@ -8,7 +8,6 @@ import static org.mongodb.morphia.aggregation.Group.id;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -85,31 +84,37 @@ public class TestGroupBy {
 	
 	@Test
 	public void testGroupBy() throws JsonProcessingException {
-		AggregationOptions options = AggregationOptions.builder()
-                .outputMode(AggregationOptions.OutputMode.CURSOR)
-                .build();
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DATE, -8);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
 		
-		System.out.println(calendar.getTime());
+		AggregationOptions options = AggregationOptions.builder()
+                .outputMode(AggregationOptions.OutputMode.CURSOR)
+                .build();
 		
 		Query<Event> query = datastore.createQuery(Event.class)
 				.field("eventDate")
 				.greaterThanOrEq(calendar.getTime());
 		
-		AggregationPipeline aggregate = datastore.createAggregation(Event.class).match(query).group(
-				id(
-                        grouping("year", new Accumulator("$year", "eventDate")),
-                        grouping("month", new Accumulator("$month", "eventDate")),
-                        grouping("day", new Accumulator("$dayOfMonth", "eventDate"))
-                    )
+		AggregationPipeline aggregate = datastore.createAggregation(Event.class)
+				.match(query)
+				.group(
+						id(
+								grouping("year", new Accumulator("$year", "eventDate")),
+								grouping("month", new Accumulator("$month", "eventDate")),
+								grouping("day", new Accumulator("$dayOfMonth", "eventDate"))
+						),
+						grouping("count", new Accumulator("$sum", 1))
 				);
 		
 		Iterator<EventAggregator> iterator = aggregate.aggregate(EventAggregator.class, options);
 		
 		while (iterator.hasNext()) {
-			System.out.println(mapper.writeValueAsString(iterator.next()));
+			EventAggregator aggregator = iterator.next();
+			
 		}
 	}
 	
