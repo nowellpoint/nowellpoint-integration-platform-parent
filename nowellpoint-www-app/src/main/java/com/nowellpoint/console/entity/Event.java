@@ -5,12 +5,14 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
 @Entity(value = "events")
 public class Event implements Serializable {
 
 	private static final long serialVersionUID = -226649098013040674L;
 	
+	@Id
 	private ObjectId id;
 	
 	private String salesforceId;

@@ -2,15 +2,12 @@ package com.nowellpoint.console.mongodb;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mongodb.morphia.aggregation.Group.grouping;
-import static org.mongodb.morphia.aggregation.Group.id;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -33,21 +30,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.aggregation.Accumulator;
-import org.mongodb.morphia.aggregation.AggregationPipeline;
-import org.mongodb.morphia.query.Query;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.AggregationOptions;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.Event;
-import com.nowellpoint.console.entity.EventAggregator;
+import com.nowellpoint.console.entity.EventDAO;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
@@ -83,39 +76,15 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	public void testGroupBy() throws JsonProcessingException {
+	public void testGroupBy() throws IOException {
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -8);
-		calendar.set(Calendar.HOUR, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
+		EventDAO dao = new EventDAO(Event.class, datastore);
 		
-		AggregationOptions options = AggregationOptions.builder()
-                .outputMode(AggregationOptions.OutputMode.CURSOR)
-                .build();
+		List<AggregationResult> results = dao.getEventsLast7Days();
 		
-		Query<Event> query = datastore.createQuery(Event.class)
-				.field("eventDate")
-				.greaterThanOrEq(calendar.getTime());
-		
-		AggregationPipeline aggregate = datastore.createAggregation(Event.class)
-				.match(query)
-				.group(
-						id(
-								grouping("year", new Accumulator("$year", "eventDate")),
-								grouping("month", new Accumulator("$month", "eventDate")),
-								grouping("day", new Accumulator("$dayOfMonth", "eventDate"))
-						),
-						grouping("count", new Accumulator("$sum", 1))
-				);
-		
-		Iterator<EventAggregator> iterator = aggregate.aggregate(EventAggregator.class, options);
-		
-		while (iterator.hasNext()) {
-			EventAggregator aggregator = iterator.next();
-			
-		}
+		results.stream().forEach(e -> {
+			System.out.println(e.getId() + " : " + e.getCount());
+		});
 	}
 	
 	@Test
@@ -351,6 +320,7 @@ public class TestGroupBy {
         				logger.info(message.isSuccessful());
         				logger.info(message.getClientId());
         				logger.info(channel.getChannelId());
+        				
         				Map<String,Object> data = message.getDataAsMap();
         				replayId.set((Long)((Map<String, Object>)data.get("event")).get("replayId"));
         				logger.info("**** start message data ****");
@@ -369,6 +339,8 @@ public class TestGroupBy {
         				String lastModifiedById = (String)sobjectMap.get("LastModifiedById");
         				Date lastModifiedDate = Date.from( Instant.parse((String) sobjectMap.get("LastModifiedDate")));
         				
+        				EventDAO dao = new EventDAO(Event.class, datastore);
+        				
         				Event event = new Event();
         				event.setCreatedById(createdById);
         				event.setCreatedDate(createdDate);
@@ -379,7 +351,7 @@ public class TestGroupBy {
         				event.setSalesforceId(salesforceId);
         				event.setType(type);
         				
-        				datastore.save(event);
+        				dao.save(event);
         			}
         		});
         	}
