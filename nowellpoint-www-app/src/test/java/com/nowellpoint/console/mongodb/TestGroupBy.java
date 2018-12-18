@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +74,7 @@ public class TestGroupBy {
         datastore.ensureIndexes();
 	}
 	
-	@Test
+	//@Test
 	public void testGroupBy() throws IOException {
 		
 		EventDAO dao = new EventDAO(Event.class, datastore);
@@ -88,7 +87,7 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
@@ -134,12 +133,12 @@ public class TestGroupBy {
 		String topicId = createAccountTopic(token.getAccessToken(), sobjectUrl);
 		
 		try {
-			BayeuxClient client = createClient(token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
+			BayeuxClient client = createClient(token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic", organization.getId());
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
 			TimeUnit.SECONDS.sleep(10);
 			client.disconnect();
 			logger.info("**** replay id ****");
-			createClient(token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
+			createClient(token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic", organization.getId());
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
 			TimeUnit.SECONDS.sleep(10);
 		} catch (Exception e) {
@@ -210,7 +209,7 @@ public class TestGroupBy {
 		assertEquals(204, response.getStatusCode());
 	}
 	
-	private BayeuxClient createClient(String instanceUrl, String accessToken, String channel) throws Exception {
+	private BayeuxClient createClient(String instanceUrl, String accessToken, String channel, ObjectId organizationId) throws Exception {
 		HttpClient httpClient = new HttpClient();
 		httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
 		httpClient.setStopTimeout(STOP_TIMEOUT);
@@ -314,30 +313,38 @@ public class TestGroupBy {
         		client.getChannel("/topic/".concat(channel)).subscribe(new ClientSessionChannel.MessageListener() {
 
 					@Override
-					@SuppressWarnings("unchecked")
         			public void onMessage(ClientSessionChannel channel, Message message) {
+						
+						Long start = System.currentTimeMillis();
+						
         				logger.info("**** message received ****");
         				logger.info(message.isSuccessful());
         				logger.info(message.getClientId());
         				logger.info(channel.getChannelId());
         				
-        				Map<String,Object> data = message.getDataAsMap();
-        				replayId.set((Long)((Map<String, Object>)data.get("event")).get("replayId"));
+        				JsonNode node = null;
+        				try {
+        					node = mapper.valueToTree(message.getDataAsMap());
+        				} catch (Exception e) {
+        					e.printStackTrace();
+        				}
+        				
+        				replayId.set(node.get("event").get("replayId").asLong());
+        				
         				logger.info("**** start message data ****");
-        				logger.info(data);
+        				logger.info(node.toString());
         				logger.info("**** end message data ****");
         				
-        				Map<String,Object> eventMap = (Map<String, Object>)data.get("event");
-        				Long replayId = (Long) eventMap.get("replayId");
-        				Date eventDate = Date.from( Instant.parse((String) eventMap.get("createdDate")) );
-        				String type = (String) eventMap.get("type");
+        				Long replayId = node.get("event").get("replayId").asLong();
+        				Date eventDate = Date.from( Instant.parse(node.get("event").get("createdDate").asText()) );
+        				String type = node.get("event").get("type").asText();
         				
-        				Map<String,Object> sobjectMap = (Map<String, Object>)data.get("sobject");
-        				String salesforceId = (String)sobjectMap.get("Id");
-        				String createdById = (String)sobjectMap.get("CreatedById");
-        				Date createdDate = Date.from( Instant.parse((String) sobjectMap.get("CreatedDate")) );
-        				String lastModifiedById = (String)sobjectMap.get("LastModifiedById");
-        				Date lastModifiedDate = Date.from( Instant.parse((String) sobjectMap.get("LastModifiedDate")));
+        				JsonNode sobject = node.get("sobject");
+        				String salesforceId = sobject.get("Id").asText();
+        				String createdById = sobject.get("CreatedById").asText();
+        				Date createdDate = Date.from( Instant.parse(sobject.get("CreatedDate").asText()) );
+        				String lastModifiedById = sobject.get("LastModifiedById").asText();
+        				Date lastModifiedDate = Date.from( Instant.parse(sobject.get("LastModifiedDate").asText()) );
         				
         				EventDAO dao = new EventDAO(Event.class, datastore);
         				
@@ -347,11 +354,14 @@ public class TestGroupBy {
         				event.setEventDate(eventDate);
         				event.setLastModifiedById(lastModifiedById);
         				event.setLastModifiedDate(lastModifiedDate);
+        				event.setOrganizationId(organizationId);
         				event.setReplayId(replayId);
         				event.setSalesforceId(salesforceId);
         				event.setType(type);
         				
         				dao.save(event);
+        				
+        				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
         			}
         		});
         	}

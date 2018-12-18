@@ -15,6 +15,8 @@ public class Event implements Serializable {
 	@Id
 	private ObjectId id;
 	
+	private ObjectId organizationId;
+	
 	private String salesforceId;
 	
 	private Date createdDate;
@@ -41,6 +43,14 @@ public class Event implements Serializable {
 
 	public void setId(ObjectId id) {
 		this.id = id;
+	}
+
+	public ObjectId getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(ObjectId organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public String getSalesforceId() {

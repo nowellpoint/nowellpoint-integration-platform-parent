@@ -4,8 +4,9 @@ import static org.mongodb.morphia.aggregation.Group.grouping;
 import static org.mongodb.morphia.aggregation.Group.id;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,16 +34,11 @@ public class EventDAO extends BasicDAO<Event,String> {
 	}
 	
 	public List<AggregationResult> getEventsLast7Days() {
-		Calendar today = Calendar.getInstance();
-		today.set(Calendar.HOUR, 0);
-		today.set(Calendar.MINUTE, 0);
-		today.set(Calendar.SECOND, 0);
 		
-		Calendar startDate = Calendar.getInstance();
-		startDate.add(Calendar.DATE, -8);
-		startDate.set(Calendar.HOUR, 0);
-		startDate.set(Calendar.MINUTE, 0);
-		startDate.set(Calendar.SECOND, 0);
+		ZoneId utc = ZoneId.of( "UTC" );
+		
+		LocalDate startDate = LocalDate.now(utc).minusDays(7);
+		LocalDate today = LocalDate.now(utc);
 		
 		AggregationOptions options = AggregationOptions.builder()
                 .outputMode(AggregationOptions.OutputMode.CURSOR)
@@ -50,7 +46,9 @@ public class EventDAO extends BasicDAO<Event,String> {
 		
 		Query<Event> query = getDatastore().createQuery(Event.class)
 				.field("eventDate")
-				.greaterThanOrEq(startDate.getTime());
+				.greaterThanOrEq(Date.from(startDate.atStartOfDay()
+					      .atZone(utc)
+					      .toInstant()));
 		
 		AggregationPipeline pipeline = getDatastore().createAggregation(Event.class)
 				.match(query)
@@ -65,21 +63,22 @@ public class EventDAO extends BasicDAO<Event,String> {
 		
 		Iterator<AggregationResult> iterator = pipeline.aggregate(AggregationResult.class, options);
 		
-		Long numberOfDays = ChronoUnit.DAYS.between(LocalDate.of(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DATE)),
-				LocalDate.of(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DATE)));
+		Long numberOfDays = ChronoUnit.DAYS.between(startDate, today) + 1;
 		
-		AtomicReference<LocalDate> start = new AtomicReference<LocalDate>(LocalDate.now().minusDays(8));
+		AtomicReference<LocalDate> referenceDate = new AtomicReference<LocalDate>(today);
 		
 		Map<String,AggregationResult> buckets = new HashMap<String,AggregationResult>();
 		
 		IntStream.range(0, numberOfDays.intValue()).forEach( i -> {
-			String key = String.valueOf(start.get().getYear())
-					.concat(String.valueOf(start.get().getMonthValue()))
-					.concat(String.valueOf(start.get().getDayOfMonth()));
+			String key = String.valueOf(referenceDate.get().getYear())
+					.concat(String.valueOf(referenceDate.get().getMonthValue()))
+					.concat(String.valueOf(referenceDate.get().getDayOfMonth()));
 					
 			buckets.put(key, new AggregationResult(String.valueOf(i), new Long(0)));
 			
-			start.set(start.get().plusDays(1));
+			System.out.println(key);
+			
+			referenceDate.set(referenceDate.get().minusDays(1));
 		});
 		
 		StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false).forEach( r -> {
