@@ -1,17 +1,17 @@
 <#import "template.html" as t>
     <@t.page>
-        <div class="container-fluid pt-3 pl-3 pr-3 mb-1">
-            <div class="dashhead border rounded pt-3 pl-3 pr-3 pb-1 unique-color">
+        <div class="container-fluid pt-5 pl-5 pr-5 mb-3">
+            <div class="dashhead">
                 <div class="dashhead-titles">
-                    <h6 class="dashhead-subtitle text-white">${organization.name}</h6>
-                    <h3 class="dashhead-title text-white">${messages['start']}</h3>
+                    <h6 class="dashhead-subtitle">${organization.name}</h6>
+                    <h3 class="dashhead-title">${messages['start']}</h3>
                 </div>
                 <div class="dashhead-toolbar">
 
                 </div>
             </div>
         </div>
-        <div class="container-fluid pt-3 pl-3 pr-3 mb-1">
+        <div class="container-fluid pl-5 pr-5 mb-3">
             <div class="card-columns">     
                 <div class="card">
                     <div class="card-body">

@@ -1,5 +1,5 @@
 <!-- navbar -->
-<nav class="navbar navbar-default navbar-expand-lg navbar-light fixed-top scrolling-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark unique-color fixed-top scrolling-navbar">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
         <span class="navbar-toggler-icon"></span>
     </button>

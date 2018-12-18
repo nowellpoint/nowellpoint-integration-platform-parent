@@ -74,7 +74,8 @@ public class TestGroupBy {
         datastore.ensureIndexes();
 	}
 	
-	//@Test
+	@Test
+	@Ignore
 	public void testGroupBy() throws IOException {
 		
 		EventDAO dao = new EventDAO(Event.class, datastore);

@@ -14,10 +14,11 @@ header {
 }
 main {
 	position: absolute;
-    top: 75px;
+    top: 50px;
     bottom: 0px;
     width: 100%;
     transition: margin-left .5s;
+    background-color: rgba(220,220,220,0.3);
 }
 footer {
     position: fixed; /* Set the navbar to fixed position */
@@ -40,18 +41,6 @@ footer {
 	background-color: #3F729B;
 }
 
-.navbar.navbar-default {
-    border: 0;
-    height: 75px;
-    border-bottom: 1px solid lightGray;
-}
-
-.navbar .navbar-default .navbar-collapse {
-    border: 0;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
-
 .content {
     position: absolute;
     bottom: 0px;
@@ -70,7 +59,6 @@ footer {
     left: 0;
     border-right: 1px solid lightGray;
     overflow-x: hidden;
-    background-color: rgba(220,220,220,0.3);
 }
 
 /* The navigation menu links */
