@@ -34,7 +34,7 @@
                     data.addColumn('string', 'Days');
                     data.addColumn('number', 'Events');
                     data.addRows([
-                        ${results}
+                        ${data}
                     ]);
 
                     var options = {

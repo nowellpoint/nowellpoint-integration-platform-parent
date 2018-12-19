@@ -5,6 +5,8 @@ import static spark.Spark.post;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
@@ -20,6 +23,7 @@ import javax.validation.ValidationException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
+import com.nowellpoint.client.sforce.model.AggregateResult;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
@@ -32,6 +36,7 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Alert;
+import com.nowellpoint.console.util.MessageProvider;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 
@@ -120,29 +125,16 @@ public class OrganizationController extends BaseController {
 				.organization()
 				.getEventsLastDays(organizationId, 7);
 		
-		/**
-		 * [
-                        
-                        ['7d', 1000],
-                        ['6d', 3890],
-                        ['5d', 17],
-                        ['4d', 4211],
-                        ['3d', 3290],
-                        ['2d', 4011],
-                        ['1d', 89],
-                        ['Today', 0]
-                    ]
-		 */
+		String data = results.stream()
+				.sorted(Comparator.reverseOrder())
+				.map(r -> formatLabel(getIdentity(request).getLocale(), r))
+				.collect(Collectors.joining(", "));
 		
-		AtomicReference<String> output = new AtomicReference<String>(new String());
-		
-		results.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
-			output.set(output.get().concat("[".concat("'" + r.getId() + "d'," + r.getCount() + "],")));
-		});
+		System.out.println(data);
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("results", output.get());
+		model.put("data", data);
 		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
@@ -579,4 +571,28 @@ public class OrganizationController extends BaseController {
 		
 		return null;
 	};
+	
+	private static String formatLabel(Locale locale, AggregationResult result) {
+		
+		ZoneId utc = ZoneId.of( "UTC" );
+		
+		LocalDate now = LocalDate.now( utc ).minusDays(Integer.valueOf(result.getId()));
+		
+		String text = null;
+		if (now.equals(LocalDate.now( utc ))) {
+			text = MessageProvider.getMessage(locale, "today");
+		} else if (now.equals(LocalDate.now( utc ).minusDays(1))) {
+			text = MessageProvider.getMessage(locale, "yesterday");
+		} else {
+			text = String.format(MessageProvider.getMessage(locale, "days.ago"), result.getId());
+		}
+		
+		return new StringBuilder("['")
+				.append(text)
+				.append("'")
+				.append(", ")
+				.append(result.getCount())
+				.append("]")
+				.toString();
+	}
 }

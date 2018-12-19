@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +31,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,20 +79,23 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testGroupBy() throws IOException {
 		
 		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
 		
 		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId("5bac3c0e0626b951816064f5"), 7);
 		
+		PrettyTime p = new PrettyTime();
+		
 		results.stream().forEach(e -> {
-			System.out.println(e.getId() + " : " + e.getCount());
+			LocalDate today = LocalDate.now().plusDays(Integer.valueOf(e.getId()));
+			System.out.println(e.getId() + " : " + p.formatDuration(Date.from(today.atStartOfDay().atZone(ZoneId.of( "UTC" )).toInstant())) + " : " + e.getCount());
 		});
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
