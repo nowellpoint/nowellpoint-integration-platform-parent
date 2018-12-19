@@ -6,11 +6,13 @@ import static spark.Spark.post;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
@@ -18,6 +20,7 @@ import javax.validation.ValidationException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
+import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
@@ -107,12 +110,39 @@ public class OrganizationController extends BaseController {
 	
 	private static String eventListenersOverview(Request request, Response response) {
 		
+		String organizationId = getIdentity(request).getOrganization().getId();
+		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
-				.get(getIdentity(request).getOrganization().getId());
+				.get(organizationId);
+		
+		List<AggregationResult> results = ServiceClient.getInstance()
+				.organization()
+				.getEventsLastDays(organizationId, 7);
+		
+		/**
+		 * [
+                        
+                        ['7d', 1000],
+                        ['6d', 3890],
+                        ['5d', 17],
+                        ['4d', 4211],
+                        ['3d', 3290],
+                        ['2d', 4011],
+                        ['1d', 89],
+                        ['Today', 0]
+                    ]
+		 */
+		
+		AtomicReference<String> output = new AtomicReference<String>(new String());
+		
+		results.stream().sorted(Comparator.reverseOrder()).forEach(r -> {
+			output.set(output.get().concat("[".concat("'" + r.getId() + "d'," + r.getCount() + "],")));
+		});
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
+		model.put("results", output.get());
 		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()

@@ -1,6 +1,6 @@
 package com.nowellpoint.console.entity;
 
-public class AggregationResult {
+public class AggregationResult implements Comparable<AggregationResult> {
 	
 	private String _id;
 	private Long count;
@@ -28,5 +28,10 @@ public class AggregationResult {
 
 	public void setCount(Long count) {
 		this.count = count;
+	}
+
+	@Override
+	public int compareTo(AggregationResult o) {
+		return _id.compareTo(o.getId());
 	}
 }

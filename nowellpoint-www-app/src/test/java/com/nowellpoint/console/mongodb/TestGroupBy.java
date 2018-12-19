@@ -41,6 +41,7 @@ import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.Event;
 import com.nowellpoint.console.entity.EventDAO;
 import com.nowellpoint.console.entity.Organization;
+import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.http.HttpRequestException;
@@ -78,9 +79,9 @@ public class TestGroupBy {
 	@Ignore
 	public void testGroupBy() throws IOException {
 		
-		EventDAO dao = new EventDAO(Event.class, datastore);
+		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
 		
-		List<AggregationResult> results = dao.getEventsLast7Days();
+		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId("5bac3c0e0626b951816064f5"), 7);
 		
 		results.stream().forEach(e -> {
 			System.out.println(e.getId() + " : " + e.getCount());

@@ -5,6 +5,7 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="${links['dashboard']}">${messages["dashboard"]}</a>
+        <a class="nav-link" href="${DASHBOARD_URI}">
+            <i class="fa fa-dashboard"></i><span class="clearfix d-none d-sm-inline-block">&nbsp;${messages["dashboard"]}</span></a>
     </li>
 </ul>

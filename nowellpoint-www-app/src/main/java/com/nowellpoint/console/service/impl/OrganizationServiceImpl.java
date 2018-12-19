@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
@@ -499,6 +501,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = get(id);
 		deleteCustomer(organization.getNumber());
 		delete(organization);
+	}
+	
+	@Override
+	public List<AggregationResult> getEventsLastDays(String id, Integer days) {
+		return dao.getEventsLastDays(new ObjectId(id), days);
 	}
 	
 	@Override

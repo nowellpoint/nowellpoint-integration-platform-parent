@@ -13,41 +13,45 @@
         </div>
         <div class="container">
             <div class="row mb-3">
-                <div class="card-deck">
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.customObjectCount}</b></h4>
-                            <span class="statcard-desc">${labels["custom.objects"]}</span>
-                        </div>
-                    </div>
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.apexClassCount}</b></h4>
-                            <span class="statcard-desc">${labels["apex.classes"]}</span>
-                        </div>
-                    </div>
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.apexTriggerCount}</b></h4>
-                            <span class="statcard-desc">${labels["apex.triggers"]}</span>
-                        </div>
-                    </div>
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.recordTypeCount}</b></h4>
-                            <span class="statcard-desc">${labels["record.types"]}</span>
-                        </div>
-                    </div>
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.userRoleCount}</b></h4>
-                            <span class="statcard-desc">${labels["user.roles"]}</span>
-                        </div>
-                    </div>
-                    <div class="card border-primary">
-                        <div class="statcard statcard-primary text-xs-center p-4 h-100 d-inline-block">
-                            <h4 class="statcard-number"><b>${organization.dashboard.profileCount}</b></h4>
-                            <span class="statcard-desc">${labels["profiles"]}</span>
+                <div class="card w-100">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.customObjectCount}</h4>
+                                    <span class="statcard-desc">${labels["custom.objects"]}</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.apexClassCount}</h4>
+                                    <span class="statcard-desc">${labels["apex.classes"]}</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.apexTriggerCount}</h4>
+                                    <span class="statcard-desc">${labels["apex.triggers"]}</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.recordTypeCount}</h4>
+                                    <span class="statcard-desc">${labels["record.types"]}</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.userRoleCount}</h4>
+                                    <span class="statcard-desc">${labels["user.roles"]}</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="statcard text-center p-1">
+                                    <h4 class="statcard-number">${organization.dashboard.profileCount}</h4>
+                                    <span class="statcard-desc">${labels["profiles"]}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

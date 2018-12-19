@@ -1,8 +1,10 @@
 package com.nowellpoint.console.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
@@ -39,4 +41,6 @@ public interface OrganizationService {
 	public void delete(String id);
 	
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
+	
+	public List<AggregationResult> getEventsLastDays(String id, Integer days);
 }
