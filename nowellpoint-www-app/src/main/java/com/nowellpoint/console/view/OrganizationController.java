@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +23,6 @@ import javax.validation.ValidationException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
-import com.nowellpoint.client.sforce.model.AggregateResult;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
@@ -130,12 +129,10 @@ public class OrganizationController extends BaseController {
 				.map(r -> formatLabel(getIdentity(request).getLocale(), r))
 				.collect(Collectors.joining(", "));
 		
-		System.out.println(data);
-		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
+		model.put("results", results);
 		model.put("data", data);
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
@@ -584,11 +581,10 @@ public class OrganizationController extends BaseController {
 		} else if (now.equals(LocalDate.now( utc ).minusDays(1))) {
 			text = MessageProvider.getMessage(locale, "yesterday");
 		} else {
-			text = String.format(MessageProvider.getMessage(locale, "days.ago"), result.getId());
+			text = now.getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
 		}
 		
-		return new StringBuilder("['")
-				.append(text)
+		return new StringBuilder("['").append(text)
 				.append("'")
 				.append(", ")
 				.append(result.getCount())

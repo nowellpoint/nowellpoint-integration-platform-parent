@@ -8,12 +8,16 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.cometd.bayeux.Channel;
@@ -31,7 +35,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,12 +89,12 @@ public class TestGroupBy {
 		
 		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId("5bac3c0e0626b951816064f5"), 7);
 		
-		PrettyTime p = new PrettyTime();
+		String data = results.stream()
+				.sorted(Comparator.reverseOrder())
+				.map(r -> formatLabel(Locale.getDefault(), r))
+				.collect(Collectors.joining(", "));
 		
-		results.stream().forEach(e -> {
-			LocalDate today = LocalDate.now().plusDays(Integer.valueOf(e.getId()));
-			System.out.println(e.getId() + " : " + p.formatDuration(Date.from(today.atStartOfDay().atZone(ZoneId.of( "UTC" )).toInstant())) + " : " + e.getCount());
-		});
+		System.out.println(data);
 	}
 	
 	@Test
@@ -385,5 +388,29 @@ public class TestGroupBy {
 	
 	private Long getReplayId(Message.Mutable message) {
 		return replayId.get();
+	}
+	
+	private static String formatLabel(Locale locale, AggregationResult result) {
+		
+		ZoneId utc = ZoneId.of( "UTC" );
+		
+		LocalDate now = LocalDate.now( utc ).minusDays(Integer.valueOf(result.getId()));
+		
+		String text = null;
+		if (now.equals(LocalDate.now( utc ))) {
+			text = "Today";
+		} else if (now.equals(LocalDate.now( utc ).minusDays(1))) {
+			text = "Yesterday";
+		} else {
+			text = now.getDayOfWeek().getDisplayName(TextStyle.FULL, locale);
+		}
+		
+		return new StringBuilder("['")
+				.append(text)
+				.append("'")
+				.append(", ")
+				.append(result.getCount())
+				.append("]")
+				.toString();
 	}
 }

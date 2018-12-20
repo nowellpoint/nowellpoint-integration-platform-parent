@@ -18,7 +18,15 @@ main {
     bottom: 0px;
     width: 100%;
     transition: margin-left .5s;
-    background-color: rgba(220,220,220,0.3);
+    background-color: #fafafa;
+}
+content {
+    position: absolute;
+    bottom: 0px;
+    left: 250px;
+    right: 0;
+    top: 0;
+    margin-right: 0px; 
 }
 footer {
     position: fixed; /* Set the navbar to fixed position */
@@ -39,15 +47,6 @@ footer {
 }
 .unique-color {
 	background-color: #3F729B;
-}
-
-.content {
-    position: absolute;
-    bottom: 0px;
-    left: 250px;
-    right: 0;
-    top: 0;
-    margin-right: 0px; 
 }
 
 /* The side navigation menu */

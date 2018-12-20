@@ -2,30 +2,65 @@
 
     <@t.page>
 
-        <#include "event-listener-menu.ftl" />
+        <#include "sidebar.ftl" />
 
-        <div id="content" class="content">
-            <div class="container-fluid p-3">
-                <div class="dashhead mb-3">
+        <content>
+            <div class="container-fluid mt-3 p-3">
+                <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${labels["salesforce"]}</h6>
                         <h3 class="dashhead-title">${labels['event.listeners']}</h3>
                     </div>
                 </div>
-                <div class="card-columns">
-                    <div class="card border-success border-right-0 border-bottom-0 border-left-0">
-                        <div class="card-body">
-                            <h5 class="card-title">${labels['events.received.last.n.days']?replace(':s1','7')}</h5>
-                            <div id="curve_chart"></div>
-                        </div>
-                    </div>
-                </div>
+                <hr>
+                <div id="events-last-7-days"></div>
+                <br>
+                <br>
+                <table class="table">
+                    <thead>
+                        <tr class="d-flex">
+                            <th class="col-3">${labels['id']}</th>
+                            <th class="col-3">${labels['name']}</th>
+                            <th class="col-3 text-center">${labels['enabled']}</th>
+                            <th class="col-3">${labels['last.event.received.on']}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#if organization.eventListeners?size==0>
+                            <tr>
+                                <td colspan="4">&nbsp;</td>
+                            </tr>
+                            <#else>
+                                <#list organization.eventListeners?sort_by("name") as listener>
+                                    <tr class="d-flex">
+                                        <td class="col-3">${listener.id}</td>
+                                        <td class="col-3">${listener.name}</td>
+                                        <td class="col-3 text-center">
+                                            <#if listener.enabled>
+                                                <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>
+                                                <#else>
+                                                    <i class="fa fa-close mr-2 text-danger" aria-hidden="true"></i>
+                                            </#if>
+                                        </td>
+                                        <td class="col-3">
+                                            <#if listener.lastEventReceivedOn??>
+                                                ${listener.lastEventReceivedOn?date?string.long - listener.lastEventReceivedOn?time?string.medium}
+                                                <#else>
+                                                    &nbsp;
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                </#list>
+                        </#if>
+                    </tbody>
+                </table>
             </div>
-            
+        </content>
+
             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
             <script type="text/javascript">
                 google.charts.load('current', {
-                    'packages': ['corechart']
+                    'packages': ['corechart', 'bar']
                 });
                 google.charts.setOnLoadCallback(drawChart);
 
@@ -38,26 +73,40 @@
                     ]);
 
                     var options = {
-                        curveType: 'function',
-                        pointSize: 3,
-                        lineWidth: 0,
-                        legend: 'none',
-                        vAxis: {
+                        title: "${labels['events.received.last.n.days']?replace(':s1','7')}",
+                        focusTarget: 'category',
+                        backgroundColor: 'transparent',
+                        hAxis: {
                             viewWindow: {
-                                min: 0
+                                min: [7, 30, 0],
+                                max: [17, 30, 0]
+                            },
+                            textStyle: {
+                                fontSize: 14,
+                                color: '#053061',
+                                bold: true,
+                                italic: false
                             }
                         },
-                        width: '100%',
-                        chartArea: {
-                            left: 40,
-                            width: '100%'
+                        vAxis: {
+                            textStyle: {
+                                fontSize: 18,
+                                color: '#67001f',
+                                bold: false,
+                                italic: false
+                            }
                         }
                     };
 
-                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                    var chart = new google.visualization.ColumnChart(document.getElementById('events-last-7-days'));
 
                     chart.draw(data, options);
                 }
+
+                $(document).ready(function() {
+                    $(window).resize(function() {
+                        drawChart();
+                    });
+                });
             </script>
-        </div>
     </@t.page>
