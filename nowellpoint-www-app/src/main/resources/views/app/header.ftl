@@ -1,8 +1,6 @@
 <!-- navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark unique-color fixed-top scrolling-navbar">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="${messages['toggle.navigation']}">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <button id="toggleSidebar" type="button" class="btn btn-link"><i class="fa fa-bars fa-1x text-white"></i></button>&emsp;
     <span class="navbar-brand">${messages["application.title"]}</span>
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav mr-auto">

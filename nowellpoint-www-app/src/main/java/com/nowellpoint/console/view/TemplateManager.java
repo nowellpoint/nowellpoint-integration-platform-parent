@@ -61,7 +61,7 @@ public class TemplateManager {
 			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
 			model.put("USER_PROFILE_URI", Path.Route.USER_PROFILE);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
-			model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
+			model.put("ORGANIZATION_EVENTS_URI", Path.Route.ORGANIZATION_EVENTS);
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}

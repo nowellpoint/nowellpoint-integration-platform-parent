@@ -1,18 +1,19 @@
 <#import "template.html" as t>
     <@t.page>
         <#include "sidebar.ftl" />
-        <content>
-            <div class="container-fluid mt-3 p-3">
+        <content id="content">
+            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${organization.name}</h6>
-                        <h3 class="dashhead-title">${messages['start']}</h3>
+                        <h4 class="dashhead-title font-weight-normal">${messages['start']}</h4>
                     </div>
                     <div class="dashhead-toolbar">
 
                     </div>
                 </div>
-                <br>
+            </div>
+            <hr>
+            <div class="container-fluid p-3">
                 <div class="card-columns">
                     <div class="card">
                         <div class="card-body">
@@ -39,7 +40,7 @@
                             <h4>${labels['event.listeners']}</h4>
                             <span>${ORGANIZATION_EVENT_LISTENER_LABEL}</span>
                         </div>
-                        <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENT_LISTENERS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
+                        <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENTS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
                     </div>
                 </div>
                 

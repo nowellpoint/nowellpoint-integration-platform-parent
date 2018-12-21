@@ -1,6 +1,5 @@
 body {
-    overflow-x: hidden;
-    overflow-y: scroll;
+    overflow: hidden;
     margin: 0;
     padding: 0;
 }
@@ -13,20 +12,21 @@ header {
     border-bottom: 1px solid lightGray;
 }
 main {
-	position: absolute;
-    top: 50px;
-    bottom: 0px;
-    width: 100%;
-    transition: margin-left .5s;
-    background-color: #fafafa;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
 }
 content {
     position: absolute;
-    bottom: 0px;
+    height: 100%;
     left: 250px;
     right: 0;
-    top: 0;
-    margin-right: 0px; 
+    top: 0px;    
+    margin-right: 0px;
+    margin-top: 50px; 
+    overflow: auto;
 }
 footer {
     position: fixed; /* Set the navbar to fixed position */
@@ -36,8 +36,6 @@ footer {
     padding-top: 20px;
     border-top: 1px solid lightGray;
 }
-
-
 
 .hidden {
     display: none;
@@ -51,13 +49,16 @@ footer {
 
 /* The side navigation menu */
 .sidebar {
-    bottom: 0px;
+    height: 100%;
     width: 250px; /* 0 width - change this with JavaScript */
-    position: absolute;
-    top: 0;
+    top: 0px;
     left: 0;
     border-right: 1px solid lightGray;
     overflow-x: hidden;
+    background-color: #fafafa;
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    margin-top: 50px;
+    z-index: 1; /* Stay on top */
 }
 
 /* The navigation menu links */

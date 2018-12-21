@@ -49,8 +49,8 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION, (request, response) 
 				-> viewOrganization(request, response));
 		
-		get(Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW, (request, response) 
-				-> eventListenersOverview(request, response));
+		get(Path.Route.ORGANIZATION_EVENTS, (request, response) 
+				-> viewEvents(request, response));
 		
 		get(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
 				-> setupEventListener(request, response));
@@ -112,7 +112,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	private static String eventListenersOverview(Request request, Response response) {
+	private static String viewEvents(Request request, Response response) {
 		
 		String organizationId = getIdentity(request).getOrganization().getId();
 		
@@ -137,7 +137,7 @@ public class OrganizationController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
-				.templateName(Templates.ORGANIZATION_EVENT_LISTENERS_OVERVIEW)
+				.templateName(Templates.ORGANIZATION_EVENTS)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -166,7 +166,6 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
@@ -229,7 +228,6 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("SOBJECT", sobject);
-		model.put("ORGANIZATION_EVENT_LISTENERS_URI", Path.Route.ORGANIZATION_EVENT_LISTENERS_OVERVIEW);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)

@@ -1,18 +1,16 @@
 <#import "template.html" as t>
-
     <@t.page>
-
         <#include "sidebar.ftl" />
-
-        <content>
-            <div class="container-fluid mt-3 p-3">
+        <content id="content">
+            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${labels["salesforce"]}</h6>
-                        <h3 class="dashhead-title">${labels['event.listeners']}</h3>
+                        <h4 class="dashhead-title font-weight-normal">${labels['events']}</h4>
                     </div>
                 </div>
-                <hr>
+            </div>
+            <hr>
+            <div class="container-fluid p-3">
                 <div id="events-last-7-days"></div>
                 <br>
                 <br>
@@ -57,56 +55,56 @@
             </div>
         </content>
 
-            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script type="text/javascript">
-                google.charts.load('current', {
-                    'packages': ['corechart', 'bar']
-                });
-                google.charts.setOnLoadCallback(drawChart);
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load('current', {
+                'packages': ['corechart', 'bar']
+            });
+            google.charts.setOnLoadCallback(drawChart);
 
-                function drawChart() {
-                    var data = new google.visualization.DataTable();
-                    data.addColumn('string', 'Days');
-                    data.addColumn('number', 'Events');
-                    data.addRows([
-                        ${data}
-                    ]);
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Days');
+                data.addColumn('number', 'Events');
+                data.addRows([
+                    ${data}
+                ]);
 
-                    var options = {
-                        title: "${labels['events.received.last.n.days']?replace(':s1','7')}",
-                        focusTarget: 'category',
-                        backgroundColor: 'transparent',
-                        hAxis: {
-                            viewWindow: {
-                                min: [7, 30, 0],
-                                max: [17, 30, 0]
-                            },
-                            textStyle: {
-                                fontSize: 14,
-                                color: '#053061',
-                                bold: true,
-                                italic: false
-                            }
+                var options = {
+                    title: "${labels['events.received.last.n.days']?replace(':s1','7')}",
+                    focusTarget: 'category',
+                    backgroundColor: 'transparent',
+                    hAxis: {
+                        viewWindow: {
+                            min: [7, 30, 0],
+                            max: [17, 30, 0]
                         },
-                        vAxis: {
-                            textStyle: {
-                                fontSize: 18,
-                                color: '#67001f',
-                                bold: false,
-                                italic: false
-                            }
+                        textStyle: {
+                            fontSize: 14,
+                            color: '#053061',
+                            bold: true,
+                            italic: false
                         }
-                    };
+                    },
+                    vAxis: {
+                        textStyle: {
+                            fontSize: 18,
+                            color: '#67001f',
+                            bold: false,
+                            italic: false
+                        }
+                    }
+                };
 
-                    var chart = new google.visualization.ColumnChart(document.getElementById('events-last-7-days'));
+                var chart = new google.visualization.ColumnChart(document.getElementById('events-last-7-days'));
 
-                    chart.draw(data, options);
-                }
+                chart.draw(data, options);
+            }
 
-                $(document).ready(function() {
-                    $(window).resize(function() {
-                        drawChart();
-                    });
+            $(document).ready(function() {
+                $(window).resize(function() {
+                    drawChart();
                 });
-            </script>
+            });
+        </script>
     </@t.page>

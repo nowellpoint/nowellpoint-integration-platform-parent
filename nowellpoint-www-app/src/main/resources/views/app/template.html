@@ -24,19 +24,19 @@
         <script type="text/javascript" src="/js/popper.min.js"></script>
         <!-- Bootstrap core JavaScript -->
         <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-        <!-- Custom JavaScript -->
-        <script type="text/javascript" src="/js/common.js"></script>
-        
         
     </head>
 
     <body>
-        <#include "header.ftl" />
         <main>
+            <#include "header.ftl" />
             <#nested />
         </main>
 
     </body>
+        
+        <!-- Custom JavaScript -->
+        <script type="text/javascript" src="/js/common.js"></script>
 
     </html>
 </#macro>
