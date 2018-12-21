@@ -75,7 +75,11 @@ public class ConsoleServiceImpl implements ConsoleService {
 	@Override
 	public void revoke(String accessToken) {		
 		OAuthClient client = OAuthClient.builder()
-				.provider(OktaOAuthProvider.builder().build())
+				.provider(OktaOAuthProvider.builder()
+						.authorizationServer(SecretsManager.getOktaAuthorizationServer())
+						.clientId(SecretsManager.getOktaClientId())
+						.clientSecret(SecretsManager.getOktaClientSecret())
+						.build())
 				.build();
 		
 		client.revoke(accessToken);
