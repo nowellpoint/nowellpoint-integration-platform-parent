@@ -53,7 +53,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.connection(Connection.of(entity.getConnection()))
 				.dashboard(Dashboard.of(entity.getDashboard()))
 				.subscription(Subscription.of(entity.getSubscription()))
-				.eventListeners(EventListeners.of(entity.getEventListeners()))
+				.eventListeners(EventListeners.of(entity.getStreamingEventListeners()))
 				.build();
 	}
 }

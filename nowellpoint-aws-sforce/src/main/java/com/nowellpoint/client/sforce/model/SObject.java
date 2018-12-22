@@ -17,6 +17,9 @@ public class SObject implements Serializable {
 	@JsonProperty("Id")
 	private String id;
 	
+	@JsonProperty("Name")
+	private String name;
+	
 	@JsonProperty("CreatedById")
 	private String createdById;
 	
@@ -39,6 +42,10 @@ public class SObject implements Serializable {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getCreatedById() {

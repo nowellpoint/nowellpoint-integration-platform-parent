@@ -29,20 +29,20 @@
                                 <td colspan="4">&nbsp;</td>
                             </tr>
                             <#else>
-                                <#list organization.eventListeners?sort_by("name") as listener>
+                                <#list organization.eventListeners as eventListener>
                                     <tr class="d-flex">
-                                        <td class="col-3">${listener.prefix}</td>
-                                        <td class="col-3">${listener.name}</td>
+                                        <td class="col-3">${eventListener.prefix}</td>
+                                        <td class="col-3">${eventListener.sobject}</td>
                                         <td class="col-3 text-center">
-                                            <#if listener.enabled>
+                                            <#if eventListener.enabled>
                                                 <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>
                                                 <#else>
                                                     <i class="fa fa-close mr-2 text-danger" aria-hidden="true"></i>
                                             </#if>
                                         </td>
                                         <td class="col-3">
-                                            <#if listener.lastEventReceivedOn??>
-                                                ${listener.lastEventReceivedOn?date?string.long - listener.lastEventReceivedOn?time?string.medium}
+                                            <#if eventListener.lastEventReceivedOn??>
+                                                ${eventListener.lastEventReceivedOn?date?string.long - eventListener.lastEventReceivedOn?time?string.medium}
                                                 <#else>
                                                     &nbsp;
                                             </#if>

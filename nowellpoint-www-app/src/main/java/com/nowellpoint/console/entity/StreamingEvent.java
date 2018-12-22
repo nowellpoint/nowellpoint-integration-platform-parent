@@ -7,8 +7,8 @@ import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
-@Entity(value = "events")
-public class Event implements Serializable {
+@Entity(value = "streaming.events")
+public class StreamingEvent implements Serializable {
 
 	private static final long serialVersionUID = -226649098013040674L;
 	
@@ -18,6 +18,8 @@ public class Event implements Serializable {
 	private ObjectId organizationId;
 	
 	private String salesforceId;
+	
+	private String name;
 	
 	private Date createdDate;
 	
@@ -33,9 +35,9 @@ public class Event implements Serializable {
 	
 	private String type;
 	
-	private String name;
+	private String sobject;
 	
-	public Event() {
+	public StreamingEvent() {
 		
 	}
 
@@ -61,6 +63,14 @@ public class Event implements Serializable {
 
 	public void setSalesforceId(String salesforceId) {
 		this.salesforceId = salesforceId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getCreatedDate() {
@@ -119,11 +129,11 @@ public class Event implements Serializable {
 		this.type = type;
 	}
 
-	public String getName() {
-		return name;
+	public String getSObject() {
+		return sobject;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSObject(String sobject) {
+		this.sobject = sobject;
 	}
 }

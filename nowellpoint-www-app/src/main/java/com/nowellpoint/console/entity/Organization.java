@@ -25,7 +25,7 @@ public class Organization extends BaseEntity {
 	
 	private Subscription subscription;
 	
-	private Set<EventListener> eventListeners;
+	private Set<StreamingEventListener> streamingEventListeners;
 	
 	public Organization() {
 		
@@ -99,11 +99,11 @@ public class Organization extends BaseEntity {
 		this.subscription = subscription;
 	}
 
-	public Set<EventListener> getEventListeners() {
-		return eventListeners;
+	public Set<StreamingEventListener> getStreamingEventListeners() {
+		return streamingEventListeners;
 	}
 
-	public void setEventListeners(Set<EventListener> eventListeners) {
-		this.eventListeners = eventListeners;
+	public void setStreamingEventListeners(Set<StreamingEventListener> streamingEventListeners) {
+		this.streamingEventListeners = streamingEventListeners;
 	}
 }

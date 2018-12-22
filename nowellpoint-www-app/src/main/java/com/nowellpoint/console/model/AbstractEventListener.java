@@ -19,7 +19,8 @@ import com.nowellpoint.console.util.Path;
 public abstract class AbstractEventListener {
 	public abstract @Nullable String getId();
 	public abstract String getPrefix();
-	public abstract String getName();
+	public abstract String getSObject();
+	public abstract @Nullable String getName();
 	public abstract Boolean getEnabled();
 	public abstract String getDescription();
 	public abstract @Nullable Date getLastEventReceivedOn();
@@ -28,16 +29,16 @@ public abstract class AbstractEventListener {
 	@Value.Derived
 	@JsonIgnore
 	public String getHref() {
-		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getName());
+		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getSObject());
 	}
 	
-	public static EventListener of(com.nowellpoint.console.entity.EventListener source) {
+	public static EventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
 		return source == null ? null : EventListener.builder()
 				.id(source.getId())
-				.name(source.getName())
 				.enabled(source.getEnabled())
 				.description(source.getDescription())
 				.lastEventReceivedOn(source.getLastEventReceivedOn())
+				.sObject(source.getSObject())
 				.prefix(source.getPrefix())
 				.replyId(source.getReplayId())
 				.build();

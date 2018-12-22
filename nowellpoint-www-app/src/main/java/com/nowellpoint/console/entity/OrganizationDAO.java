@@ -45,13 +45,13 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
                 .outputMode(AggregationOptions.OutputMode.CURSOR)
                 .build();
 		
-		Query<Event> query = getDatastore().createQuery(Event.class)
+		Query<StreamingEvent> query = getDatastore().createQuery(StreamingEvent.class)
 				.field("eventDate")
 				.greaterThanOrEq(Date.from(startDate.atStartOfDay()
 					      .atZone(utc)
 					      .toInstant()));
 		
-		AggregationPipeline pipeline = getDatastore().createAggregation(Event.class)
+		AggregationPipeline pipeline = getDatastore().createAggregation(StreamingEvent.class)
 				.match(query)
 				.group(
 						id(

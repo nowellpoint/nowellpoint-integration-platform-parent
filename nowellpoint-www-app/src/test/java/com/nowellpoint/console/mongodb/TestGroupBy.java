@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,12 +42,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
-import com.nowellpoint.client.sforce.model.StreamingEvent;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
-import com.nowellpoint.console.entity.Event;
-import com.nowellpoint.console.entity.EventDAO;
-import com.nowellpoint.console.entity.EventListener;
+import com.nowellpoint.console.entity.StreamingEvent;
+import com.nowellpoint.console.entity.StreamingEventDAO;
+import com.nowellpoint.console.entity.StreamingEventListener;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.util.EnvironmentVariables;
@@ -73,7 +71,7 @@ public class TestGroupBy {
 	private AtomicLong replayId = new AtomicLong();
 	private ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
 	
-	private Map<String,EventListener> eventListenerMap = new HashMap<String,EventListener>();
+	private Map<String,StreamingEventListener> eventListenerMap = new HashMap<String,StreamingEventListener>();
 	
 	@BeforeClass
 	public static void start() {
@@ -113,7 +111,7 @@ public class TestGroupBy {
 		
 		System.out.println(organization.getConnection().getRefreshToken());
 		
-		eventListenerMap = organization.getEventListeners()
+		eventListenerMap = organization.getStreamingEventListeners()
 				.stream()
 				.collect(Collectors.toMap(el -> el.getPrefix(), el -> el));
 		
@@ -189,7 +187,7 @@ public class TestGroupBy {
 	
 	private String createAccountTopic(String accessToken, String sobjectUrl) throws HttpRequestException, IOException {
 		
-		String query = "SELECT Id, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
+		String query = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
 		
 		String body = mapper.createObjectNode()
 				.put("Name", "AccountUpdateTopic")
@@ -342,45 +340,36 @@ public class TestGroupBy {
         				logger.info(message.getClientId());
         				logger.info(channel.getChannelId());
         				
-        				StreamingEvent streamingEvent = null;
+        				com.nowellpoint.client.sforce.model.StreamingEvent source = null;
         	
         				try {
         					logger.info("**** start message data ****");
         					JsonNode node = mapper.valueToTree(message.getDataAsMap());
         					logger.info(node.toString());
         					logger.info("**** end message data ****");
-        					streamingEvent = mapper.readValue(node.toString(), StreamingEvent.class);
+        					source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
         				} catch (Exception e) {
         					e.printStackTrace();
         				}
         				
-        				replayId.set(streamingEvent.getEvent().getReplayId());
+        				replayId.set(source.getEvent().getReplayId());
         				
-        				Long replayId = streamingEvent.getEvent().getReplayId();
-        				Date eventDate = streamingEvent.getEvent().getCreatedDate();
-        				String type = streamingEvent.getEvent().getType();
+        				StreamingEventDAO dao = new StreamingEventDAO(StreamingEvent.class, datastore);
         				
-        				String salesforceId = streamingEvent.getSObject().getId();
-        				String createdById = streamingEvent.getSObject().getCreatedById();
-        				Date createdDate = streamingEvent.getSObject().getCreatedDate();
-        				String lastModifiedById = streamingEvent.getSObject().getLastModifiedById();
-        				Date lastModifiedDate = streamingEvent.getSObject().getLastModifiedDate();
+        				StreamingEvent streamingEvent = new StreamingEvent();
+        				streamingEvent.setCreatedById(source.getSObject().getCreatedById());
+        				streamingEvent.setCreatedDate(source.getSObject().getCreatedDate());
+        				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
+        				streamingEvent.setLastModifiedById(source.getSObject().getLastModifiedById());
+        				streamingEvent.setLastModifiedDate(source.getSObject().getLastModifiedDate());
+        				streamingEvent.setOrganizationId(organization.getId());
+        				streamingEvent.setReplayId(source.getEvent().getReplayId());
+        				streamingEvent.setSalesforceId(source.getSObject().getId());
+        				streamingEvent.setType(source.getEvent().getType());
+        				streamingEvent.setName(source.getSObject().getName());
+        				streamingEvent.setSObject(eventListenerMap.get(source.getSObject().getId().substring(0, 3)).getSObject());
         				
-        				EventDAO dao = new EventDAO(Event.class, datastore);
-        				
-        				Event event = new Event();
-        				event.setCreatedById(createdById);
-        				event.setCreatedDate(createdDate);
-        				event.setEventDate(eventDate);
-        				event.setLastModifiedById(lastModifiedById);
-        				event.setLastModifiedDate(lastModifiedDate);
-        				event.setOrganizationId(organization.getId());
-        				event.setReplayId(replayId);
-        				event.setSalesforceId(salesforceId);
-        				event.setType(type);
-        				event.setName(eventListenerMap.get(salesforceId.substring(0, 3)).getName());
-        				
-        				dao.save(event);
+        				dao.save(streamingEvent);
         				
         				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
         			}

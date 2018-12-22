@@ -3,7 +3,7 @@ package com.nowellpoint.console.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class EventListener implements Serializable {
+public class StreamingEventListener implements Serializable {
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class EventListener implements Serializable {
 	
 	private String prefix;
 	
-	private String name;
+	private String sobject;
 	
 	private Boolean enabled;
 	
@@ -25,7 +25,7 @@ public class EventListener implements Serializable {
 	
 	private Long replayId;
 	
-	public EventListener() {
+	public StreamingEventListener() {
 		
 	}
 
@@ -45,12 +45,12 @@ public class EventListener implements Serializable {
 		this.prefix = prefix;
 	}
 
-	public String getName() {
-		return name;
+	public String getSObject() {
+		return sobject;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSObject(String sobject) {
+		this.sobject = sobject;
 	}
 
 	public Boolean getEnabled() {
