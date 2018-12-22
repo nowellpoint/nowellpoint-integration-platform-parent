@@ -49,8 +49,8 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION, (request, response) 
 				-> viewOrganization(request, response));
 		
-		get(Path.Route.ORGANIZATION_EVENTS, (request, response) 
-				-> viewEvents(request, response));
+		get(Path.Route.ORGANIZATION_STREAMING_EVENTS, (request, response) 
+				-> viewStreamingEvents(request, response));
 		
 		get(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
 				-> setupEventListener(request, response));
@@ -112,7 +112,7 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	private static String viewEvents(Request request, Response response) {
+	private static String viewStreamingEvents(Request request, Response response) {
 		
 		String organizationId = getIdentity(request).getOrganization().getId();
 		
@@ -137,7 +137,7 @@ public class OrganizationController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
-				.templateName(Templates.ORGANIZATION_EVENTS)
+				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS)
 				.build();
 		
 		return processTemplate(templateProcessRequest);

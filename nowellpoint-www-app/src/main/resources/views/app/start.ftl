@@ -37,10 +37,10 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <h4>${labels['event.listeners']}</h4>
-                            <span>${ORGANIZATION_EVENT_LISTENER_LABEL}</span>
+                            <h4>${labels['streaming.event.listeners']}</h4>
+                            <span>${ORGANIZATION_STREAMING_EVENT_LISTENER_LABEL}</span>
                         </div>
-                        <div class="card-footer bg-transparent"><a href="${ORGANIZATION_EVENTS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.event.listeners']}</a></div>
+                        <div class="card-footer bg-transparent"><a href="${ORGANIZATION_STREAMING_EVENTS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.streaming.event.listeners']}</a></div>
                     </div>
                 </div>
                 

@@ -33,6 +33,8 @@ public class Event implements Serializable {
 	
 	private String type;
 	
+	private String name;
+	
 	public Event() {
 		
 	}
@@ -115,5 +117,13 @@ public class Event implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

@@ -17,7 +17,8 @@ import com.nowellpoint.console.util.Path;
 @JsonSerialize(as = EventListener.class)
 @JsonDeserialize(as = EventListener.class)
 public abstract class AbstractEventListener {
-	public abstract String getId();
+	public abstract @Nullable String getId();
+	public abstract String getPrefix();
 	public abstract String getName();
 	public abstract Boolean getEnabled();
 	public abstract String getDescription();
@@ -37,6 +38,7 @@ public abstract class AbstractEventListener {
 				.enabled(source.getEnabled())
 				.description(source.getDescription())
 				.lastEventReceivedOn(source.getLastEventReceivedOn())
+				.prefix(source.getPrefix())
 				.replyId(source.getReplayId())
 				.build();
 	}

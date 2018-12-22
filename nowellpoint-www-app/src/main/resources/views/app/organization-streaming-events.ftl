@@ -5,7 +5,7 @@
             <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h4 class="dashhead-title font-weight-normal">${labels['events']}</h4>
+                        <h4 class="dashhead-title font-weight-normal">${messages["streaming.events"]}</h4>
                     </div>
                 </div>
             </div>
@@ -17,7 +17,7 @@
                 <table class="table">
                     <thead>
                         <tr class="d-flex">
-                            <th class="col-3">${labels['id']}</th>
+                            <th class="col-3">${labels['prefix']}</th>
                             <th class="col-3">${labels['name']}</th>
                             <th class="col-3 text-center">${labels['enabled']}</th>
                             <th class="col-3">${labels['last.event.received.on']}</th>
@@ -31,7 +31,7 @@
                             <#else>
                                 <#list organization.eventListeners?sort_by("name") as listener>
                                     <tr class="d-flex">
-                                        <td class="col-3">${listener.id}</td>
+                                        <td class="col-3">${listener.prefix}</td>
                                         <td class="col-3">${listener.name}</td>
                                         <td class="col-3 text-center">
                                             <#if listener.enabled>
@@ -71,7 +71,7 @@
                 ]);
 
                 var options = {
-                    title: "${labels['events.received.last.n.days']?replace(':s1','7')}",
+                    title: "${labels['streaming.events.received.last.n.days']?replace(':s1','7')}",
                     focusTarget: 'category',
                     backgroundColor: 'transparent',
                     hAxis: {

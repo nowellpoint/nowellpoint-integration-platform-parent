@@ -11,8 +11,8 @@
         </li>
         <li class="nav-header">${messages["organization"]}</li>
         <li class="nav-item">
-            <a class="nav-link" href="${ORGANIZATION_EVENTS_URI}">
-                <i class="fa fa-exchange"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["events"]}</span></a>
+            <a class="nav-link" href="${ORGANIZATION_STREAMING_EVENTS_URI}">
+                <i class="fa fa-exchange"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["streaming.events"]}</span></a>
         </li>
     </ul>
 </div>

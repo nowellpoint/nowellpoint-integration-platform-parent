@@ -13,6 +13,8 @@ public class EventListener implements Serializable {
 
 	private String id;
 	
+	private String prefix;
+	
 	private String name;
 	
 	private Boolean enabled;
@@ -33,6 +35,14 @@ public class EventListener implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	public String getName() {
