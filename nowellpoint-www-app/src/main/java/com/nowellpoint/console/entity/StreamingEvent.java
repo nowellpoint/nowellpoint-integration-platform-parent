@@ -15,27 +15,17 @@ public class StreamingEvent implements Serializable {
 	@Id
 	private ObjectId id;
 	
-	private ObjectId organizationId;
-	
-	private String salesforceId;
-	
-	private String name;
-	
-	private Date createdDate;
-	
-	private String createdById;
-	
-	private Date lastModifiedDate;
-	
-	private String lastModifiedById;
-	
 	private Date eventDate;
+	
+	private ObjectId organizationId;
 	
 	private Long replayId;
 	
 	private String type;
 	
-	private String sobject;
+	private String source;
+	
+	private Payload payload;
 	
 	public StreamingEvent() {
 		
@@ -55,54 +45,6 @@ public class StreamingEvent implements Serializable {
 
 	public void setOrganizationId(ObjectId organizationId) {
 		this.organizationId = organizationId;
-	}
-
-	public String getSalesforceId() {
-		return salesforceId;
-	}
-
-	public void setSalesforceId(String salesforceId) {
-		this.salesforceId = salesforceId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public String getCreatedById() {
-		return createdById;
-	}
-
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
-	}
-
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-
-	public String getLastModifiedById() {
-		return lastModifiedById;
-	}
-
-	public void setLastModifiedById(String lastModifiedById) {
-		this.lastModifiedById = lastModifiedById;
 	}
 
 	public Date getEventDate() {
@@ -129,11 +71,19 @@ public class StreamingEvent implements Serializable {
 		this.type = type;
 	}
 
-	public String getSObject() {
-		return sobject;
+	public String getSource() {
+		return source;
 	}
 
-	public void setSObject(String sobject) {
-		this.sobject = sobject;
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public Payload getPayload() {
+		return payload;
+	}
+
+	public void setPayload(Payload payload) {
+		this.payload = payload;
 	}
 }

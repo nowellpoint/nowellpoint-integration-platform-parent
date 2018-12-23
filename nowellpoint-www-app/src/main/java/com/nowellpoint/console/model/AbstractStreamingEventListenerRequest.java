@@ -7,7 +7,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-public abstract class AbstractEventListenerRequest {
+public abstract class AbstractStreamingEventListenerRequest {
 	public abstract @Nullable String getId();
 	public abstract String getObject();
 	

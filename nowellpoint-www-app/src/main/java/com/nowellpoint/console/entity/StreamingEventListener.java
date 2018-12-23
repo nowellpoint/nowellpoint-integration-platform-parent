@@ -15,7 +15,7 @@ public class StreamingEventListener implements Serializable {
 	
 	private String prefix;
 	
-	private String sobject;
+	private String source;
 	
 	private Boolean enabled;
 	
@@ -45,12 +45,12 @@ public class StreamingEventListener implements Serializable {
 		this.prefix = prefix;
 	}
 
-	public String getSObject() {
-		return sobject;
+	public String getSource() {
+		return source;
 	}
 
-	public void setSObject(String sobject) {
-		this.sobject = sobject;
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	public Boolean getEnabled() {

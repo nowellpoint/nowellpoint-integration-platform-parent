@@ -8,7 +8,7 @@ import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
-import com.nowellpoint.console.model.EventListenerRequest;
+import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -24,7 +24,7 @@ public interface OrganizationService {
 	
 	public Organization update(String id, Token token);
 	
-	public Organization update(String id, EventListenerRequest request);
+	public Organization update(String id, StreamingEventListenerRequest request);
 	
 	public Organization update(String id, CreditCardRequest request);
 	

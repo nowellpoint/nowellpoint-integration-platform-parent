@@ -49,6 +49,7 @@ import com.nowellpoint.console.entity.StreamingEventDAO;
 import com.nowellpoint.console.entity.StreamingEventListener;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.entity.Payload;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.http.HttpRequestException;
@@ -356,18 +357,21 @@ public class TestGroupBy {
         				
         				StreamingEventDAO dao = new StreamingEventDAO(StreamingEvent.class, datastore);
         				
+        				Payload payload = new Payload();
+        				payload.setId(source.getSObject().getId());
+        				payload.setName(source.getSObject().getName());
+        				payload.setCreatedById(source.getSObject().getCreatedById());
+        				payload.setCreatedDate(source.getSObject().getCreatedDate());
+        				payload.setLastModifiedById(source.getSObject().getLastModifiedById());
+        				payload.setLastModifiedDate(source.getSObject().getLastModifiedDate());
+        				
         				StreamingEvent streamingEvent = new StreamingEvent();
-        				streamingEvent.setCreatedById(source.getSObject().getCreatedById());
-        				streamingEvent.setCreatedDate(source.getSObject().getCreatedDate());
         				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
-        				streamingEvent.setLastModifiedById(source.getSObject().getLastModifiedById());
-        				streamingEvent.setLastModifiedDate(source.getSObject().getLastModifiedDate());
         				streamingEvent.setOrganizationId(organization.getId());
         				streamingEvent.setReplayId(source.getEvent().getReplayId());
-        				streamingEvent.setSalesforceId(source.getSObject().getId());
         				streamingEvent.setType(source.getEvent().getType());
-        				streamingEvent.setName(source.getSObject().getName());
-        				streamingEvent.setSObject(eventListenerMap.get(source.getSObject().getId().substring(0, 3)).getSObject());
+        				streamingEvent.setSource(eventListenerMap.get(source.getSObject().getId().substring(0, 3)).getSource());
+        				streamingEvent.setPayload(payload);
         				
         				dao.save(streamingEvent);
         				

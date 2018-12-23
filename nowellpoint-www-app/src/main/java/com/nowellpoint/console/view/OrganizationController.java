@@ -27,11 +27,11 @@ import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
-import com.nowellpoint.console.model.EventListener;
-import com.nowellpoint.console.model.EventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
+import com.nowellpoint.console.model.StreamingEventListener;
+import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Alert;
@@ -158,7 +158,7 @@ public class OrganizationController extends BaseController {
 				.organization()
 				.get(getIdentity(request).getOrganization().getId());
 		
-		Optional<EventListener> eventListener = organization.getEventListeners()
+		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
 				.stream()
 				.filter(e -> sobject.equals(e.getName()))
 				.findFirst();
@@ -213,7 +213,7 @@ public class OrganizationController extends BaseController {
 			}
 		});
 		
-		EventListenerRequest eventListenerRequest = EventListenerRequest.builder()
+		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
 				.object(sobject)
 				.onCreate(onCreate.get())
 				.onUpdate(onUpdate.get())

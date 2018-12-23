@@ -23,7 +23,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract @Nullable Connection getConnection();
 	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
-	public abstract List<EventListener> getEventListeners();
+	public abstract List<StreamingEventListener> getStreamingEventListeners();
 	
 	@Value.Default
 	public String getOrganizationType() {
@@ -53,7 +53,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.connection(Connection.of(entity.getConnection()))
 				.dashboard(Dashboard.of(entity.getDashboard()))
 				.subscription(Subscription.of(entity.getSubscription()))
-				.eventListeners(EventListeners.of(entity.getStreamingEventListeners()))
+				.streamingEventListeners(StreamingEventListeners.of(entity.getStreamingEventListeners()))
 				.build();
 	}
 }

@@ -46,7 +46,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
-import com.nowellpoint.console.model.EventListenerRequest;
+import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -145,7 +145,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.dashboard(dashboard)
 				.domain(request.getDomain())
-				.eventListeners(plan.getEventListeners())
+			//	.streamingEventListeners(plan.getEventListeners())
 				.name(request.getName())
 				.number(customerResult.getTarget().getId())
 				.subscription(subscription)
@@ -199,7 +199,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public Organization update(String id, EventListenerRequest request) {
+	public Organization update(String id, StreamingEventListenerRequest request) {
 		Organization instance = get(id);
 		
 		logger.info(request.getObject());
@@ -325,7 +325,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.eventListeners(plan.getEventListeners())
+				.streamingEventListeners(plan.getEventListeners())
 				.subscription(subscription)
 				.build();
 		
@@ -406,7 +406,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.eventListeners(plan.getEventListeners())
+				.streamingEventListeners(plan.getEventListeners())
 				.subscription(subscription)
 				.build();
 		

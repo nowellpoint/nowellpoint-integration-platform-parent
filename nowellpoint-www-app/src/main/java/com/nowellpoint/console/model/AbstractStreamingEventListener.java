@@ -14,12 +14,12 @@ import com.nowellpoint.console.util.Path;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-@JsonSerialize(as = EventListener.class)
-@JsonDeserialize(as = EventListener.class)
-public abstract class AbstractEventListener {
+@JsonSerialize(as = StreamingEventListener.class)
+@JsonDeserialize(as = StreamingEventListener.class)
+public abstract class AbstractStreamingEventListener {
 	public abstract @Nullable String getId();
 	public abstract String getPrefix();
-	public abstract String getSObject();
+	public abstract String getSource();
 	public abstract @Nullable String getName();
 	public abstract Boolean getEnabled();
 	public abstract String getDescription();
@@ -29,16 +29,16 @@ public abstract class AbstractEventListener {
 	@Value.Derived
 	@JsonIgnore
 	public String getHref() {
-		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getSObject());
+		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getSource());
 	}
 	
-	public static EventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
-		return source == null ? null : EventListener.builder()
+	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
+		return source == null ? null : StreamingEventListener.builder()
 				.id(source.getId())
 				.enabled(source.getEnabled())
 				.description(source.getDescription())
 				.lastEventReceivedOn(source.getLastEventReceivedOn())
-				.sObject(source.getSObject())
+				.source(source.getSource())
 				.prefix(source.getPrefix())
 				.replyId(source.getReplayId())
 				.build();

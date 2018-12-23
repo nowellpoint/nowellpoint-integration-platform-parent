@@ -24,15 +24,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <#if organization.eventListeners?size==0>
+                        <#if organization.streamingEventListeners?size==0>
                             <tr>
                                 <td colspan="4">&nbsp;</td>
                             </tr>
                             <#else>
-                                <#list organization.eventListeners as eventListener>
+                                <#list organization.streamingEventListeners as eventListener>
                                     <tr class="d-flex">
                                         <td class="col-3">${eventListener.prefix}</td>
-                                        <td class="col-3">${eventListener.sobject}</td>
+                                        <td class="col-3">${eventListener.source}</td>
                                         <td class="col-3 text-center">
                                             <#if eventListener.enabled>
                                                 <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>

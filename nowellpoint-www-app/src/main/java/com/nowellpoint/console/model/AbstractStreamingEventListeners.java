@@ -8,11 +8,11 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
-public abstract class AbstractEventListeners {
-	public static Set<EventListener> of(Set<com.nowellpoint.console.entity.StreamingEventListener> source) {
+public abstract class AbstractStreamingEventListeners {
+	public static Set<StreamingEventListener> of(Set<com.nowellpoint.console.entity.StreamingEventListener> source) {
 		return source == null ? Collections.emptySet() : source.stream()
 				.map(f -> {
-					return EventListener.of(f);
+					return StreamingEventListener.of(f);
 				})
 				.collect(Collectors.toSet());
 	}
