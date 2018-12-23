@@ -36,11 +36,13 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
+import com.nowellpoint.client.sforce.Client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.CreateResult;
+import com.nowellpoint.client.sforce.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
@@ -149,7 +151,7 @@ public class TestGroupBy {
 		
 		String sobjectUrl = identity.getUrls().getSobjects();
 		
-		String topicId = createAccountTopic(token.getAccessToken(), sobjectUrl);
+		String topicId = createAccountTopic(token, sobjectUrl);
 		
 		try {
 			BayeuxClient client = createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
@@ -186,32 +188,24 @@ public class TestGroupBy {
 		assertEquals(204, response.getStatusCode());
 	}
 	
-	private String createAccountTopic(String accessToken, String sobjectUrl) throws HttpRequestException, IOException {
+	private String createAccountTopic(Token token, String sobjectUrl) throws HttpRequestException, IOException {
 		
 		String query = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
 		
-		String body = mapper.createObjectNode()
-				.put("Name", "AccountUpdateTopic")
-				.put("Query", query)
-				.put("ApiVersion", "44.0")
-				.put("NotifyForOperationCreate", Boolean.TRUE)
-				.put("NotifyForOperationUpdate", Boolean.TRUE)
-				.put("NotifyForOperationUndelete", Boolean.TRUE)
-				.put("NotifyForOperationDelete", Boolean.TRUE)
-				.put("NotifyForFields", "All")
-				.toString();
+		PushTopicRequest request = PushTopicRequest.builder()
+				.name("AccountUpdateTopic")
+				.query(query)
+				.apiVersion("44.0")
+				.notifyForOperationCreate(Boolean.TRUE)
+				.notifyForOperationDelete(Boolean.TRUE)
+				.notifyForOperationUndelete(Boolean.TRUE)
+				.notifyForOperationUpdate(Boolean.TRUE)
+				.notifyForFields("All")
+				.build();
 		
-		HttpResponse response = RestResource.post(sobjectUrl.concat("PushTopic/"))
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(accessToken)
-				.body(body)
-				.contentType(MediaType.APPLICATION_JSON)
-                .execute();
+		Client client = new Client();
 		
-		assertEquals(201, response.getStatusCode());
-		
-		CreateResult createResult = response.getEntity(CreateResult.class);
+		CreateResult createResult = client.create(token, request);
 		
 		assertEquals(Boolean.TRUE, createResult.getSuccess());
 		assertNotNull(createResult.getId());

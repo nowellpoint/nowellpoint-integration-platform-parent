@@ -208,6 +208,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		logger.info(String.valueOf(request.getOnUpdate()));
 		logger.info(String.valueOf(request.getOnUndelete()));
 		
+		
+		
 		return instance;
 	}
 	
@@ -325,7 +327,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.streamingEventListeners(plan.getEventListeners())
+				.streamingEventListeners(plan.getStreamingEventListeners())
 				.subscription(subscription)
 				.build();
 		
@@ -406,7 +408,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.streamingEventListeners(plan.getEventListeners())
+				.streamingEventListeners(plan.getStreamingEventListeners())
 				.subscription(subscription)
 				.build();
 		

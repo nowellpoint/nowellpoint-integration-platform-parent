@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
@@ -12,6 +13,7 @@ import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Theme;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
@@ -21,6 +23,7 @@ import com.nowellpoint.http.Status;
 public class Client {
 	
 	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
 			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
@@ -238,5 +241,54 @@ public class Client {
 		}
 			
 		return totalSize;
+	}
+	
+	public Identity getIdentity(Token token) {
+		HttpResponse response = RestResource.get(token.getId())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.queryParameter("version", "latest")
+				.execute();
+		
+		Identity identity = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			identity = response.getEntity(Identity.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return identity;
+	}
+	
+	public CreateResult create(Token token, PushTopicRequest request) {
+		
+		Identity identity = getIdentity(token);
+		
+		String body = mapper.createObjectNode()
+				.put("Name", request.getName())
+				.put("Query", request.getQuery())
+				.put("ApiVersion", request.getApiVersion())
+				.put("NotifyForOperationCreate", request.getNotifyForOperationCreate())
+				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
+				.put("NotifyForOperationUndelete", Boolean.TRUE)
+				.put("NotifyForOperationDelete", Boolean.TRUE)
+				.put("NotifyForFields", "All")
+				.toString();
+		
+		HttpResponse response = RestResource.post(identity.getUrls().getSobjects().concat("PushTopic/"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.body(body)
+				.contentType(MediaType.APPLICATION_JSON)
+                .execute();
+		
+		if (response.getStatusCode() == Status.CREATED) {
+			return response.getEntity(CreateResult.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
 	}
 }

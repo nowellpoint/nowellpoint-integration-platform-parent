@@ -60,7 +60,7 @@
 		<version.model.mapper>1.1.0</version.model.mapper>
 		<version.braintree.sdk>2.83.1</version.braintree.sdk>
 		<version.sendgrid.java>4.1.2</version.sendgrid.java>
-		<version.immutables>2.5.6</version.immutables>
+		<version.immutables>2.7.3</version.immutables>
 		<version.wildfly.swarm>2018.2.0.Final</version.wildfly.swarm>
 		<version.junit>4.12</version.junit>
 	</properties>

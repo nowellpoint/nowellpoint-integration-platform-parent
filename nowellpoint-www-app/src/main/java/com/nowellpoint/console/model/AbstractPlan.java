@@ -24,7 +24,7 @@ public abstract class AbstractPlan {
 	public abstract Boolean getIsActive();
 	public abstract String getLanguage();
 	public abstract Price getPrice();
-	public abstract Set<StreamingEventListener> getEventListeners();
+	public abstract Set<StreamingEventListener> getStreamingEventListeners();
 	public abstract Set<Feature> getFeatures();
 	
 	public static Plan of(com.nowellpoint.console.entity.Plan entity) {
@@ -38,7 +38,7 @@ public abstract class AbstractPlan {
 				.planName(entity.getPlanName())
 				.price(Price.of(entity.getPrice()))
 				.recommendedPlan(entity.getRecommendedPlan())
-				.eventListeners(StreamingEventListeners.of(entity.getEventListeners()))
+				.streamingEventListeners(StreamingEventListeners.of(entity.getStreamingEventListeners()))
 				.build();
 	}
 }

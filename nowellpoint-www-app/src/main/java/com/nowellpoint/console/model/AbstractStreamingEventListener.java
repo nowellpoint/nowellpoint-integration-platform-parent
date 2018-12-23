@@ -20,16 +20,33 @@ public abstract class AbstractStreamingEventListener {
 	public abstract @Nullable String getId();
 	public abstract String getPrefix();
 	public abstract String getSource();
-	public abstract @Nullable String getName();
-	public abstract Boolean getEnabled();
+	public abstract String getName();
 	public abstract String getDescription();
 	public abstract @Nullable Date getLastEventReceivedOn();
 	public abstract @Nullable Long getReplyId();
+	
+	private static final String API_VERSION = "44.0";
+	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
 	
 	@Value.Derived
 	@JsonIgnore
 	public String getHref() {
 		return Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP.replace(":sobject", getSource());
+	}
+	
+	@Value.Default
+	public Boolean getEnabled() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Derived
+	public String getQuery() {
+		return String.format(QUERY, getSource());
+	}
+	
+	@Value.Derived
+	public String getApiVersion() {
+		return API_VERSION;
 	}
 	
 	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
