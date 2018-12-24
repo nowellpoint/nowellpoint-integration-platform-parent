@@ -2,6 +2,8 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +35,9 @@ public class Client {
 	
 	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
  			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
- 			+ "UsesStartDateAsFiscalYearName";
+ 			+ "UsesStartDateAsFiscalYearName,Address";
+	
+	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
 	
 	public Client() {
 		
@@ -41,46 +45,8 @@ public class Client {
 	
 	/**
 	 * 
-	 * 
 	 * @param request
 	 * @return
-	 * 
-	 * 
-	 */
-	
-	public Identity getIdentity(GetIdentityRequest request) {
-		String id = null;
-		if (request.getId() == null) {
-			id = String.format("%s/id/%s/%s", request.getInstance(), request.getOrganizationId(), request.getUserId());
-		} else {
-			id = request.getId();
-		}
-		
-		HttpResponse httpResponse = RestResource.get(id)
-				.acceptCharset(StandardCharsets.UTF_8)
-				.bearerAuthorization(request.getAccessToken())
-				.accept(MediaType.APPLICATION_JSON)
-				.queryParameter("version", "latest")
-				.execute();
-    	
-		Identity identity = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		identity = httpResponse.getEntity(Identity.class);
-		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
-		}
-    	
-    	return identity;
-	}
-	
-	/**
-	 * 
-	 * 
-	 * @param request
-	 * @return
-	 * 
-	 * 
 	 */
 	
 	public User getUser(GetUserRequest request) {
@@ -101,6 +67,37 @@ public class Client {
 		}
 		
 		return user;
+	}
+	
+	/**
+	 * 
+	 * @param token
+	 * @return the queried Organization
+	 */
+	
+	public Organization getOrganization(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getSobjects())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.path("Organization")
+     			.path(identity.getOrganizationId())
+     			.queryParameter("fields", ORGANIZATION_FIELDS)
+     			.queryParameter("version", "latest")
+     			.execute();
+		
+		Organization organization = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			organization = response.getEntity(Organization.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(Error.class));
+		}
+		
+		return organization;
 	}
 	
 	/**
@@ -244,19 +241,30 @@ public class Client {
 	}
 	
 	public Identity getIdentity(Token token) {
-		HttpResponse response = RestResource.get(token.getId())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.queryParameter("version", "latest")
-				.execute();
 		
 		Identity identity = null;
 		
-		if (response.getStatusCode() == Status.OK) {
-			identity = response.getEntity(Identity.class);
+		if (IDENTITY_CACHE.containsKey(token.getId())) {
+			LOGGER.info("cache entry found");
+			identity = IDENTITY_CACHE.get(token.getId());
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			
+			HttpResponse response = RestResource.get(token.getId())
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.queryParameter("version", "latest")
+					.execute();
+			
+			if (response.getStatusCode() == Status.OK) {
+				identity = response.getEntity(Identity.class);
+			} else {
+				throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			}
+			
+			LOGGER.info("cache entry not found");
+			
+			IDENTITY_CACHE.put(token.getId(), identity);
 		}
 		
 		return identity;

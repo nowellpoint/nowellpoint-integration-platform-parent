@@ -1,19 +1,17 @@
 package com.nowellpoint.client.sforce;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,12 +29,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.OutboundEvent;
-import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpRequestException;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -134,6 +128,7 @@ public class TestSObjectToCSV {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private OutboundEvent getOutboundEvent(String sessionId, String partnerUrl) throws HttpRequestException, UnsupportedEncodingException, ParseException {
 		
 		String url = partnerUrl.substring(0, partnerUrl.lastIndexOf("/") + 1).concat("queryAll").replace("/Soap/u/", "/data/v");
@@ -160,6 +155,7 @@ public class TestSObjectToCSV {
 		return outboundEvent;
 	}
 	
+	@SuppressWarnings("unused")
 	private void convertToCsv(ArrayNode records) throws IOException {
 		 CSVWriter writer = new CSVWriter(new FileWriter("test.csv"));
 		 
@@ -196,6 +192,7 @@ public class TestSObjectToCSV {
 		return node != null ? node.asText() : "";
 	}
 	
+	@SuppressWarnings("unused")
 	private void  saveToBucket(OutboundEvent outboundEvent, File file) {
 		AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 		

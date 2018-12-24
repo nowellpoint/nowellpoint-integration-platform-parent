@@ -88,6 +88,42 @@ public class TestGroupBy {
 	}
 	
 	@Test
+	public void testSalesforceIdentity() {
+
+		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
+		
+		assertNotNull(organization.getName());
+		assertNotNull(organization.getNumber());
+		
+		System.out.println(organization.getConnection().getRefreshToken());
+		
+		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+                .queryParameter("grant_type", "refresh_token")
+                .queryParameter("refresh_token", organization.getConnection().getRefreshToken())
+                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
+                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
+                .execute();
+		
+		Token token = tokenResponse.getEntity(Token.class);
+		
+		Client client = new Client();
+		
+		long start = System.currentTimeMillis();
+		
+		client.getIdentity(token);
+		
+		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
+		
+		start = System.currentTimeMillis();
+		
+		client.getIdentity(token);
+		
+		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
+	}
+	
+	@Test
 	@Ignore
 	public void testGroupBy() throws IOException {
 		
@@ -118,6 +154,8 @@ public class TestGroupBy {
 				.stream()
 				.collect(Collectors.toMap(el -> el.getPrefix(), el -> el));
 		
+		Client client = new Client();
+		
 		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
@@ -129,14 +167,11 @@ public class TestGroupBy {
 		
 		Token token = tokenResponse.getEntity(Token.class);
 		
-		HttpResponse identityResponse = RestResource.get(token.getId())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.queryParameter("version", "latest")
-				.execute();
+		Long start = System.currentTimeMillis();
 		
-		Identity identity = identityResponse.getEntity(Identity.class);
+		Identity identity = client.getIdentity(token);
+		
+		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
 		
 		HttpResponse queryResponse = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -151,13 +186,13 @@ public class TestGroupBy {
 		
 		String sobjectUrl = identity.getUrls().getSobjects();
 		
-		String topicId = createAccountTopic(token, sobjectUrl);
+		String topicId = createAccountTopic(token);
 		
 		try {
-			BayeuxClient client = createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
+			BayeuxClient bayeuxClient = createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
 			TimeUnit.SECONDS.sleep(10);
-			client.disconnect();
+			bayeuxClient.disconnect();
 			logger.info("**** replay id ****");
 			createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
@@ -188,7 +223,7 @@ public class TestGroupBy {
 		assertEquals(204, response.getStatusCode());
 	}
 	
-	private String createAccountTopic(Token token, String sobjectUrl) throws HttpRequestException, IOException {
+	private String createAccountTopic(Token token) throws HttpRequestException, IOException {
 		
 		String query = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
 		

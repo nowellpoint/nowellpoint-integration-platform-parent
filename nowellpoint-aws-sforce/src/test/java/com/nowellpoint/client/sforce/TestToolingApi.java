@@ -1,11 +1,9 @@
 package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.junit.Test;
 
-import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexClassResult;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
@@ -14,6 +12,7 @@ import com.nowellpoint.http.RestResource;
 
 public class TestToolingApi {
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testToolingApi() {
 		
