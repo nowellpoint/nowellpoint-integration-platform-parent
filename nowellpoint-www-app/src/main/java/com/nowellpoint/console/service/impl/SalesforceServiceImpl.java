@@ -5,7 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.nowellpoint.client.sforce.Client;
+import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
@@ -31,7 +32,7 @@ import com.nowellpoint.http.Status;
 
 public class SalesforceServiceImpl implements SalesforceService {
 	
-	private static final Client client = new Client();
+	private static final Salesforce client = SalesforceClientBuilder.builder().build().getClient();
 	
 	@Override
 	public Token getToken(String authorizationCode) {

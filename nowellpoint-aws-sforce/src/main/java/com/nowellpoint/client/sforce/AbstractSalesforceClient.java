@@ -145,6 +145,10 @@ public abstract class AbstractSalesforceClient {
 		return organization;
 	}
 	
+	public DescribeResult describeSObject(Token token, String sobject) {
+		return describeSObject(token, sobject, null);
+	}
+	
 	/**
 	 * 
 	 * 
@@ -198,21 +202,15 @@ public abstract class AbstractSalesforceClient {
 		return result;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param request
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public Long getCount(CountRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getQueryUrl())
+	public Long count(Token token, String query) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(request.getAccessToken())
-				.queryParameter("q", request.getQueryString())
+				.bearerAuthorization(token.getAccessToken())
+				.queryParameter("q", query)
 				.execute();
 		
 		Long totalSize = Long.valueOf(0);
@@ -227,7 +225,7 @@ public abstract class AbstractSalesforceClient {
 		return totalSize;
 	}
 	
-	public CreateResult create(Token token, PushTopicRequest request) {
+	public CreateResult createPushTopic(Token token, PushTopicRequest request) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -253,6 +251,19 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.CREATED) {
 			return response.getEntity(CreateResult.class);
 		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+	}
+	
+	public void deletePushTopic(Token token, String topicId) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.delete(identity.getUrls().getSObjects().concat("PushTopic/").concat(topicId))
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		if (response.getStatusCode() != Status.NO_CONTENT) {
 			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 	}

@@ -12,7 +12,7 @@ import com.nowellpoint.client.sforce.model.Theme;
 
 public class TestAutheticators {
 	
-	private static Client client = new Client();
+	private static Salesforce client = SalesforceClientBuilder.builder().build().getClient();
 	
 	@BeforeClass
 	public static void init() {
@@ -51,29 +51,15 @@ public class TestAutheticators {
 			
 			assertNotNull(describeGlobalSobjectsResult.getSObjects());
 			
-			DescribeSobjectRequest describeSobjectRequest = new DescribeSobjectRequest()
-					.withAccessToken(response.getToken().getAccessToken())
-					.withSobjectsUrl(response.getIdentity().getUrls().getSObjects())
-					.withSobject(describeGlobalSobjectsResult.getSObjects().get(0).getName());
-			
-			DescribeResult describeSobjectResult = client.describeSobject(describeSobjectRequest);
+			DescribeResult describeSobjectResult = client.describeSObject(response.getToken(), "Account");
 			
 			assertNotNull(describeSobjectResult.getName());
-
-			ThemeRequest themeRequest = new ThemeRequest()
-					.withAccessToken(response.getToken().getAccessToken())
-					.withRestEndpoint(response.getIdentity().getUrls().getRest());
 			
-			Theme theme = client.getTheme(themeRequest);
+			Theme theme = client.getTheme(response.getToken());
 
 			assertNotNull(theme.getThemeItems());
 			
-			CountRequest countRequest = new CountRequest()
-					.withAccessToken(response.getToken().getAccessToken())
-					.withQueryUrl(response.getIdentity().getUrls().getQuery())
-					.withSobject("Vote");
-			
-			Long count = client.getCount(countRequest);
+			Long count = client.count(response.getToken(), "Select count() from Account");
 			
 			assertNotNull(count);
 			

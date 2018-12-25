@@ -37,7 +37,6 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
 import com.nowellpoint.client.sforce.Authenticators;
-import com.nowellpoint.client.sforce.Client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
@@ -158,7 +157,7 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
@@ -172,7 +171,7 @@ public class TestGroupBy {
 				.stream()
 				.collect(Collectors.toMap(el -> el.getPrefix(), el -> el));
 		
-		Client client = new Client();
+		Salesforce client = SalesforceClientBuilder.builder().build().getClient();
 		
 		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
 				.setClientId(SecretsManager.getSalesforceClientId())
@@ -219,7 +218,7 @@ public class TestGroupBy {
 			e.printStackTrace();
 		}
 		
-		deleteTopic(token.getAccessToken(), sobjectUrl, topicId);
+		client.deletePushTopic(token, topicId);
 		
 		testGroupBy();
 	}
@@ -256,23 +255,14 @@ public class TestGroupBy {
 				.notifyForFields("All")
 				.build();
 		
-		Client client = new Client();
+		Salesforce client = SalesforceClientBuilder.builder().build().getClient();
 		
-		CreateResult createResult = client.create(token, request);
+		CreateResult createResult = client.createPushTopic(token, request);
 		
 		assertEquals(Boolean.TRUE, createResult.getSuccess());
 		assertNotNull(createResult.getId());
 		
 		return createResult.getId();
-	}
-	
-	private void deleteTopic(String accessToken, String sobjectUrl, String topicId) {
-		
-		HttpResponse response = RestResource.delete(sobjectUrl.concat("PushTopic/").concat(topicId))
-				.bearerAuthorization(accessToken)
-				.execute();
-		
-		assertEquals(204, response.getStatusCode());
 	}
 	
 	private BayeuxClient createClient(Organization organization, String instanceUrl, String accessToken, String channel) throws Exception {

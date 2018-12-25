@@ -24,32 +24,52 @@ public abstract class AbstractSalesforceClientBuilder {
 
 		@Override
 		public Identity getIdentity(Token token) {
-			return this.getIdentity(token);
+			return super.getIdentity(token);
 		}
 		
 		@Override
 		public DescribeGlobalResult describeGlobal(Token token) {
-			return this.describeGlobal(token);
+			return super.describeGlobal(token);
 		}
 		
 		@Override
 		public User getUser(Token token) {
-			return this.getUser(token);
+			return super.getUser(token);
 		}
 		
 		@Override
 		public Organization getOrganization(Token token) {
-			return this.getOrganization(token);
+			return super.getOrganization(token);
+		}
+		
+		@Override
+		public DescribeResult describeSObject(Token token, String sobject) {
+			return super.describeSObject(token, sobject);
 		}
 		
 		@Override
 		public DescribeResult describeSObject(Token token, String sobject, Date modifiedSince) {
-			return this.describeSObject(token, sobject, modifiedSince);
+			return super.describeSObject(token, sobject, modifiedSince);
 		}
 		
 		@Override
 		public Theme getTheme(Token token) {
-			return this.getTheme(token);
+			return super.getTheme(token);
+		}
+		
+		@Override
+		public Long count(Token token, String query) {
+			return super.count(token, query);
+		}
+		
+		@Override
+		public CreateResult createPushTopic(Token token, PushTopicRequest request) {
+			return super.createPushTopic(token, request);
+		}
+		
+		@Override
+		public void deletePushTopic(Token token, String topicId) {
+			super.deletePushTopic(token, topicId);
 		}
 	}
 }

@@ -15,6 +15,10 @@ public interface Salesforce {
 	public DescribeGlobalResult describeGlobal(Token token);
 	public User getUser(Token token);
 	public Organization getOrganization(Token token);
+	public DescribeResult describeSObject(Token token, String sobject);
 	public DescribeResult describeSObject(Token token, String sobject, Date modifiedSince);
 	public Theme getTheme(Token token);
+	public Long count(Token token, String query);
+	public CreateResult createPushTopic(Token token, PushTopicRequest request);
+	public void deletePushTopic(Token token, String topicId);
 }
