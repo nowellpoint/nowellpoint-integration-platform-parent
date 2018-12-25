@@ -55,6 +55,7 @@ import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.entity.StreamingEventDAO;
 import com.nowellpoint.console.entity.StreamingEventListener;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.entity.Payload;
@@ -102,30 +103,21 @@ public class TestGroupBy {
 		
 		System.out.println(organization.getConnection().getRefreshToken());
 		
-		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
-				.setClientId(SecretsManager.getSalesforceClientId())
-				.setClientSecret(SecretsManager.getSalesforceClientSecret())
-				.setRefreshToken(organization.getConnection().getRefreshToken())
-				.build();
-		
-		OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
-				.authenticate(request);
-		
-		Token token = response.getToken();
-		
-		Salesforce salesforce = SalesforceClientBuilder.builder()
-				.build()
-				.getClient();
+		Token token = ServiceClient.getInstance()
+				.salesforce()
+				.refreshToken(organization.getConnection().getRefreshToken());
 		
 		long start = System.currentTimeMillis();
 		
-		salesforce.getIdentity(token);
+		ServiceClient.getInstance().salesforce().getIdentity(token);
 		
 		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
 		
 		start = System.currentTimeMillis();
 		
-		Identity identity = salesforce.getIdentity(token);
+		Identity identity = ServiceClient.getInstance()
+				.salesforce()
+				.getIdentity(token);
 		
 		assertTrue((System.currentTimeMillis() - start) < 3);
 		assertNotNull(identity);

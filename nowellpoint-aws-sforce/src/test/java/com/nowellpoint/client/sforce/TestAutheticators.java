@@ -8,7 +8,9 @@ import org.junit.Test;
 import com.amazonaws.AmazonClientException;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
+import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Theme;
+import com.nowellpoint.client.sforce.model.Token;
 
 public class TestAutheticators {
 	
@@ -34,29 +36,33 @@ public class TestAutheticators {
 			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
-			assertNotNull(response.getToken());
-			assertNotNull(response.getToken().getAccessToken());			
-			assertNotNull(response.getToken().getId());
-			assertNotNull(response.getToken().getInstanceUrl());
-			assertNotNull(response.getToken().getIssuedAt());
-			assertNotNull(response.getToken().getSignature());
-			assertNotNull(response.getToken().getTokenType());
+			Token token = response.getToken();
 			
-			assertNotNull(response.getIdentity());
-			assertNotNull(response.getIdentity().getActive());
-			assertNotNull(response.getIdentity().getCity());
-			assertNotNull(response.getIdentity().getCountry());
-			assertNotNull(response.getIdentity().getState());
-			assertNotNull(response.getIdentity().getStreet());
-			assertNotNull(response.getIdentity().getPostalCode());
-			assertNotNull(response.getIdentity().getAssertedUser());
-			assertNotNull(response.getIdentity().getDisplayName());
-			assertNotNull(response.getIdentity().getEmail());
-			assertNotNull(response.getIdentity().getFirstName());
-			assertNotNull(response.getIdentity().getLastName());
-			assertNotNull(response.getIdentity().getId());
-			assertNotNull(response.getIdentity().getLanguage());
-			assertNotNull(response.getIdentity().getLocale());
+			assertNotNull(token);
+			assertNotNull(token.getAccessToken());			
+			assertNotNull(token.getId());
+			assertNotNull(token.getInstanceUrl());
+			assertNotNull(token.getIssuedAt());
+			assertNotNull(token.getSignature());
+			assertNotNull(token.getTokenType());
+			
+			Identity identity = client.getIdentity(token);
+			
+			assertNotNull(identity);
+			assertNotNull(identity.getActive());
+			assertNotNull(identity.getCity());
+			assertNotNull(identity.getCountry());
+			assertNotNull(identity.getState());
+			assertNotNull(identity.getStreet());
+			assertNotNull(identity.getPostalCode());
+			assertNotNull(identity.getAssertedUser());
+			assertNotNull(identity.getDisplayName());
+			assertNotNull(identity.getEmail());
+			assertNotNull(identity.getFirstName());
+			assertNotNull(identity.getLastName());
+			assertNotNull(identity.getId());
+			assertNotNull(identity.getLanguage());
+			assertNotNull(identity.getLocale());
 			
 			long startTime = System.currentTimeMillis();
 			

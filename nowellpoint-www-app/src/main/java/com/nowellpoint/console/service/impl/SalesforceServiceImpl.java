@@ -3,6 +3,10 @@ package com.nowellpoint.console.service.impl;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.ApexClass;
@@ -56,24 +60,16 @@ public class SalesforceServiceImpl implements SalesforceService {
 	
 	@Override
 	public Token refreshToken(String refreshToken) {
-		HttpResponse response = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-                .queryParameter("grant_type", "refresh_token")
-                .queryParameter("refresh_token", refreshToken)
-                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
-                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
-                .execute();
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
+				.setRefreshToken(refreshToken)
+				.build();
 		
-		Token token = null;
+		OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
 		
-		if (response.getStatusCode() == Status.OK) {
-			token = response.getEntity(Token.class);
-		} else {
-			throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
-		
-		return token;
+		return response.getToken();
 	}
 	
 	@Override
