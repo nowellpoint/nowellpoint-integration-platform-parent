@@ -36,13 +36,19 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
+import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.Client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.CreateResult;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.PushTopicRequest;
+import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
@@ -52,7 +58,6 @@ import com.nowellpoint.console.entity.StreamingEventListener;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.entity.Payload;
-import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
@@ -97,30 +102,43 @@ public class TestGroupBy {
 		
 		System.out.println(organization.getConnection().getRefreshToken());
 		
-		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-                .queryParameter("grant_type", "refresh_token")
-                .queryParameter("refresh_token", organization.getConnection().getRefreshToken())
-                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
-                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
-                .execute();
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
+				.setRefreshToken(organization.getConnection().getRefreshToken())
+				.build();
 		
-		Token token = tokenResponse.getEntity(Token.class);
+		OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
 		
-		Client client = new Client();
+		Token token = response.getToken();
+		
+		Salesforce salesforce = SalesforceClientBuilder.builder()
+				.build()
+				.getClient();
 		
 		long start = System.currentTimeMillis();
 		
-		client.getIdentity(token);
+		salesforce.getIdentity(token);
 		
 		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
 		
 		start = System.currentTimeMillis();
 		
-		client.getIdentity(token);
+		Identity identity = salesforce.getIdentity(token);
 		
 		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
+		
+		assertNotNull(identity);
+		assertNotNull(identity.getActive());
+		assertNotNull(identity.getAddrCity());
+		assertNotNull(identity.getAddrCountry());
+		assertNotNull(identity.getAddrState());
+		assertNotNull(identity.getAddrStreet());
+		assertNotNull(identity.getAddrZip());
+		assertNotNull(identity.getAssertedUser());
+		
+		logger.info(identity.getDisplayName());
 	}
 	
 	@Test
@@ -140,7 +158,7 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
@@ -156,16 +174,16 @@ public class TestGroupBy {
 		
 		Client client = new Client();
 		
-		HttpResponse tokenResponse = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-                .queryParameter("grant_type", "refresh_token")
-                .queryParameter("refresh_token", organization.getConnection().getRefreshToken())
-                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
-                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
-                .execute();
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
+				.setRefreshToken(organization.getConnection().getRefreshToken())
+				.build();
 		
-		Token token = tokenResponse.getEntity(Token.class);
+		OauthAuthenticationResponse oauthAthenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		Token token = oauthAthenticationResponse.getToken();
 		
 		Long start = System.currentTimeMillis();
 		
@@ -184,7 +202,7 @@ public class TestGroupBy {
 		
 		logger.info(response.get("totalSize").asInt());
 		
-		String sobjectUrl = identity.getUrls().getSobjects();
+		String sobjectUrl = identity.getUrls().getSObjects();
 		
 		String topicId = createAccountTopic(token);
 		

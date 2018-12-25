@@ -2,6 +2,7 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -22,9 +23,11 @@ import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 
-public class Client {
+public abstract class AbstractSalesforceClient {
 	
-	private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(AbstractSalesforceClient.class.getName());
+	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
+	
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
@@ -36,18 +39,57 @@ public class Client {
 	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
  			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
  			+ "UsesStartDateAsFiscalYearName,Address";
-	
-	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
-	
-	public Client() {
+
+	public Identity getIdentity(Token token) {
+		Identity identity = null;
 		
+		if (IDENTITY_CACHE.containsKey(token.getId())) {
+			LOGGER.info("cache entry found");
+			identity = IDENTITY_CACHE.get(token.getId());
+		} else {
+			
+			HttpResponse response = RestResource.get(token.getId())
+					.acceptCharset(StandardCharsets.UTF_8)
+					.accept(MediaType.APPLICATION_JSON)
+					.bearerAuthorization(token.getAccessToken())
+					.queryParameter("version", "latest")
+					.execute();
+			
+			if (response.getStatusCode() == Status.OK) {
+				identity = response.getEntity(Identity.class);
+			} else {
+				throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			}
+			
+			LOGGER.info("cache entry not found");
+			
+			IDENTITY_CACHE.put(token.getId(), identity);
+		}
+		
+		return identity;
 	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @return
-	 */
+
+	public DescribeGlobalResult describeGlobal(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		DescribeGlobalResult describeGlobalResult = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(Error.class));
+			//throw new ServiceException(response.getEntity(SalesforceApiError.class));
+		}
+		
+		return describeGlobalResult;
+	}
 	
 	public User getUser(Token token) {
 		
@@ -103,28 +145,6 @@ public class Client {
 		return organization;
 	}
 	
-	public DescribeGlobalResult describeGlobal(Token token) {
-		
-		Identity identity = getIdentity(token);
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.execute();
-		
-		DescribeGlobalResult describeGlobalResult = null;
-		
-		if (response.getStatusCode() == Status.OK) {
-			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
-		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(Error.class));
-			//throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
-		
-		return describeGlobalResult;
-	}
-	
 	/**
 	 * 
 	 * 
@@ -134,11 +154,14 @@ public class Client {
 	 * 
 	 */
 	
-	public DescribeResult describeSobject(DescribeSobjectRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getSobjectsUrl().concat(request.getSobject()).concat("/describe"))
-				.header("If-Modified-Since", request.getIfModifiedSince() != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(request.getIfModifiedSince()) : null)
+	public DescribeResult describeSObject(Token token, String sobject, Date modifiedSince) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse httpResponse = RestResource.get(identity.getUrls().getSObjects().concat(sobject).concat("/describe"))
+				.header("If-Modified-Since", modifiedSince != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(modifiedSince) : null)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(request.getAccessToken())
+				.bearerAuthorization(token.getAccessToken())
 				.execute();
 		
 		DescribeResult result = null;
@@ -154,20 +177,14 @@ public class Client {
 		return result;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * @param request
-	 * @return
-	 * 
-	 * 
-	 */
-	
-	public Theme getTheme(ThemeRequest request) {
-		HttpResponse httpResponse = RestResource.get(request.getRestEndpoint().concat("theme"))
+	public Theme getTheme(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("theme"))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(request.getAccessToken())
+				.bearerAuthorization(token.getAccessToken())
 				.execute();
 		
 		Theme result = null;
@@ -208,36 +225,6 @@ public class Client {
 		}
 			
 		return totalSize;
-	}
-	
-	public Identity getIdentity(Token token) {
-		
-		Identity identity = null;
-		
-		if (IDENTITY_CACHE.containsKey(token.getId())) {
-			LOGGER.info("cache entry found");
-			identity = IDENTITY_CACHE.get(token.getId());
-		} else {
-			
-			HttpResponse response = RestResource.get(token.getId())
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.queryParameter("version", "latest")
-					.execute();
-			
-			if (response.getStatusCode() == Status.OK) {
-				identity = response.getEntity(Identity.class);
-			} else {
-				throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
-			}
-			
-			LOGGER.info("cache entry not found");
-			
-			IDENTITY_CACHE.put(token.getId(), identity);
-		}
-		
-		return identity;
 	}
 	
 	public CreateResult create(Token token, PushTopicRequest request) {

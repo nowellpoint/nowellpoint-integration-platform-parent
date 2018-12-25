@@ -401,10 +401,6 @@ public class Identity implements Serializable {
 		return urls;
 	}
 
-	public void setUrls(Urls urls) {
-		this.urls = urls;
-	}
-
 	public Boolean getActive() {
 		return active;
 	}

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.nowellpoint.client.sforce.Client;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
@@ -29,6 +30,8 @@ import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 
 public class SalesforceServiceImpl implements SalesforceService {
+	
+	private static final Client client = new Client();
 	
 	@Override
 	public Token getToken(String authorizationCode) {
@@ -77,70 +80,17 @@ public class SalesforceServiceImpl implements SalesforceService {
 	
 	@Override
 	public Identity getIdentity(Token token) {
-		HttpResponse response = RestResource.get(token.getId())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.queryParameter("version", "latest")
-				.execute();
-		
-		Identity identity = null;
-		
-		if (response.getStatusCode() == Status.OK) {
-			identity = response.getEntity(Identity.class);
-		} else {
-			throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
-		
-		return identity;
+		return client.getIdentity(token);
 	}
 	
 	@Override
 	public Organization getOrganization(Token token) {
-		
-		Identity identity = getIdentity(token);
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getSobjects())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-     			.path("Organization")
-     			.path(identity.getOrganizationId())
-     			.queryParameter("fields", "Id,Name,OrganizationType,Address")
-     			.queryParameter("version", "latest")
-     			.execute();
-		
-		Organization organization = null;
-		
-		if (response.getStatusCode() == Status.OK) {
-			organization = response.getEntity(Organization.class);
-		} else {
-			throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
-		
-		return organization;
+		return client.getOrganization(token);
 	}
 	
 	@Override
 	public DescribeGlobalResult describeGlobal(Token token) {
-		
-		Identity identity = getIdentity(token);
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getSobjects())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-				.execute();
-		
-		DescribeGlobalResult describeGlobalResult = null;
-		
-		if (response.getStatusCode() == Status.OK) {
-			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
-		} else {
-			throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
-		
-		return describeGlobalResult;
+		return client.describeGlobal(token);
 	}
 	
 	@Override
