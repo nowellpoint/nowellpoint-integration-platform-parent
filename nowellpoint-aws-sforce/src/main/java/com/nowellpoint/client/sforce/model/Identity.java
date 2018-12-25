@@ -189,58 +189,58 @@ public class Identity implements Serializable {
 	private String id;
 
 	@JsonProperty("asserted_user")
-	private Boolean asserted_user;
+	private Boolean assertedUser;
 
 	@JsonProperty("user_id")
-	private String user_id;
+	private String userId;
 
 	@JsonProperty("organization_id")
-	private String organization_id;
+	private String organizationId;
 
 	@JsonProperty("username")
 	private String username;
 
 	@JsonProperty("nick_name")
-	private String nick_name;
+	private String nickName;
 
 	@JsonProperty("display_name")
-	private String display_name;
+	private String displayName;
 
 	@JsonProperty("email")
 	private String email;
 	
 	@JsonProperty("first_name")
-	private String first_name;
+	private String firstName;
 	
 	@JsonProperty("last_name")
-	private String last_name;
+	private String lastName;
 	
 	@JsonProperty("status")
 	private Status status;
 	
 	@JsonProperty("addr_street")
-	private String addr_street;
+	private String street;
 	
 	@JsonProperty("addr_city")
-	private String addr_city;
+	private String city;
 	
 	@JsonProperty("addr_country")
-	private String addr_country;
+	private String country;
 	
 	@JsonProperty("addr_state")
-	private String addr_state;
+	private String state;
 	
 	@JsonProperty("addr_zip")
-	private String addr_zip;
+	private String postalCode;
 	
 	@JsonProperty("mobile_phone")
-	private String mobile_phone;
+	private String mobilePhone;
 
 	@JsonProperty("active")
 	private Boolean active;
 
 	@JsonProperty("user_type")
-	private String user_type;
+	private String userType;
 
 	@JsonProperty("language")
 	private String language;
@@ -264,137 +264,69 @@ public class Identity implements Serializable {
 	public String getId() {
 		return id;
 	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 	
 	public Boolean getAssertedUser() {
-		return asserted_user;
-	}
-
-	public void setAssertedUser(Boolean asserted_user) {
-		this.asserted_user = asserted_user;
+		return assertedUser;
 	}
 
 	public String getUserId() {
-		return user_id;
-	}
-
-	public void setUserId(String userId) {
-		this.user_id = userId;
+		return userId;
 	}
 
 	public String getOrganizationId() {
-		return organization_id;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organization_id = organizationId;
+		return organizationId;
 	}
 
 	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	public String getNickName() {
-		return nick_name;
-	}
-
-	public void setNickName(String nickName) {
-		this.nick_name = nickName;
+		return nickName;
 	}
 
 	public String getDisplayName() {
-		return display_name;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.display_name = displayName;
+		return displayName;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getFirstName() {
-		return first_name;
-	}
-
-	public void setFirstName(String firstName) {
-		this.first_name = firstName;
+		return firstName;
 	}
 
 	public String getLastName() {
-		return last_name;
-	}
-
-	public void setLastName(String lastName) {
-		this.last_name = lastName;
+		return lastName;
 	}
 
 	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public String getStreet() {
+		return street;
 	}
 
-	public String getAddrStreet() {
-		return addr_street;
+	public String getCity() {
+		return city;
 	}
 
-	public void setAddrStreet(String addrStreet) {
-		this.addr_street = addrStreet;
+	public String getCountry() {
+		return country;
 	}
 
-	public String getAddrCity() {
-		return addr_city;
+	public String getState() {
+		return state;
 	}
 
-	public void setAddrCity(String addrCity) {
-		this.addr_city = addrCity;
-	}
-
-	public String getAddrCountry() {
-		return addr_country;
-	}
-
-	public void setAddrCountry(String addrCountry) {
-		this.addr_country = addrCountry;
-	}
-
-	public String getAddrState() {
-		return addr_state;
-	}
-
-	public void setAddrState(String addrState) {
-		this.addr_state = addrState;
-	}
-
-	public String getAddrZip() {
-		return addr_zip;
-	}
-
-	public void setAddrZip(String addrZip) {
-		this.addr_zip = addrZip;
+	public String getPostalCode() {
+		return postalCode;
 	}
 
 	public String getMobilePhone() {
-		return mobile_phone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobile_phone = mobilePhone;
+		return mobilePhone;
 	}
 
 	public Urls getUrls() {
@@ -405,47 +337,23 @@ public class Identity implements Serializable {
 		return active;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
 	public String getUserType() {
-		return user_type;
-	}
-
-	public void setUserType(String userType) {
-		this.user_type = userType;
+		return userType;
 	}
 
 	public String getLanguage() {
 		return language;
 	}
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
 	public Locale getLocale() {
 		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
 	}
 
 	public String getUtcOffset() {
 		return utcOffset;
 	}
 
-	public void setUtcOffset(String utcOffset) {
-		this.utcOffset = utcOffset;
-	}
-
 	public Photos getPhotos() {
 		return photos;
-	}
-
-	public void setPhotos(Photos photos) {
-		this.photos = photos;
 	}
 }

@@ -2,6 +2,7 @@ package com.nowellpoint.console.mongodb;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -126,16 +127,22 @@ public class TestGroupBy {
 		
 		Identity identity = salesforce.getIdentity(token);
 		
-		logger.info("getIdentity execution time: " + (System.currentTimeMillis() - start));
-		
+		assertTrue((System.currentTimeMillis() - start) < 3);
 		assertNotNull(identity);
 		assertNotNull(identity.getActive());
-		assertNotNull(identity.getAddrCity());
-		assertNotNull(identity.getAddrCountry());
-		assertNotNull(identity.getAddrState());
-		assertNotNull(identity.getAddrStreet());
-		assertNotNull(identity.getAddrZip());
+		assertNotNull(identity.getCity());
+		assertNotNull(identity.getCountry());
+		assertNotNull(identity.getState());
+		assertNotNull(identity.getStreet());
+		assertNotNull(identity.getPostalCode());
 		assertNotNull(identity.getAssertedUser());
+		assertNotNull(identity.getDisplayName());
+		assertNotNull(identity.getEmail());
+		assertNotNull(identity.getFirstName());
+		assertNotNull(identity.getLastName());
+		assertNotNull(identity.getId());
+		assertNotNull(identity.getLanguage());
+		assertNotNull(identity.getLocale());
 		
 		logger.info(identity.getDisplayName());
 	}
@@ -157,7 +164,7 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	//@Ignore
+	@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));

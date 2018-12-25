@@ -2,22 +2,33 @@ package com.nowellpoint.client.sforce;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.nowellpoint.client.sforce.model.ApexClass;
+import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
+import com.nowellpoint.client.sforce.model.Profile;
+import com.nowellpoint.client.sforce.model.QueryResult;
+import com.nowellpoint.client.sforce.model.RecordType;
+import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
+import com.nowellpoint.client.sforce.model.UserLicense;
+import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -27,6 +38,8 @@ public abstract class AbstractSalesforceClient {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractSalesforceClient.class.getName());
 	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
+	
+	private static String API_VERSION = "44.0";
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
@@ -40,7 +53,13 @@ public abstract class AbstractSalesforceClient {
  			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
  			+ "UsesStartDateAsFiscalYearName,Address";
 
-	public Identity getIdentity(Token token) {
+	/**
+     * Retrieves the <code>Identity</code> associated with the Token
+     *
+     * @param token the token returned from one of the authenticate methods.
+     */
+	
+	protected Identity getIdentity(Token token) {
 		Identity identity = null;
 		
 		if (IDENTITY_CACHE.containsKey(token.getId())) {
@@ -69,7 +88,13 @@ public abstract class AbstractSalesforceClient {
 		return identity;
 	}
 
-	public DescribeGlobalResult describeGlobal(Token token) {
+	/**
+     * Describes and returns <code>DescribeGlobalResult</code> for the organization associated with the Token
+     *
+     * @param token the token returned from one of the authenticate methods.
+     */
+	
+	protected DescribeGlobalResult describeGlobal(Token token) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -91,7 +116,13 @@ public abstract class AbstractSalesforceClient {
 		return describeGlobalResult;
 	}
 	
-	public User getUser(Token token) {
+	/**
+     * Retrieves and returns <code>User</code> for the user associated with the Token
+     *
+     * @param token the token returned from one of the authenticate methods.
+     */
+	
+	protected User getUser(Token token) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -115,12 +146,12 @@ public abstract class AbstractSalesforceClient {
 	}
 	
 	/**
-	 * 
-	 * @param token
-	 * @return the queried Organization
-	 */
+     * Retrieves and returns <code>Organization</code> for the organization associated with the Token
+     *
+     * @param token the token returned from one of the authenticate methods.
+     */
 	
-	public Organization getOrganization(Token token) {
+	protected Organization getOrganization(Token token) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -145,20 +176,26 @@ public abstract class AbstractSalesforceClient {
 		return organization;
 	}
 	
-	public DescribeResult describeSObject(Token token, String sobject) {
+	/**
+     * Describes and returns <code>DescribeResult</code> for named sobject
+     *
+     * @param token the token returned from one of the authenticate methods.
+     * @param sobject the name of the sobject to describe
+     */
+	
+	protected DescribeResult describeSObject(Token token, String sobject) {
 		return describeSObject(token, sobject, null);
 	}
 	
 	/**
-	 * 
-	 * 
-	 * @param request
-	 * @return
-	 * 
-	 * 
-	 */
+     * Describes and returns <code>DescribeResult</code> for named sobject modified since the date
+     *
+     * @param token the token returned from one of the authenticate methods.
+     * @param sobject the name of the sobject to describe
+     * @param modifiedSince returns objects if they have been modified since this date
+     */
 	
-	public DescribeResult describeSObject(Token token, String sobject, Date modifiedSince) {
+	protected DescribeResult describeSObject(Token token, String sobject, Date modifiedSince) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -181,7 +218,7 @@ public abstract class AbstractSalesforceClient {
 		return result;
 	}
 	
-	public Theme getTheme(Token token) {
+	protected Theme getTheme(Token token) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -202,7 +239,7 @@ public abstract class AbstractSalesforceClient {
 		return result;
 	}
 	
-	public Long count(Token token, String query) {
+	protected Long count(Token token, String query) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -225,7 +262,7 @@ public abstract class AbstractSalesforceClient {
 		return totalSize;
 	}
 	
-	public CreateResult createPushTopic(Token token, PushTopicRequest request) {
+	protected CreateResult createPushTopic(Token token, PushTopicRequest request) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -255,7 +292,7 @@ public abstract class AbstractSalesforceClient {
 		}
 	}
 	
-	public void deletePushTopic(Token token, String topicId) {
+	protected void deletePushTopic(Token token, String topicId) {
 		
 		Identity identity = getIdentity(token);
 		
@@ -266,5 +303,168 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() != Status.NO_CONTENT) {
 			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
+	}
+	
+	protected Set<UserLicense> getUserLicenses(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", UserLicense.QUERY)
+     			.execute();
+		
+		Set<UserLicense> userLicenses = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			userLicenses = queryResult.getRecords(UserLicense.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return userLicenses;
+		
+	}
+	
+	protected Set<ApexClass> getApexClasses(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", ApexClass.QUERY)
+     			.execute();
+		
+		Set<ApexClass> apexClasses = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			apexClasses = queryResult.getRecords(ApexClass.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return apexClasses;
+	}
+	
+	protected Set<ApexTrigger> getApexTriggers(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", ApexTrigger.QUERY)
+     			.execute();
+		
+		Set<ApexTrigger> apexTriggers = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			apexTriggers = queryResult.getRecords(ApexTrigger.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return apexTriggers;
+	}
+	
+	protected Set<RecordType> getRecordTypes(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", RecordType.QUERY)
+     			.execute();
+		
+		Set<RecordType> recordTypes = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			recordTypes = queryResult.getRecords(RecordType.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return recordTypes;
+	}
+	
+	protected Set<UserRole> getUserRoles(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", UserRole.QUERY)
+     			.execute();
+		
+		Set<UserRole> userRoles = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			userRoles = queryResult.getRecords(UserRole.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return userRoles;
+	}
+	
+	protected Set<Profile> getProfiles(Token token) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", Profile.QUERY)
+     			.execute();
+		
+		Set<Profile> profiles = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			profiles = queryResult.getRecords(Profile.class);
+		} else {
+			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
+		
+		return profiles;
+	}
+	
+	protected Resources getResources(Token token) {
+		
+		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		return response.getEntity(Resources.class);
+	}
+	
+	protected Limits getLimits(Token token) {
+		
+		Resources resources = getResources(token);
+		
+		HttpResponse response = RestResource.get(token.getInstanceUrl().concat(resources.getLimits()))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.execute();
+		
+		return response.getEntity(Limits.class);
 	}
 }

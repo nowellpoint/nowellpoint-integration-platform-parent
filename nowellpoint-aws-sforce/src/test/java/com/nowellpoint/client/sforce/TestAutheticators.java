@@ -34,16 +34,29 @@ public class TestAutheticators {
 			OauthAuthenticationResponse response = Authenticators.PASSWORD_GRANT_AUTHENTICATOR
 					.authenticate(request);
 			
-			System.out.println(response.getToken().getAccessToken());			
-			System.out.println(response.getToken().getId());
-			System.out.println(response.getToken().getInstanceUrl());
-			System.out.println(response.getToken().getIssuedAt());
-			System.out.println(response.getToken().getSignature());
-			System.out.println(response.getToken().getTokenType());
-			
 			assertNotNull(response.getToken());
+			assertNotNull(response.getToken().getAccessToken());			
+			assertNotNull(response.getToken().getId());
+			assertNotNull(response.getToken().getInstanceUrl());
+			assertNotNull(response.getToken().getIssuedAt());
+			assertNotNull(response.getToken().getSignature());
+			assertNotNull(response.getToken().getTokenType());
+			
 			assertNotNull(response.getIdentity());
-			assertNotNull(response.getIdentity().getAddrCity());
+			assertNotNull(response.getIdentity().getActive());
+			assertNotNull(response.getIdentity().getCity());
+			assertNotNull(response.getIdentity().getCountry());
+			assertNotNull(response.getIdentity().getState());
+			assertNotNull(response.getIdentity().getStreet());
+			assertNotNull(response.getIdentity().getPostalCode());
+			assertNotNull(response.getIdentity().getAssertedUser());
+			assertNotNull(response.getIdentity().getDisplayName());
+			assertNotNull(response.getIdentity().getEmail());
+			assertNotNull(response.getIdentity().getFirstName());
+			assertNotNull(response.getIdentity().getLastName());
+			assertNotNull(response.getIdentity().getId());
+			assertNotNull(response.getIdentity().getLanguage());
+			assertNotNull(response.getIdentity().getLocale());
 			
 			long startTime = System.currentTimeMillis();
 			
