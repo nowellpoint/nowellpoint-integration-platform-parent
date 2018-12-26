@@ -18,7 +18,7 @@
                     <thead>
                         <tr class="d-flex">
                             <th class="col-3">${labels['prefix']}</th>
-                            <th class="col-3">${labels['name']}</th>
+                            <th class="col-3">${labels['source']}</th>
                             <th class="col-3 text-center">${labels['enabled']}</th>
                             <th class="col-3">${labels['last.event.received.on']}</th>
                         </tr>
@@ -32,7 +32,7 @@
                                 <#list organization.streamingEventListeners as eventListener>
                                     <tr class="d-flex">
                                         <td class="col-3">${eventListener.prefix}</td>
-                                        <td class="col-3">${eventListener.source}</td>
+                                        <td class="col-3"><a href="${eventListener.href}">${eventListener.source}</a></td>
                                         <td class="col-3 text-center">
                                             <#if eventListener.enabled>
                                                 <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>

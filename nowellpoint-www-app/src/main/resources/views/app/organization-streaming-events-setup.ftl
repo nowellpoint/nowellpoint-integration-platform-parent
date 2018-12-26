@@ -1,18 +1,16 @@
 <#import "template.html" as t>
-
     <@t.page>
-
-        <#include "event-listener-menu.ftl" />
-
-        <div id="content" class="content">
-            <div class="container-fluid p-3">
-                <div class="dashhead mb-3">
+        <#include "sidebar.ftl" />
+        <content id="content">
+            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
+                <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h6 class="dashhead-subtitle">${labels["setup.event.listener"]}</h6>
-                        <h3 class="dashhead-title">${eventListener.name}</h3>
+                        <h4 class="dashhead-title font-weight-normal">${labels["setup.event.listener"]}</h4>
                     </div>
                 </div>
-                <hr>
+            </div>
+            <hr>
+            <div class="container-fluid p-3">
                 <form id="event-listener-setup-form" role="form" method="post" action="${eventListener.href}">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create">
@@ -33,11 +31,11 @@
                     <hr>
                     <div>
                         <div class="text-right">
-                            <a href="${ORGANIZATION_EVENTS_URI}">${messages['cancel']}</a>&emsp;
+                            <a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&emsp;
                             <button id="save-event-listener" class="btn btn-primary">${messages['save']}</button>
                         </div>
                     </div>
                 </form>
             </div>
-        </div>
+        </content>
     </@t.page>

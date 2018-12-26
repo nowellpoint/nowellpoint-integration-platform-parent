@@ -52,10 +52,10 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION_STREAMING_EVENTS, (request, response) 
 				-> viewStreamingEvents(request, response));
 		
-		get(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
-				-> setupEventListener(request, response));
+		get(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
+				-> setupStreamingEvents(request, response));
 		
-		post(Path.Route.ORGANIZATION_EVENT_LISTENER_SETUP, (request, response)
+		post(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
 				-> saveEventListener(request, response));
 		
 		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
@@ -150,9 +150,9 @@ public class OrganizationController extends BaseController {
 	 * @return
 	 */
 	
-	private static String setupEventListener(Request request, Response response) {
+	private static String setupStreamingEvents(Request request, Response response) {
 		
-		String sobject = request.params(":sobject");
+		String source = request.params(":source");
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
@@ -160,7 +160,7 @@ public class OrganizationController extends BaseController {
 		
 		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
 				.stream()
-				.filter(e -> sobject.equals(e.getName()))
+				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
 		
 		Map<String,Object> model = getModel();
@@ -170,7 +170,7 @@ public class OrganizationController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
-				.templateName(Templates.EVENT_LISTENER_SETUP)
+				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS_SETUP)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -232,7 +232,7 @@ public class OrganizationController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
 				.model(model)
-				.templateName(Templates.EVENT_LISTENER_SETUP)
+				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS_SETUP)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
