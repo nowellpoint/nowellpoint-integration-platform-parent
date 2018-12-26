@@ -1,7 +1,5 @@
 package com.nowellpoint.console.exception;
 
-import com.nowellpoint.console.model.SalesforceApiError;
-
 public class ServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = 618375122517080979L;
@@ -46,17 +44,6 @@ public class ServiceException extends RuntimeException {
 	
 	public ServiceException(String message, Throwable cause) {
 		super(message, cause);
-	}
-	
-	/**
-     * Constructs an <code>ServiceException</code> with the specified cause.
-     *
-     * @param error the Salesforce API error and error description.
-     */
-	
-	public ServiceException(SalesforceApiError error) {
-		super(error.getMessage());
-		this.errorCode = error.getErrorCode();
 	}
 	
 	/**

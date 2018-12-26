@@ -9,6 +9,8 @@ public class SalesforceException extends RuntimeException {
 
 	private int statusCode;
 	
+	private String errorCode;
+	
 	private String error;
 	
 	private String errorDescription;
@@ -26,6 +28,11 @@ public class SalesforceException extends RuntimeException {
 		this.error = node.get(0).get("errorCode").asText();
 		this.errorDescription = node.get(0).get("message").asText();
 	}
+	
+	public SalesforceException(String errorCode, String message) {
+		super(message);
+		this.errorCode = errorCode;
+	}
 
 	public int getStatusCode() {
 		return statusCode;
@@ -37,5 +44,9 @@ public class SalesforceException extends RuntimeException {
 
 	public String getErrorDescription() {
 		return errorDescription;
+	}
+	
+	public String getErrorCode() {
+		return errorCode;
 	}
 }

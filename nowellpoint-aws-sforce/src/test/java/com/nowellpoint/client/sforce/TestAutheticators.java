@@ -90,7 +90,7 @@ public class TestAutheticators {
 			System.out.println(e.getStatusCode());
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
-		} catch (ClientException e) {
+		} catch (SalesforceClientException e) {
 			System.out.println(e.getErrorDescription());
 			System.out.println(e.getError());
 			System.out.println(e.getStatusCode());

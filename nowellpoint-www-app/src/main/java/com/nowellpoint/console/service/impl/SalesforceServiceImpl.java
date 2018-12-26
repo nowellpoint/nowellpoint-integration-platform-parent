@@ -1,9 +1,9 @@
 package com.nowellpoint.console.service.impl;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
@@ -21,41 +21,29 @@ import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
-import com.nowellpoint.console.exception.ServiceException;
-import com.nowellpoint.console.model.SalesforceApiError;
 import com.nowellpoint.console.service.SalesforceService;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.SecretsManager;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
-import com.nowellpoint.http.Status;
 
 public class SalesforceServiceImpl implements SalesforceService {
 	
-	private static final Salesforce client = SalesforceClientBuilder.builder().build().getClient();
+	private static final Salesforce client = SalesforceClientBuilder.builder()
+			.build()
+			.getClient();
 	
 	@Override
 	public Token getToken(String authorizationCode) {
-		HttpResponse response = RestResource.get(EnvironmentVariables.getSalesforceTokenUri())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-                .queryParameter("grant_type", "authorization_code")
-                .queryParameter("code", authorizationCode)
-                .queryParameter("client_id", SecretsManager.getSalesforceClientId())
-                .queryParameter("client_secret", SecretsManager.getSalesforceClientSecret())
-                .queryParameter("redirect_uri", EnvironmentVariables.getSalesforceRedirectUri())
-                .execute();
-        
-		Token token = null;
+		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST.builder()
+				.setCallbackUri(EnvironmentVariables.getSalesforceRedirectUri())
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
+				.setCode(authorizationCode)
+				.build();
 		
-		if (response.getStatusCode() == Status.OK) {
-			token = response.getEntity(Token.class);
-		} else {
-			throw new ServiceException(response.getEntity(SalesforceApiError.class));
-		}
+		OauthAuthenticationResponse response = Authenticators.AUTHORIZATION_GRANT_AUTHENTICATOR
+				.authenticate(request);
 		
-		return token;
+		return response.getToken();
 	}
 	
 	@Override

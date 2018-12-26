@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
 import com.nowellpoint.client.sforce.model.Count;
+import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Error;
@@ -39,9 +40,9 @@ public abstract class AbstractSalesforceClient {
 	private static final Logger LOGGER = Logger.getLogger(AbstractSalesforceClient.class.getName());
 	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
 	
-	private static String API_VERSION = "44.0";
-	
 	private static final ObjectMapper mapper = new ObjectMapper();
+	
+	private static final String API_VERSION = "44.0";
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
 			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
@@ -77,7 +78,7 @@ public abstract class AbstractSalesforceClient {
 			if (response.getStatusCode() == Status.OK) {
 				identity = response.getEntity(Identity.class);
 			} else {
-				throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+				throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 			}
 			
 			LOGGER.info("cache entry not found");
@@ -109,7 +110,7 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.OK) {
 			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(Error.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 			//throw new ServiceException(response.getEntity(SalesforceApiError.class));
 		}
 		
@@ -139,7 +140,7 @@ public abstract class AbstractSalesforceClient {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			user = httpResponse.getEntity(User.class);
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
 		}
 		
 		return user;
@@ -170,7 +171,7 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.OK) {
 			organization = response.getEntity(Organization.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(Error.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 		
 		return organization;
@@ -212,7 +213,7 @@ public abstract class AbstractSalesforceClient {
 		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
 			return null;
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
 		
 		return result;
@@ -233,7 +234,7 @@ public abstract class AbstractSalesforceClient {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(Theme.class);
 		} else {
-			throw new ClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
 		}
 		
 		return result;
@@ -288,7 +289,7 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.CREATED) {
 			return response.getEntity(CreateResult.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 	}
 	
@@ -301,7 +302,7 @@ public abstract class AbstractSalesforceClient {
 				.execute();
 		
 		if (response.getStatusCode() != Status.NO_CONTENT) {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 	}
 	
@@ -322,7 +323,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			userLicenses = queryResult.getRecords(UserLicense.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return userLicenses;
@@ -346,7 +347,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			apexClasses = queryResult.getRecords(ApexClass.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return apexClasses;
@@ -369,7 +370,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			apexTriggers = queryResult.getRecords(ApexTrigger.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return apexTriggers;
@@ -392,7 +393,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			recordTypes = queryResult.getRecords(RecordType.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return recordTypes;
@@ -415,7 +416,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			userRoles = queryResult.getRecords(UserRole.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return userRoles;
@@ -438,7 +439,7 @@ public abstract class AbstractSalesforceClient {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			profiles = queryResult.getRecords(Profile.class);
 		} else {
-			throw new ClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
 		
 		return profiles;
