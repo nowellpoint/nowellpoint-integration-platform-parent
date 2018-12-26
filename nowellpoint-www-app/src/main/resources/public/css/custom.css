@@ -72,6 +72,10 @@ footer {
     background: lightGray;
 }
 
+.active {
+    background-color: #D9EAFC !important;
+}
+
 /* Position and style the close button (top right corner) */
 .sidebar .title {
     position: absolute;

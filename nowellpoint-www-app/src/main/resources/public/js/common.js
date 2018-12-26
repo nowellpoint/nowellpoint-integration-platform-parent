@@ -5,7 +5,7 @@ $( document ).ready(function() {
 $(document).ready(function () {
     var path = window.location.pathname;
     path = path.replace(/\/$/, "");
-    path = decodeURIComponent(path);
+    path = decodeURIComponent(path).concat("/");
 
     $(".sidebar a").each(function () {
         var href = $(this).attr('href');

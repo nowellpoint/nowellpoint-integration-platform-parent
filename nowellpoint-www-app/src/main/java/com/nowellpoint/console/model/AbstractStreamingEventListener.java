@@ -55,6 +55,7 @@ public abstract class AbstractStreamingEventListener {
 				.enabled(source.getEnabled())
 				.description(source.getDescription())
 				.lastEventReceivedOn(source.getLastEventReceivedOn())
+				.name(source.getName())
 				.source(source.getSource())
 				.prefix(source.getPrefix())
 				.replyId(source.getReplayId())
