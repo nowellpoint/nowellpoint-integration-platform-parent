@@ -1,10 +1,9 @@
 package com.nowellpoint.client.sforce;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.nowellpoint.client.sforce.impl.SalesforceException;
 import com.nowellpoint.client.sforce.model.Error;
 
-public class SalesforceClientException extends SalesforceException {
+public class SalesforceClientException extends RuntimeException {
 	
 	private static final long serialVersionUID = 2726007023971974319L;
 	
@@ -15,7 +14,7 @@ public class SalesforceClientException extends SalesforceException {
      */
 	
 	public SalesforceClientException(int statusCode, Error error) {
-		super(statusCode, error);
+		super(error.getErrorDescription());
 	}
 	
 	/**
@@ -25,7 +24,7 @@ public class SalesforceClientException extends SalesforceException {
      */
 	
 	public SalesforceClientException(int statusCode, ArrayNode error) {
-		super(statusCode, error);
+		super(error.get("errorMessage").asText());
 	}
 	
 	/**
@@ -34,7 +33,11 @@ public class SalesforceClientException extends SalesforceException {
      * @param error the Salesforce API error and message.
      */
 	
-	public SalesforceClientException(SalesforceApiError error) {
-		super(error.getErrorCode(), error.getMessage());
+	public SalesforceClientException(ApiError error) {
+		super(error.getMessage());
+	}
+	
+	public SalesforceClientException(String message) {
+		super(message);
 	}
 }

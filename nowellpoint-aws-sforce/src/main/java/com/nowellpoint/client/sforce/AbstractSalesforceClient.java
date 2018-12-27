@@ -273,8 +273,9 @@ public abstract class AbstractSalesforceClient {
 				.put("ApiVersion", request.getApiVersion())
 				.put("NotifyForOperationCreate", request.getNotifyForOperationCreate())
 				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
-				.put("NotifyForOperationUndelete", Boolean.TRUE)
-				.put("NotifyForOperationDelete", Boolean.TRUE)
+				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
+				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
+				//.put("IsActive", request.getIsActive())
 				.put("NotifyForFields", "All")
 				.toString();
 		
@@ -289,8 +290,41 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.CREATED) {
 			return response.getEntity(CreateResult.class);
 		} else {
+			// [{"message":"Topic Name: data value too large: NOWELLPOINT_OPPORTUNITY_PUSH_TOPIC (max length=25)","errorCode":"STRING_TOO_LONG","fields":["Name"]}]
+			throw new SalesforceClientException(response.getEntity(ApiError.class));
+		}
+	}
+	
+	protected void updatePushTopic(Token token, String topicId, PushTopicRequest request) {
+		
+		Identity identity = getIdentity(token);
+		
+		String body = mapper.createObjectNode()
+				.put("Name", request.getName())
+				.put("Query", request.getQuery())
+				.put("ApiVersion", request.getApiVersion())
+				.put("NotifyForOperationCreate", request.getNotifyForOperationCreate())
+				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
+				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
+				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
+				.put("IsActive", request.getIsActive())
+				.put("NotifyForFields", "All")
+				.toString();
+		
+		HttpResponse response = RestResource.post(identity.getUrls().getSObjects().concat("PushTopic/").concat(topicId).concat("?_HttpMethod=PATCH"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.body(body)
+				.contentType(MediaType.APPLICATION_JSON)
+                .execute();
+		
+		if (response.getStatusCode() == Status.CREATED) {
+//			return response.getEntity(CreateResult.class);
+		} else {
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
+		
 	}
 	
 	protected void deletePushTopic(Token token, String topicId) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,10 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.nowellpoint.client.sforce.PushTopicRequest;
+import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
@@ -50,6 +55,7 @@ import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
+import com.nowellpoint.console.model.StreamingEventListener;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
@@ -145,7 +151,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Organization organization = Organization.builder()
 				.dashboard(dashboard)
 				.domain(request.getDomain())
-			//	.streamingEventListeners(plan.getEventListeners())
+				.streamingEventListeners(plan.getStreamingEventListeners())
 				.name(request.getName())
 				.number(customerResult.getTarget().getId())
 				.subscription(subscription)
@@ -202,15 +208,69 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public Organization update(String id, StreamingEventListenerRequest request) {
 		Organization instance = get(id);
 		
-		logger.info(request.getObject());
+		logger.info(request.getSource());
 		logger.info(String.valueOf(request.getOnCreate()));
 		logger.info(String.valueOf(request.getOnDelete()));
 		logger.info(String.valueOf(request.getOnUpdate()));
 		logger.info(String.valueOf(request.getOnUndelete()));
 		
+		Token token = ServiceClient.getInstance()
+        		.salesforce()
+        		.refreshToken(instance.getConnection().getRefreshToken());
 		
+		Optional<StreamingEventListener> listener = instance.getStreamingEventListeners()
+				.stream()
+				.filter(l -> request.getSource().equals(l.getSource()))
+				.findFirst();
 		
-		return instance;
+		List<StreamingEventListener> listeners = new ArrayList<StreamingEventListener>(instance.getStreamingEventListeners());
+		
+		if (listener.isPresent()) {
+			
+			PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
+					.name(listener.get().getName())
+					.query(listener.get().getQuery())
+					.apiVersion(listener.get().getApiVersion())
+					.notifyForOperationCreate(request.getOnCreate())
+					.notifyForOperationDelete(request.getOnDelete())
+					.notifyForOperationUndelete(request.getOnUndelete())
+					.notifyForOperationUpdate(request.getOnUpdate())
+					.isActive(request.getIsActive())
+					.notifyForFields("All")
+					.build();
+			
+			Salesforce client = SalesforceClientBuilder.builder()
+					.build()
+					.getClient();
+			
+			listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
+			
+			if (Assert.isNullOrEmpty(listener.get().getId())) {
+				
+				logger.info("creating push topic");
+				
+				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
+				
+				listeners.add(StreamingEventListener.builder()
+						.from(listener.get())
+						.id(createResult.getId())
+						.enabled(Boolean.TRUE)
+						.build());
+				
+			} else {
+				//UpdateResult updateResult = client.
+				
+				logger.info("updating push topic");
+			}
+			
+		}
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.streamingEventListeners(listeners)
+				.build();
+		
+		return update(organization);
 	}
 	
 	@Override

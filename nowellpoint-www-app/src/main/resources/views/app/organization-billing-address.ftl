@@ -1,3 +1,4 @@
+<!--
 <div class="row">
     <div class="col-3">
         <span class="grey-text">${labels["street"]}</span>
@@ -43,7 +44,7 @@
     </div>
 </div>
 <hr>
-
+-->
 <div class="card">
     <div class="card-body">
         <dl class="dl-vertical">

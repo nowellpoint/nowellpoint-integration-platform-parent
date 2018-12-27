@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.amazonaws.AmazonClientException;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -91,11 +90,10 @@ public class TestAutheticators {
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
 		} catch (SalesforceClientException e) {
-			System.out.println(e.getErrorDescription());
-			System.out.println(e.getError());
-			System.out.println(e.getStatusCode());
-		} catch (AmazonClientException e) {
-	    	System.out.println(e.getMessage());
-	    }
+			e.getErrors().forEach(ex -> {
+				System.out.println(ex.getErrorCode());
+				System.out.println(ex.getMessage());
+			});
+		} 
 	}
 }

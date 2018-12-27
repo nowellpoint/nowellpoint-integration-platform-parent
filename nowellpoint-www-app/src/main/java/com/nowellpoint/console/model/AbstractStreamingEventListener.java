@@ -1,6 +1,7 @@
 package com.nowellpoint.console.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -23,7 +24,6 @@ public abstract class AbstractStreamingEventListener {
 	public abstract String getName();
 	public abstract String getDescription();
 	public abstract @Nullable Date getLastEventReceivedOn();
-	public abstract @Nullable Long getReplyId();
 	
 	private static final String API_VERSION = "44.0";
 	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
@@ -49,7 +49,26 @@ public abstract class AbstractStreamingEventListener {
 		return API_VERSION;
 	}
 	
+	@Value.Default
+	public Long getReplyId() {
+		return Long.valueOf(-1);
+	}
+	
+	@Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final StreamingEventListener listener = (StreamingEventListener) o;
+        return Objects.equals(getPrefix(), listener.getPrefix());
+    }
+	
+	@Override
+	public int hashCode() {
+       return Objects.hash(getPrefix());
+    }
+	
 	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
+		System.out.println(source.getReplayId());
 		return source == null ? null : StreamingEventListener.builder()
 				.id(source.getId())
 				.enabled(source.getEnabled())

@@ -9,7 +9,7 @@ import org.immutables.value.Value;
 @Value.Style(typeImmutable = "*", jdkOnly=true)
 public abstract class AbstractStreamingEventListenerRequest {
 	public abstract @Nullable String getId();
-	public abstract String getObject();
+	public abstract String getSource();
 	
 	@Value.Default
 	public Boolean getOnCreate() {
@@ -28,6 +28,11 @@ public abstract class AbstractStreamingEventListenerRequest {
 	
 	@Value.Default
 	public Boolean getOnUndelete() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public Boolean getIsActive() {
 		return Boolean.FALSE;
 	}
 }

@@ -185,7 +185,7 @@ public class OrganizationController extends BaseController {
 	
 	private static String saveEventListener(Request request, Response response) {
 		
-		String sobject = request.params(":sobject");
+		String source = request.params(":source");
 		
 		List<NameValuePair> params = Collections.emptyList();
 		
@@ -214,11 +214,12 @@ public class OrganizationController extends BaseController {
 		});
 		
 		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
-				.object(sobject)
+				.isActive(Boolean.TRUE)
 				.onCreate(onCreate.get())
 				.onUpdate(onUpdate.get())
 				.onDelete(onDelete.get())
 				.onUndelete(onUndelete.get())
+				.source(source)
 				.build();
 		
 		Organization organization = ServiceClient.getInstance()
@@ -227,7 +228,7 @@ public class OrganizationController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("SOBJECT", sobject);
+		model.put("source", source);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)

@@ -74,6 +74,7 @@
                     title: "${labels['streaming.events.received.last.n.days']?replace(':s1','7')}",
                     focusTarget: 'category',
                     backgroundColor: 'transparent',
+                    animation: {"startup": true},
                     hAxis: {
                         viewWindow: {
                             min: [7, 30, 0],
@@ -88,8 +89,8 @@
                     },
                     vAxis: {
                         textStyle: {
-                            fontSize: 18,
-                            color: '#67001f',
+                            //fontSize: 18,
+                            //color: '#67001f',
                             bold: false,
                             italic: false
                         }
@@ -97,7 +98,15 @@
                 };
 
                 var chart = new google.visualization.ColumnChart(document.getElementById('events-last-7-days'));
-
+                
+                google.visualization.events.addListener(chart, 'select', function () {
+                    var selectedItem = chart.getSelection()[0];
+                    if (selectedItem) {
+                        var value = data.getValue(selectedItem.row, 0);
+                        alert('The user selected ' + value);
+                    }
+                });
+                
                 chart.draw(data, options);
             }
 

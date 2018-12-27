@@ -163,7 +163,7 @@
     *
     */
 
-   $(document).on('click', 'button#save-event-listener', function () {
+   $(document).on('click', 'button#save-streaming-event-listener', function () {
 
        $form = $("#event-listener-setup-form");
 

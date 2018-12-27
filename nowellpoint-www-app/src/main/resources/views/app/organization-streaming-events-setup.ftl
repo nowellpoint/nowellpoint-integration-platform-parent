@@ -32,7 +32,7 @@
                     <div>
                         <div class="text-right">
                             <a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&emsp;
-                            <button id="save-event-listener" class="btn btn-primary">${messages['save']}</button>
+                            <button id="save-streaming-event-listener" class="btn btn-primary">${messages['save']}</button>
                         </div>
                     </div>
                 </form>

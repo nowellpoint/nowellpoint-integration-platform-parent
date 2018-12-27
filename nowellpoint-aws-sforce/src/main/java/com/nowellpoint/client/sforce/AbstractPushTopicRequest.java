@@ -18,4 +18,5 @@ public abstract class AbstractPushTopicRequest {
 	public abstract Boolean getNotifyForOperationUndelete();
 	public abstract Boolean getNotifyForOperationDelete();
 	public abstract String getNotifyForFields();
+	public abstract Boolean getIsActive();
 }
