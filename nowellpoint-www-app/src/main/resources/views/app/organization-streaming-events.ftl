@@ -29,12 +29,12 @@
                                 <td colspan="4">&nbsp;</td>
                             </tr>
                             <#else>
-                                <#list organization.streamingEventListeners as eventListener>
+                                <#list organization.streamingEventListeners?sort_by("source") as eventListener>
                                     <tr class="d-flex">
                                         <td class="col-3">${eventListener.prefix}</td>
                                         <td class="col-3"><a href="${eventListener.href}">${eventListener.source}</a></td>
                                         <td class="col-3 text-center">
-                                            <#if eventListener.enabled>
+                                            <#if eventListener.isActive()>
                                                 <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>
                                                 <#else>
                                                     <i class="fa fa-close mr-2 text-danger" aria-hidden="true"></i>

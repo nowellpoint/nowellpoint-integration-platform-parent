@@ -179,181 +179,38 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Status;
 import com.nowellpoint.client.sforce.model.Urls;
+import lombok.Getter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Identity implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
-
-	@JsonProperty("id")
-	private String id;
-
-	@JsonProperty("asserted_user")
-	private Boolean assertedUser;
-
-	@JsonProperty("user_id")
-	private String userId;
-
-	@JsonProperty("organization_id")
-	private String organizationId;
-
-	@JsonProperty("username")
-	private String username;
-
-	@JsonProperty("nick_name")
-	private String nickName;
-
-	@JsonProperty("display_name")
-	private String displayName;
-
-	@JsonProperty("email")
-	private String email;
-	
-	@JsonProperty("first_name")
-	private String firstName;
-	
-	@JsonProperty("last_name")
-	private String lastName;
-	
-	@JsonProperty("status")
-	private Status status;
-	
-	@JsonProperty("addr_street")
-	private String street;
-	
-	@JsonProperty("addr_city")
-	private String city;
-	
-	@JsonProperty("addr_country")
-	private String country;
-	
-	@JsonProperty("addr_state")
-	private String state;
-	
-	@JsonProperty("addr_zip")
-	private String postalCode;
-	
-	@JsonProperty("mobile_phone")
-	private String mobilePhone;
-
-	@JsonProperty("active")
-	private Boolean active;
-
-	@JsonProperty("user_type")
-	private String userType;
-
-	@JsonProperty("language")
-	private String language;
-
-	@JsonProperty("locale")
-	private Locale locale;
-
-	@JsonProperty("utcOffset")
-	private String utcOffset;
-
-	@JsonProperty("photos")
-	private Photos photos;
-
-	@JsonProperty("urls")
-	private Urls urls;
+	@Getter @JsonProperty("id") private String id;
+	@Getter @JsonProperty("asserted_user") private Boolean assertedUser;
+	@Getter @JsonProperty("user_id") private String userId;
+	@Getter @JsonProperty("organization_id") private String organizationId;
+	@Getter @JsonProperty("username") private String username;
+	@Getter @JsonProperty("nick_name") private String nickName;
+	@Getter @JsonProperty("display_name") private String displayName;
+	@Getter @JsonProperty("email") private String email;
+	@Getter @JsonProperty("first_name") private String firstName;
+	@Getter @JsonProperty("last_name") private String lastName;
+	@Getter @JsonProperty("status") private Status status;
+	@Getter @JsonProperty("addr_street") private String street;
+	@Getter @JsonProperty("addr_city") private String city;
+	@Getter @JsonProperty("addr_country") private String country;
+	@Getter @JsonProperty("addr_state") private String state;
+	@Getter @JsonProperty("addr_zip") private String postalCode;
+	@Getter @JsonProperty("mobile_phone") private String mobilePhone;
+	@Getter @JsonProperty("active") private Boolean active;
+	@Getter @JsonProperty("user_type") private String userType;
+	@Getter @JsonProperty("language") private String language;
+	@Getter @JsonProperty("locale") private Locale locale;
+	@Getter @JsonProperty("utcOffset") private String utcOffset;
+	@Getter @JsonProperty("photos") private Photos photos;
+	@Getter @JsonProperty("urls") private Urls urls;
 
 	public Identity() {
 
-	}
-
-	public String getId() {
-		return id;
-	}
-	
-	public Boolean getAssertedUser() {
-		return assertedUser;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public String getOrganizationId() {
-		return organizationId;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getNickName() {
-		return nickName;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-
-	public Urls getUrls() {
-		return urls;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public String getUtcOffset() {
-		return utcOffset;
-	}
-
-	public Photos getPhotos() {
-		return photos;
 	}
 }

@@ -8,38 +8,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Address implements Serializable {
 	
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = 3317676775699599582L;
-
-	@JsonProperty(value="street")
-	private String street;
-	
-	@JsonProperty(value="city")
-	private String city;
-	
-	@JsonProperty(value="state")
-	private String state;
-	
-	@JsonProperty(value="stateCode")
-	private String stateCode;
-	
-	@JsonProperty(value="country")
-	private String country;
-	
-	@JsonProperty(value="countryCode")
-	private String countryCode;
-	
-	@JsonProperty(value="postalCode")
-	private String postalCode;
-	
-	@JsonProperty(value="longitude")
-	private String longitude;
-	
-	@JsonProperty(value="latitude")
-	private String latitude;
+	private @JsonProperty(value="street") String street;
+	private @JsonProperty(value="city") String city;
+	private @JsonProperty(value="state") String state;
+	private @JsonProperty(value="stateCode") String stateCode;
+	private @JsonProperty(value="country") String country;
+	private @JsonProperty(value="countryCode") String countryCode;
+	private @JsonProperty(value="postalCode") String postalCode;
+	private @JsonProperty(value="longitude")String longitude;
+	private @JsonProperty(value="latitude") String latitude;
 	
 	public Address() {
 		

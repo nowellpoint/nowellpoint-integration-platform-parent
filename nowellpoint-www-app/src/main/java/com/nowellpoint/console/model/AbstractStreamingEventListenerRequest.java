@@ -1,14 +1,11 @@
 package com.nowellpoint.console.model;
 
-import javax.annotation.Nullable;
-
 import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true)
+@Value.Style(typeImmutable = "*", jdkOnly=true, get = {"is*", "get*"})
 public abstract class AbstractStreamingEventListenerRequest {
-	public abstract @Nullable String getId();
 	public abstract String getSource();
 	
 	@Value.Default
@@ -32,7 +29,7 @@ public abstract class AbstractStreamingEventListenerRequest {
 	}
 	
 	@Value.Default
-	public Boolean getIsActive() {
+	public Boolean isActive() {
 		return Boolean.FALSE;
 	}
 }

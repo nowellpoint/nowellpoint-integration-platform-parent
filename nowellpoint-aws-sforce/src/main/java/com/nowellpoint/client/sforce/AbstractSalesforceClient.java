@@ -275,8 +275,9 @@ public abstract class AbstractSalesforceClient {
 				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
 				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
 				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
-				//.put("IsActive", request.getIsActive())
-				.put("NotifyForFields", "All")
+				.put("IsActive", request.isActive())
+				.put("Description", request.getDescription())
+				.put("NotifyForFields", request.getNotifyForFields())
 				.toString();
 		
 		HttpResponse response = RestResource.post(identity.getUrls().getSObjects().concat("PushTopic/"))
@@ -290,8 +291,8 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.CREATED) {
 			return response.getEntity(CreateResult.class);
 		} else {
-			// [{"message":"Topic Name: data value too large: NOWELLPOINT_OPPORTUNITY_PUSH_TOPIC (max length=25)","errorCode":"STRING_TOO_LONG","fields":["Name"]}]
-			throw new SalesforceClientException(response.getEntity(ApiError.class));
+			//[{"message":"Topic Name: data value too large: NOWELLPOINT_OPPORTUNITY_PUSH_TOPIC (max length=25)","errorCode":"STRING_TOO_LONG","fields":["Name"]}]
+			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
 		}
 	}
 	
@@ -307,7 +308,7 @@ public abstract class AbstractSalesforceClient {
 				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
 				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
 				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
-				.put("IsActive", request.getIsActive())
+				.put("IsActive", request.isActive())
 				.put("NotifyForFields", "All")
 				.toString();
 		
@@ -322,7 +323,7 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() == Status.CREATED) {
 //			return response.getEntity(CreateResult.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
 		}
 		
 	}

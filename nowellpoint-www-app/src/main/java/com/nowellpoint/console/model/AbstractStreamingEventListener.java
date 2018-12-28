@@ -14,7 +14,7 @@ import com.nowellpoint.console.util.Path;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true)
+@Value.Style(typeImmutable = "*", jdkOnly=true, get = {"is*", "get*"})
 @JsonSerialize(as = StreamingEventListener.class)
 @JsonDeserialize(as = StreamingEventListener.class)
 public abstract class AbstractStreamingEventListener {
@@ -35,7 +35,27 @@ public abstract class AbstractStreamingEventListener {
 	}
 	
 	@Value.Default
-	public Boolean getEnabled() {
+	public Boolean getNotifyForOperationCreate() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public Boolean getNotifyForOperationUpdate() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public Boolean getNotifyForOperationUndelete() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public Boolean getNotifyForOperationDelete() {
+		return Boolean.FALSE;
+	}
+	
+	@Value.Default
+	public Boolean isActive() {
 		return Boolean.FALSE;
 	}
 	
@@ -68,10 +88,9 @@ public abstract class AbstractStreamingEventListener {
     }
 	
 	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
-		System.out.println(source.getReplayId());
 		return source == null ? null : StreamingEventListener.builder()
 				.id(source.getId())
-				.enabled(source.getEnabled())
+				.active(source.isActive())
 				.description(source.getDescription())
 				.lastEventReceivedOn(source.getLastEventReceivedOn())
 				.name(source.getName())

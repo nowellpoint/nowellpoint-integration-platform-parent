@@ -228,33 +228,39 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		if (listener.isPresent()) {
 			
 			PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
-					.name(listener.get().getName())
-					.query(listener.get().getQuery())
+					.active(request.isActive())
 					.apiVersion(listener.get().getApiVersion())
+					.description(listener.get().getDescription())
+					.name(listener.get().getName())
 					.notifyForOperationCreate(request.getOnCreate())
 					.notifyForOperationDelete(request.getOnDelete())
 					.notifyForOperationUndelete(request.getOnUndelete())
 					.notifyForOperationUpdate(request.getOnUpdate())
-					.isActive(request.getIsActive())
 					.notifyForFields("All")
+					.query(listener.get().getQuery())
 					.build();
 			
 			Salesforce client = SalesforceClientBuilder.builder()
 					.build()
 					.getClient();
 			
-			listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
-			
 			if (Assert.isNullOrEmpty(listener.get().getId())) {
 				
 				logger.info("creating push topic");
+				logger.info("Replay Id: " + listener.get().getReplyId()); 
+				
+				listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
 				
 				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
 				
 				listeners.add(StreamingEventListener.builder()
 						.from(listener.get())
 						.id(createResult.getId())
-						.enabled(Boolean.TRUE)
+						.active(request.isActive())
+						.notifyForOperationCreate(request.getOnCreate())
+						.notifyForOperationDelete(request.getOnDelete())
+						.notifyForOperationUndelete(request.getOnUndelete())
+						.notifyForOperationUpdate(request.getOnUpdate())
 						.build());
 				
 			} else {
@@ -270,7 +276,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.streamingEventListeners(listeners)
 				.build();
 		
-		return update(organization);
+		return organization; //update(organization);
 	}
 	
 	@Override

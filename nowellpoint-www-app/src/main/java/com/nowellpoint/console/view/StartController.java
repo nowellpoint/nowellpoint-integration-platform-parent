@@ -39,7 +39,7 @@ public class StartController extends BaseController {
 		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER);
 		model.put("ORGANIZATION_STREAMING_EVENT_LISTENER_LABEL", String.format(
 				ResourceBundle.getBundle(StartController.class.getName(), getIdentity(request).getLocale()).getString("configured.streaming.event.listeners"),
-				organization.getStreamingEventListeners().stream().filter(e -> e.getEnabled()).count(),
+				organization.getStreamingEventListeners().stream().filter(e -> e.isActive()).count(),
 				organization.getStreamingEventListeners().size()));
     	
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()

@@ -19,9 +19,17 @@ public class StreamingEventListener implements Serializable {
 	
 	private String source;
 	
-	private Boolean enabled;
-	
 	private String description;
+	
+	private Boolean notifyForOperationCreate;
+	
+	private Boolean notifyForOperationUpdate;
+	
+	private Boolean notifyForOperationUndelete;
+	
+	private Boolean notifyForOperationDelete;
+	
+	private Boolean active;
 	
 	private Date lastEventReceivedOn;
 	
@@ -63,20 +71,52 @@ public class StreamingEventListener implements Serializable {
 		this.source = source;
 	}
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Boolean getNotifyForOperationCreate() {
+		return notifyForOperationCreate;
+	}
+
+	public void setNotifyForOperationCreate(Boolean notifyForOperationCreate) {
+		this.notifyForOperationCreate = notifyForOperationCreate;
+	}
+
+	public Boolean getNotifyForOperationUpdate() {
+		return notifyForOperationUpdate;
+	}
+
+	public void setNotifyForOperationUpdate(Boolean notifyForOperationUpdate) {
+		this.notifyForOperationUpdate = notifyForOperationUpdate;
+	}
+
+	public Boolean getNotifyForOperationUndelete() {
+		return notifyForOperationUndelete;
+	}
+
+	public void setNotifyForOperationUndelete(Boolean notifyForOperationUndelete) {
+		this.notifyForOperationUndelete = notifyForOperationUndelete;
+	}
+
+	public Boolean getNotifyForOperationDelete() {
+		return notifyForOperationDelete;
+	}
+
+	public void setNotifyForOperationDelete(Boolean notifyForOperationDelete) {
+		this.notifyForOperationDelete = notifyForOperationDelete;
+	}
+
+	public Boolean isActive() {
+		return active;
+	}
+
+	public void isActive(Boolean active) {
+		this.active = active;
 	}
 
 	public Date getLastEventReceivedOn() {

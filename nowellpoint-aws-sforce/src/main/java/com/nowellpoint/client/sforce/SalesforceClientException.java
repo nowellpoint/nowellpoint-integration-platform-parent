@@ -7,6 +7,9 @@ public class SalesforceClientException extends RuntimeException {
 	
 	private static final long serialVersionUID = 2726007023971974319L;
 	
+	private String errorCode;
+	private String[] fields;
+	
 	/**
      * Constructs an <code>SalesforceClientException</code> with the specified status code and error.
      *
@@ -35,9 +38,15 @@ public class SalesforceClientException extends RuntimeException {
 	
 	public SalesforceClientException(ApiError error) {
 		super(error.getMessage());
+		this.errorCode = error.getErrorCode();
+		this.fields = error.getFields();
 	}
 	
-	public SalesforceClientException(String message) {
-		super(message);
+	public String getErrorCode() {
+		return errorCode;
+	}
+	
+	public String[] getFields() {
+		return fields;
 	}
 }

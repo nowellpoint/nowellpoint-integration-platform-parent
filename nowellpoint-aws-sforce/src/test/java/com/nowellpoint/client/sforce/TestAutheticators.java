@@ -90,10 +90,8 @@ public class TestAutheticators {
 			System.out.println(e.getError());
 			System.out.println(e.getErrorDescription());
 		} catch (SalesforceClientException e) {
-			e.getErrors().forEach(ex -> {
-				System.out.println(ex.getErrorCode());
-				System.out.println(ex.getMessage());
-			});
+			System.out.println(e.getMessage());
+			System.out.println(e.getErrorCode());
 		} 
 	}
 }

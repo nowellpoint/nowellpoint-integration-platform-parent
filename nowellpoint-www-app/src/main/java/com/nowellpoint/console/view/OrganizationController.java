@@ -214,7 +214,7 @@ public class OrganizationController extends BaseController {
 		});
 		
 		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
-				.isActive(Boolean.TRUE)
+				.active(Boolean.TRUE)
 				.onCreate(onCreate.get())
 				.onUpdate(onUpdate.get())
 				.onDelete(onDelete.get())
@@ -222,21 +222,14 @@ public class OrganizationController extends BaseController {
 				.source(source)
 				.build();
 		
+		@SuppressWarnings("unused")
 		Organization organization = ServiceClient.getInstance()
 				.organization()
 				.update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
-		Map<String,Object> model = getModel();
-		model.put("organization", organization);
-		model.put("source", source);
+		response.redirect(Path.Route.ORGANIZATION_STREAMING_EVENTS);
 		
-    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(OrganizationController.class)
-				.model(model)
-				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS_SETUP)
-				.build();
-		
-		return processTemplate(templateProcessRequest);
+		return "";
 	};	
 	
 	/**
