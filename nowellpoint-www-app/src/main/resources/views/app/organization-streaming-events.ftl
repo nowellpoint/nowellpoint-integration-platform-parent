@@ -19,7 +19,7 @@
                         <tr class="d-flex">
                             <th class="col-3">${labels['prefix']}</th>
                             <th class="col-3">${labels['source']}</th>
-                            <th class="col-3 text-center">${labels['enabled']}</th>
+                            <th class="col-3 text-center">${labels['active']}</th>
                             <th class="col-3">${labels['last.event.received.on']}</th>
                         </tr>
                     </thead>

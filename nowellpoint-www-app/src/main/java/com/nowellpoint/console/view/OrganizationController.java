@@ -222,10 +222,7 @@ public class OrganizationController extends BaseController {
 				.source(source)
 				.build();
 		
-		@SuppressWarnings("unused")
-		Organization organization = ServiceClient.getInstance()
-				.organization()
-				.update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
+		ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
 		response.redirect(Path.Route.ORGANIZATION_STREAMING_EVENTS);
 		

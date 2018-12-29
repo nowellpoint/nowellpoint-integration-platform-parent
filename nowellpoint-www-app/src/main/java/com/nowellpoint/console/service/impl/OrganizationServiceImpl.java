@@ -26,6 +26,8 @@ import org.bson.types.ObjectId;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -244,12 +246,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.build()
 					.getClient();
 			
+			listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
+			
 			if (Assert.isNullOrEmpty(listener.get().getId())) {
-				
-				logger.info("creating push topic");
-				logger.info("Replay Id: " + listener.get().getReplyId()); 
-				
-				listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
 				
 				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
 				
@@ -276,7 +275,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.streamingEventListeners(listeners)
 				.build();
 		
-		return organization; //update(organization);
+		try {
+			logger.info(new ObjectMapper().writeValueAsString(organization));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return update(organization);
 	}
 	
 	@Override

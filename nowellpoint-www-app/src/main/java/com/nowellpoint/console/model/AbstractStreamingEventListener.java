@@ -70,7 +70,7 @@ public abstract class AbstractStreamingEventListener {
 	}
 	
 	@Value.Default
-	public Long getReplyId() {
+	public Long getReplayId() {
 		return Long.valueOf(-1);
 	}
 	
@@ -96,7 +96,7 @@ public abstract class AbstractStreamingEventListener {
 				.name(source.getName())
 				.source(source.getSource())
 				.prefix(source.getPrefix())
-				.replyId(source.getReplayId())
+				.replayId(source.getReplayId())
 				.build();
 	}
 }
