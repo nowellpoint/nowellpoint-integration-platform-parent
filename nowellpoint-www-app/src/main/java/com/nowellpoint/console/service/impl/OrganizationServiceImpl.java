@@ -26,8 +26,6 @@ import org.bson.types.ObjectId;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -210,12 +208,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public Organization update(String id, StreamingEventListenerRequest request) {
 		Organization instance = get(id);
 		
-		logger.info(request.getSource());
-		logger.info(String.valueOf(request.getOnCreate()));
-		logger.info(String.valueOf(request.getOnDelete()));
-		logger.info(String.valueOf(request.getOnUpdate()));
-		logger.info(String.valueOf(request.getOnUndelete()));
-		
 		Token token = ServiceClient.getInstance()
         		.salesforce()
         		.refreshToken(instance.getConnection().getRefreshToken());
@@ -274,13 +266,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.from(instance)
 				.streamingEventListeners(listeners)
 				.build();
-		
-		try {
-			logger.info(new ObjectMapper().writeValueAsString(organization));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return update(organization);
 	}

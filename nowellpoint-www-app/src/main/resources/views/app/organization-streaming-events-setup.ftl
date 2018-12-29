@@ -11,47 +11,63 @@
             </div>
             <hr>
             <div class="container-fluid p-3">
-                <h5>${eventListener.source}</h5>
                 <form id="event-listener-setup-form" role="form" method="post" action="${eventListener.href}">
-                    <div class="form-check">
-                        <#if eventListener.notifyForOperationCreate>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create" checked>
-                        <#else>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create" >
-                        </#if>
-                        <label class="form-check-label" for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
-                    </div>
-                    <div class="form-check">
-                        <#if eventListener.notifyForOperationUpdate>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyOn" value="update" checked>
-                        <#else>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyOn" value="update">
-                        </#if>
-                        <label class="form-check-label" for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
-                    </div>
-                    <div class="form-check">
-                        <#if eventListener.notifyForOperationDelete>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="delete" checked>
-                        <#else>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="delete">
-                        </#if>
-                        <label class="form-check-label" for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
-                    </div>
-                    <div class="form-check">
-                        <#if eventListener.notifyForOperationUndelete>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyOn" value="undelete" checked>
-                        <#else>
-                            <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyOn" value="undelete">
-                        </#if>
-                        <label class="form-check-label" for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
-                    </div>
-                    <hr>
-                    <div>
-                        <div class="text-right">
-                            <a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&emsp;
-                            <button id="save-streaming-event-listener" class="btn btn-primary">${messages['save']}</button>
+                <div class="flextable">
+                    <div class="flextable-item flextable-primary">
+                        <h5>${eventListener.source}</h5>
+                    </div>    
+                        <div class="flextable-item">
+                            <label for="active">${labels["active"]}</label>&nbsp;
+                            <#if eventListener.isActive()>
+                                <input type="checkbox" id="active" name="active" value="active" data-toggle="toggle" data-onstyle="success" data-on="${messages['yes']}" data-off="${messages['no']}" checked>
+                                <#else>
+                                    <input type="checkbox" id="active" name="active" value="active" data-toggle="toggle" data-onstyle="success" data-on="${messages['yes']}" data-off="${messages['no']}">
+                            </#if>
                         </div>
+                </div>
+                <hr>
+                <div class="form-check">
+                    <#if eventListener.notifyForOperationCreate>
+                        <input type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
+                        <#else>
+                            <input type="checkbox" id="notifyForOperationCreate" name="notifyOn" value="create" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
+                    </#if>&emsp;
+                    <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
+                </div>
+                <br>
+                <div class="form-check">
+                    <#if eventListener.notifyForOperationUpdate>
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyOn" value="update" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
+                        <#else>
+                            <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyOn" value="update" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
+                    </#if>&emsp;
+                    <label class="form-check-label" for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
+                </div>
+                <br>
+                <div class="form-check">
+                    <#if eventListener.notifyForOperationDelete>
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="delete" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
+                        <#else>
+                            <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyOn" value="delete" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
+                    </#if>&emsp;
+                    <label class="form-check-label" for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
+                </div>
+                <br>
+                <div class="form-check">
+                    <#if eventListener.notifyForOperationUndelete>
+                        <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyOn" value="undelete" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
+                        <#else>
+                            <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyOn" value="undelete" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
+                    </#if>&emsp;
+                    <label class="form-check-label" for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
+                </div>
+                <hr>
+                <div>
+                    <div class="text-right">
+                        <a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&emsp;
+                        <button id="save-streaming-event-listener" class="btn btn-primary">${messages['save']}</button>
                     </div>
+                </div>
                 </form>
             </div>
         </content>
