@@ -175,7 +175,10 @@
            contentType: "application/x-www-form-urlencoded",
            complete: function (response) {
                if (response.status == 200) {
-            	   
+            	   $('#success-modal').modal('toggle');
+            	   setTimeout(function() {
+            		   $('#success-modal').modal('toggle');
+                   }, 2000);
                } else {
                    $form.prepend(response.responseText);
                }
