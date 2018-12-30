@@ -165,13 +165,14 @@
 
    $(document).on('click', 'button#save-streaming-event-listener', function () {
 
-       $form = $("#event-listener-setup-form");
+       $form = $("#streaming-event-listener-form");
 
        $.ajax({
-       	type: $form.attr('method'),
+    	   type: $form.attr('method'),
            url: $form.attr('action'),
            dataType: "html",
            data: $form.serialize(),
+           contentType: "application/x-www-form-urlencoded",
            complete: function (response) {
                if (response.status == 200) {
             	   

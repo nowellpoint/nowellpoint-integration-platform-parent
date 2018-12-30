@@ -7,6 +7,11 @@ import org.immutables.value.Value;
 @Value.Style(typeImmutable = "*", jdkOnly=true, get = {"is*", "get*"})
 public abstract class AbstractStreamingEventListenerRequest {
 	public abstract String getSource();
+	public abstract Boolean getNotifyForOperationUpdate();
+	public abstract Boolean getNotifyForOperationCreate();
+	public abstract Boolean getNotifyForOperationDelete();
+	public abstract Boolean getNotifyForOperationUndelete();
+	public abstract Boolean isActive();
 	
 	@Value.Default
 	public Boolean getOnCreate() {
@@ -25,11 +30,6 @@ public abstract class AbstractStreamingEventListenerRequest {
 	
 	@Value.Default
 	public Boolean getOnUndelete() {
-		return Boolean.FALSE;
-	}
-	
-	@Value.Default
-	public Boolean isActive() {
 		return Boolean.FALSE;
 	}
 }

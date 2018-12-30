@@ -23,6 +23,8 @@ import javax.validation.ValidationException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
@@ -193,36 +195,31 @@ public class OrganizationController extends BaseController {
 			params = URLEncodedUtils.parse(request.body(), Charset.forName("UTF-8"));
 		}
 		
-		AtomicBoolean onCreate = new AtomicBoolean(Boolean.FALSE);
-		AtomicBoolean onUpdate = new AtomicBoolean(Boolean.FALSE);
-		AtomicBoolean onDelete = new AtomicBoolean(Boolean.FALSE);
-		AtomicBoolean onUndelete = new AtomicBoolean(Boolean.FALSE);
+		Map<String,String> map = params.stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
 		
-		params.forEach(p -> {
-			if ("create".equalsIgnoreCase(p.getValue())) {
-				onCreate.set(Boolean.TRUE);
-			}
-			if ("update".equalsIgnoreCase(p.getValue())) {
-				onUpdate.set(Boolean.TRUE);
-			}
-			if ("delete".equalsIgnoreCase(p.getValue())) {
-				onDelete.set(Boolean.TRUE);
-			}
-			if ("undelete".equalsIgnoreCase(p.getValue())) {
-				onUndelete.set(Boolean.TRUE);
-			}
-		});
+		Boolean active = Boolean.valueOf(map.getOrDefault("active", "false"));
+		Boolean notifyForOperationCreate = Boolean.valueOf(map.getOrDefault("notifyForOperationCreate", "false"));
+		Boolean notifyForOperationDelete = Boolean.valueOf(map.getOrDefault("notifyForOperationDelete", "false"));
+		Boolean notifyForOperationUndelete = Boolean.valueOf(map.getOrDefault("notifyForOperationUndelete", "false"));
+		Boolean notifyForOperationUpdate = Boolean.valueOf(map.getOrDefault("notifyForOperationUpdate", "false"));
 		
 		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
-				.active(Boolean.TRUE)
-				.onCreate(onCreate.get())
-				.onUpdate(onUpdate.get())
-				.onDelete(onDelete.get())
-				.onUndelete(onUndelete.get())
+				.active(active)
+				.notifyForOperationCreate(notifyForOperationCreate)
+				.notifyForOperationDelete(notifyForOperationDelete)
+				.notifyForOperationUndelete(notifyForOperationUndelete)
+				.notifyForOperationUpdate(notifyForOperationUpdate)
 				.source(source)
 				.build();
 		
-		ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(eventListenerRequest));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
 		response.redirect(Path.Route.ORGANIZATION_STREAMING_EVENTS);
 		

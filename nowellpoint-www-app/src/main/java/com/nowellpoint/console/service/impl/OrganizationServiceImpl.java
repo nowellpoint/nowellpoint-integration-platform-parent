@@ -226,10 +226,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.apiVersion(listener.get().getApiVersion())
 					.description(listener.get().getDescription())
 					.name(listener.get().getName())
-					.notifyForOperationCreate(request.getOnCreate())
-					.notifyForOperationDelete(request.getOnDelete())
-					.notifyForOperationUndelete(request.getOnUndelete())
-					.notifyForOperationUpdate(request.getOnUpdate())
+					.notifyForOperationCreate(request.getNotifyForOperationCreate())
+					.notifyForOperationDelete(request.getNotifyForOperationDelete())
+					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
 					.notifyForFields("All")
 					.query(listener.get().getQuery())
 					.build();
@@ -248,10 +248,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.from(listener.get())
 						.id(createResult.getId())
 						.active(request.isActive())
-						.notifyForOperationCreate(request.getOnCreate())
-						.notifyForOperationDelete(request.getOnDelete())
-						.notifyForOperationUndelete(request.getOnUndelete())
-						.notifyForOperationUpdate(request.getOnUpdate())
+						.notifyForOperationCreate(request.getNotifyForOperationCreate())
+						.notifyForOperationDelete(request.getNotifyForOperationDelete())
+						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
 						.build());
 				
 			} else {
