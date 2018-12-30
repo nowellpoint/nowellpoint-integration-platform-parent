@@ -212,16 +212,9 @@ public class OrganizationController extends BaseController {
 				.source(source)
 				.build();
 		
-		try {
-			System.out.println(new ObjectMapper().writeValueAsString(eventListenerRequest));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		//ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
-		response.redirect(Path.Route.ORGANIZATION_STREAMING_EVENTS);
+		response.header("location", Path.Route.ORGANIZATION_STREAMING_EVENTS);
 		
 		return "";
 	};	

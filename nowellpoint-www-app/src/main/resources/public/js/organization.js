@@ -178,7 +178,8 @@
             	   $('#success-modal').modal('toggle');
             	   setTimeout(function() {
             		   $('#success-modal').modal('toggle');
-                   }, 2000);
+            		   $(location).attr('href', response.getResponseHeader('location'));
+                   }, 2500);
                } else {
                    $form.prepend(response.responseText);
                }
