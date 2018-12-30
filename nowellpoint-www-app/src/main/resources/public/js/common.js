@@ -24,3 +24,11 @@ $("#toggleSidebar").click(function() {
         $('#content').animate({left: "0"}, 200)
     }
 });
+
+$(document).ajaxStart(function(){
+	$("#wait").css("display", "block");
+});
+
+$(document).ajaxComplete(function(){
+	$("#wait").css("display", "none");
+});

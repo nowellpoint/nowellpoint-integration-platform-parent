@@ -62,16 +62,14 @@
                         <label class="form-check-label" for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
                     </div>
                 </form>
-                <hr>
+                <hr>     
                 <div>
                     <div class="text-right">
                         <a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&emsp;
                         <button type="button" id="save-streaming-event-listener" name="save-streaming-event-listener" class="btn btn-primary">${messages['save']}</button>
                     </div>
                 </div>
-
             </div>
-        </content>
-
+        </content>            
         <script type="text/javascript" src="/js/organization.js"></script>
     </@t.page>

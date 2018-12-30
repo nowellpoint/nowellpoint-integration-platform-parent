@@ -12,24 +12,4 @@ public abstract class AbstractStreamingEventListenerRequest {
 	public abstract Boolean getNotifyForOperationDelete();
 	public abstract Boolean getNotifyForOperationUndelete();
 	public abstract Boolean isActive();
-	
-	@Value.Default
-	public Boolean getOnCreate() {
-		return Boolean.FALSE;
-	}
-	
-	@Value.Default
-	public Boolean getOnUpdate() {
-		return Boolean.FALSE;
-	}
-	
-	@Value.Default
-	public Boolean getOnDelete() {
-		return Boolean.FALSE;
-	}
-	
-	@Value.Default
-	public Boolean getOnUndelete() {
-		return Boolean.FALSE;
-	}
 }
