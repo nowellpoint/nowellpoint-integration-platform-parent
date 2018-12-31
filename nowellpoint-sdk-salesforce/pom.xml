@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>nowellpoint-sdk-salesforce</artifactId>
+	<packaging>jar</packaging>
+	<name>Salesforce Services Client</name>
+	<description>Nowellpoint Salesforce Services Client jar</description>
+
+	<parent>
+		<groupId>com.nowellpoint</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.10-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.18.4</version>
+		<scope>provided</scope>
+	</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${version.junit}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>3.2.1</version>
+						<configuration>
+						<useIncrementalCompilation>true</useIncrementalCompilation>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<minimizeJar>true</minimizeJar>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok-maven-plugin</artifactId>
+      <version>1.18.4.0</version>
+      <executions>
+        <execution>
+          <phase>generate-sources</phase>
+          <goals>
+            <goal>delombok</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
