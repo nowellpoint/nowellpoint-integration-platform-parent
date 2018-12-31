@@ -61,7 +61,7 @@
 		<version.braintree.sdk>2.83.1</version.braintree.sdk>
 		<version.sendgrid.java>4.1.2</version.sendgrid.java>
 		<version.immutables>2.7.4</version.immutables>
-		<version.wildfly.swarm>2018.2.0.Final</version.wildfly.swarm>
+		<version.wildfly.swarm>2.2.1.Final</version.wildfly.swarm>
 		<version.junit>4.12</version.junit>
 	</properties>
 
