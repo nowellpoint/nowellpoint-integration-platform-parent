@@ -17,11 +17,16 @@
                             <h5>${eventListener.source}</h5>
                         </div>
                         <div class="flextable-item">
-                            <label for="active">${labels["active"]}</label>&nbsp;
+                            <#if eventListener.topicId??>
+                                <span>${labels["last.updated.by"]}:</span>&nbsp;
+                                <span class="text-primary">${eventListener.lastUpdatedBy.name}</span>&emsp;
+                                <span>${labels["last.updated.on"]}:</span>&nbsp;
+                                <span class="text-primary">${eventListener.lastUpdatedOn?date?string.long} ${eventListener.lastUpdatedOn?time?string.medium}</span>&emsp;&emsp;&emsp;
+                            </#if>   
                             <#if eventListener.isActive()>
-                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${messages['yes']}" data-off="${messages['no']}" checked>
+                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" checked>
                             <#else>
-                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${messages['yes']}" data-off="${messages['no']}">
+                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}">
                             </#if>
                         </div>
                     </div>

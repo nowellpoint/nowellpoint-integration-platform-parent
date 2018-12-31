@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -245,6 +246,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			UserInfo user = UserInfo.of(UserContext.get());
 			
+			Date now = getCurrentDateTime();
+			
 			if (Assert.isNullOrEmpty(topicId)) {
 				
 				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
@@ -253,7 +256,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.from(listener.get())
 						.active(request.isActive())
 						.createdBy(user)
+						.createdOn(now)
 						.lastUpdatedBy(user)
+						.lastUpdatedOn(now)
 						.notifyForOperationCreate(request.getNotifyForOperationCreate())
 						.notifyForOperationDelete(request.getNotifyForOperationDelete())
 						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
@@ -269,7 +274,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.from(listener.get())
 						.active(request.isActive())
 						.lastUpdatedBy(user)
-						.lastUpdatedOn(getCurrentDateTime())
+						.lastUpdatedOn(now)
 						.notifyForOperationCreate(request.getNotifyForOperationCreate())
 						.notifyForOperationDelete(request.getNotifyForOperationDelete())
 						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
