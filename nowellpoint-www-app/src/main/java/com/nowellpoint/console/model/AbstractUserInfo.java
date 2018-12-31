@@ -23,13 +23,23 @@ public abstract class AbstractUserInfo {
 		return getFirstName() != null ? getFirstName().concat(" ").concat(getLastName()) : getLastName(); 
 	}
 	
-	public static UserInfo of(com.nowellpoint.console.entity.Identity entity) {
-		return entity == null ? null : UserInfo.builder()
-				.id(entity.getId().toString())
-				.email(entity.getEmail())
-				.firstName(entity.getFirstName())
-				.lastName(entity.getLastName())
-				.photos(Photos.of(entity.getPhotos()))
+	public static UserInfo of(com.nowellpoint.console.entity.Identity source) {
+		return source == null ? null : UserInfo.builder()
+				.id(source.getId().toString())
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.lastName(source.getLastName())
+				.photos(Photos.of(source.getPhotos()))
+				.build();
+	}
+	
+	public static UserInfo of(Identity source) {
+		return source == null ? null : UserInfo.builder()
+				.id(source.getId())
+				.email(source.getEmail())
+				.firstName(source.getFirstName())
+				.lastName(source.getLastName())
+				.photos(Photos.of(source.getPhotos()))
 				.build();
 	}
 }

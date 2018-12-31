@@ -1,6 +1,9 @@
 package com.nowellpoint.console.entity;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import org.mongodb.morphia.annotations.Reference;
 
 public class StreamingEventListener implements Serializable {
 
@@ -29,6 +32,16 @@ public class StreamingEventListener implements Serializable {
 	private Boolean notifyForOperationDelete;
 	
 	private Boolean active;
+	
+	private Date createdOn;
+	
+	@Reference
+	private Identity createdBy;
+	
+	private Date lastUpdatedOn;
+	
+	@Reference
+	private Identity lastUpdatedBy;
 	
 	private Long replayId;
 	
@@ -108,12 +121,44 @@ public class StreamingEventListener implements Serializable {
 		this.notifyForOperationDelete = notifyForOperationDelete;
 	}
 
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
-	public void isActive(Boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Identity getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Identity createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getLastUpdatedOn() {
+		return lastUpdatedOn;
+	}
+
+	public void setLastUpdatedOn(Date lastUpdatedOn) {
+		this.lastUpdatedOn = lastUpdatedOn;
+	}
+
+	public Identity getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(Identity lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 	public Long getReplayId() {

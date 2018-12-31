@@ -22,4 +22,10 @@ public abstract class AbstractPhotos {
 				.profilePicture(source.getProfilePicture())
 				.build();
 	}
+	
+	public static Photos of(Photos source) {
+		return source == null ? null : Photos.builder()
+				.profilePicture(source.getProfilePicture())
+				.build();
+	}
 }

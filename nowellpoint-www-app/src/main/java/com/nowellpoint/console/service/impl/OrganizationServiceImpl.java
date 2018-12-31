@@ -59,6 +59,7 @@ import com.nowellpoint.console.model.StreamingEventListener;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
+import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -242,23 +243,39 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			String topicId = listener.get().getTopicId();
 			
+			UserInfo user = UserInfo.of(UserContext.get());
+			
 			if (Assert.isNullOrEmpty(topicId)) {
+				
 				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
-				topicId = createResult.getId();
+				
+				listeners.add(StreamingEventListener.builder()
+						.from(listener.get())
+						.active(request.isActive())
+						.createdBy(user)
+						.lastUpdatedBy(user)
+						.notifyForOperationCreate(request.getNotifyForOperationCreate())
+						.notifyForOperationDelete(request.getNotifyForOperationDelete())
+						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
+						.topicId(createResult.getId())
+						.build());
+				
 			} else {
+				
 				client.updatePushTopic(token, topicId, pushTopicRequest);
+				
+				listeners.add(StreamingEventListener.builder()
+						.from(listener.get())
+						.active(request.isActive())
+						.lastUpdatedBy(user)
+						.lastUpdatedOn(getCurrentDateTime())
+						.notifyForOperationCreate(request.getNotifyForOperationCreate())
+						.notifyForOperationDelete(request.getNotifyForOperationDelete())
+						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
+						.build());
 			}
-			
-			listeners.add(StreamingEventListener.builder()
-					.from(listener.get())
-					.active(request.isActive())
-					.notifyForOperationCreate(request.getNotifyForOperationCreate())
-					.notifyForOperationDelete(request.getNotifyForOperationDelete())
-					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
-					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
-					.topicId(topicId)
-					.build());
-			
 		}
 		
 		Organization organization = Organization.builder()
