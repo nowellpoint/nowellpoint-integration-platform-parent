@@ -78,6 +78,11 @@ public abstract class AbstractSalesforceClientBuilder {
 		}
 		
 		@Override
+		public void updatePushTopic(Token token, String topicId, PushTopicRequest request) {
+			super.updatePushTopic(token, topicId, request);
+		}
+		
+		@Override
 		public void deletePushTopic(Token token, String topicId) {
 			super.deletePushTopic(token, topicId);
 		}

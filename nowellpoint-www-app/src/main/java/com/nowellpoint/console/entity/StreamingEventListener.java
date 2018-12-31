@@ -1,7 +1,6 @@
 package com.nowellpoint.console.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class StreamingEventListener implements Serializable {
 
@@ -11,7 +10,7 @@ public class StreamingEventListener implements Serializable {
 	
 	private static final long serialVersionUID = 1631326328342999076L;
 
-	private String id;
+	private String topicId;
 	
 	private String prefix;
 	
@@ -31,20 +30,18 @@ public class StreamingEventListener implements Serializable {
 	
 	private Boolean active;
 	
-	private Date lastEventReceivedOn;
-	
 	private Long replayId;
 	
 	public StreamingEventListener() {
 		
 	}
 
-	public String getId() {
-		return id;
+	public String getTopicId() {
+		return topicId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setTopicId(String topicId) {
+		this.topicId = topicId;
 	}
 
 	public String getPrefix() {
@@ -117,14 +114,6 @@ public class StreamingEventListener implements Serializable {
 
 	public void isActive(Boolean active) {
 		this.active = active;
-	}
-
-	public Date getLastEventReceivedOn() {
-		return lastEventReceivedOn;
-	}
-
-	public void setLastEventReceivedOn(Date lastEventReceivedOn) {
-		this.lastEventReceivedOn = lastEventReceivedOn;
 	}
 
 	public Long getReplayId() {

@@ -30,6 +30,7 @@ public interface Salesforce {
 	public Theme getTheme(Token token);
 	public Long count(Token token, String query);
 	public CreateResult createPushTopic(Token token, PushTopicRequest request);
+	public void updatePushTopic(Token token, String topicId, PushTopicRequest request);
 	public void deletePushTopic(Token token, String topicId);
 	public Set<UserLicense> getUserLicenses(Token token);
 	public Set<ApexClass> getApexClasses(Token token);

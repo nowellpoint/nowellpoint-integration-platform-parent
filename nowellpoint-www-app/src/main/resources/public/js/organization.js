@@ -179,7 +179,7 @@
             	   setTimeout(function() {
             		   $('#success-modal').modal('toggle');
             		   $(location).attr('href', response.getResponseHeader('location'));
-                   }, 2500);
+                   }, 2000);
                } else {
                    $form.prepend(response.responseText);
                }

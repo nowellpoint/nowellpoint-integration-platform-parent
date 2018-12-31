@@ -156,7 +156,7 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	@Ignore
+	//@Ignore
 	public void testCountTrends() throws HttpRequestException, IOException {
 		
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
@@ -207,12 +207,16 @@ public class TestGroupBy {
 		try {
 			BayeuxClient bayeuxClient = createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
-			TimeUnit.SECONDS.sleep(10);
+			TimeUnit.SECONDS.sleep(5);
 			bayeuxClient.disconnect();
 			logger.info("**** replay id ****");
 			createClient(organization, token.getInstanceUrl(), token.getAccessToken(), "AccountUpdateTopic");
 			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
-			TimeUnit.SECONDS.sleep(10);
+			TimeUnit.SECONDS.sleep(5);
+			logger.info("**** disable topic ****");
+			updateAccountTopic(token, topicId);
+			updateAccount(token.getAccessToken(), sobjectUrl, "0013A00001YjszLQAR");
+			TimeUnit.SECONDS.sleep(5);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -244,6 +248,8 @@ public class TestGroupBy {
 		String query = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
 		
 		PushTopicRequest request = PushTopicRequest.builder()
+				.active(Boolean.TRUE)
+				.description("Test Topic for Account Streaming Events")
 				.name("AccountUpdateTopic")
 				.query(query)
 				.apiVersion("44.0")
@@ -262,6 +268,28 @@ public class TestGroupBy {
 		assertNotNull(createResult.getId());
 		
 		return createResult.getId();
+	}
+	
+	private void updateAccountTopic(Token token, String topicId) throws HttpRequestException, IOException {
+		
+		String query = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM Account";
+		
+		PushTopicRequest request = PushTopicRequest.builder()
+				.active(Boolean.FALSE)
+				.description("Test Topic for Account Streaming Events")
+				.name("AccountUpdateTopic")
+				.query(query)
+				.apiVersion("44.0")
+				.notifyForOperationCreate(Boolean.TRUE)
+				.notifyForOperationDelete(Boolean.TRUE)
+				.notifyForOperationUndelete(Boolean.TRUE)
+				.notifyForOperationUpdate(Boolean.TRUE)
+				.notifyForFields("All")
+				.build();
+		
+		Salesforce client = SalesforceClientBuilder.builder().build().getClient();
+		
+		client.updatePushTopic(token, topicId, request);
 	}
 	
 	private BayeuxClient createClient(Organization organization, String instanceUrl, String accessToken, String channel) throws Exception {

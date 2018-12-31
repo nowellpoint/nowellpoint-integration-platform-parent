@@ -19,37 +19,31 @@
                         <tr class="d-flex">
                             <th class="col-3">${labels['prefix']}</th>
                             <th class="col-3">${labels['source']}</th>
+                            <th class="col-3">${labels['topic.id']}</th>
                             <th class="col-3 text-center">${labels['active']}</th>
-                            <th class="col-3">${labels['last.event.received.on']}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <#if organization.streamingEventListeners?size==0>
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
+                        <#list organization.streamingEventListeners?sort_by("source") as eventListener>
+                            <tr class="d-flex">
+                                <td class="col-3">${eventListener.prefix}</td>
+                                <td class="col-3"><a href="${eventListener.href}">${eventListener.source}</a></td>
+                                <td class="col-3">
+                                    <#if eventListener.topicId??>
+                                        ${eventListener.topicId} 
+                                    <#else>
+                                        &nbsp;
+                                    </#if>
+                                </td>
+                                <td class="col-3 text-center">
+                                    <#if eventListener.isActive()>
+                                        <i class="fa fa-check text-success" aria-hidden="true"></i>
+                                    <#else>
+                                        <i class="fa fa-close text-danger" aria-hidden="true"></i>
+                                    </#if>
+                                </td>
                             </tr>
-                            <#else>
-                                <#list organization.streamingEventListeners?sort_by("source") as eventListener>
-                                    <tr class="d-flex">
-                                        <td class="col-3">${eventListener.prefix}</td>
-                                        <td class="col-3"><a href="${eventListener.href}">${eventListener.source}</a></td>
-                                        <td class="col-3 text-center">
-                                            <#if eventListener.isActive()>
-                                                <i class="fa fa-check mr-2 text-success" aria-hidden="true"></i>
-                                                <#else>
-                                                    <i class="fa fa-close mr-2 text-danger" aria-hidden="true"></i>
-                                            </#if>
-                                        </td>
-                                        <td class="col-3">
-                                            <#if eventListener.lastEventReceivedOn??>
-                                                ${eventListener.lastEventReceivedOn?date?string.long - eventListener.lastEventReceivedOn?time?string.medium}
-                                                <#else>
-                                                    &nbsp;
-                                            </#if>
-                                        </td>
-                                    </tr>
-                                </#list>
-                        </#if>
+                        </#list>
                     </tbody>
                 </table>
             </div>

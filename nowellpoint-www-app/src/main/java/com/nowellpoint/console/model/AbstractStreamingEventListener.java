@@ -1,6 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.util.Date;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -18,12 +17,11 @@ import com.nowellpoint.console.util.Path;
 @JsonSerialize(as = StreamingEventListener.class)
 @JsonDeserialize(as = StreamingEventListener.class)
 public abstract class AbstractStreamingEventListener {
-	public abstract @Nullable String getId();
+	public abstract @Nullable String getTopicId();
 	public abstract String getPrefix();
 	public abstract String getSource();
 	public abstract String getName();
 	public abstract String getDescription();
-	public abstract @Nullable Date getLastEventReceivedOn();
 	
 	private static final String API_VERSION = "44.0";
 	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
@@ -89,10 +87,9 @@ public abstract class AbstractStreamingEventListener {
 	
 	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
 		return source == null ? null : StreamingEventListener.builder()
-				.id(source.getId())
+				.topicId(source.getTopicId())
 				.active(source.isActive())
 				.description(source.getDescription())
-				.lastEventReceivedOn(source.getLastEventReceivedOn())
 				.name(source.getName())
 				.notifyForOperationCreate(source.getNotifyForOperationCreate())
 				.notifyForOperationDelete(source.getNotifyForOperationDelete())

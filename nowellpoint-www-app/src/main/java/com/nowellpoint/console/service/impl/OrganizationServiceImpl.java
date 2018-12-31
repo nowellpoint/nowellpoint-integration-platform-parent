@@ -208,10 +208,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public Organization update(String id, StreamingEventListenerRequest request) {
 		Organization instance = get(id);
 		
-		Token token = ServiceClient.getInstance()
-        		.salesforce()
-        		.refreshToken(instance.getConnection().getRefreshToken());
-		
 		Optional<StreamingEventListener> listener = instance.getStreamingEventListeners()
 				.stream()
 				.filter(l -> request.getSource().equals(l.getSource()))
@@ -234,31 +230,34 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.query(listener.get().getQuery())
 					.build();
 			
+			Token token = ServiceClient.getInstance()
+	        		.salesforce()
+	        		.refreshToken(instance.getConnection().getRefreshToken());
+			
 			Salesforce client = SalesforceClientBuilder.builder()
 					.build()
 					.getClient();
 			
 			listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
 			
-			if (Assert.isNullOrEmpty(listener.get().getId())) {
-				
+			String topicId = listener.get().getTopicId();
+			
+			if (Assert.isNullOrEmpty(topicId)) {
 				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
-				
-				listeners.add(StreamingEventListener.builder()
-						.from(listener.get())
-						.id(createResult.getId())
-						.active(request.isActive())
-						.notifyForOperationCreate(request.getNotifyForOperationCreate())
-						.notifyForOperationDelete(request.getNotifyForOperationDelete())
-						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
-						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
-						.build());
-				
+				topicId = createResult.getId();
 			} else {
-				//UpdateResult updateResult = client.
-				
-				logger.info("updating push topic");
+				client.updatePushTopic(token, topicId, pushTopicRequest);
 			}
+			
+			listeners.add(StreamingEventListener.builder()
+					.from(listener.get())
+					.active(request.isActive())
+					.notifyForOperationCreate(request.getNotifyForOperationCreate())
+					.notifyForOperationDelete(request.getNotifyForOperationDelete())
+					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
+					.topicId(topicId)
+					.build());
 			
 		}
 		

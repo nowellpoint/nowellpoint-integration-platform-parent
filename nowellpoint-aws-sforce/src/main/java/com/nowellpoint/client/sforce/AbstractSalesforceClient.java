@@ -320,12 +320,9 @@ public abstract class AbstractSalesforceClient {
 				.contentType(MediaType.APPLICATION_JSON)
                 .execute();
 		
-		if (response.getStatusCode() == Status.CREATED) {
-//			return response.getEntity(CreateResult.class);
-		} else {
+		if (response.getStatusCode() != Status.NO_CONTENT) {
 			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
 		}
-		
 	}
 	
 	protected void deletePushTopic(Token token, String topicId) {
