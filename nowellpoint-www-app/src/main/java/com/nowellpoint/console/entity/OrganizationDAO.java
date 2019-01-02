@@ -46,6 +46,8 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
                 .build();
 		
 		Query<StreamingEvent> query = getDatastore().createQuery(StreamingEvent.class)
+				.field("organizationId")
+				.equal(organizationId)
 				.field("eventDate")
 				.greaterThanOrEq(Date.from(startDate.atStartOfDay()
 					      .atZone(utc)

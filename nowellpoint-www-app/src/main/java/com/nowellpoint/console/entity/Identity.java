@@ -4,9 +4,16 @@ import java.util.Locale;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Field;
+import org.mongodb.morphia.annotations.Index;
+import org.mongodb.morphia.annotations.IndexOptions;
+import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.Reference;
 
 @Entity(value = "identities")
+@Indexes(
+	@Index(fields = { @Field("subject") }, options = @IndexOptions(unique = true))
+)
 public class Identity extends BaseEntity {
 	
 	private static final long serialVersionUID = -2208648612942290914L;

@@ -4,8 +4,15 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Field;
+import org.mongodb.morphia.annotations.Index;
+import org.mongodb.morphia.annotations.IndexOptions;
+import org.mongodb.morphia.annotations.Indexes;
 
 @Entity(value = "streaming.event.listener.configurations")
+@Indexes(
+		@Index(fields = { @Field("topicId") }, options = @IndexOptions(unique = true))
+)
 public class StreamingEventListenerConfiguration extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = -1074167755763471323L;

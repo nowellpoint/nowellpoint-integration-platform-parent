@@ -32,8 +32,10 @@ import org.mongodb.morphia.query.Query;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.nowellpoint.console.entity.Lead;
+import com.nowellpoint.client.sforce.model.StreamingEvent;
 import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
+import com.nowellpoint.console.entity.StreamingEventListenerConfiguration;
 import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.util.SecretsManager;
@@ -64,6 +66,8 @@ public abstract class AbstractService {
         morphia.map(Identity.class);
         morphia.map(Plan.class);
         morphia.map(Organization.class);
+        //morphia.map(StreamingEvent.class);
+        morphia.map(StreamingEventListenerConfiguration.class);
 
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();
