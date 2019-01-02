@@ -60,7 +60,7 @@ public abstract class AbstractStreamingEventListener {
 	}
 	
 	@Value.Default
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return Boolean.FALSE;
 	}
 	

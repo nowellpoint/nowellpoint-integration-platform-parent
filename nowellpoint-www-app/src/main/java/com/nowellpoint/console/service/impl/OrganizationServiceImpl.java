@@ -239,7 +239,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			String topicId = savePushTopic(token, listener);
 			
 			StreamingEventListenerConfiguration configuration = StreamingEventListenerConfiguration.builder()
-					.active(listener.isActive())
+					.active(listener.getActive())
 					.apiVersion(listener.getApiVersion())
 					.channel(listener.getName())
 					.organizationId(instance.getId())
@@ -745,7 +745,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private String savePushTopic(Token token, StreamingEventListener listener) {
 		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
-				.active(listener.isActive())
+				.active(listener.getActive())
 				.apiVersion(listener.getApiVersion())
 				.description(listener.getDescription())
 				.name(listener.getName())

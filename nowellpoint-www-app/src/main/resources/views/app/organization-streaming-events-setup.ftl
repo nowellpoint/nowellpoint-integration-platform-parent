@@ -23,7 +23,7 @@
                                 <span>${labels["last.updated.on"]}:</span>&nbsp;
                                 <span class="text-primary">${eventListener.lastUpdatedOn?date?string.long} ${eventListener.lastUpdatedOn?time?string.medium}</span>&emsp;&emsp;&emsp;
                             </#if>   
-                            <#if eventListener.isActive()>
+                            <#if eventListener.active>
                                 <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" checked>
                             <#else>
                                 <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}">

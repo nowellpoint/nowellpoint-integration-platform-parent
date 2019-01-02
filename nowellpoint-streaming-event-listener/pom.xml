@@ -15,6 +15,9 @@
 	</parent>
 
 	<properties>
+	
+		<version.maven.resolver.provider>3.6.0</version.maven.resolver.provider>
+	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -79,6 +82,18 @@
 			<artifactId>nowellpoint-aws-sforce</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-resolver-provider</artifactId>
+        <version>${version.maven.resolver.provider}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-settings-builder</artifactId>
+        <version>${version.maven.resolver.provider}</version>
+      </dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>

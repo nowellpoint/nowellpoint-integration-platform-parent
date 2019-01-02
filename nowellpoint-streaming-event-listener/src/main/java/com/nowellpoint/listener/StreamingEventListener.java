@@ -4,6 +4,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -35,8 +38,11 @@ import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
 import com.nowellpoint.util.SecretsManager;
 
-@WebListener
-public class StreamingEventListener implements ServletContextListener {
+//@WebListener
+
+@Startup
+@Singleton
+public class StreamingEventListener  {
 	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
 	private static ObjectMapper mapper = new ObjectMapper();
@@ -47,11 +53,15 @@ public class StreamingEventListener implements ServletContextListener {
     
     private ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     
-    private static MongoClient mongoClient;
-	private static Datastore datastore;
+    private MongoClient mongoClient;
+	private Datastore datastore;
     
-    @Override
-	public void contextInitialized(ServletContextEvent event) {
+    //@Override
+	@PostConstruct
+	//public void contextInitialized(ServletContextEvent event) {
+	public void init() {
+    	
+    	logger.info("starting servlet");
     	
     	MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientUri);
@@ -74,10 +84,10 @@ public class StreamingEventListener implements ServletContextListener {
         });
     }
     
-    @Override
-	public void contextDestroyed(ServletContextEvent event) {
-    	mongoClient.close();
-    }
+//    @Override
+//	public void contextDestroyed(ServletContextEvent event) {
+//    	mongoClient.close();
+//    }
     
     private Token refreshToken(String refreshToken) {
 		

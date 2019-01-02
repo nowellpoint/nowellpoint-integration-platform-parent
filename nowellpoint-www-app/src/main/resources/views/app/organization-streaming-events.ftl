@@ -36,7 +36,7 @@
                                     </#if>
                                 </td>
                                 <td class="col-3 text-center">
-                                    <#if eventListener.isActive()>
+                                    <#if eventListener.active>
                                         <i class="fa fa-check text-success" aria-hidden="true"></i>
                                     <#else>
                                         <i class="fa fa-close text-danger" aria-hidden="true"></i>
