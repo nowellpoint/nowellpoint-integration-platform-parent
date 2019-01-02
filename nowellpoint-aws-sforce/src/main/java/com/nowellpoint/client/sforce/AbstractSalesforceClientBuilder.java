@@ -14,6 +14,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
+import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Theme;
@@ -75,6 +76,11 @@ public abstract class AbstractSalesforceClientBuilder {
 		@Override
 		public CreateResult createPushTopic(Token token, PushTopicRequest request) {
 			return super.createPushTopic(token, request);
+		}
+		
+		@Override
+		public PushTopic getPushTopic(Token token, String pushTopicId) {
+			return super.getPushTopic(token, pushTopicId);
 		}
 		
 		@Override

@@ -59,7 +59,7 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.entity.Payload;
-import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.http.HttpRequestException;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;

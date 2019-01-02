@@ -12,6 +12,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
+import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Theme;
@@ -30,6 +31,7 @@ public interface Salesforce {
 	public Theme getTheme(Token token);
 	public Long count(Token token, String query);
 	public CreateResult createPushTopic(Token token, PushTopicRequest request);
+	public PushTopic getPushTopic(Token token, String pushTopicId);
 	public void updatePushTopic(Token token, String topicId, PushTopicRequest request);
 	public void deletePushTopic(Token token, String topicId);
 	public Set<UserLicense> getUserLicenses(Token token);

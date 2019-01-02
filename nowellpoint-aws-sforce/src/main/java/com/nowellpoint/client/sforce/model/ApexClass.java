@@ -3,6 +3,8 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApexClass extends SObject {
 	
@@ -19,35 +21,17 @@ public class ApexClass extends SObject {
 			+ "LastModifiedById, "
 			+ "LastModifiedDate, "
 			+ "LengthWithoutComments, "
-			+ "Name, NamespacePrefix, "
+			+ "Name, "
+			+ "NamespacePrefix, "
 			+ "Status "
 			+ "From ApexClass";
 	
-	@JsonProperty("Body")
-	private String body;
-	
-	@JsonProperty("IsValid")
-	private Boolean isValid;
-	
-	@JsonProperty("ApiVersion")
-	private Double apiVersion;
-	
-	@JsonProperty("Name")
-	private String name;
+	@Getter @JsonProperty("Body") private String body;
+	@Getter @JsonProperty("IsValid") private Boolean isValid;
+	@Getter @JsonProperty("ApiVersion") private Double apiVersion;
+	@Getter @JsonProperty("Name") private String name;
 	
 	public ApexClass() {
 		
-	}
-
-	public String getBody() {
-		return body;
-	}
-
-	public Boolean getIsValid() {
-		return isValid;
-	}
-
-	public String getName() {
-		return name;
 	}
 }

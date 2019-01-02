@@ -23,7 +23,7 @@ import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.console.service.SalesforceService;
 import com.nowellpoint.console.util.EnvironmentVariables;
-import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.util.SecretsManager;
 
 public class SalesforceServiceImpl implements SalesforceService {
 	

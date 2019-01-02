@@ -36,7 +36,7 @@ import com.nowellpoint.console.entity.Identity;
 import com.nowellpoint.console.entity.Plan;
 import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
-import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.console.entity.Organization;
 
 import redis.clients.jedis.Jedis;

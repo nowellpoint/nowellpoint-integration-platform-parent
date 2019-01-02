@@ -22,6 +22,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
+import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
@@ -53,6 +54,10 @@ public abstract class AbstractSalesforceClient {
 	private static final String ORGANIZATION_FIELDS = "Id,Division,Fax,DefaultLocaleSidKey,FiscalYearStartMonth,"
  			+ "InstanceName,IsSandbox,LanguageLocaleKey,Name,OrganizationType,Phone,PrimaryContact,"
  			+ "UsesStartDateAsFiscalYearName,Address";
+	
+	private static final String PUSH_TOPIC_FIELDS = "Id,ApiVersion,Description,IsActive,IsDeleted,CreatedDate,"
+			+ "LastModifiedById,LastModifiedDate,Name,NotifyForFields,NotifyForOperationCreate,NotifyForOperationDelete,"
+			+ "NotifyForOperations,NotifyForOperationUndelete,NotifyForOperationUpdate,Query";
 
 	/**
      * Retrieves the <code>Identity</code> associated with the Token
@@ -323,6 +328,29 @@ public abstract class AbstractSalesforceClient {
 		if (response.getStatusCode() != Status.NO_CONTENT) {
 			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
 		}
+	}
+	
+	protected PushTopic getPushTopic(Token token, String pushTopicId) {
+		
+		Identity identity = getIdentity(token);
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
+     			.bearerAuthorization(token.getAccessToken())
+     			.path("PushTopic")
+     			.path(pushTopicId)
+     			.queryParameter("fields", PUSH_TOPIC_FIELDS)
+     			.queryParameter("version", "latest")
+     			.execute();
+		
+		PushTopic pushTopic = null;
+		
+		if (response.getStatusCode() == Status.OK) {
+			pushTopic = response.getEntity(PushTopic.class);
+		} else {
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+		}
+		
+		return pushTopic;
 	}
 	
 	protected void deletePushTopic(Token token, String topicId) {

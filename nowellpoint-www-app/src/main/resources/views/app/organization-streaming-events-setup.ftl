@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="form-check">
+                    <div>
                         <#if eventListener.notifyForOperationCreate>
                             <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
                         <#else>
@@ -40,7 +40,7 @@
                         <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
                     </div>
                     <br>
-                    <div class="form-check">
+                    <div>
                         <#if eventListener.notifyForOperationUpdate>
                             <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
                         <#else>
@@ -49,7 +49,7 @@
                         <label class="form-check-label" for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
                     </div>
                     <br>
-                    <div class="form-check">
+                    <div>
                         <#if eventListener.notifyForOperationDelete>
                             <input class="form-check-input" type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
                         <#else>
@@ -58,7 +58,7 @@
                         <label class="form-check-label" for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
                     </div>
                     <br>
-                    <div class="form-check">
+                    <div>
                         <#if eventListener.notifyForOperationUndelete>
                             <input class="form-check-input" type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
                         <#else>

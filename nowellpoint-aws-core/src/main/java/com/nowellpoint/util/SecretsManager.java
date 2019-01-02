@@ -1,4 +1,4 @@
-package com.nowellpoint.console.util;
+package com.nowellpoint.util;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -109,5 +109,4 @@ public class SecretsManager {
 			return null;
 		}
 	}
-
 }

@@ -74,11 +74,6 @@ public abstract class AbstractStreamingEventListener {
 		return API_VERSION;
 	}
 	
-	@Value.Default
-	public Long getReplayId() {
-		return Long.valueOf(-1);
-	}
-	
 	@Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -107,7 +102,6 @@ public abstract class AbstractStreamingEventListener {
 				.notifyForOperationUpdate(source.getNotifyForOperationUpdate())
 				.source(source.getSource())
 				.prefix(source.getPrefix())
-				.replayId(source.getReplayId())
 				.topicId(source.getTopicId())
 				.build();
 	}

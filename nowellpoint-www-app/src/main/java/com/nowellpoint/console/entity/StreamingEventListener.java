@@ -39,8 +39,6 @@ public class StreamingEventListener implements Serializable {
 	@Reference
 	private Identity lastUpdatedBy;
 	
-	private Long replayId;
-	
 	public StreamingEventListener() {
 		
 	}
@@ -155,13 +153,5 @@ public class StreamingEventListener implements Serializable {
 
 	public void setLastUpdatedBy(Identity lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
-	}
-
-	public Long getReplayId() {
-		return replayId;
-	}
-
-	public void setReplayId(Long replayId) {
-		this.replayId = replayId;
 	}
 }

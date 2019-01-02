@@ -2,16 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.nowellpoint</groupId>
 	<artifactId>nowellpoint-aws-core</artifactId>
-	<version>1.0.10-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Core Library Functions</name>
+	<description>Nowellpoint Core Library Functions jar</description>
 	
 	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>9</version>
+		<groupId>com.nowellpoint</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.10-SNAPSHOT</version>
 	</parent>
 
 	<url>https://www.nowellpoint.com</url>
@@ -53,7 +52,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.5</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -61,27 +60,32 @@
 			<version>4.5</version>
 		</dependency>
 		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-secretsmanager</artifactId>
+			<version>1.11.475</version>
+		</dependency>
+		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>value</artifactId>
-			<version>2.5.6</version>
+			<version>${version.immutables}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>builder</artifactId>
-			<version>2.5.6</version>
+			<version>${version.immutables}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.immutables</groupId>
 			<artifactId>value-fixture</artifactId>
-			<version>2.5.6</version>
+			<version>${version.immutables}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.0</version>
+			<version>0.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

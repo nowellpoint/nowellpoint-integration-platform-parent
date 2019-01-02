@@ -12,13 +12,13 @@ import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.service.ConsoleService;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.oauth.OAuthClient;
 import com.nowellpoint.oauth.model.AuthenticationRequest;
 import com.nowellpoint.oauth.model.OktaOAuthProvider;
 import com.nowellpoint.oauth.model.TokenResponse;
-import com.nowellpoint.console.service.ConsoleService;
+import com.nowellpoint.util.SecretsManager;
 import com.okta.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;

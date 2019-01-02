@@ -3,7 +3,6 @@ package com.nowellpoint.listener;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,15 +19,21 @@ import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.QueryResults;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
+import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
-import com.nowellpoint.listener.model.StreamingEventDAO;
+import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
+import com.nowellpoint.util.SecretsManager;
 
 @WebListener
 public class StreamingEventListener implements ServletContextListener {
@@ -40,8 +45,6 @@ public class StreamingEventListener implements ServletContextListener {
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
     
-    private AtomicLong replayId = new AtomicLong();
-    
     private ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     
     private static MongoClient mongoClient;
@@ -50,28 +53,50 @@ public class StreamingEventListener implements ServletContextListener {
     @Override
 	public void contextInitialized(ServletContextEvent event) {
     	
-    	// todo add secrets manager
-    	MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", ""));
+    	MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientUri);
         
         final Morphia morphia = new Morphia();
+        morphia.map(StreamingEvent.class);
+        morphia.map(StreamingEventListenerConfiguration.class);
 
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();
-    	
-    	try {
-			createClient("","", "");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        
+        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class);
+        
+        queryResults.asList().stream().forEach(c -> {
+        	try {
+				createClient(c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        });
     }
     
     @Override
 	public void contextDestroyed(ServletContextEvent event) {
-    	
+    	mongoClient.close();
+    }
+    
+    private Token refreshToken(String refreshToken) {
+		
+		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
+				.setRefreshToken(refreshToken)
+				.build();
+		
+		OauthAuthenticationResponse oauthAthenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+				.authenticate(request);
+		
+		return oauthAthenticationResponse.getToken();
     }
 
-	private BayeuxClient createClient(String instanceUrl, String accessToken, String channel) throws Exception {
+	private BayeuxClient createClient(final StreamingEventListenerConfiguration configuration) throws Exception {
+		
+		Token token = refreshToken(configuration.getRefreshToken());
+		
 		HttpClient httpClient = new HttpClient();
 		httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
 		httpClient.setStopTimeout(STOP_TIMEOUT);
@@ -80,17 +105,17 @@ public class StreamingEventListener implements ServletContextListener {
         LongPollingTransport httpTransport = new LongPollingTransport(null, httpClient) {
             @Override
             protected void customize(Request request) {
-                request.header("Authorization", "OAuth " + accessToken);
+                request.header("Authorization", "OAuth " + token.getAccessToken());
             }
         };
 
-        BayeuxClient client = new BayeuxClient(instanceUrl.concat("/cometd/44.0"), httpTransport);
+        BayeuxClient client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
         
         client.addExtension(new ClientSession.Extension() {
         	
         	@Override
             public boolean rcv(ClientSession session, Message.Mutable message) {
-                Long replayId = getReplayId();
+                Long replayId = configuration.getReplayId();
                 if (replayId != null) {
                     try {
                         dataMap.put(message.getChannel(), replayId);
@@ -154,8 +179,8 @@ public class StreamingEventListener implements ServletContextListener {
 				System.out.println(message.getClientId());
 				System.out.println(channel.getChannelId());
 				if (! message.isSuccessful()) {
-					System.out.println(message.get("error"));
-					System.out.println(message.get("failure"));
+					logger.info(message.get("error"));
+					logger.info(message.get("failure"));
 				}
 				
 			}
@@ -172,7 +197,7 @@ public class StreamingEventListener implements ServletContextListener {
         
         client.batch(new Runnable() {
         	public void run() {
-        		client.getChannel("/topic/".concat(channel)).subscribe(new ClientSessionChannel.MessageListener() {
+        		client.getChannel("/topic/".concat(configuration.getChannel())).subscribe(new ClientSessionChannel.MessageListener() {
 
 					@Override
         			public void onMessage(ClientSessionChannel channel, Message message) {
@@ -196,10 +221,6 @@ public class StreamingEventListener implements ServletContextListener {
         					e.printStackTrace();
         				}
         				
-        				replayId.set(source.getEvent().getReplayId());
-        				
-        				StreamingEventDAO dao = new StreamingEventDAO(StreamingEvent.class, datastore);
-        				
         				Payload payload = new Payload();
         				payload.setId(source.getSObject().getId());
         				payload.setName(source.getSObject().getName());
@@ -210,14 +231,17 @@ public class StreamingEventListener implements ServletContextListener {
         				
         				StreamingEvent streamingEvent = new StreamingEvent();
         				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
-        				// todo set organization id
-        				streamingEvent.setOrganizationId(null);
+        				streamingEvent.setOrganizationId(configuration.getOrganizationId());
         				streamingEvent.setReplayId(source.getEvent().getReplayId());
         				streamingEvent.setType(source.getEvent().getType());
-        				streamingEvent.setSource(eventListenerMap.get(source.getSObject().getId().substring(0, 3)).getSource());
+        				streamingEvent.setSource(configuration.getSource());
         				streamingEvent.setPayload(payload);
         				
-        				dao.save(streamingEvent);
+        				datastore.save(streamingEvent);
+        				
+        				configuration.setReplayId(source.getEvent().getReplayId());
+        				
+        				datastore.save(configuration);
         				
         				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
         			}
@@ -227,8 +251,4 @@ public class StreamingEventListener implements ServletContextListener {
         
         return client;
     }
-	
-	private Long getReplayId() {
-		return Long.valueOf(-2);
-	}
 }

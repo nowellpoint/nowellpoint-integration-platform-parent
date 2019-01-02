@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
-
+import com.nowellpoint.util.SecretsManager;
 
 import spark.Request;
 import spark.Response;

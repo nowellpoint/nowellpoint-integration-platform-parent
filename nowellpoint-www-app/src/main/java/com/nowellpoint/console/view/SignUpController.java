@@ -20,11 +20,11 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.model.SignUpRequest;
 import com.nowellpoint.console.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.SecretsManager;
 import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.util.SecretsManager;
 
 import spark.Request;
 import spark.Response;

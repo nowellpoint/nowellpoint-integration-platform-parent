@@ -7,23 +7,23 @@ public class Connection implements Serializable {
 	
 	private static final long serialVersionUID = -8557210889178981333L;
 	
-	public String id;
+	private String id;
 	
-	public String instanceUrl;
+	private String instanceUrl;
 	
-	public String refreshToken;
+	private String refreshToken;
 	
-	public String tokenType;
+	private String tokenType;
 	
-	public String issuedAt;
+	private String issuedAt;
 	
-	public String connectedAs;
+	private String connectedAs;
 	
-	public Date connectedAt;
+	private Date connectedAt;
 	
-	public String status;
+	private String status;
 	
-	public Boolean isConnected;
+	private Boolean isConnected;
 	
 	public Connection() {
 		

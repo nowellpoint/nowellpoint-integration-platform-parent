@@ -23,6 +23,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.query.Query;
 
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
@@ -41,9 +42,11 @@ import com.nowellpoint.client.sforce.PushTopicRequest;
 import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.CreateResult;
+import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.entity.StreamingEventListenerConfigurationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
@@ -57,6 +60,7 @@ import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.StreamingEventListener;
+import com.nowellpoint.console.model.StreamingEventListenerConfiguration;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
@@ -64,7 +68,7 @@ import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.SecretsManager;
+import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
 
@@ -210,75 +214,71 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public Organization update(String id, StreamingEventListenerRequest request) {
 		Organization instance = get(id);
 		
-		Optional<StreamingEventListener> listener = instance.getStreamingEventListeners()
+		Optional<StreamingEventListener> listenerOptional = instance.getStreamingEventListeners()
 				.stream()
 				.filter(l -> request.getSource().equals(l.getSource()))
 				.findFirst();
 		
 		List<StreamingEventListener> listeners = new ArrayList<StreamingEventListener>(instance.getStreamingEventListeners());
 		
-		if (listener.isPresent()) {
-			
-			PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
-					.active(request.isActive())
-					.apiVersion(listener.get().getApiVersion())
-					.description(listener.get().getDescription())
-					.name(listener.get().getName())
-					.notifyForOperationCreate(request.getNotifyForOperationCreate())
-					.notifyForOperationDelete(request.getNotifyForOperationDelete())
-					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
-					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
-					.notifyForFields("All")
-					.query(listener.get().getQuery())
-					.build();
+		if (listenerOptional.isPresent()) {
 			
 			Token token = ServiceClient.getInstance()
 	        		.salesforce()
 	        		.refreshToken(instance.getConnection().getRefreshToken());
 			
-			Salesforce client = SalesforceClientBuilder.builder()
-					.build()
-					.getClient();
+			StreamingEventListener listener = StreamingEventListener.builder()
+					.from(listenerOptional.get())
+					.active(request.isActive())
+					.notifyForOperationCreate(request.getNotifyForOperationCreate())
+					.notifyForOperationDelete(request.getNotifyForOperationDelete())
+					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
+					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
+					.build();
 			
-			listeners.removeIf(l -> listener.get().getSource().equals(l.getSource()));
+			String topicId = savePushTopic(token, listener);
 			
-			String topicId = listener.get().getTopicId();
+			StreamingEventListenerConfiguration configuration = StreamingEventListenerConfiguration.builder()
+					.active(listener.isActive())
+					.apiVersion(listener.getApiVersion())
+					.channel(listener.getName())
+					.organizationId(instance.getId())
+					.refreshToken(instance.getConnection().getRefreshToken())
+					.source(listener.getSource())
+					.topicId(topicId)
+					.build();
+					
+			saveStreamingEventListenerConfiguration(configuration);
+			
+			listeners.removeIf(l -> listenerOptional.get().getSource().equals(l.getSource()));
 			
 			UserInfo user = UserInfo.of(UserContext.get());
 			
 			Date now = getCurrentDateTime();
 			
-			if (Assert.isNullOrEmpty(topicId)) {
-				
-				CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
+			Salesforce client = SalesforceClientBuilder.builder()
+					.build()
+					.getClient();
+			
+			PushTopic pushTopic = client.getPushTopic(token, topicId);
+			
+			if (pushTopic.getCreatedDate().equals(pushTopic.getLastModifiedDate())) {
 				
 				listeners.add(StreamingEventListener.builder()
-						.from(listener.get())
-						.active(request.isActive())
+						.from(listener)
 						.createdBy(user)
 						.createdOn(now)
 						.lastUpdatedBy(user)
 						.lastUpdatedOn(now)
-						.notifyForOperationCreate(request.getNotifyForOperationCreate())
-						.notifyForOperationDelete(request.getNotifyForOperationDelete())
-						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
-						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
-						.topicId(createResult.getId())
+						.topicId(pushTopic.getId())
 						.build());
 				
 			} else {
 				
-				client.updatePushTopic(token, topicId, pushTopicRequest);
-				
 				listeners.add(StreamingEventListener.builder()
-						.from(listener.get())
-						.active(request.isActive())
+						.from(listener)
 						.lastUpdatedBy(user)
 						.lastUpdatedOn(now)
-						.notifyForOperationCreate(request.getNotifyForOperationCreate())
-						.notifyForOperationDelete(request.getNotifyForOperationDelete())
-						.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
-						.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
 						.build());
 			}
 		}
@@ -714,6 +714,63 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			logger.severe("Unable to sync organization: " + e.getMessage());
 			return instance;
 		}
+	}
+	
+	private void saveStreamingEventListenerConfiguration(StreamingEventListenerConfiguration configuration) {
+		StreamingEventListenerConfigurationDAO dao = new StreamingEventListenerConfigurationDAO(com.nowellpoint.console.entity.StreamingEventListenerConfiguration.class, datastore);
+		
+		Query<com.nowellpoint.console.entity.StreamingEventListenerConfiguration> query = dao.createQuery().field("topicId").equal(configuration.getTopicId());
+		
+		com.nowellpoint.console.entity.StreamingEventListenerConfiguration entity = dao.findOne(query);
+		
+		if (entity == null) {
+			entity = new com.nowellpoint.console.entity.StreamingEventListenerConfiguration();
+			entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get().getId()));
+			entity.setCreatedOn(getCurrentDateTime());
+			entity.setReplayId(Long.valueOf(-2));
+		}
+		
+		entity.setActive(configuration.isActive());
+		entity.setApiVersion(configuration.getApiVersion());
+		entity.setChannel(configuration.getChannel());
+		entity.setOrganizationId(configuration.getOrganizationId());
+		entity.setRefreshToken(configuration.getRefreshToken());
+		entity.setSource(configuration.getSource());
+		entity.setTopicId(configuration.getTopicId());
+		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get().getId()));
+		entity.setLastUpdatedOn(getCurrentDateTime());
+		
+		dao.save(entity);
+	}
+	
+	private String savePushTopic(Token token, StreamingEventListener listener) {
+		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
+				.active(listener.isActive())
+				.apiVersion(listener.getApiVersion())
+				.description(listener.getDescription())
+				.name(listener.getName())
+				.notifyForOperationCreate(listener.getNotifyForOperationCreate())
+				.notifyForOperationDelete(listener.getNotifyForOperationDelete())
+				.notifyForOperationUndelete(listener.getNotifyForOperationUndelete())
+				.notifyForOperationUpdate(listener.getNotifyForOperationUpdate())
+				.notifyForFields("All")
+				.query(listener.getQuery())
+				.build();
+		
+		Salesforce client = SalesforceClientBuilder.builder()
+				.build()
+				.getClient();
+		
+		String topicId = listener.getTopicId();
+		
+		if (Assert.isNullOrEmpty(topicId)) {
+			CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
+			topicId = createResult.getId();
+		} else {
+			client.updatePushTopic(token, listener.getTopicId(), pushTopicRequest);
+		}
+		
+		return topicId;
 	}
 	
 	private Organization create(Organization organization) {
