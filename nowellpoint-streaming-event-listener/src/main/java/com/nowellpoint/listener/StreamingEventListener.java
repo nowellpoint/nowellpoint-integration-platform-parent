@@ -4,9 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -38,11 +35,8 @@ import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
 import com.nowellpoint.util.SecretsManager;
 
-//@WebListener
-
-@Startup
-@Singleton
-public class StreamingEventListener  {
+@WebListener
+public class StreamingEventListener implements ServletContextListener {
 	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
 	private static ObjectMapper mapper = new ObjectMapper();
@@ -56,10 +50,8 @@ public class StreamingEventListener  {
     private MongoClient mongoClient;
 	private Datastore datastore;
     
-    //@Override
-	@PostConstruct
-	//public void contextInitialized(ServletContextEvent event) {
-	public void init() {
+    @Override
+	public void contextInitialized(ServletContextEvent event) {
     	
     	logger.info("starting servlet");
     	
@@ -84,10 +76,10 @@ public class StreamingEventListener  {
         });
     }
     
-//    @Override
-//	public void contextDestroyed(ServletContextEvent event) {
-//    	mongoClient.close();
-//    }
+    @Override
+	public void contextDestroyed(ServletContextEvent event) {
+    	mongoClient.close();
+    }
     
     private Token refreshToken(String refreshToken) {
 		

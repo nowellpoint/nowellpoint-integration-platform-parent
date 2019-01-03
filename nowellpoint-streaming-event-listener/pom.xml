@@ -5,7 +5,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-streaming-event-listener</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>Nowellpoint Streaming Event Listener Service</name>
 
 	<parent>
@@ -15,9 +15,8 @@
 	</parent>
 
 	<properties>
-	
-		<version.maven.resolver.provider>3.6.0</version.maven.resolver.provider>
-	
+		<version.war.plugin>2.5</version.war.plugin>
+		<version.surefire.plugin>2.16</version.surefire.plugin>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -68,11 +67,6 @@
 			<version>1.3.2</version>
 		</dependency>
 		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>2.9.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.cometd.java</groupId>
 			<artifactId>cometd-java-client</artifactId>
 			<version>4.0.0</version>
@@ -82,29 +76,10 @@
 			<artifactId>nowellpoint-aws-sforce</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
-		<dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-resolver-provider</artifactId>
-        <version>${version.maven.resolver.provider}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-settings-builder</artifactId>
-        <version>${version.maven.resolver.provider}</version>
-      </dependency>
-		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.21</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>3.14.0</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -113,24 +88,51 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
 	<build>
-		<finalName>nowellpoint-streaming-event-listener</finalName>
-		<plugins>
-			<plugin>
-				<groupId>io.thorntail</groupId>
-				<artifactId>thorntail-maven-plugin</artifactId>
-				<version>${version.wildfly.swarm}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>package</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-	<profiles>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${version.war.plugin}</version>
+        <configuration>
+          <!-- Java EE 7 doesn't require web.xml, Maven needs to catch up! -->
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>io.thorntail</groupId>
+        <artifactId>thorntail-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <!-- The default profile skips all tests, though you can tune it to run just unit tests based on a custom pattern -->
+      <!-- Seperate profiles are provided for running all tests, including Arquillian tests that execute in the specified container -->
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${version.surefire.plugin}</version>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 		<profile>
 			<id>openshift</id>
 			<build>
