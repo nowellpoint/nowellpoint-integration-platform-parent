@@ -25,19 +25,17 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="row">
-                        <div class="col-9">
-                            <div>
-                                <#if eventListener.notifyForOperationCreate>
-                                    <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
-                                <#else>
-                                        <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
-                                </#if>&emsp;
-                                <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
-                            </div>
-                            <br>
-                            <div>
-                                <#if eventListener.notifyForOperationUpdate>
+                    <div>
+                        <#if eventListener.notifyForOperationCreate>
+                            <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
+                        <#else>
+                            <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
+                        </#if>&emsp;
+                        <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
+                        </div>
+                        <br>
+                        <div>
+                        <#if eventListener.notifyForOperationUpdate>
                                     <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" checked>
                                 <#else>
                                         <input class="form-check-input" type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}">
@@ -62,17 +60,17 @@
                                 </#if>&emsp;
                                 <label class="form-check-label" for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
                             </div>
-                        </div>
-                        <div class="col-3 border">
+
+                                <!--
                             <#if eventListener.topicId??>
                                 <span>${labels["last.updated.by"]}:</span><br>
                                 <span class="text-primary">${eventListener.lastUpdatedBy.name}</span>&emsp;
                                 <br>
                                 <span>${labels["last.updated.on"]}:</span><br>
                                 <span class="text-primary">${eventListener.lastUpdatedOn?date?string.long} ${eventListener.lastUpdatedOn?time?string.medium}</span>
-                             </#if> 
-                        </div>    
-                    </div> 
+                             </#if> -->
+  
+                    
                 
             </form> 
             <hr>

@@ -29,8 +29,6 @@ public class StreamingEventListenerConfiguration extends BaseEntity implements S
 	
 	private String channel;
 	
-	private Long replayId;
-	
 	private String refreshToken;
 
 	public StreamingEventListenerConfiguration() {
@@ -87,14 +85,6 @@ public class StreamingEventListenerConfiguration extends BaseEntity implements S
 
 	public void setChannel(String channel) {
 		this.channel = channel;
-	}
-
-	public Long getReplayId() {
-		return replayId;
-	}
-
-	public void setReplayId(Long replayId) {
-		this.replayId = replayId;
 	}
 
 	public String getRefreshToken() {

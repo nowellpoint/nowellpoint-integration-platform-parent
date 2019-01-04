@@ -24,9 +24,9 @@ public class StreamingEventListenerConfiguration implements Serializable {
 	
 	private String channel;
 	
-	private Long replayId;
-	
 	private String refreshToken;
+	
+	private Boolean active;
 
 	public StreamingEventListenerConfiguration() {
 		
@@ -80,19 +80,19 @@ public class StreamingEventListenerConfiguration implements Serializable {
 		this.channel = channel;
 	}
 
-	public Long getReplayId() {
-		return replayId;
-	}
-
-	public void setReplayId(Long replayId) {
-		this.replayId = replayId;
-	}
-
 	public String getRefreshToken() {
 		return refreshToken;
 	}
 
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

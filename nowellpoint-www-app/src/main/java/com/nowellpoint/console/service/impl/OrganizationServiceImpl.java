@@ -727,7 +727,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			entity = new com.nowellpoint.console.entity.StreamingEventListenerConfiguration();
 			entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get().getId()));
 			entity.setCreatedOn(getCurrentDateTime());
-			entity.setReplayId(Long.valueOf(-2));
 		}
 		
 		entity.setActive(configuration.isActive());

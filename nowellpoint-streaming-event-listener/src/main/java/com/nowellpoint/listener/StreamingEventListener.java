@@ -33,6 +33,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
+import com.nowellpoint.listener.model.StreamingEventReplayId;
 import com.nowellpoint.util.SecretsManager;
 
 @WebListener
@@ -45,27 +46,24 @@ public class StreamingEventListener implements ServletContextListener {
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
     
-    private ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
-    
     private MongoClient mongoClient;
 	private Datastore datastore;
     
     @Override
 	public void contextInitialized(ServletContextEvent event) {
     	
-    	logger.info("starting servlet");
-    	
     	MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientUri);
         
         final Morphia morphia = new Morphia();
         morphia.map(StreamingEvent.class);
+        morphia.map(StreamingEventReplayId.class);
         morphia.map(StreamingEventListenerConfiguration.class);
 
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();
         
-        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class);
+        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class).filter("active =", Boolean.TRUE);
         
         queryResults.asList().stream().forEach(c -> {
         	try {
@@ -110,6 +108,12 @@ public class StreamingEventListener implements ServletContextListener {
                 request.header("Authorization", "OAuth " + token.getAccessToken());
             }
         };
+        
+        Long replayId = getReplayId(configuration.getTopicId());
+        String channel = "/topic/".concat(configuration.getChannel());
+        
+        ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
+        dataMap.put(channel, replayId);
 
         BayeuxClient client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
         
@@ -117,7 +121,6 @@ public class StreamingEventListener implements ServletContextListener {
         	
         	@Override
             public boolean rcv(ClientSession session, Message.Mutable message) {
-                Long replayId = configuration.getReplayId();
                 if (replayId != null) {
                     try {
                         dataMap.put(message.getChannel(), replayId);
@@ -193,13 +196,13 @@ public class StreamingEventListener implements ServletContextListener {
         boolean connected = client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.CONNECTED);
         
         if (!connected) {
-        	System.out.println("unable to connect");
+        	logger.error("unable to connect");
         	System.exit(1);
         }
         
         client.batch(new Runnable() {
         	public void run() {
-        		client.getChannel("/topic/".concat(configuration.getChannel())).subscribe(new ClientSessionChannel.MessageListener() {
+        		client.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
 
 					@Override
         			public void onMessage(ClientSessionChannel channel, Message message) {
@@ -220,7 +223,7 @@ public class StreamingEventListener implements ServletContextListener {
         					logger.info("**** end message data ****");
         					source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
         				} catch (Exception e) {
-        					e.printStackTrace();
+        					logger.error(e);
         				}
         				
         				Payload payload = new Payload();
@@ -239,11 +242,18 @@ public class StreamingEventListener implements ServletContextListener {
         				streamingEvent.setSource(configuration.getSource());
         				streamingEvent.setPayload(payload);
         				
-        				datastore.save(streamingEvent);
+        				try {
+        					datastore.save(streamingEvent);
+        				} catch (com.mongodb.DuplicateKeyException e) {
+        					logger.info(e.getErrorMessage());
+        				}
         				
-        				configuration.setReplayId(source.getEvent().getReplayId());
+        				StreamingEventReplayId streamingEventReplayId = new StreamingEventReplayId();
+        				streamingEventReplayId.setId(configuration.getTopicId());
+        				streamingEventReplayId.setChannel(channel.getChannelId().getId());
+        				streamingEventReplayId.setReplayId(source.getEvent().getReplayId());
         				
-        				datastore.save(configuration);
+        				datastore.save(streamingEventReplayId);
         				
         				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
         			}
@@ -253,4 +263,13 @@ public class StreamingEventListener implements ServletContextListener {
         
         return client;
     }
+	
+	private Long getReplayId(String topicId) {
+		StreamingEventReplayId replayId = datastore.get(StreamingEventReplayId.class, topicId);
+		if (replayId != null) {
+			return replayId.getReplayId();
+		} else {
+			return Long.valueOf(-2);
+		}
+	}
 }
