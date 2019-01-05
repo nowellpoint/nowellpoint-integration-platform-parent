@@ -35,10 +35,10 @@ public class StreamingEventListener implements ServletContextListener {
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();
         
-        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class).filter("active =", Boolean.TRUE);
+        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class);
         
-        queryResults.asList().stream().forEach(c -> {
-        	new StreamingEventListenerSubscription(datastore, c);
+        queryResults.asList().stream().forEach(configuration -> {
+        	new StreamingEventListenerSubscription(datastore, configuration);
         });
     }
     

@@ -731,7 +731,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		entity.setActive(configuration.isActive());
 		entity.setApiVersion(configuration.getApiVersion());
-		entity.setChannel(configuration.getChannel());
+		entity.setChannel("/topic/".concat(configuration.getChannel()));
 		entity.setOrganizationId(configuration.getOrganizationId());
 		entity.setRefreshToken(configuration.getRefreshToken());
 		entity.setSource(configuration.getSource());

@@ -36,8 +36,8 @@ public class StreamingEventListenerSubscription {
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
-    private static final String ERROR_401 = "401";
-    private static final String ERROR_403 = "403";
+//    private static final String ERROR_401 = "401";
+//    private static final String ERROR_403 = "403";
 
 	private Datastore datastore;
 	private HttpClient httpClient;
@@ -105,10 +105,10 @@ public class StreamingEventListenerSubscription {
         };
         
         Long replayId = getReplayId(configuration.getTopicId());
-        String channel = "/topic/".concat(configuration.getChannel());
+        //String channel = configuration.getChannel();
         
         ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
-        dataMap.put(channel, replayId);
+        dataMap.put(configuration.getChannel(), replayId);
 
         client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
         
@@ -151,11 +151,10 @@ public class StreamingEventListenerSubscription {
 				logger.info("success: " + message.isSuccessful());
 				logger.info("clientId: " + message.getClientId());
 				if (! message.isSuccessful()) {
-					logger.error(message);
-					if (message.get("error").toString().startsWith(ERROR_401) || message.get("error").toString().startsWith(ERROR_403)) {
-						disconnect();
-						connect();
-					}
+					JsonNode node = mapper.valueToTree(message);
+					logger.error(node.asText());
+					disconnect();
+					connect();
 				}
 			}
 		});
@@ -169,11 +168,10 @@ public class StreamingEventListenerSubscription {
 				logger.info("success: " + message.isSuccessful());
 				logger.info("clientId: " + message.getClientId());
 				if (! message.isSuccessful()) {
-					logger.error(message);
-					if (message.get("error").toString().startsWith(ERROR_401) || message.get("error").toString().startsWith(ERROR_403)) {
-						disconnect();
-						connect();
-					}
+					JsonNode node = mapper.valueToTree(message);
+					logger.error(node.asText());
+					disconnect();
+					connect();
 				}
 				
 			}
@@ -203,7 +201,7 @@ public class StreamingEventListenerSubscription {
         
         client.batch(new Runnable() {
         	public void run() {
-        		client.getChannel(channel).subscribe(new ClientSessionChannel.MessageListener() {
+        		client.getChannel(configuration.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
 
 					@Override
         			public void onMessage(ClientSessionChannel channel, Message message) {
@@ -225,12 +223,12 @@ public class StreamingEventListenerSubscription {
         				}
         				
         				Payload payload = new Payload();
-        				payload.setId(source.getSObject().getId());
-        				payload.setName(source.getSObject().getName());
-        				payload.setCreatedById(source.getSObject().getCreatedById());
-        				payload.setCreatedDate(source.getSObject().getCreatedDate());
-        				payload.setLastModifiedById(source.getSObject().getLastModifiedById());
-        				payload.setLastModifiedDate(source.getSObject().getLastModifiedDate());
+        				payload.setId(source.getSobject().getId());
+        				payload.setName(source.getSobject().getName());
+        				payload.setCreatedById(source.getSobject().getCreatedById());
+        				payload.setCreatedDate(source.getSobject().getCreatedDate());
+        				payload.setLastModifiedById(source.getSobject().getLastModifiedById());
+        				payload.setLastModifiedDate(source.getSobject().getLastModifiedDate());
         				
         				StreamingEvent streamingEvent = new StreamingEvent();
         				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
