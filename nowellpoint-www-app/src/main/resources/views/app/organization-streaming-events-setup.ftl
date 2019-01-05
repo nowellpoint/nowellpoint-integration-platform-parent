@@ -22,8 +22,8 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-6">
-                            <div class="card">
+                        <div class="col-3">
+                            <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.today']}</span>
                                     <h1 class="display-3">${today}</h1>
@@ -31,11 +31,27 @@
                             </div>
 
                         </div>
-                        <div class="col-6">
-                            <div class="card">
+                        <div class="col-3">
+                            <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.this.week']}</span>
                                     <h1 class="display-3">${thisWeek}</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <span>${labels['events.received.this.month']}</span>
+                                    <h1 class="display-3">${thisMonth}</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <span>${labels['events.received.this.year']}</span>
+                                    <h1 class="display-3">${thisYear}</h1>
                                 </div>
                             </div>
                         </div>

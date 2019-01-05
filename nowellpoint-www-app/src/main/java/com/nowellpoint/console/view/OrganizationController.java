@@ -165,19 +165,33 @@ public class OrganizationController extends BaseController {
 				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
 		
+		LocalDate now = LocalDate.now( ZoneId.of( "UTC" ) );
+		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsBySourceByDays(organizationId, source, 7);
+				.getEventsBySourceByDays(organizationId, source, now.getDayOfYear());
 		
 		AtomicLong today = new AtomicLong(0);
 		AtomicLong thisWeek = new AtomicLong(0);
+		AtomicLong thisMonth = new AtomicLong(0);
+		AtomicLong thisYear = new AtomicLong(0);
+		
+		System.out.println(now.getDayOfWeek().getValue());
+		System.out.println(now.getDayOfMonth());
+		
 		
 		results.forEach(r -> {
-			if (r.getId().equals("0")) {
+			Integer day = Integer.valueOf(r.getId());
+			if (day == 0) {
 				today.set(r.getCount());
-			} else {
+			} 
+			if (day > 0 || day <= now.getDayOfWeek().getValue()) {
 				thisWeek.addAndGet(r.getCount());
+			} 
+			if (day > now.getDayOfWeek().getValue() || day <= now.getDayOfMonth()) {
+				thisMonth.addAndGet(r.getCount());
 			}
+			thisYear.addAndGet(r.getCount());
 		});
 		
 		Map<String,Object> model = getModel();
@@ -185,6 +199,8 @@ public class OrganizationController extends BaseController {
 		model.put("eventListener", eventListener.get());
 		model.put("today", today);
 		model.put("thisWeek", thisWeek);
+		model.put("thisMonth", thisMonth);
+		model.put("thisYear", thisYear);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
