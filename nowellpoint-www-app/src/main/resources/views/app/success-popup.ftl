@@ -1,5 +1,5 @@
 <div class="modal" id="success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-notify modal-success" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <!--Content-->
         <div class="modal-content">
             <!--Header-->
