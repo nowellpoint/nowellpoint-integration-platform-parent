@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
@@ -151,6 +152,8 @@ public class OrganizationController extends BaseController {
 	
 	private static String setupStreamingEvents(Request request, Response response) {
 		
+		String organizationId = getIdentity(request).getOrganization().getId();
+		
 		String source = request.params(":source");
 		
 		Organization organization = ServiceClient.getInstance()
@@ -162,9 +165,26 @@ public class OrganizationController extends BaseController {
 				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
 		
+		List<AggregationResult> results = ServiceClient.getInstance()
+				.organization()
+				.getEventsBySourceByDays(organizationId, source, 7);
+		
+		AtomicLong today = new AtomicLong(0);
+		AtomicLong thisWeek = new AtomicLong(0);
+		
+		results.forEach(r -> {
+			if (r.getId().equals("0")) {
+				today.set(r.getCount());
+			} else {
+				thisWeek.addAndGet(r.getCount());
+			}
+		});
+		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
+		model.put("today", today);
+		model.put("thisWeek", thisWeek);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)

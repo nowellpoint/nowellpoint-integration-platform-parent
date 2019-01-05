@@ -43,4 +43,6 @@ public interface OrganizationService {
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
 	
 	public List<AggregationResult> getEventsLastDays(String id, Integer days);
+	
+	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days);
 }

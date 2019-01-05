@@ -589,6 +589,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
+	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days) {
+		return dao.getEventsBySourceByDays(new ObjectId(id), source, days);
+	}
+	
+	@Override
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException {
 		
 		Organization organization = get(id);

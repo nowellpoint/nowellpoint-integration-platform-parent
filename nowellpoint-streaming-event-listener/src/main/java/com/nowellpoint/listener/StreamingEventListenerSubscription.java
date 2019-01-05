@@ -105,7 +105,6 @@ public class StreamingEventListenerSubscription {
         };
         
         Long replayId = getReplayId(configuration.getTopicId());
-        //String channel = configuration.getChannel();
         
         ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
         dataMap.put(configuration.getChannel(), replayId);
