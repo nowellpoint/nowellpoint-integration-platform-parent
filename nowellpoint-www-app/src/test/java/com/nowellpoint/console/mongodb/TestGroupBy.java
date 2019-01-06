@@ -9,9 +9,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
@@ -62,6 +64,56 @@ public class TestGroupBy {
 	}
 	
 	@Test
+	public void testStreamingEventStatistics() {
+		
+		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
+		
+		LocalDate today = LocalDate.now( ZoneId.of( "UTC" ) );
+		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+		LocalDate firstDayOfYear = LocalDate.of(today.getYear(), 1, 1);
+		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
+		
+		List<AggregationResult> results = ServiceClient.getInstance()
+				.organization()
+				.getEventsBySourceByDays(organization.getId().toString(), "Account", daysBetween.intValue());
+		
+		System.out.println("Today: " + today);
+		System.out.println("First Day of the week: " + firstDayOfWeek);
+		System.out.println("First Day of the month: " + firstDayOfMonth);
+		System.out.println("First Day of the year: " + firstDayOfYear);
+		System.out.println(today.minusYears(1).plusDays(1));
+		System.out.println(today.minusDays(daysBetween));
+		System.out.println(daysBetween);
+		System.out.println("*******");
+		
+		AtomicLong eventsToday = new AtomicLong(0);
+		AtomicLong eventsThisWeek = new AtomicLong(0);
+		AtomicLong eventsThisMonth = new AtomicLong(0);
+		AtomicLong eventsThisYear = new AtomicLong(0);
+		
+		results.forEach(r -> {
+			if (r.getGroupByDate().isEqual(today)) {
+				eventsToday.set(r.getCount());
+			} 
+			if (r.getGroupByDate().isEqual(firstDayOfWeek) || r.getGroupByDate().isAfter(firstDayOfWeek)) {
+				eventsThisWeek.addAndGet(r.getCount());
+			} 
+			if (r.getGroupByDate().isEqual(firstDayOfMonth) || r.getGroupByDate().isAfter(firstDayOfMonth)) {
+				eventsThisMonth.addAndGet(r.getCount());
+			}
+			if (r.getGroupByDate().isEqual(firstDayOfYear) || r.getGroupByDate().isAfter(firstDayOfYear)) {
+				eventsThisYear.addAndGet(r.getCount());
+			}
+		});
+		
+		System.out.println("Today: " + eventsToday.get());
+		System.out.println("This week: " + eventsThisWeek.get());
+		System.out.println("This month: " + eventsThisMonth.get());
+		System.out.println("This year: " + eventsThisYear.get());
+	}
+	
+	@Test
 	public void testSalesforceIdentity() {
 
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
@@ -107,7 +159,7 @@ public class TestGroupBy {
 		logger.info(identity.getDisplayName());
 	}
 	
-	@Test
+	//@Test
 	public void testStreamingEventListener() {
 		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
 		

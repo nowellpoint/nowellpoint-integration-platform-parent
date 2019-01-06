@@ -26,16 +26,17 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.today']}</span>
-                                    <h1 class="display-3">${today}</h1>
+                                    <h1 class="display-3">${EVENTS_RECEIVED_TODAY}</h1>
+                                    <span class="text-primary">${TODAY} (${labels['utc']})</span>
                                 </div>
                             </div>
-
                         </div>
                         <div class="col-3">
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.this.week']}</span>
-                                    <h1 class="display-3">${thisWeek}</h1>
+                                    <h1 class="display-3">${EVENTS_RECEIVED_THIS_WEEK}</h1>
+                                    <span class="text-primary">${FIRST_DAY_OF_WEEK} (${labels['utc']})</span>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +44,8 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.this.month']}</span>
-                                    <h1 class="display-3">${thisMonth}</h1>
+                                    <h1 class="display-3">${EVENTS_RECEIVED_THIS_MONTH}</h1>
+                                    <span class="text-primary">${FIRST_DAY_OF_MONTH} (${labels['utc']})</span>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +53,8 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <span>${labels['events.received.this.year']}</span>
-                                    <h1 class="display-3">${thisYear}</h1>
+                                    <h1 class="display-3">${EVENTS_RECEIVED_THIS_YEAR}</h1>
+                                    <span class="text-primary">${FIRST_DAY_OF_YEAR} (${labels['utc']})</span>
                                 </div>
                             </div>
                         </div>

@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -188,49 +189,55 @@ public class OrganizationController extends BaseController {
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
-				.get(getIdentity(request).getOrganization().getId());
+				.get(organizationId);
 		
 		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
 				.stream()
 				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
 		
-		LocalDate now = LocalDate.now( ZoneId.of( "UTC" ) );
+		ZoneId utc = ZoneId.of( "UTC" );
+		LocalDate today = LocalDate.now( utc );
+		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+		LocalDate firstDayOfYear = LocalDate.of(today.getYear(), 1, 1);
+		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsBySourceByDays(organizationId, source, now.getDayOfYear());
+				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue());
 		
-		AtomicLong today = new AtomicLong(0);
-		AtomicLong thisWeek = new AtomicLong(0);
-		AtomicLong thisMonth = new AtomicLong(0);
-		AtomicLong thisYear = new AtomicLong(0);
-		
-		System.out.println(now.getDayOfWeek().getValue());
-		System.out.println(now.getDayOfMonth());
-		
+		AtomicLong eventsToday = new AtomicLong(0);
+		AtomicLong eventsThisWeek = new AtomicLong(0);
+		AtomicLong eventsThisMonth = new AtomicLong(0);
+		AtomicLong eventsThisYear = new AtomicLong(0);
 		
 		results.forEach(r -> {
-			Integer day = Integer.valueOf(r.getId());
-			if (day == 0) {
-				today.set(r.getCount());
+			if (r.getGroupByDate().isEqual(today)) {
+				eventsToday.set(r.getCount());
 			} 
-			if (day > 0 || day <= now.getDayOfWeek().getValue()) {
-				thisWeek.addAndGet(r.getCount());
+			if (r.getGroupByDate().isEqual(firstDayOfWeek) || r.getGroupByDate().isAfter(firstDayOfWeek)) {
+				eventsThisWeek.addAndGet(r.getCount());
 			} 
-			if (day > now.getDayOfWeek().getValue() || day <= now.getDayOfMonth()) {
-				thisMonth.addAndGet(r.getCount());
+			if (r.getGroupByDate().isEqual(firstDayOfMonth) || r.getGroupByDate().isAfter(firstDayOfMonth)) {
+				eventsThisMonth.addAndGet(r.getCount());
 			}
-			thisYear.addAndGet(r.getCount());
+			if (r.getGroupByDate().isEqual(firstDayOfYear) || r.getGroupByDate().isAfter(firstDayOfYear)) {
+				eventsThisYear.addAndGet(r.getCount());
+			}
 		});
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
-		model.put("today", today);
-		model.put("thisWeek", thisWeek);
-		model.put("thisMonth", thisMonth);
-		model.put("thisYear", thisYear);
+		model.put("TODAY", today);
+		model.put("FIRST_DAY_OF_WEEK", firstDayOfWeek);
+		model.put("FIRST_DAY_OF_MONTH", firstDayOfMonth);
+		model.put("FIRST_DAY_OF_YEAR", firstDayOfYear);
+		model.put("EVENTS_RECEIVED_TODAY", eventsToday);
+		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
+		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
+		model.put("EVENTS_RECEIVED_THIS_YEAR", eventsThisYear);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
