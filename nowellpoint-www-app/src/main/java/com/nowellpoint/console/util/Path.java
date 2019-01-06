@@ -50,6 +50,7 @@ public class Path {
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
 		public static final String ORGANIZATION_CONNECTED_USER = String.format(APPLICATION_CONTEXT, "organization/connected-user");
 		public static final String ORGANIZATION_STREAMING_EVENTS = String.format(APPLICATION_CONTEXT, "organization/streaming-events");
+		public static final String ORGANIZATION_STREAMING_EVENTS_FEED = String.format(APPLICATION_CONTEXT, "organization/streaming-events/feed");
 		public static final String ORGANIZATION_STREAMING_EVENTS_SETUP = String.format(APPLICATION_CONTEXT, "organization/streaming-events/setup/:source");
 		
 		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");

@@ -46,6 +46,7 @@ import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.entity.StreamingEventListenerConfigurationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
@@ -591,6 +592,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	@Override
 	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days) {
 		return dao.getEventsBySourceByDays(new ObjectId(id), source, days);
+	}
+	
+	@Override
+	public List<StreamingEvent> getEvents(String id) {
+		return dao.getStreamingEvents(new ObjectId(id));
 	}
 	
 	@Override

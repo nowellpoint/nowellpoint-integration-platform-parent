@@ -24,6 +24,7 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.aggregation.Accumulator;
 import org.mongodb.morphia.aggregation.AggregationPipeline;
 import org.mongodb.morphia.dao.BasicDAO;
+import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
 
 import com.mongodb.AggregationOptions;
@@ -32,6 +33,24 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 
 	public OrganizationDAO(Class<Organization> entityClass, Datastore ds) {
 		super(entityClass, ds);
+	}
+	
+	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId) {
+		
+		FindOptions options = new FindOptions().limit(50);
+		
+		System.out.println("get streaming events: " + organizationId);
+		
+		List<StreamingEvent>  list = getDatastore().createQuery(StreamingEvent.class)
+				.field("organizationId")
+				.equal(organizationId)
+				.order("-eventDate")
+				.asList(options);
+		
+		System.out.println(list.size());
+		
+		return list;
+				
 	}
 	
 	public List<AggregationResult> getEventsBySourceByDays(ObjectId organizationId, String source, Integer days) {

@@ -24,6 +24,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import com.nowellpoint.console.entity.AggregationResult;
+import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
@@ -54,6 +55,9 @@ public class OrganizationController extends BaseController {
 		
 		get(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
 				-> setupStreamingEvents(request, response));
+		
+		get(Path.Route.ORGANIZATION_STREAMING_EVENTS_FEED, (request, response)
+				-> streamingEventsFeed(request, response));
 		
 		post(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
 				-> saveEventListener(request, response));
@@ -129,10 +133,36 @@ public class OrganizationController extends BaseController {
 				.map(r -> formatLabel(getIdentity(request).getLocale(), r))
 				.collect(Collectors.joining(", "));
 		
+		ServiceClient.getInstance()
+				.organization()
+				.getEvents(organizationId).forEach(e -> {
+					System.out.println(e.getEventDate());
+				});;
+		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("results", results);
 		model.put("data", data);
+		
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(OrganizationController.class)
+				.model(model)
+				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS)
+				.build();
+		
+		return processTemplate(templateProcessRequest);
+	};	
+	
+	private static String streamingEventsFeed(Request request, Response response) {
+		
+		String organizationId = getIdentity(request).getOrganization().getId();
+		
+		List<StreamingEvent> list = ServiceClient.getInstance()
+				.organization()
+				.getEvents(organizationId);
+		
+		Map<String,Object> model = getModel();
+		model.put("feed", list);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(OrganizationController.class)
