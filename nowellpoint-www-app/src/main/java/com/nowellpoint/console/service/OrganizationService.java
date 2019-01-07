@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
-import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
@@ -43,7 +43,7 @@ public interface OrganizationService {
 	
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException;
 	
-	public List<StreamingEvent> getEvents(String id);
+	public List<FeedItem> getStreamingEventsFeed(String id);
 	
 	public List<AggregationResult> getEventsLastDays(String id, Integer days);
 	

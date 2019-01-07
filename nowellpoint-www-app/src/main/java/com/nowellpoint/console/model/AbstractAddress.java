@@ -48,18 +48,18 @@ public abstract class AbstractAddress {
 //		}
 //	}
 	
-	public static Address of(com.nowellpoint.console.entity.Address entity) {
-		return entity == null ? null : Address.builder()
-				.addedOn(entity.getAddedOn())
-				.city(entity.getCity())
-				.countryCode(entity.getCountryCode())
-				.id(entity.getId())
-				.latitude(entity.getLatitude())
-				.longitude(entity.getLongitude())
-				.postalCode(entity.getPostalCode())
-				.state(entity.getState())
-				.street(entity.getStreet())
-				.updatedOn(entity.getUpdatedOn())
+	public static Address of(com.nowellpoint.console.entity.Address source) {
+		return source == null ? null : Address.builder()
+				.addedOn(source.getAddedOn())
+				.city(source.getCity())
+				.countryCode(source.getCountryCode())
+				.id(source.getId())
+				.latitude(source.getLatitude())
+				.longitude(source.getLongitude())
+				.postalCode(source.getPostalCode())
+				.state(source.getState())
+				.street(source.getStreet())
+				.updatedOn(source.getUpdatedOn())
 				.build();
 	}
 	

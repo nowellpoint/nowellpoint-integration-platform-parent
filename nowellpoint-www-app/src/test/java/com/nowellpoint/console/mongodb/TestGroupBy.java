@@ -49,6 +49,8 @@ public class TestGroupBy {
 	private static final Logger logger = Logger.getLogger(TestGroupBy.class.getName());
 	private static ObjectMapper mapper = new ObjectMapper();
 	
+	private static final String ORGANIZATION_ID = "5bac3c0e0626b951816064f5";
+	
 	private static MongoClient mongoClient;
 	private static Datastore datastore;
 	
@@ -66,7 +68,7 @@ public class TestGroupBy {
 	@Test
 	public void testStreamingEventStatistics() {
 		
-		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
+		Organization organization = datastore.get(Organization.class, new ObjectId(ORGANIZATION_ID));
 		
 		LocalDate today = LocalDate.now( ZoneId.of( "UTC" ) );
 		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
@@ -77,15 +79,6 @@ public class TestGroupBy {
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
 				.getEventsBySourceByDays(organization.getId().toString(), "Account", daysBetween.intValue());
-		
-		System.out.println("Today: " + today);
-		System.out.println("First Day of the week: " + firstDayOfWeek);
-		System.out.println("First Day of the month: " + firstDayOfMonth);
-		System.out.println("First Day of the year: " + firstDayOfYear);
-		System.out.println(today.minusYears(1).plusDays(1));
-		System.out.println(today.minusDays(daysBetween));
-		System.out.println(daysBetween);
-		System.out.println("*******");
 		
 		AtomicLong eventsToday = new AtomicLong(0);
 		AtomicLong eventsThisWeek = new AtomicLong(0);
@@ -116,7 +109,7 @@ public class TestGroupBy {
 	@Test
 	public void testSalesforceIdentity() {
 
-		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
+		Organization organization = datastore.get(Organization.class, new ObjectId(ORGANIZATION_ID));
 		
 		assertNotNull(organization.getName());
 		assertNotNull(organization.getNumber());
@@ -159,9 +152,9 @@ public class TestGroupBy {
 		logger.info(identity.getDisplayName());
 	}
 	
-	//@Test
+	@Test
 	public void testStreamingEventListener() {
-		Organization organization = datastore.get(Organization.class, new ObjectId("5bac3c0e0626b951816064f5"));
+		Organization organization = datastore.get(Organization.class, new ObjectId(ORGANIZATION_ID));
 		
 		assertNotNull(organization.getName());
 		assertNotNull(organization.getNumber());
@@ -196,7 +189,7 @@ public class TestGroupBy {
 		
 		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
 		
-		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId("5bac3c0e0626b951816064f5"), 7);
+		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId(ORGANIZATION_ID), 7);
 		
 		String data = results.stream()
 				.sorted(Comparator.reverseOrder())

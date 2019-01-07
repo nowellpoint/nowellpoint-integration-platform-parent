@@ -29,6 +29,7 @@ import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;
+import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
@@ -134,15 +135,13 @@ public class OrganizationController extends BaseController {
 				.map(r -> formatLabel(getIdentity(request).getLocale(), r))
 				.collect(Collectors.joining(", "));
 		
-		ServiceClient.getInstance()
+		List<FeedItem> feedItems = ServiceClient.getInstance()
 				.organization()
-				.getEvents(organizationId).forEach(e -> {
-					System.out.println(e.getEventDate());
-				});;
+				.getStreamingEventsFeed(organizationId);
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("results", results);
+		model.put("feedItems", feedItems);
 		model.put("data", data);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
@@ -158,9 +157,9 @@ public class OrganizationController extends BaseController {
 		
 		String organizationId = getIdentity(request).getOrganization().getId();
 		
-		List<StreamingEvent> list = ServiceClient.getInstance()
+		List<FeedItem> list = ServiceClient.getInstance()
 				.organization()
-				.getEvents(organizationId);
+				.getStreamingEventsFeed(organizationId);
 		
 		Map<String,Object> model = getModel();
 		model.put("feed", list);

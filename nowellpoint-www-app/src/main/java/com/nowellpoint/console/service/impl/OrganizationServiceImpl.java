@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -46,7 +47,6 @@ import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
-import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.entity.StreamingEventListenerConfigurationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
@@ -56,6 +56,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
+import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
@@ -595,8 +596,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public List<StreamingEvent> getEvents(String id) {
-		return dao.getStreamingEvents(new ObjectId(id));
+	public List<FeedItem> getStreamingEventsFeed(String id) {
+		return dao.getStreamingEvents(new ObjectId(id))
+				.stream()
+				.map(s -> FeedItem.of(s))
+				.collect(Collectors.toList());
 	}
 	
 	@Override
