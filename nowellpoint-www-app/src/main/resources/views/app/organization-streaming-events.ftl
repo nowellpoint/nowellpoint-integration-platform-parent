@@ -28,20 +28,20 @@
                             <tbody>
                                 <#list organization.streamingEventListeners?sort_by("source") as eventListener>
                                     <tr class="d-flex">
-                                        <td class="col-3">${eventListener.prefix}</td>
-                                        <td class="col-3"><a href="${eventListener.href}">${eventListener.source}</a></td>
-                                        <td class="col-3">
+                                        <td class="col-3"><div class="circle"><span class="initials">${eventListener.prefix}</span></div></td>
+                                        <td class="col-3 align-middle"><a href="${eventListener.href}">${eventListener.source}</a></td>
+                                        <td class="col-3 align-middle">
                                             <#if eventListener.topicId??>
                                                 ${eventListener.topicId} 
                                             <#else>
                                                 &nbsp;
                                             </#if>
                                         </td>
-                                        <td class="col-3 text-center">
+                                        <td class="col-3 text-center align-middle">
                                             <#if eventListener.active>
-                                                <i class="fa fa-check text-success" aria-hidden="true"></i>
+                                                <h5><span class="badge badge-success">${labels['active']}</span></h5>
                                             <#else>
-                                                <i class="fa fa-close text-danger" aria-hidden="true"></i>
+                                                <h5><span class="badge badge-danger">${labels['inactive']}</span></h5>
                                             </#if>
                                         </td>
                                     </tr>
@@ -49,18 +49,20 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-2 border-left">
-                        <ul class="list-unstyled" style="overflow: scroll; height: 100%">
+                    <div class="col-2 pb-3">
+                        <div class="tracking-list">
                             <#list feedItems as feedItem>
-                                <li class="media">
-                                    <img class="mr-3" src="/images/person-generic.jpg" height="50" width="50" alt="Generic placeholder image">
-                                    <div class="media-body">
-                                        <h6 class="mt-0 mb-1">${feedItem.subject}</h6>
-                                        <span>${feedItem.body}</span>
-                                    </div>
-                                </li>
-                            </#list>
-                        </ul>
+                                <div class="tracking-item">
+                                    <div class="tracking-icon status-intransit">
+                                        <svg class="svg-inline--fa fa-circle fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="circle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                            <path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z"></path>
+                                        </svg>
+                                    </div> 
+                                    <div class="tracking-date">${feedItem.lastUpdatedOn?date?string.long}<span>${feedItem.lastUpdatedOn?time?string.medium}</span></div>
+                                    <div class="tracking-content">${feedItem.subject}<span>${feedItem.body}</span></div>
+                                </div>
+                            </#list>    
+                        </div>       
                     </div>
                 </div>
             </div>

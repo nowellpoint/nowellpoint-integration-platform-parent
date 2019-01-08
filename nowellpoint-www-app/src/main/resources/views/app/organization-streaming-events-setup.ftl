@@ -60,7 +60,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="card">
+                    <div class="card bg-light">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6">
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="card">
+                    <div class="card bg-light">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-6">
@@ -136,7 +136,7 @@
                     <br>
 
                     <#if eventListener.topicId??>
-                        <div class="card">
+                        <div class="card bg-light">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">

@@ -9,7 +9,7 @@ import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 
-@Entity(value = "streaming.event.listener.configurations")
+@Entity(value = "streaming.event.listener.configurations", noClassnameStored = true)
 @Indexes(
 		@Index(fields = { @Field("topicId") }, options = @IndexOptions(unique = true))
 )

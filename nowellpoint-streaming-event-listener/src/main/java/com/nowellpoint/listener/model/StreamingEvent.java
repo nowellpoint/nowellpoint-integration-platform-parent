@@ -11,7 +11,7 @@ import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 
-@Entity(value = "streaming.events")
+@Entity(value = "streaming.events", noClassnameStored = true)
 @Indexes(
 		@Index(fields = { @Field("replayId"), @Field("organizationId"), @Field("source") }, options = @IndexOptions(unique = true))
 )

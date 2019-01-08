@@ -24,20 +24,19 @@ public abstract class AbstractFeedItem {
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	public abstract Date getLastUpdatedOn();
 	
-	private static final String SUBJECT = "%s %s %s: %s";
+	private static final String SUBJECT = "%s %s";
+	private static final String BODY = "%s was %s by %s";
 	
-	public static FeedItem of(com.nowellpoint.console.entity.StreamingEvent source) {
-		return source == null ? null : FeedItem.builder()
-				.body(source.getSource().concat(" was updated at ").concat(source.getPayload().getLastModifiedDate().toString()).concat(" by ").concat(source.getPayload().getLastModifiedById()))
-				.createdOn(source.getPayload().getCreatedDate())
-				.event(source.getType())
-				.id(source.getId().toString())
-				.lastUpdatedOn(source.getPayload().getLastModifiedDate())
+	public static FeedItem of(com.nowellpoint.console.entity.StreamingEvent entity) {
+		return entity == null ? null : FeedItem.builder()
+				.body(String.format(BODY, entity.getPayload().getName(), entity.getType(), entity.getPayload().getLastModifiedById()))
+				.createdOn(entity.getPayload().getCreatedDate())
+				.event(entity.getType())
+				.id(entity.getId().toString())
+				.lastUpdatedOn(entity.getPayload().getLastModifiedDate())
 				.subject(String.format(SUBJECT, 
-						source.getPayload().getLastModifiedById(), 
-						source.getType(), 
-						source.getSource(), 
-						source.getPayload().getName()))
+						entity.getSource(), 
+						entity.getType()))
 				.type(StreamingEvent.class.getSimpleName())
 				.build();
 	}
