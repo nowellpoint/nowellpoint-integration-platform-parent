@@ -29,7 +29,10 @@ public abstract class AbstractFeedItem {
 	
 	public static FeedItem of(com.nowellpoint.console.entity.StreamingEvent entity) {
 		return entity == null ? null : FeedItem.builder()
-				.body(String.format(BODY, entity.getPayload().getName(), entity.getType(), entity.getPayload().getLastModifiedById()))
+				.body(String.format(BODY, 
+						entity.getPayload().getName(), 
+						entity.getType(), 
+						entity.getPayload().getLastModifiedById()))
 				.createdOn(entity.getPayload().getCreatedDate())
 				.event(entity.getType())
 				.id(entity.getId().toString())

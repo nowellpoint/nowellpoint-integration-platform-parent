@@ -3,8 +3,8 @@ package com.nowellpoint.listener.model;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
-@Entity(value = "streaming.event.replay.ids")
-public class StreamingEventReplayId {
+@Entity(value = "replay.ids")
+public class ReplayId {
 
 	@Id
 	private String id;
@@ -13,7 +13,7 @@ public class StreamingEventReplayId {
 	
 	private Long replayId;
 	
-	public StreamingEventReplayId() {
+	public ReplayId() {
 		
 	}
 

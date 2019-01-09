@@ -1,49 +1,26 @@
 package com.nowellpoint.listener;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-
 import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.QueryResults;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
-import com.nowellpoint.listener.model.StreamingEventReplayId;
-import com.nowellpoint.util.SecretsManager;
 
-@WebListener
-public class StreamingEventListener implements ServletContextListener {
-    
-    private MongoClient mongoClient;
+public class StreamingEventListener {
+
 	private Datastore datastore;
-    
-    @Override
-	public void contextInitialized(ServletContextEvent event) {
-    	
-    	MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
-		mongoClient = new MongoClient(mongoClientUri);
-        
-        final Morphia morphia = new Morphia();
-        morphia.map(StreamingEvent.class);
-        morphia.map(StreamingEventReplayId.class);
-        morphia.map(StreamingEventListenerConfiguration.class);
-
-        datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
-        datastore.ensureIndexes();
-        
-        QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class);
-        
+	
+	public StreamingEventListener(Datastore datastore) {
+		this.datastore = datastore;
+	}
+	
+	public void start() {
+		QueryResults<StreamingEventListenerConfiguration> queryResults = datastore.find(StreamingEventListenerConfiguration.class);
         queryResults.asList().stream().forEach(configuration -> {
-        	new StreamingEventListenerSubscription(datastore, configuration);
+        	new TopicSubscription(datastore, configuration);
         });
-    }
-    
-    @Override
-	public void contextDestroyed(ServletContextEvent event) {
-    	mongoClient.close();
-    }
+	}
+	
+	public void stop() {
+		
+	}
 }

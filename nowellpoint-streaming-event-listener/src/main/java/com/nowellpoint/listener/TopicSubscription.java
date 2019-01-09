@@ -23,31 +23,30 @@ import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.listener.model.Payload;
+import com.nowellpoint.listener.model.ReplayId;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.listener.model.StreamingEventListenerConfiguration;
-import com.nowellpoint.listener.model.StreamingEventReplayId;
 import com.nowellpoint.util.SecretsManager;
 
-public class StreamingEventListenerSubscription {
+public class TopicSubscription {
 	
-	private static final Logger logger = Logger.getLogger(StreamingEventListenerSubscription.class);
+	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
 	private static ObjectMapper mapper = new ObjectMapper();
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
-//    private static final String ERROR_401 = "401";
-//    private static final String ERROR_403 = "403";
 
 	private Datastore datastore;
 	private HttpClient httpClient;
 	private BayeuxClient client;
 	private StreamingEventListenerConfiguration configuration;
-	
-	public StreamingEventListenerSubscription(Datastore datastore, StreamingEventListenerConfiguration configuration) {
+
+	public TopicSubscription(Datastore datastore, StreamingEventListenerConfiguration configuration) {
 		this.datastore = datastore;
 		this.configuration = configuration;
-		connect();
+		this.connect();
+		this.subscribe();
 	}
 	
 	private Token refreshToken(String refreshToken) {
@@ -65,7 +64,7 @@ public class StreamingEventListenerSubscription {
     }
 	
 	private Long getReplayId(String topicId) {
-		StreamingEventReplayId replayId = datastore.get(StreamingEventReplayId.class, topicId);
+		ReplayId replayId = datastore.get(ReplayId.class, topicId);
 		if (replayId != null) {
 			return replayId.getReplayId();
 		} else {
@@ -80,6 +79,62 @@ public class StreamingEventListenerSubscription {
 		} catch (Exception e) {
 			logger.error(e);
 		}
+	}
+	
+	private void subscribe() {
+		client.getChannel(configuration.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
+
+			@Override
+			public void onMessage(ClientSessionChannel channel, Message message) {
+				
+				Long start = System.currentTimeMillis();
+				
+				com.nowellpoint.client.sforce.model.StreamingEvent source = null;
+	
+				try {
+					logger.info("**** start message received ****");
+					JsonNode node = mapper.valueToTree(message.getDataAsMap());
+					logger.info(node.toString());
+					source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
+				} catch (Exception e) {
+					logger.error(e);
+				}
+				
+				Payload payload = new Payload();
+				payload.setId(source.getSobject().getId());
+				payload.setName(source.getSobject().getName());
+				payload.setCreatedById(source.getSobject().getCreatedById());
+				payload.setCreatedDate(source.getSobject().getCreatedDate());
+				payload.setLastModifiedById(source.getSobject().getLastModifiedById());
+				payload.setLastModifiedDate(source.getSobject().getLastModifiedDate());
+				
+				StreamingEvent streamingEvent = new StreamingEvent();
+				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
+				streamingEvent.setOrganizationId(configuration.getOrganizationId());
+				streamingEvent.setReplayId(source.getEvent().getReplayId());
+				streamingEvent.setType(source.getEvent().getType());
+				streamingEvent.setSource(configuration.getSource());
+				streamingEvent.setPayload(payload);
+				
+				try {
+					datastore.save(streamingEvent);
+				} catch (com.mongodb.DuplicateKeyException e) {
+					logger.info(e.getErrorMessage());
+				}
+				
+				ReplayId streamingEventReplayId = new ReplayId();
+				streamingEventReplayId.setId(configuration.getTopicId());
+				streamingEventReplayId.setChannel(channel.getChannelId().getId());
+				streamingEventReplayId.setReplayId(source.getEvent().getReplayId());
+				
+				datastore.save(streamingEventReplayId);
+				
+				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
+				logger.info("**** end message received ****");
+			}
+		});
+		
+		logger.info("Subscribed to channel: " + configuration.getChannel());
 	}
 	
 	private void connect() {
@@ -145,10 +200,6 @@ public class StreamingEventListenerSubscription {
 			
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
-				logger.info("**** start handshake ****");
-				logger.info(channel.getChannelId());
-				logger.info("success: " + message.isSuccessful());
-				logger.info("clientId: " + message.getClientId());
 				if (! message.isSuccessful()) {
 					JsonNode node = mapper.valueToTree(message);
 					logger.error(node.asText());
@@ -162,10 +213,6 @@ public class StreamingEventListenerSubscription {
 			
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
-				logger.info("**** connect ****");
-				logger.info(channel.getChannelId());
-				logger.info("success: " + message.isSuccessful());
-				logger.info("clientId: " + message.getClientId());
 				if (! message.isSuccessful()) {
 					JsonNode node = mapper.valueToTree(message);
 					logger.error(node.asText());
@@ -180,10 +227,6 @@ public class StreamingEventListenerSubscription {
 			
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
-				logger.info("**** subscribe ****");
-				logger.info(message.isSuccessful());
-				logger.info(message.getClientId());
-				logger.info(channel.getChannelId());
 				if (! message.isSuccessful()) {
 					logger.error(message.get("error"));
 				}
@@ -197,63 +240,5 @@ public class StreamingEventListenerSubscription {
         if (!connected) {
         	logger.error("unable to connect");
         }
-        
-        client.batch(new Runnable() {
-        	public void run() {
-        		client.getChannel(configuration.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
-
-					@Override
-        			public void onMessage(ClientSessionChannel channel, Message message) {
-						
-						Long start = System.currentTimeMillis();
-						
-        				logger.info("**** message received ****");
-        				
-        				com.nowellpoint.client.sforce.model.StreamingEvent source = null;
-        	
-        				try {
-        					logger.info("**** start message data ****");
-        					JsonNode node = mapper.valueToTree(message.getDataAsMap());
-        					logger.info(node.toString());
-        					logger.info("**** end message data ****");
-        					source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
-        				} catch (Exception e) {
-        					logger.error(e);
-        				}
-        				
-        				Payload payload = new Payload();
-        				payload.setId(source.getSobject().getId());
-        				payload.setName(source.getSobject().getName());
-        				payload.setCreatedById(source.getSobject().getCreatedById());
-        				payload.setCreatedDate(source.getSobject().getCreatedDate());
-        				payload.setLastModifiedById(source.getSobject().getLastModifiedById());
-        				payload.setLastModifiedDate(source.getSobject().getLastModifiedDate());
-        				
-        				StreamingEvent streamingEvent = new StreamingEvent();
-        				streamingEvent.setEventDate(source.getEvent().getCreatedDate());
-        				streamingEvent.setOrganizationId(configuration.getOrganizationId());
-        				streamingEvent.setReplayId(source.getEvent().getReplayId());
-        				streamingEvent.setType(source.getEvent().getType());
-        				streamingEvent.setSource(configuration.getSource());
-        				streamingEvent.setPayload(payload);
-        				
-        				try {
-        					datastore.save(streamingEvent);
-        				} catch (com.mongodb.DuplicateKeyException e) {
-        					logger.info(e.getErrorMessage());
-        				}
-        				
-        				StreamingEventReplayId streamingEventReplayId = new StreamingEventReplayId();
-        				streamingEventReplayId.setId(configuration.getTopicId());
-        				streamingEventReplayId.setChannel(channel.getChannelId().getId());
-        				streamingEventReplayId.setReplayId(source.getEvent().getReplayId());
-        				
-        				datastore.save(streamingEventReplayId);
-        				
-        				logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
-        			}
-        		});
-        	}
-        });
 	}
 }
