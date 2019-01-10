@@ -12,15 +12,13 @@ public class TestGetCountryList {
 	
 	@Test
 	public void testGetCountries() {
-		ContentService service = new ContentService();
-		IsoCountryList countryList = service.getCountries();
+		IsoCountryList countryList = ContentService.getInstance().getCountries();
 		assertTrue(countryList.getSize() > 0);
 	}
 	
 	@Test
 	public void testGetPlans() {
-		ContentService service = new ContentService();
-		PlanList planList = service.getPlans();
+		PlanList planList = ContentService.getInstance().getPlans();
 		assertTrue(planList.getSize() > 0);
 	}
 }

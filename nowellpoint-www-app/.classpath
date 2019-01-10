@@ -90,10 +90,10 @@
   <classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7.jar" sourcepath="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.475/aws-java-sdk-s3-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.475/aws-java-sdk-s3-1.11.475-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.475/aws-java-sdk-kms-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.475/aws-java-sdk-kms-1.11.475-sources.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-core"/>
   <classpathentry kind="src" path="/nowellpoint-aws-admin"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.228/aws-java-sdk-s3-1.11.228.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.228/aws-java-sdk-kms-1.11.228.jar"/>
   <classpathentry kind="src" path="/nowellpoint-aws-sforce"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar" sourcepath="M2_REPO/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/seleniumhq/selenium/selenium-java/3.14.0/selenium-java-3.14.0.jar" sourcepath="M2_REPO/org/seleniumhq/selenium/selenium-java/3.14.0/selenium-java-3.14.0-sources.jar"/>

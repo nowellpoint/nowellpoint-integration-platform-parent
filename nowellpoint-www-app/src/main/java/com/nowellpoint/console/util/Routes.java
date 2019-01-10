@@ -18,9 +18,7 @@ import com.nowellpoint.console.view.StartController;
 import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.content.model.IsoCountry;
-import com.nowellpoint.content.model.IsoCountryList;
 import com.nowellpoint.content.model.Plan;
-import com.nowellpoint.content.model.PlanList;
 import com.nowellpoint.content.service.ContentService;
 
 import freemarker.template.Configuration;
@@ -68,9 +66,9 @@ public class Routes {
 	 */
 	
 	private static List<IsoCountry> loadCountries(Locale locale) {				
-		ContentService service = new ContentService();
-		IsoCountryList countryList = service.getCountries();
-		return countryList.getItems();
+		return ContentService.getInstance()
+				.getCountries()
+				.getItems();
 	}
 	
 	/**
@@ -79,8 +77,8 @@ public class Routes {
 	 */
 	
 	private static List<Plan> loadPlans(Locale locale) {				
-		ContentService service = new ContentService();
-		PlanList planList = service.getPlans();
-		return planList.getItems();
+		return ContentService.getInstance()
+				.getPlans()
+				.getItems();
 	}
 }

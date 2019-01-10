@@ -25,7 +25,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import com.nowellpoint.console.entity.AggregationResult;
-import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCardRequest;

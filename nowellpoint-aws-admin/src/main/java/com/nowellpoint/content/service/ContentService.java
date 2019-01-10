@@ -14,7 +14,14 @@ import com.nowellpoint.content.model.PlanList;
 public class ContentService extends S3ObjectService {
 	
 	private static final Logger LOG = Logger.getLogger(ContentService.class.getName());
+	private static final ContentService contentService = new ContentService();
 	private static final String S3_BUCKET = "nowellpoint-static-content";
+	
+	private ContentService() {}
+	
+	public static ContentService getInstance() {
+		return contentService;
+	}
 	
 	public IsoCountryList getCountries() {
 		

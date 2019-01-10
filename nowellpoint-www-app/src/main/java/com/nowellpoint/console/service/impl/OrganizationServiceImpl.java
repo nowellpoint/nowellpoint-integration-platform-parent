@@ -1,8 +1,11 @@
 package com.nowellpoint.console.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,11 +27,17 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.query.Query;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -47,7 +56,6 @@ import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
-import com.nowellpoint.console.entity.StreamingEventListenerConfigurationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
 import com.nowellpoint.console.model.AddressRequest;
@@ -57,12 +65,11 @@ import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
 import com.nowellpoint.console.model.FeedItem;
-import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.StreamingEventListener;
-import com.nowellpoint.console.model.StreamingEventListenerConfiguration;
+import com.nowellpoint.console.model.StreamingEventListenerRequest;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
@@ -70,13 +77,14 @@ import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.SecretsManager;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
 	private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
+	private static final String S3_BUCKET = "com.nowellpoint.configuration";
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
@@ -240,17 +248,17 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			String topicId = savePushTopic(token, listener);
 			
-			StreamingEventListenerConfiguration configuration = StreamingEventListenerConfiguration.builder()
-					.active(listener.getActive())
-					.apiVersion(listener.getApiVersion())
-					.channel(listener.getName())
-					.organizationId(instance.getId())
-					.refreshToken(instance.getConnection().getRefreshToken())
-					.source(listener.getSource())
-					.topicId(topicId)
-					.build();
+//			StreamingEventListenerConfiguration configuration = StreamingEventListenerConfiguration.builder()
+//					.active(listener.getActive())
+//					.apiVersion(listener.getApiVersion())
+//					.channel(listener.getName())
+//					.organizationId(instance.getId())
+//					.refreshToken(instance.getConnection().getRefreshToken())
+//					.source(listener.getSource())
+//					.topicId(topicId)
+//					.build();
 					
-			saveStreamingEventListenerConfiguration(configuration);
+			//saveStreamingEventListenerConfiguration(configuration);
 			
 			listeners.removeIf(l -> listenerOptional.get().getSource().equals(l.getSource()));
 			
@@ -289,6 +297,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.from(instance)
 				.streamingEventListeners(listeners)
 				.build();
+		
+		saveConfiguration(organization);
 		
 		return update(organization);
 	}
@@ -731,32 +741,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 	}
 	
-	private void saveStreamingEventListenerConfiguration(StreamingEventListenerConfiguration configuration) {
-		StreamingEventListenerConfigurationDAO dao = new StreamingEventListenerConfigurationDAO(com.nowellpoint.console.entity.StreamingEventListenerConfiguration.class, datastore);
-		
-		Query<com.nowellpoint.console.entity.StreamingEventListenerConfiguration> query = dao.createQuery().field("topicId").equal(configuration.getTopicId());
-		
-		com.nowellpoint.console.entity.StreamingEventListenerConfiguration entity = dao.findOne(query);
-		
-		if (entity == null) {
-			entity = new com.nowellpoint.console.entity.StreamingEventListenerConfiguration();
-			entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get().getId()));
-			entity.setCreatedOn(getCurrentDateTime());
-		}
-		
-		entity.setActive(configuration.isActive());
-		entity.setApiVersion(configuration.getApiVersion());
-		entity.setChannel("/topic/".concat(configuration.getChannel()));
-		entity.setOrganizationId(configuration.getOrganizationId());
-		entity.setRefreshToken(configuration.getRefreshToken());
-		entity.setSource(configuration.getSource());
-		entity.setTopicId(configuration.getTopicId());
-		entity.setLastUpdatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get().getId()));
-		entity.setLastUpdatedOn(getCurrentDateTime());
-		
-		dao.save(entity);
-	}
-	
 	private String savePushTopic(Token token, StreamingEventListener listener) {
 		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
 				.active(listener.getActive())
@@ -803,6 +787,35 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		entity = dao.get(entity.getId());
 		putEntry(entity.getId().toString(), entity);
 		return Organization.of(entity);
+	}
+	
+	private void saveConfiguration(Organization organization) {
+		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+				
+		ObjectNode object = new ObjectMapper().createObjectNode()
+				.put("organizationId", organization.getId())
+				.put("refreshToken", organization.getConnection().getRefreshToken());
+		
+		ArrayNode array = object.putArray("topics");
+		
+		organization.getStreamingEventListeners().forEach(l -> {
+			array.addObject()
+			.put("apiVersion", l.getApiVersion())
+			.put("channel", "/topic/".concat(l.getName()))
+			.put("source", l.getSource())
+			.put("topicId", l.getTopicId());
+		});
+		
+		byte[] bytes = object.toString().getBytes(StandardCharsets.UTF_8);
+		InputStream input = new ByteArrayInputStream(bytes);
+		
+		ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("application/json");
+        metadata.setContentLength(bytes.length);
+		
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "streaming-event-listeners/".concat(organization.getId()), input, metadata);
+        
+        s3client.putObject(request);
 	}
 	
 	private PdfPTable getHeader(Organization organization, Transaction transaction) {

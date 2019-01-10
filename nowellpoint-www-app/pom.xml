@@ -141,6 +141,11 @@
 			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.nowellpoint</groupId>
 			<artifactId>nowellpoint-aws-core</artifactId>
 			<version>${project.version}</version>
