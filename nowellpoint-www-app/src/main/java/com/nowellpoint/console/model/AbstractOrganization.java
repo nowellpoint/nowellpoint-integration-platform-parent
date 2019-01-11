@@ -36,7 +36,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.id(getId())
 				.resourcePath(Path.Resource.ORANIZATIONS)
 				.build();
-	} 
+	}
 	
 	public static Organization of(com.nowellpoint.console.entity.Organization entity) {
 		return entity == null ? null : Organization.builder()

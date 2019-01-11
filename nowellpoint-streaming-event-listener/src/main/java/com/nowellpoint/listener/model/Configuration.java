@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Configuration {
 	private String organizationId;
+	private String apiVersion;
 	private String refreshToken;
 	private List<Topic> topics;
 }

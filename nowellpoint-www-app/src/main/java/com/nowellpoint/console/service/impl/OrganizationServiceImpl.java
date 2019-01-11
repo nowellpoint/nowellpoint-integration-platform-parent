@@ -240,6 +240,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			StreamingEventListener listener = StreamingEventListener.builder()
 					.from(listenerOptional.get())
 					.active(request.isActive())
+					.apiVersion(instance.getConnection().getApiVersion())
 					.notifyForOperationCreate(request.getNotifyForOperationCreate())
 					.notifyForOperationDelete(request.getNotifyForOperationDelete())
 					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
@@ -247,18 +248,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.build();
 			
 			String topicId = savePushTopic(token, listener);
-			
-//			StreamingEventListenerConfiguration configuration = StreamingEventListenerConfiguration.builder()
-//					.active(listener.getActive())
-//					.apiVersion(listener.getApiVersion())
-//					.channel(listener.getName())
-//					.organizationId(instance.getId())
-//					.refreshToken(instance.getConnection().getRefreshToken())
-//					.source(listener.getSource())
-//					.topicId(topicId)
-//					.build();
-					
-			//saveStreamingEventListenerConfiguration(configuration);
 			
 			listeners.removeIf(l -> listenerOptional.get().getSource().equals(l.getSource()));
 			
@@ -794,16 +783,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				
 		ObjectNode object = new ObjectMapper().createObjectNode()
 				.put("organizationId", organization.getId())
+				.put("apiVersion", organization.getConnection().getApiVersion())
 				.put("refreshToken", organization.getConnection().getRefreshToken());
 		
 		ArrayNode array = object.putArray("topics");
 		
 		organization.getStreamingEventListeners().forEach(l -> {
-			array.addObject()
-			.put("apiVersion", l.getApiVersion())
-			.put("channel", "/topic/".concat(l.getName()))
-			.put("source", l.getSource())
-			.put("topicId", l.getTopicId());
+			array.addObject().put("channel", "/topic/".concat(l.getName())).put("active", l.getActive()).put("source", l.getSource()).put("topicId", l.getTopicId());
 		});
 		
 		byte[] bytes = object.toString().getBytes(StandardCharsets.UTF_8);

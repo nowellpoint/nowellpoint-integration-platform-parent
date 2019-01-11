@@ -31,6 +31,7 @@ public abstract class AbstractConnection {
 	
 	public static final String CONNECTED = "Connected";
 	public static final String NOT_CONNECTED = "Not Connected";
+	private static final String API_VERSION = "44.0";
 	
 	@Value.Default
 	public String getStatus() {
@@ -40,6 +41,11 @@ public abstract class AbstractConnection {
 	@Value.Default
 	public Boolean getIsConnected() {
 		return Boolean.FALSE;
+	}
+	
+	@Value.Derived
+	public String getApiVersion() {
+		return API_VERSION;
 	}
 	
 	public static Connection of(com.nowellpoint.console.entity.Connection entity) {

@@ -20,6 +20,7 @@ import com.nowellpoint.console.util.Path;
 @JsonDeserialize(as = StreamingEventListener.class)
 public abstract class AbstractStreamingEventListener {
 	public abstract @Nullable String getTopicId();
+	public abstract @Nullable String getApiVersion();
 	public abstract String getPrefix();
 	public abstract String getSource();
 	public abstract String getName();
@@ -30,7 +31,6 @@ public abstract class AbstractStreamingEventListener {
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract @Nullable Meta getMeta();
 	
-	private static final String API_VERSION = "44.0";
 	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
 	
 	@Value.Derived
@@ -67,11 +67,6 @@ public abstract class AbstractStreamingEventListener {
 	@Value.Derived
 	public String getQuery() {
 		return String.format(QUERY, getSource());
-	}
-	
-	@Value.Derived
-	public String getApiVersion() {
-		return API_VERSION;
 	}
 	
 	@Override

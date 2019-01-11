@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Topic {
-	private String apiVersion;
 	private String channel;
 	private String source;
 	private String topicId;
+	private Boolean active;
 }

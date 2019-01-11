@@ -178,8 +178,9 @@ public class TestGroupBy {
 		
 		int i = 0;
 		
-		while (i < 10) {
+		while (i < 5) {
 			updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), "0013A00001YjszLQAR");
+			updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
 			i++;
 		}
 	}
@@ -206,6 +207,23 @@ public class TestGroupBy {
 				.toString();
 		
 		HttpResponse response = RestResource.post(sobjectUrl.concat("Account/").concat(accountId).concat("/?_HttpMethod=PATCH"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(accessToken)
+				.body(body)
+				.contentType(MediaType.APPLICATION_JSON)
+                .execute();
+		
+		assertEquals(204, response.getStatusCode());
+	}
+	
+	private void updateOpportunity(String accessToken, String sobjectUrl, String opportunityId) {
+		
+		String body = mapper.createObjectNode()
+				.put("NextStep", "Call")
+				.toString();
+		
+		HttpResponse response = RestResource.post(sobjectUrl.concat("Opportunity/").concat(opportunityId).concat("/?_HttpMethod=PATCH"))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(accessToken)

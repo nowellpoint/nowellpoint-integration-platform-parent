@@ -24,7 +24,9 @@ public class StreamingEventListener {
 		
 		ObjectListing objectListing = s3client.listObjects(S3_BUCKET);
 		
-		objectListing.getObjectSummaries().stream().forEach(os -> {
+		logger.info(objectListing.getObjectSummaries().size());
+		
+		objectListing.getObjectSummaries().stream().filter(os -> os.getSize() > 0).forEach(os -> {
 			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
 			builder.setBucket(os.getBucketName());
 			builder.setKey(os.getKey());
