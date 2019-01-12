@@ -2,15 +2,14 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <content id="content">
-            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
+            <div class="container-fluid pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h4 class="dashhead-title font-weight-normal">${messages["streaming.events"]}</h4>
                     </div>
                 </div>
             </div>
-            <hr>
-            <div class="container-fluid">
+            <div class="container-fluid border-top">
                 <div class="row">
                     <div class="col-10 p-3">
                         <div id="events-last-7-days"></div>
