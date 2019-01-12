@@ -76,7 +76,7 @@ public class TopicSubscription {
 		}
 	}
 	
-	private void disconnect() {
+	public void disconnect() {
 		client.disconnect();
 		try {
 			httpClient.stop();
