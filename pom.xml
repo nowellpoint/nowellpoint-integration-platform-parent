@@ -75,7 +75,7 @@
 		<module>nowellpoint-payment-gateway-webhook</module>
 		<module>nowellpoint-sforce-outbound-message-service</module>
 		<module>nowellpoint-aws-api</module>
-        <module>nowellpoint-signup-service</module>
+<!--        <module>nowellpoint-signup-service</module>-->
 		<module>nowellpoint-www-app</module>
 		<module>nowellpoint-aws-test</module>
 	</modules>

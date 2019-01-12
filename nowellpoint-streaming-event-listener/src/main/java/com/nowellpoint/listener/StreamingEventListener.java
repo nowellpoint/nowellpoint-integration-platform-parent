@@ -16,7 +16,7 @@ import com.nowellpoint.listener.model.Configuration;
 public class StreamingEventListener {
 	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
-	private static final String S3_BUCKET = "com.nowellpoint.configuration";
+	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	public void start() {

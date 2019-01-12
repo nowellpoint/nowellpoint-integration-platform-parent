@@ -1,34 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-        
-    <wb-module deploy-name="nowellpoint-aws-api">
-                
-        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                
-        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-                
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-                
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
-                
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
-                
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
-        <dependent-module archiveName="nowellpoint-aws-core-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="nowellpoint-aws-data-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-data/nowellpoint-aws-data">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="nowellpoint-aws-sforce-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-                
-        <property name="context-root" value="nowellpoint-aws-api"/>
-                
-        <property name="java-output-path" value="/nowellpoint-aws-api/target/classes"/>
             
-    </wb-module>
     
+    <wb-module deploy-name="nowellpoint-aws-api">
+                        
+        
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+                        
+        
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+                        
+        
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
+                
+        <dependent-module archiveName="nowellpoint-aws-core-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                
+        <dependent-module archiveName="nowellpoint-aws-data-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-data/nowellpoint-aws-data">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                
+        <dependent-module archiveName="nowellpoint-aws-sforce-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-sforce/nowellpoint-aws-sforce">
+                        
+            <dependency-type>uses</dependency-type>
+                    
+        </dependent-module>
+                        
+        
+        <property name="context-root" value="nowellpoint-aws-api"/>
+                        
+        
+        <property name="java-output-path" value="/nowellpoint-aws-api/target/classes"/>
+                    
+    
+    </wb-module>
+        
+
 </project-modules>

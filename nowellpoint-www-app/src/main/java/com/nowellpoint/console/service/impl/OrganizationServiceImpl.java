@@ -84,7 +84,7 @@ import com.nowellpoint.util.SecretsManager;
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
 	private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
-	private static final String S3_BUCKET = "com.nowellpoint.configuration";
+	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
@@ -101,31 +101,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	public OrganizationServiceImpl() {
 		dao = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
-
-//		Calendar today = Calendar.getInstance();
-//		today.set(Calendar.HOUR_OF_DAY, 2);
-//		today.set(Calendar.MINUTE, 0);
-//		today.set(Calendar.SECOND, 0);
-//		
-//		Timer timer = new Timer();
-//		timer.schedule(new TimerTask() {
-//			public void run() {
-//				List<com.nowellpoint.console.entity.Organization> organizations = dao.createQuery()
-//						.field("connection")
-//						.notEqual(null)
-//						.asList();
-//				
-//				organizations.stream().forEach(instance -> {
-//					System.out.println(new java.util.Date() + " " + instance.getName());
-//					
-//					//JsonNode tokenNode = refreshToken(String.valueOf(Base64.getDecoder().decode(instance.getConnection().getRefreshToken())));
-//					
-//					//System.out.println(tokenNode.toString());
-//					
-//					
-//				});
-//			}
-//		}, today.getTime(), TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
 	}
 	
 	@Override
@@ -799,7 +774,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
         metadata.setContentType("application/json");
         metadata.setContentLength(bytes.length);
 		
-		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "streaming-event-listeners/".concat(organization.getId()), input, metadata);
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "configuration/".concat(organization.getId()), input, metadata);
         
         s3client.putObject(request);
 	}
