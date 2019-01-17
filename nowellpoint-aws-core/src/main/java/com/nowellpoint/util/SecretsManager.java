@@ -9,7 +9,26 @@ import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@SuppressWarnings("unchecked")
 public class SecretsManager {
+	
+	private static HashMap<String, String> secretMap = new HashMap<>(); 
+    
+    static {
+    	AWSSecretsManager client = AWSSecretsManagerClientBuilder.defaultClient();
+
+        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(System.getenv("AWS_SECRET_NAME"));
+
+        GetSecretValueResult getSecretValueResult = client.getSecretValue(getSecretValueRequest);
+        
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+    		secretMap = objectMapper.readValue(getSecretValueResult.getSecretString(), HashMap.class);
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    }
 	
 	public static String getMongoClientUri() {
 		return getSecret("MONGO_CLIENT_URI");
@@ -91,22 +110,7 @@ public class SecretsManager {
 		return getSecret("SALESFORCE_CLIENT_SECRET");
 	}
 	
-	public static String getSecret(String secretName) {
-		AWSSecretsManager client = AWSSecretsManagerClientBuilder.defaultClient();
-
-	    GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId("/sandbox/console");
-
-	    GetSecretValueResult getSecretValueResult = client.getSecretValue(getSecretValueRequest);
-	    
-	    final ObjectMapper objectMapper = new ObjectMapper();
-
-	    try {
-			@SuppressWarnings("unchecked")
-			final HashMap<String, String> secretMap = objectMapper.readValue(getSecretValueResult.getSecretString(), HashMap.class);
-			return secretMap.get(secretName);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+	private static String getSecret(String secretName) {
+		return secretMap.get(secretName);
 	}
 }
