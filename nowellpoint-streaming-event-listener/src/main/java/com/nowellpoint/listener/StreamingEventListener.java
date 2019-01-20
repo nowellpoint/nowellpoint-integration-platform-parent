@@ -27,6 +27,8 @@ import com.nowellpoint.listener.model.Configuration;
 
 public class StreamingEventListener {
 	
+	private static StreamingEventListener instance = new StreamingEventListener();
+	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
 	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
 	//private static final String CONFIGURATION_QUEUE = "streaming-event-listener-configuration-events";
@@ -36,6 +38,8 @@ public class StreamingEventListener {
 //	private static SQSConnectionFactory connectionFactory;
 //	private static SQSConnection connection;
 //	private static Session session;
+	
+	private StreamingEventListener() {}
 	
 	public void start() {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
@@ -77,6 +81,10 @@ public class StreamingEventListener {
 			topicSubscriptions.get(k).disconnect();
 			topicSubscriptions.remove(k);
 		});
+	}
+	
+	public static StreamingEventListener getInstance() {
+		return instance;
 	}
 	
 //	class StreamingEventMessageListener implements MessageListener {

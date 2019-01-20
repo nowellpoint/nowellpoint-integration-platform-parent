@@ -17,7 +17,7 @@ public class StreamingEventContextListener implements ServletContextListener {
     	connection = MongoConnection.getInstance();
     	connection.connect();
         
-        listener = new StreamingEventListener();
+        listener = StreamingEventListener.getInstance();
         listener.start();
     }
     
