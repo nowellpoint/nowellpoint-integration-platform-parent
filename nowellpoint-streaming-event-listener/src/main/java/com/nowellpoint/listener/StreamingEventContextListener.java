@@ -13,6 +13,7 @@ public class StreamingEventContextListener implements ServletContextListener {
     
     @Override
 	public void contextInitialized(ServletContextEvent event) {
+    	System.out.println("**** Context start");
     	connection = MongoConnection.getInstance();
     	connection.connect();
         

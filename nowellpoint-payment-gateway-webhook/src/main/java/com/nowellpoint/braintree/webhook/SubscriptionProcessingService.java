@@ -236,13 +236,13 @@ public class SubscriptionProcessingService implements RequestHandler<DynamodbEve
 		SendGrid sendgrid = new SendGrid(apiKey);
 	    
 	    Request request = new Request();
-	    request.method = Method.POST;
-	    request.endpoint = "mail/send";
-	    request.body = mail.build();
+	    request.setMethod(Method.POST);
+	    request.setEndpoint("mail/send");
+	    request.setBody(mail.build());
 	    
 	    Response response = sendgrid.api(request);
 	    
-	    logger.log("sendInvoiceMessage: " + response.statusCode + " : " + response.body);	
+	    logger.log("sendInvoiceMessage: " + response.getStatusCode() + " : " + response.getBody());	
 	}
 	
 	private String createSubscriptionMessage(String id, String status, Calendar nextBillingDate, Transaction transaction) {
