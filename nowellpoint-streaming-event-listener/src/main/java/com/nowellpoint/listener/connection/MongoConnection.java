@@ -6,7 +6,6 @@ import org.mongodb.morphia.Morphia;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
-import com.nowellpoint.listener.model.ReplayId;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
 
@@ -28,7 +27,6 @@ public class MongoConnection {
         
         final Morphia morphia = new Morphia();
         morphia.map(StreamingEvent.class);
-        morphia.map(ReplayId.class);
 
         datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
         datastore.ensureIndexes();

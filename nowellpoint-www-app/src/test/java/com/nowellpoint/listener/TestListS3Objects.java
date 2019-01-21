@@ -11,12 +11,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestListS3Objects {
+
+	private static final String BUCKET = "streaming-event-listener-us-east-1-600862814314";
+	private static final String PREFIX = "configuration/";
 	
 	@Test
 	public void testListS3Objects() {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
-		ObjectListing objectListing = s3client.listObjects(new ListObjectsRequest().withBucketName("streaming-event-listener-us-east-1-600862814314").withPrefix("configuration"));
+		ObjectListing objectListing = s3client.listObjects(new ListObjectsRequest().withBucketName(BUCKET).withPrefix(PREFIX));
 		
 		try {
 			System.out.println(new ObjectMapper().writeValueAsString(objectListing));

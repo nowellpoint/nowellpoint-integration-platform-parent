@@ -26,14 +26,13 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.Configuration;
 import com.nowellpoint.listener.model.Payload;
-import com.nowellpoint.listener.model.ReplayId;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
 
 public class TopicSubscription {
 	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
-	private static ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int STOP_TIMEOUT = 120 * 1000; 
@@ -66,15 +65,6 @@ public class TopicSubscription {
 		
 		return oauthAthenticationResponse.getToken();
     }
-	
-	private Long getReplayId(String topicId) {
-		ReplayId replayId = datastore.get(ReplayId.class, topicId);
-		if (replayId != null) {
-			return replayId.getReplayId();
-		} else {
-			return Long.valueOf(-2);
-		}
-	}
 	
 	public void disconnect() {
 		client.disconnect();
@@ -128,13 +118,6 @@ public class TopicSubscription {
 						logger.info(e.getErrorMessage());
 					}
 					
-					ReplayId replayId = new ReplayId();
-					replayId.setId(t.getTopicId());
-					replayId.setChannel(channel.getChannelId().getId());
-					replayId.setReplayId(source.getEvent().getReplayId());
-					
-					datastore.save(replayId);
-					
 					logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
 					logger.info("**** end message received ****");
 				}
@@ -167,7 +150,7 @@ public class TopicSubscription {
         };
         
         configuration.getTopics().stream().forEach(t -> {
-        	dataMap.put(t.getChannel(), getReplayId(t.getTopicId()));
+        	dataMap.put(t.getChannel(), Long.valueOf(-1));
         });
 
         client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
