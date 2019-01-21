@@ -14,14 +14,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.logging.Logger;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 //import com.amazon.sqs.javamessaging.SQSConnection;
 //import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ListObjectsV2Request;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.listener.model.Configuration;
 
@@ -30,7 +39,8 @@ public class StreamingEventListener {
 	private static StreamingEventListener instance = new StreamingEventListener();
 	
 	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
-	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
+	private static final String BUCKET = "streaming-event-listener-us-east-1-600862814314";
+	private static final String PREFIX = "configuration/";
 	//private static final String CONFIGURATION_QUEUE = "streaming-event-listener-configuration-events";
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private static final Map<String,TopicSubscription> topicSubscriptions = new ConcurrentHashMap<>();
@@ -42,9 +52,17 @@ public class StreamingEventListener {
 	private StreamingEventListener() {}
 	
 	public void start() {
+		
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
-		ObjectListing objectListing = s3client.listObjects(S3_BUCKET);
+		ObjectListing objectListing = s3client.listObjects(new ListObjectsRequest().withBucketName(BUCKET).withPrefix(PREFIX));
+		
+		try {
+			logger.info(mapper.writeValueAsString(objectListing));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		logger.info(objectListing.getObjectSummaries().size());
 		
@@ -52,6 +70,8 @@ public class StreamingEventListener {
 			S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
 			builder.setBucket(os.getBucketName());
 			builder.setKey(os.getKey());
+			
+			logger.info(os.getKey());
 			
 			GetObjectRequest request = new GetObjectRequest(builder.build());
 			
@@ -63,6 +83,45 @@ public class StreamingEventListener {
 				logger.error(e);
 			}
 		});
+		
+		ListObjectsV2Request request = new ListObjectsV2Request().withBucketName("nowellpoint-profile-photos").withMaxKeys(2);
+        ListObjectsV2Result result;
+        
+        try {
+			logger.info(mapper.writeValueAsString(request));
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+        do {
+            result = s3client.listObjectsV2(request);
+            
+            try {
+    			logger.info(mapper.writeValueAsString(result));
+    		} catch (JsonProcessingException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+            
+            logger.info(result.getObjectSummaries().size());
+
+            for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
+                System.out.printf(" - %s (size: %d)\n", objectSummary.getKey(), objectSummary.getSize());
+            }
+            // If there are more than maxKeys keys in the bucket, get a continuation token
+            // and list the next objects.
+            String token = result.getNextContinuationToken();
+            System.out.println("Next Continuation Token: " + token);
+            request.setContinuationToken(token);
+        } while (result.isTruncated());
+        
+        S3ObjectIdBuilder builder = new S3ObjectIdBuilder();
+		builder.setBucket(BUCKET);
+		builder.setKey("");
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest(builder.build());
+		
 		
 //    	try {
 //			Queue queue = session.createQueue(CONFIGURATION_QUEUE);

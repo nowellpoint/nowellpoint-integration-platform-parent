@@ -42,26 +42,26 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<scope>provided</scope>
 			<version>${jackson.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<scope>provided</scope>
 			<version>${jackson.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<scope>provided</scope>
 			<version>${jackson.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-s3</artifactId>
 			<version>${version.aws.sdk}</version>
-		</dependency>
+ 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
