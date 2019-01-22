@@ -40,6 +40,8 @@ public class StreamingEventListener {
 	private static final String QUEUE = "streaming-event-listener-configuration-events";
 	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 	
+	private final ObjectMapper mapper = new ObjectMapper();
+	
 	private SQSConnectionFactory connectionFactory;
 	private SQSConnection connection;
 	private Session session;
@@ -49,8 +51,6 @@ public class StreamingEventListener {
 	}
 	
 	public void start() {
-		
-		final ObjectMapper mapper = new ObjectMapper();
 		
 		final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
@@ -154,17 +154,23 @@ public class StreamingEventListener {
 				
 				AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 				
+				String key = event.getRecords().get(0).getS3().getObject().getKey();
+				
 				S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
 						.withBucket(event.getRecords().get(0).getS3().getBucket().getName())
-						.withKey(event.getRecords().get(0).getS3().getObject().getKey());
+						.withKey(key);
 				
 				S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
 				
 				TopicConfiguration topicConfiguration = new ObjectMapper().readValue(object.getObjectContent(), TopicConfiguration.class);
 				
 				LOGGER.info(topicConfiguration.getOrganizationId());
+				
+				TOPIC_SUBSCRIPTIONS.get(key).disconnect();
 			
-				//TOPIC_SUBSCRIPTIONS.replace(event.getRecords().get(0).getS3().getObject().getKey(), );
+				TOPIC_SUBSCRIPTIONS.replace(key, new TopicSubscription(
+						mapper.readValue(object.getObjectContent(), TopicConfiguration.class), 
+						MongoConnection.getInstance().getDatastore()));
 			
 				message.acknowledge();
 			} catch (JMSException | IOException e) {
