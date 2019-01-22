@@ -74,7 +74,7 @@ public class TopicSubscription {
 		}
 	}
 	
-	private void subscribe() {
+	public void subscribe() {
 		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
@@ -126,7 +126,7 @@ public class TopicSubscription {
 		});
 	}
 	
-	private void connect() {
+	public void connect() {
 		
 		httpClient = new HttpClient();
 		httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -182,10 +182,7 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					JsonNode node = mapper.valueToTree(message);
-					logger.error(node.asText());
-					disconnect();
-					connect();
+					logger.error(channel.getChannelId() + ": " + message.toString());
 				}
 			}
 		});
@@ -195,12 +192,8 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					JsonNode node = mapper.valueToTree(message);
-					logger.error(node.asText());
-					disconnect();
-					connect();
+					logger.error(channel.getChannelId() + ": " + message.toString());
 				}
-				
 			}
 		});
         
@@ -209,7 +202,7 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					logger.error(message.get("error"));
+					logger.error(channel.getChannelId() + ": " + message.toString());
 				}
 			}
 		});

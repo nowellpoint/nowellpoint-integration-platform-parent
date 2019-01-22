@@ -1,8 +1,6 @@
 package com.nowellpoint.listener;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -30,7 +28,7 @@ import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 
-public class StreamingEventListener {
+public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 	
 	private static StreamingEventListener instance = new StreamingEventListener();
 	
@@ -38,21 +36,17 @@ public class StreamingEventListener {
 	private static final String BUCKET = "streaming-event-listener-us-east-1-600862814314";
 	private static final String PREFIX = "configuration/";
 	private static final String QUEUE = "streaming-event-listener-configuration-events";
-	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 	
 	private final ObjectMapper mapper = new ObjectMapper();
+	private final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
 	private SQSConnectionFactory connectionFactory;
 	private SQSConnection connection;
 	private Session session;
 	
-	private StreamingEventListener() {
-		
-	}
+	private StreamingEventListener() {}
 	
 	public void start() {
-		
-		final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
 		ListObjectsV2Request request = new ListObjectsV2Request()
 				.withBucketName(BUCKET)
@@ -74,7 +68,7 @@ public class StreamingEventListener {
     			
     			try {
     				
-    				addTopicSubscription(os.getKey(), new TopicSubscription(
+    				put(os.getKey(), new TopicSubscription(
     						mapper.readValue(object.getObjectContent(), TopicConfiguration.class), 
     						MongoConnection.getInstance().getDatastore()));
     				
@@ -108,16 +102,12 @@ public class StreamingEventListener {
 	
 	public void stop() {
 		stopQueue();
-		disconnectTopics();
+		disconnectAll();
 		mongoDisconnect();
 	}
 	
 	public static StreamingEventListener getInstance() {
 		return instance;
-	}
-	
-	private void addTopicSubscription(String key, TopicSubscription topicSubscription) {
-		TOPIC_SUBSCRIPTIONS.put(key, topicSubscription);
 	}
 	
 	private void mongoConnect() {
@@ -126,13 +116,6 @@ public class StreamingEventListener {
 	
 	private void mongoDisconnect() {
 		MongoConnection.getInstance().disconnect();
-	}
-	
-	private void disconnectTopics() {
-		TOPIC_SUBSCRIPTIONS.keySet().stream().forEach(k -> {
-			TOPIC_SUBSCRIPTIONS.get(k).disconnect();
-		});
-		TOPIC_SUBSCRIPTIONS.clear();
 	}
 	
 	private void stopQueue() {
@@ -150,34 +133,37 @@ public class StreamingEventListener {
 		public void onMessage(Message message) {
 			TextMessage textMessage = (TextMessage) message;
 			try {
-				S3Event event = new ObjectMapper().readValue(textMessage.getText(), S3Event.class);
+				S3Event event = mapper.readValue(textMessage.getText(), S3Event.class);
 				
-				AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+				event.getRecords().stream().forEach(record -> {
+					
+					String key = record.getS3().getObject().getKey();
+					
+					S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
+							.withBucket(record.getS3().getBucket().getName())
+							.withKey(key);
+					
+					S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
+					
+					disconnect(key);
+					
+					TopicConfiguration configuration = null;
+					try {
+						configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
+					} catch (IOException e) {
+						LOGGER.error(e);
+					}
+					
+					TopicSubscription subscription = new TopicSubscription(configuration, MongoConnection.getInstance().getDatastore());
+							
+					replace(key, subscription);
+				});
 				
-				String key = event.getRecords().get(0).getS3().getObject().getKey();
-				
-				S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
-						.withBucket(event.getRecords().get(0).getS3().getBucket().getName())
-						.withKey(key);
-				
-				S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
-				
-				TopicConfiguration topicConfiguration = new ObjectMapper().readValue(object.getObjectContent(), TopicConfiguration.class);
-				
-				LOGGER.info(topicConfiguration.getOrganizationId());
-				
-				TOPIC_SUBSCRIPTIONS.get(key).disconnect();
-			
-				TOPIC_SUBSCRIPTIONS.replace(key, new TopicSubscription(
-						mapper.readValue(object.getObjectContent(), TopicConfiguration.class), 
-						MongoConnection.getInstance().getDatastore()));
-			
 				message.acknowledge();
+				
 			} catch (JMSException | IOException e) {
 				LOGGER.error(e);
-			}
-			//topicSubscriptions.get("");
-			
+			}			
 		}
 	}
 }
