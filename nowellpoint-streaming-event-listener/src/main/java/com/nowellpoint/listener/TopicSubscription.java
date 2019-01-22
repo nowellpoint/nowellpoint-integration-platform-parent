@@ -89,7 +89,6 @@ public class TopicSubscription {
 					try {
 						logger.info("**** start message received ****");
 						JsonNode node = mapper.valueToTree(message.getDataAsMap());
-						logger.info(node.toString());
 						source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
 					} catch (Exception e) {
 						logger.error(e);
@@ -114,10 +113,10 @@ public class TopicSubscription {
 					try {
 						datastore.save(streamingEvent);
 					} catch (com.mongodb.DuplicateKeyException e) {
-						logger.info(e.getErrorMessage());
+						logger.warn(e.getErrorMessage());
 					}
 					
-					logger.info("Execution Time: ".concat(String.valueOf(System.currentTimeMillis() - start)));
+					logger.info("message processed in (ms): ".concat(String.valueOf(System.currentTimeMillis() - start)));
 					logger.info("**** end message received ****");
 				}
 			});

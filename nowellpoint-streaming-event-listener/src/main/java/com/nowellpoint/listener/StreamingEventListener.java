@@ -4,9 +4,7 @@ import java.io.IOException;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
-import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -86,10 +84,45 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
             
-			Queue queue = session.createQueue(QUEUE);
-			
-			MessageConsumer consumer = session.createConsumer(queue);			
-			consumer.setMessageListener(new StreamingEventMessageListener());
+			session.createConsumer(session.createQueue(QUEUE)).setMessageListener(new MessageListener() {
+				
+				@Override
+				public void onMessage(Message message) {
+					TextMessage textMessage = (TextMessage) message;
+					try {
+						S3Event event = mapper.readValue(textMessage.getText(), S3Event.class);
+						
+						event.getRecords().stream().forEach(record -> {
+							
+							String key = record.getS3().getObject().getKey();
+							
+							S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
+									.withBucket(record.getS3().getBucket().getName())
+									.withKey(key);
+							
+							S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
+							
+							disconnect(key);
+							
+							TopicConfiguration configuration = null;
+							try {
+								configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
+							} catch (IOException e) {
+								LOGGER.error(e);
+							}
+							
+							TopicSubscription subscription = new TopicSubscription(configuration, MongoConnection.getInstance().getDatastore());
+									
+							replace(key, subscription);
+						});
+						
+						message.acknowledge();
+						
+					} catch (JMSException | IOException e) {
+						LOGGER.error(e);
+					}	
+				}
+			});
 			
 			connection.start();
 				 				
@@ -124,46 +157,6 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 			connection.stop();
 		} catch (JMSException e) {
 			LOGGER.error(e);
-		}
-	}
-	
-	class StreamingEventMessageListener implements MessageListener {
-
-		@Override
-		public void onMessage(Message message) {
-			TextMessage textMessage = (TextMessage) message;
-			try {
-				S3Event event = mapper.readValue(textMessage.getText(), S3Event.class);
-				
-				event.getRecords().stream().forEach(record -> {
-					
-					String key = record.getS3().getObject().getKey();
-					
-					S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
-							.withBucket(record.getS3().getBucket().getName())
-							.withKey(key);
-					
-					S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
-					
-					disconnect(key);
-					
-					TopicConfiguration configuration = null;
-					try {
-						configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
-					} catch (IOException e) {
-						LOGGER.error(e);
-					}
-					
-					TopicSubscription subscription = new TopicSubscription(configuration, MongoConnection.getInstance().getDatastore());
-							
-					replace(key, subscription);
-				});
-				
-				message.acknowledge();
-				
-			} catch (JMSException | IOException e) {
-				LOGGER.error(e);
-			}			
 		}
 	}
 }
