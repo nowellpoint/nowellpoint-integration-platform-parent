@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class Configuration {
+public class TopicConfiguration {
 	private String organizationId;
 	private String apiVersion;
 	private String refreshToken;

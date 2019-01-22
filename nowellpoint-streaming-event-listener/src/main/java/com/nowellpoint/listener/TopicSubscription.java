@@ -23,8 +23,7 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.connection.MongoConnection;
-import com.nowellpoint.listener.model.Configuration;
+import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
@@ -41,12 +40,12 @@ public class TopicSubscription {
 	private Datastore datastore;
 	private HttpClient httpClient;
 	private BayeuxClient client;
-	private Configuration configuration;
+	private TopicConfiguration configuration;
 	private ConcurrentMap<String, Long> dataMap;
 
-	public TopicSubscription(Configuration configuration) {
+	public TopicSubscription(TopicConfiguration configuration, Datastore datastore) {
 		this.configuration = configuration;
-		this.datastore = MongoConnection.getInstance().getDatastore();
+		this.datastore = datastore;
 		this.dataMap = new ConcurrentHashMap<>();
 		this.connect();
 		this.subscribe();
