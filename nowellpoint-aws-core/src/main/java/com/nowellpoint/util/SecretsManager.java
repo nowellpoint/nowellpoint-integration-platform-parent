@@ -3,6 +3,8 @@ package com.nowellpoint.util;
 import java.io.IOException;
 import java.util.HashMap;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest;
@@ -15,7 +17,12 @@ public class SecretsManager {
 	private static HashMap<String, String> secretMap = new HashMap<>(); 
     
     static {
-    	AWSSecretsManager client = AWSSecretsManagerClientBuilder.defaultClient();
+    	BasicAWSCredentials credentials = new BasicAWSCredentials(System.getenv("AWS_ACCESS_KEY"), System.getenv("AWS_SECRET_ACCESS_KEY"));
+    	
+    	AWSSecretsManager client = AWSSecretsManagerClientBuilder.standard()
+    			.withRegion(System.getenv("AWS_REGION"))
+    			.withCredentials(new AWSStaticCredentialsProvider(credentials))
+    			.build();
 
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(System.getenv("AWS_SECRET_NAME"));
 
