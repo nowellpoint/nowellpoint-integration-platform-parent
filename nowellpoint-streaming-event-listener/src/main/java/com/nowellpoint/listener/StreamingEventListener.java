@@ -46,6 +46,8 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 	
 	public void start() {
 		
+		mongoConnect();
+		
 		ListObjectsV2Request request = new ListObjectsV2Request()
 				.withBucketName(BUCKET)
 				.withPrefix(PREFIX)
@@ -129,8 +131,6 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 		} catch (JMSException e) {
 			LOGGER.error(e);
 		} 
-    	
-    	mongoConnect();
 	}
 	
 	public void stop() {
