@@ -192,10 +192,10 @@ public class TopicSubscription {
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
 					logger.error(channel.getChannelId() + ": " + message.toString());
-					if (message.get("error") != null && "403::Unknown client".equals(message.get("error").toString())) {
+					//if (message.get("error") != null && "403::Unknown client".equals(message.get("error").toString())) {
 						connect();
 						subscribe();
-					}
+					//}
 				}
 			}
 		});
