@@ -50,25 +50,17 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	private static final Logger LOGGER = Logger.getLogger(IdentityServiceImpl.class.getName());
 	
-	private static BraintreeGateway gateway = new BraintreeGateway(
+	private static final BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
 			SecretsManager.getBraintreeMerchantId(),
 			SecretsManager.getBraintreePublicKey(),
 			SecretsManager.getBraintreePrivateKey()
 	);
 	
-	static {
-		gateway.clientToken().generate();
-	}
-	
-	private static Client client;
-	
-	static {
-		client = Clients.builder()
+	private static final Client client = Clients.builder()
 	    		.setClientCredentials(new TokenClientCredentials(SecretsManager.getOktaApiKey()))
 	    		.setOrgUrl(SecretsManager.getOktaOrgUrl())
 	    		.build();	
-	}
 	
 	private static final SendGrid sendgrid = new SendGrid(SecretsManager.getSendGridApiKey());
 	
@@ -76,6 +68,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	public IdentityServiceImpl() {
 		dao = new IdentityDAO(com.nowellpoint.console.entity.Identity.class, datastore);
+		//gateway.clientToken().generate();
 	}
 	
 	@Override

@@ -8,7 +8,7 @@
                 <dd>${organization.number}</dd>
                 <dt>${labels['domain']}</dt>
                 <dd>${organization.domain}</dd>
-                <dt>${labels['created.on']}</dt>
+                <dt>${labels['created']}</dt>
                 <dd>${organization.createdOn?date?string.long} - ${organization.createdOn?time?string.medium}</dd>
             </dl>
         </div>

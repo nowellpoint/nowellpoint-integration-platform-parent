@@ -2,7 +2,7 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <content id="content">
-            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
+            <div class="container-fluid pt-4 pb-2 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h4 class="dashhead-title font-weight-normal">${messages['start']}</h4>
@@ -12,8 +12,7 @@
                     </div>
                 </div>
             </div>
-            <hr>
-            <div class="container-fluid p-3">
+            <div class="container-fluid border-top p-3">
                 <div class="card-columns">
                     <div class="card">
                         <div class="card-body">

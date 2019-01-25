@@ -2,10 +2,13 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <content id="content">
-            <div class="container-fluid pt-3 pr-3 pl-3">
+            <div class="container-fluid pt-4 pb-2 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h4 class="dashhead-title font-weight-normal">${messages["streaming.events"]}</h4>
+                    </div>
+                    <div class="dashhead-toolbar">
+
                     </div>
                 </div>
             </div>
