@@ -67,11 +67,7 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
     			S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));	
     			
     			try {
-    				
-    				put(os.getKey(), new TopicSubscription(
-    						mapper.readValue(object.getObjectContent(), TopicConfiguration.class), 
-    						MongoConnection.getInstance().getDatastore()));
-    				
+    				put(os.getKey(), new TopicSubscription(mapper.readValue(object.getObjectContent(), TopicConfiguration.class)));
     			} catch (IOException e) {
     				LOGGER.error(e);
     			}
@@ -113,9 +109,7 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 								LOGGER.error(e);
 							}
 							
-							TopicSubscription subscription = new TopicSubscription(configuration, MongoConnection.getInstance().getDatastore());
-									
-							replace(key, subscription);
+							get(key).connect(configuration);
 						});
 						
 						message.acknowledge();

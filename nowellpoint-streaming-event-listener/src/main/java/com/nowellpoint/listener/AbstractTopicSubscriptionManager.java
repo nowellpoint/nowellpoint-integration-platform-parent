@@ -1,7 +1,11 @@
 package com.nowellpoint.listener;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.nowellpoint.listener.model.Topic;
+import com.nowellpoint.listener.model.TopicConfiguration;
 
 public abstract class AbstractTopicSubscriptionManager {
 	
@@ -22,12 +26,12 @@ public abstract class AbstractTopicSubscriptionManager {
 		return TOPIC_SUBSCRIPTIONS.get(key);
 	}
 	
-	protected void connect(String key) {
-		get(key).connect();
+	protected void connect(String key, TopicConfiguration configuration) {
+		get(key).connect(configuration);
 	}
 	
-	protected void subscribe(String key) {
-		get(key).subscribe();
+	protected void subscribe(String key, String organizationId, List<Topic> topics) {
+		get(key).subscribe(organizationId, topics);
 	}
 	
 	protected void disconnect(String key) {

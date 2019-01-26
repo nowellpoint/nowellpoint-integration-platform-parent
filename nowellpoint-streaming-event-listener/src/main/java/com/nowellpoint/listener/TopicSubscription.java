@@ -1,5 +1,6 @@
 package com.nowellpoint.listener;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,6 @@ import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
-import org.mongodb.morphia.Datastore;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +24,10 @@ import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.listener.model.TopicConfiguration;
+import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
+import com.nowellpoint.listener.model.Topic;
 import com.nowellpoint.util.SecretsManager;
 
 public class TopicSubscription {
@@ -37,18 +39,12 @@ public class TopicSubscription {
     private static final int STOP_TIMEOUT = 120 * 1000; 
     private static final String REPLAY = "replay";
 
-	private Datastore datastore;
 	private HttpClient httpClient;
 	private BayeuxClient client;
-	private TopicConfiguration configuration;
-	private ConcurrentMap<String, Long> dataMap;
 
-	public TopicSubscription(TopicConfiguration configuration, Datastore datastore) {
-		this.configuration = configuration;
-		this.datastore = datastore;
-		this.dataMap = new ConcurrentHashMap<>();
-		this.connect();
-		this.subscribe();
+	public TopicSubscription(TopicConfiguration configuration) {
+		this.connect(configuration);
+		this.subscribe(configuration.getOrganizationId(), configuration.getTopics());
 	}
 	
 	private Token refreshToken(String refreshToken) {
@@ -67,6 +63,7 @@ public class TopicSubscription {
 	
 	public void disconnect() {
 		client.disconnect();
+		client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.DISCONNECTED);
 		try {
 			httpClient.stop();
 		} catch (Exception e) {
@@ -74,8 +71,8 @@ public class TopicSubscription {
 		}
 	}
 	
-	public void subscribe() {
-		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
+	public void subscribe(String organizationId, List<Topic> topics) {
+		topics.stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
 
@@ -104,14 +101,14 @@ public class TopicSubscription {
 					
 					StreamingEvent streamingEvent = new StreamingEvent();
 					streamingEvent.setEventDate(source.getEvent().getCreatedDate());
-					streamingEvent.setOrganizationId(new ObjectId(configuration.getOrganizationId()));
+					streamingEvent.setOrganizationId(new ObjectId(organizationId));
 					streamingEvent.setReplayId(source.getEvent().getReplayId());
 					streamingEvent.setType(source.getEvent().getType());
 					streamingEvent.setSource(t.getSource());
 					streamingEvent.setPayload(payload);
 					
 					try {
-						datastore.save(streamingEvent);
+						MongoConnection.getInstance().getDatastore().save(streamingEvent);
 					} catch (com.mongodb.DuplicateKeyException e) {
 						logger.warn(e.getErrorMessage());
 					}
@@ -125,7 +122,7 @@ public class TopicSubscription {
 		});
 	}
 	
-	public void connect() {
+	public void connect(TopicConfiguration configuration) {
 		
 		httpClient = new HttpClient();
 		httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
@@ -147,9 +144,7 @@ public class TopicSubscription {
             }
         };
         
-        configuration.getTopics().stream().forEach(t -> {
-        	dataMap.put(t.getChannel(), Long.valueOf(-1));
-        });
+        ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<String,Long>();
 
         client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
         
@@ -157,6 +152,9 @@ public class TopicSubscription {
         	
         	@Override
             public boolean rcv(ClientSession session, Message.Mutable message) {
+                configuration.getTopics().stream().forEach(t -> {
+                	dataMap.put(t.getChannel(), Long.valueOf(-1));
+                });
                 return true;
             }
         	
@@ -191,11 +189,12 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
+					logger.info(client.isDisconnected());
 					logger.error(channel.getChannelId() + ": " + message.toString());
-					//if (message.get("error") != null && "403::Unknown client".equals(message.get("error").toString())) {
-						connect();
-						subscribe();
-					//}
+					if (client.isDisconnected()) {
+						connect(configuration);
+						subscribe(configuration.getOrganizationId(), configuration.getTopics());
+					}
 				}
 			}
 		});
