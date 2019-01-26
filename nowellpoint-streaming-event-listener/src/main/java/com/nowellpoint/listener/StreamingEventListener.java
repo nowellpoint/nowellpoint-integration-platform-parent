@@ -109,7 +109,7 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 								LOGGER.error(e);
 							}
 							
-							get(key).connect(configuration);
+							get(key).reconnect(configuration);
 						});
 						
 						message.acknowledge();

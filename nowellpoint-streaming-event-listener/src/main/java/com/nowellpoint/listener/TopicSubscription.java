@@ -1,6 +1,7 @@
 package com.nowellpoint.listener;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +12,7 @@ import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.transport.ClientTransport;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
@@ -27,7 +29,6 @@ import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
-import com.nowellpoint.listener.model.Topic;
 import com.nowellpoint.util.SecretsManager;
 
 public class TopicSubscription {
@@ -36,15 +37,18 @@ public class TopicSubscription {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
-    private static final int STOP_TIMEOUT = 120 * 1000; 
+    private static final int READ_TIMEOUT = 120 * 1000; 
+    private static final int STOP_TIMEOUT = 120 * 1000;
     private static final String REPLAY = "replay";
 
+    private TopicConfiguration configuration;
 	private HttpClient httpClient;
 	private BayeuxClient client;
 
 	public TopicSubscription(TopicConfiguration configuration) {
-		this.connect(configuration);
-		this.subscribe(configuration.getOrganizationId(), configuration.getTopics());
+		this.configuration = configuration;
+		this.connect();
+		this.subscribe();
 	}
 	
 	private Token refreshToken(String refreshToken) {
@@ -61,9 +65,17 @@ public class TopicSubscription {
 		return oauthAthenticationResponse.getToken();
     }
 	
-	public void disconnect() {
-		client.disconnect();
-		client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.DISCONNECTED);
+	public void reconnect(TopicConfiguration configuration) {
+		this.configuration = configuration;
+		reconnect();
+	}
+	
+	private void reconnect() {
+		connect();
+		subscribe();
+	}
+	
+	private void stopHttpClient() {
 		try {
 			httpClient.stop();
 		} catch (Exception e) {
@@ -71,8 +83,17 @@ public class TopicSubscription {
 		}
 	}
 	
-	public void subscribe(String organizationId, List<Topic> topics) {
-		topics.stream().filter(t -> t.getActive()).forEach(t -> {
+	public void disconnect() {
+		configuration.getTopics().stream().forEach( t -> {
+			client.getChannel(t.getChannel()).unsubscribe();
+		});
+		client.disconnect();
+		client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.DISCONNECTED);
+		stopHttpClient();
+	}
+	
+	public void subscribe() {
+		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
 
@@ -101,7 +122,7 @@ public class TopicSubscription {
 					
 					StreamingEvent streamingEvent = new StreamingEvent();
 					streamingEvent.setEventDate(source.getEvent().getCreatedDate());
-					streamingEvent.setOrganizationId(new ObjectId(organizationId));
+					streamingEvent.setOrganizationId(new ObjectId(configuration.getOrganizationId()));
 					streamingEvent.setReplayId(source.getEvent().getReplayId());
 					streamingEvent.setType(source.getEvent().getType());
 					streamingEvent.setSource(t.getSource());
@@ -122,11 +143,12 @@ public class TopicSubscription {
 		});
 	}
 	
-	public void connect(TopicConfiguration configuration) {
+	public void connect() {
 		
 		httpClient = new HttpClient();
 		httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
 		httpClient.setStopTimeout(STOP_TIMEOUT);
+		httpClient.setIdleTimeout(READ_TIMEOUT);
 		
         try {
 			httpClient.start();
@@ -137,14 +159,18 @@ public class TopicSubscription {
 		
 		Token token = refreshToken(configuration.getRefreshToken());
 		
-		LongPollingTransport httpTransport = new LongPollingTransport(null, httpClient) {
+		Map<String, Object> options = new HashMap<>();
+		options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, READ_TIMEOUT);
+		
+		LongPollingTransport httpTransport = new LongPollingTransport(options, httpClient) {
             @Override
             protected void customize(Request request) {
+            	super.customize(request);
                 request.header("Authorization", "OAuth " + token.getAccessToken());
             }
         };
         
-        ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<String,Long>();
+        ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
 
         client = new BayeuxClient(token.getInstanceUrl().concat("/cometd/").concat(configuration.getApiVersion()), httpTransport);
         
@@ -191,10 +217,9 @@ public class TopicSubscription {
 				if (! message.isSuccessful()) {
 					logger.info(client.isDisconnected());
 					logger.error(channel.getChannelId() + ": " + message.toString());
-					if (client.isDisconnected()) {
-						connect(configuration);
-						subscribe(configuration.getOrganizationId(), configuration.getTopics());
-					}
+					//if (client.isDisconnected()) {
+						reconnect();
+					//}
 				}
 			}
 		});
@@ -213,8 +238,9 @@ public class TopicSubscription {
         
         boolean connected = client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.CONNECTED);
         
-        if (!connected) {
-        	logger.error("unable to connect");
+        if (! connected) {
+        	stopHttpClient();
+        	logger.error(String.format("%s failed to connect to the server at %s", this.getClass().getName(), client.getURL()));
         }
 	}
 }

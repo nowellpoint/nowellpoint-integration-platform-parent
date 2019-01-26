@@ -1,11 +1,9 @@
 package com.nowellpoint.console.mongodb;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.TextStyle;
@@ -24,30 +22,19 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.nowellpoint.client.sforce.Authenticators;
-import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
-import com.nowellpoint.client.sforce.OauthRequests;
-import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
-import com.nowellpoint.client.sforce.Salesforce;
-import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.http.HttpResponse;
-import com.nowellpoint.http.MediaType;
-import com.nowellpoint.http.RestResource;
 import com.nowellpoint.util.SecretsManager;
 
 public class TestGroupBy {
 	
 	private static final Logger logger = Logger.getLogger(TestGroupBy.class.getName());
-	private static ObjectMapper mapper = new ObjectMapper();
 	
 	private static final String ORGANIZATION_ID = "5bac3c0e0626b951816064f5";
 	
@@ -153,39 +140,6 @@ public class TestGroupBy {
 	}
 	
 	@Test
-	public void testStreamingEventListener() {
-		Organization organization = datastore.get(Organization.class, new ObjectId(ORGANIZATION_ID));
-		
-		assertNotNull(organization.getName());
-		assertNotNull(organization.getNumber());
-		
-		System.out.println(organization.getConnection().getRefreshToken());
-		
-		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
-				.setClientId(SecretsManager.getSalesforceClientId())
-				.setClientSecret(SecretsManager.getSalesforceClientSecret())
-				.setRefreshToken(organization.getConnection().getRefreshToken())
-				.build();
-		
-		OauthAuthenticationResponse oauthAthenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
-				.authenticate(request);
-		
-		Token token = oauthAthenticationResponse.getToken();
-		
-		Salesforce client = SalesforceClientBuilder.builder().build().getClient();
-		
-		Identity identity = client.getIdentity(token);
-		
-		int i = 0;
-		
-		while (i < 5) {
-			updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), "0013A00001YjszLQAR");
-			updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
-			i++;
-		}
-	}
-	
-	@Test
 	public void testGroupBy() throws IOException {
 		
 		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
@@ -198,40 +152,6 @@ public class TestGroupBy {
 				.collect(Collectors.joining(", "));
 		
 		System.out.println(data);
-	}
-	
-	private void updateAccount(String accessToken, String sobjectUrl, String accountId) {
-		
-		String body = mapper.createObjectNode()
-				.put("Rating", "Hot")
-				.toString();
-		
-		HttpResponse response = RestResource.post(sobjectUrl.concat("Account/").concat(accountId).concat("/?_HttpMethod=PATCH"))
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(accessToken)
-				.body(body)
-				.contentType(MediaType.APPLICATION_JSON)
-                .execute();
-		
-		assertEquals(204, response.getStatusCode());
-	}
-	
-	private void updateOpportunity(String accessToken, String sobjectUrl, String opportunityId) {
-		
-		String body = mapper.createObjectNode()
-				.put("NextStep", "Call")
-				.toString();
-		
-		HttpResponse response = RestResource.post(sobjectUrl.concat("Opportunity/").concat(opportunityId).concat("/?_HttpMethod=PATCH"))
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(accessToken)
-				.body(body)
-				.contentType(MediaType.APPLICATION_JSON)
-                .execute();
-		
-		assertEquals(204, response.getStatusCode());
 	}
 	
 	@AfterClass
