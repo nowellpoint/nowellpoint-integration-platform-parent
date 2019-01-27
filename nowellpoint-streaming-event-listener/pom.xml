@@ -96,7 +96,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>streaming-event-listener</finalName>
 		<plugins>
 			<plugin>
 				<groupId>io.thorntail</groupId>

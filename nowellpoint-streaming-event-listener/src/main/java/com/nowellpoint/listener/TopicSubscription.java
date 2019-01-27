@@ -19,8 +19,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DuplicateKeyException;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
@@ -104,11 +103,12 @@ public class TopicSubscription {
 					
 					Long start = System.currentTimeMillis();
 					
+					LOGGER.info("**** start message received ****");
+					
 					com.nowellpoint.client.sforce.model.StreamingEvent source = null;
 		
 					try {
-						LOGGER.info("**** start message received ****");
-						//source = StreamingEvent.
+						source = com.nowellpoint.client.sforce.model.StreamingEvent.of(message.getDataAsMap());
 					} catch (IOException e) {
 						LOGGER.error(e);
 					}
@@ -131,7 +131,7 @@ public class TopicSubscription {
 					
 					try {
 						MongoConnection.getInstance().getDatastore().save(streamingEvent);
-					} catch (com.mongodb.DuplicateKeyException e) {
+					} catch (DuplicateKeyException e) {
 						LOGGER.warn(e.getErrorMessage());
 					}
 					
@@ -219,7 +219,7 @@ public class TopicSubscription {
 					LOGGER.info(client.isDisconnected());
 					LOGGER.error(channel.getChannelId() + ": " + message.toString());
 					//if (client.isDisconnected()) {
-						reconnect();
+						//reconnect();
 					//}
 				}
 			}

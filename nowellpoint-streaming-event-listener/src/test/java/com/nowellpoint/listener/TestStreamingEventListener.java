@@ -119,7 +119,7 @@ public class TestStreamingEventListener {
 		assertNotNull(configuration.getTopics().get(0).getChannel());
 	}
 
-	@Test
+	//@Test
 	public void testTopicConfigurationChange() throws JsonParseException, JsonMappingException, IOException {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
@@ -143,7 +143,7 @@ public class TestStreamingEventListener {
         s3client.putObject(request);
 	}
 	
-	//@Test
+	@Test
 	public void testStreamingEventListener() {
 		
 		FindIterable<Document> query = mongoClient.getDatabase(mongoClientUri.getDatabase())
