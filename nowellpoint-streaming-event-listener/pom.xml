@@ -41,6 +41,14 @@
 		</dependency>
 		<dependency>
 			<groupId>io.thorntail</groupId>
+			<artifactId>jsonp</artifactId>
+		</dependency>
+		<dependency>
+  			<groupId>io.thorntail</groupId>
+  			<artifactId>jsonb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
 			<artifactId>microprofile-health</artifactId>
 		</dependency>
 		<dependency>

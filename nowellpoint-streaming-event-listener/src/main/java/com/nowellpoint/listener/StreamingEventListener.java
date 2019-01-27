@@ -64,14 +64,9 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
     					.withBucket(os.getBucketName())
     					.withKey(os.getKey());
     			
-    			S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));	
+    			S3Object s3object = s3client.getObject(new GetObjectRequest(builder.build()));	
     			
-    			TopicConfiguration configuration = null;
-    			try {
-    				configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
-    			} catch (IOException e) {
-    				LOGGER.error(e);
-    			}
+    			TopicConfiguration configuration = readConfiguration(s3object);
     			
     			TopicSubscription subscription = TopicSubscription.builder()
     					.configuration(configuration)
@@ -101,22 +96,17 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 							
 							String key = record.getS3().getObject().getKey();
 							
+							disconnect(key);
+							
 							S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
 									.withBucket(record.getS3().getBucket().getName())
 									.withKey(key);
 							
-							S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));
+							S3Object s3object = s3client.getObject(new GetObjectRequest(builder.build()));
 							
-							disconnect(key);
+							TopicConfiguration configuration = readConfiguration(s3object);
 							
-							TopicConfiguration configuration = null;
-							try {
-								configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
-							} catch (IOException e) {
-								LOGGER.error(e);
-							}
-							
-							get(key).reconnect(configuration);
+							reconnect(key, configuration);
 						});
 						
 						message.acknowledge();

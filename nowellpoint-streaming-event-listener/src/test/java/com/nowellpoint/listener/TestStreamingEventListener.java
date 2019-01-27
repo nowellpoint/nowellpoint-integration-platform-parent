@@ -6,7 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.config.PropertyVisibilityStrategy;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -39,6 +45,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
+import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.util.SecretsManager;
 
 public class TestStreamingEventListener {
@@ -54,6 +61,37 @@ public class TestStreamingEventListener {
 	public static void start() {
 		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
 		mongoClient = new MongoClient(mongoClientUri);
+	}
+	
+	@Test
+	public void testJsonB() {
+		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+		
+		S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
+				.withBucket(BUCKET)
+				.withKey(KEY);
+		
+		S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));	
+		
+		TopicConfiguration configuration = null;
+		
+		JsonbConfig config = new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
+
+			@Override
+			public boolean isVisible(Field field) {
+				return true;
+			}
+
+			@Override
+			public boolean isVisible(Method method) {
+				return false;
+			}
+			
+		});
+		
+		configuration = JsonbBuilder.create(config).fromJson(object.getObjectContent(), TopicConfiguration.class);
+		System.out.println("organizationid: " + configuration.getOrganizationId());
+		System.out.println(configuration.getTopics().get(0).getChannel());
 	}
 
 	//@Test
@@ -80,7 +118,7 @@ public class TestStreamingEventListener {
         s3client.putObject(request);
 	}
 	
-	@Test
+	//@Test
 	public void testStreamingEventListener() {
 		
 		FindIterable<Document> query = mongoClient.getDatabase(mongoClientUri.getDatabase())
