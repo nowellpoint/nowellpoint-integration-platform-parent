@@ -5,16 +5,22 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
+import javax.json.bind.JsonbException;
 import javax.json.bind.config.PropertyVisibilityStrategy;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 
 public abstract class AbstractTopicSubscriptionManager {
 	
 	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
+	private static final Jsonb jsonb = JsonbBuilder.create(getJsonbConfig());
 		
 	protected void put(String key, TopicSubscription topicSubscription) {
 		TOPIC_SUBSCRIPTIONS.put(key, topicSubscription);
@@ -56,7 +62,15 @@ public abstract class AbstractTopicSubscriptionManager {
 	}
 	
 	protected TopicConfiguration readConfiguration(S3Object s3object) {
-		JsonbConfig config = new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
+		return jsonb.fromJson(s3object.getObjectContent(), TopicConfiguration.class);
+	}
+	
+	protected S3Event readEvent(TextMessage message) throws JsonbException, JMSException {
+		return jsonb.fromJson(message.getText(), S3Event.class);
+	}
+	
+	private static JsonbConfig getJsonbConfig() {
+		return new JsonbConfig().withNullValues(Boolean.TRUE).withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
 
 			@Override
 			public boolean isVisible(Field field) {
@@ -69,7 +83,5 @@ public abstract class AbstractTopicSubscriptionManager {
 			}
 			
 		});
-		
-		return JsonbBuilder.create(config).fromJson(s3object.getObjectContent(), TopicConfiguration.class);
 	}
 }

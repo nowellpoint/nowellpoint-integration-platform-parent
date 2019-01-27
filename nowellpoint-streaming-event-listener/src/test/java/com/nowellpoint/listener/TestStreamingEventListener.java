@@ -45,6 +45,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
+import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.util.SecretsManager;
 
@@ -63,7 +64,30 @@ public class TestStreamingEventListener {
 		mongoClient = new MongoClient(mongoClientUri);
 	}
 	
-	@Test
+	//@Test
+	public void testReadEvent() {
+		String json = "{\"Records\":[{\"eventVersion\":\"2.1\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2019-01-27T18:52:10.540Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AWS:AIDAJYIK27YZYWJELKV54\"},\"requestParameters\":{\"sourceIPAddress\":\"75.177.182.85\"},\"responseElements\":{\"x-amz-request-id\":\"95A634A5D6103E7D\",\"x-amz-id-2\":\"VaB4XmbH4hxyQ5IQnZ5T2SHaOndhwv4zpjHo3dyhkcULQgwNrusxLRLRJzOLmib+RtcT9McF89I=\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"PutSQSNotification\",\"bucket\":{\"name\":\"streaming-event-listener-us-east-1-600862814314\",\"ownerIdentity\":{\"principalId\":\"A3O0Z0GOU0V258\"},\"arn\":\"arn:aws:s3:::streaming-event-listener-us-east-1-600862814314\"},\"object\":{\"key\":\"configuration/5bac3c0e0626b951816064f5\",\"size\":669,\"eTag\":\"6ab8b93abd9a9d3cc72e441e1b8ec711\",\"sequencer\":\"005C4DFDDA6E2DAABF\"}}}]}";
+		
+		JsonbConfig config = new JsonbConfig().withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
+
+			@Override
+			public boolean isVisible(Field field) {
+				return true;
+			}
+
+			@Override
+			public boolean isVisible(Method method) {
+				return false;
+			}
+			
+		});
+		
+		S3Event event = JsonbBuilder.create(config).fromJson(json, S3Event.class);
+		
+		System.out.println(event.getRecords().get(0).getAwsRegion());
+	}
+	
+	//@Test
 	public void testJsonB() {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
@@ -90,11 +114,12 @@ public class TestStreamingEventListener {
 		});
 		
 		configuration = JsonbBuilder.create(config).fromJson(object.getObjectContent(), TopicConfiguration.class);
-		System.out.println("organizationid: " + configuration.getOrganizationId());
-		System.out.println(configuration.getTopics().get(0).getChannel());
+		
+		assertNotNull(configuration.getOrganizationId());
+		assertNotNull(configuration.getTopics().get(0).getChannel());
 	}
 
-	//@Test
+	@Test
 	public void testTopicConfigurationChange() throws JsonParseException, JsonMappingException, IOException {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		

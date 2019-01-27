@@ -1,7 +1,5 @@
 package com.nowellpoint.listener;
 
-import java.io.IOException;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -21,7 +19,6 @@ import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
@@ -35,7 +32,6 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 	private static final String PREFIX = "configuration/";
 	private static final String QUEUE = "streaming-event-listener-configuration-events";
 	
-	private final ObjectMapper mapper = new ObjectMapper();
 	private final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
 	private SQSConnectionFactory connectionFactory;
@@ -90,7 +86,8 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 				public void onMessage(Message message) {
 					TextMessage textMessage = (TextMessage) message;
 					try {
-						S3Event event = mapper.readValue(textMessage.getText(), S3Event.class);
+						
+						S3Event event = readEvent(textMessage);
 						
 						event.getRecords().stream().forEach(record -> {
 							
@@ -111,7 +108,7 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 						
 						message.acknowledge();
 						
-					} catch (JMSException | IOException e) {
+					} catch (JMSException e) {
 						LOGGER.error(e);
 					}	
 				}
