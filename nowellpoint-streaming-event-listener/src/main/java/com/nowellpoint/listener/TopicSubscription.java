@@ -31,21 +31,24 @@ import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
 
+import lombok.Builder;
+
 public class TopicSubscription {
 	
-	private static final Logger logger = Logger.getLogger(StreamingEventListener.class);
-	private static final ObjectMapper mapper = new ObjectMapper();
-	
+	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
+	private static final String REPLAY = "replay";
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 
     private static final int STOP_TIMEOUT = 120 * 1000;
-    private static final String REPLAY = "replay";
+    
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private TopicConfiguration configuration;
 	private HttpClient httpClient;
 	private BayeuxClient client;
 
-	public TopicSubscription(TopicConfiguration configuration) {
+	@Builder
+	private TopicSubscription(TopicConfiguration configuration) {
 		this.configuration = configuration;
 		this.connect();
 		this.subscribe();
@@ -79,7 +82,7 @@ public class TopicSubscription {
 		try {
 			httpClient.stop();
 		} catch (Exception e) {
-			logger.error(e);
+			LOGGER.error(e);
 		}
 	}
 	
@@ -105,11 +108,11 @@ public class TopicSubscription {
 					com.nowellpoint.client.sforce.model.StreamingEvent source = null;
 		
 					try {
-						logger.info("**** start message received ****");
+						LOGGER.info("**** start message received ****");
 						JsonNode node = mapper.valueToTree(message.getDataAsMap());
 						source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
 					} catch (Exception e) {
-						logger.error(e);
+						LOGGER.error(e);
 					}
 					
 					Payload payload = new Payload();
@@ -131,15 +134,15 @@ public class TopicSubscription {
 					try {
 						MongoConnection.getInstance().getDatastore().save(streamingEvent);
 					} catch (com.mongodb.DuplicateKeyException e) {
-						logger.warn(e.getErrorMessage());
+						LOGGER.warn(e.getErrorMessage());
 					}
 					
-					logger.info("message processed in (ms): ".concat(String.valueOf(System.currentTimeMillis() - start)));
-					logger.info("**** end message received ****");
+					LOGGER.info("message processed in (ms): ".concat(String.valueOf(System.currentTimeMillis() - start)));
+					LOGGER.info("**** end message received ****");
 				}
 			});
 			
-			logger.info("Subscribed to channel: " + t.getChannel());
+			LOGGER.info("Subscribed to channel: " + t.getChannel());
 		});
 	}
 	
@@ -153,7 +156,7 @@ public class TopicSubscription {
         try {
 			httpClient.start();
 		} catch (Exception e) {
-			logger.error(e);
+			LOGGER.error(e);
 			return;
 		}
 		
@@ -205,7 +208,7 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					logger.error(channel.getChannelId() + ": " + message.toString());
+					LOGGER.error(channel.getChannelId() + ": " + message.toString());
 				}
 			}
 		});
@@ -215,8 +218,8 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					logger.info(client.isDisconnected());
-					logger.error(channel.getChannelId() + ": " + message.toString());
+					LOGGER.info(client.isDisconnected());
+					LOGGER.error(channel.getChannelId() + ": " + message.toString());
 					//if (client.isDisconnected()) {
 						reconnect();
 					//}
@@ -229,7 +232,7 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					logger.error(channel.getChannelId() + ": " + message.toString());
+					LOGGER.error(channel.getChannelId() + ": " + message.toString());
 				}
 			}
 		});
@@ -240,7 +243,7 @@ public class TopicSubscription {
         
         if (! connected) {
         	stopHttpClient();
-        	logger.error(String.format("%s failed to connect to the server at %s", this.getClass().getName(), client.getURL()));
+        	LOGGER.error(String.format("%s failed to connect to the server at %s", this.getClass().getName(), client.getURL()));
         }
 	}
 }

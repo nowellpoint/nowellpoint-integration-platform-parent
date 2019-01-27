@@ -66,11 +66,18 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
     			
     			S3Object object = s3client.getObject(new GetObjectRequest(builder.build()));	
     			
+    			TopicConfiguration configuration = null;
     			try {
-    				put(os.getKey(), new TopicSubscription(mapper.readValue(object.getObjectContent(), TopicConfiguration.class)));
+    				configuration = mapper.readValue(object.getObjectContent(), TopicConfiguration.class);
     			} catch (IOException e) {
     				LOGGER.error(e);
     			}
+    			
+    			TopicSubscription subscription = TopicSubscription.builder()
+    					.configuration(configuration)
+    					.build();
+    			
+    			put(os.getKey(), subscription);
     		});
             
         	request.setContinuationToken(result.getNextContinuationToken());

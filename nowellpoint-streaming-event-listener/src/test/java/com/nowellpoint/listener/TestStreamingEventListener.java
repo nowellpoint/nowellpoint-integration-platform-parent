@@ -56,7 +56,7 @@ public class TestStreamingEventListener {
 		mongoClient = new MongoClient(mongoClientUri);
 	}
 
-	@Test
+	//@Test
 	public void testTopicConfigurationChange() throws JsonParseException, JsonMappingException, IOException {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 		
