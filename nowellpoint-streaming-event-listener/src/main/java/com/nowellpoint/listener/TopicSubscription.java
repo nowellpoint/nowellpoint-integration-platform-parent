@@ -1,5 +1,6 @@
 package com.nowellpoint.listener;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,8 +41,6 @@ public class TopicSubscription {
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 
     private static final int STOP_TIMEOUT = 120 * 1000;
-    
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     private TopicConfiguration configuration;
 	private HttpClient httpClient;
@@ -109,9 +108,8 @@ public class TopicSubscription {
 		
 					try {
 						LOGGER.info("**** start message received ****");
-						JsonNode node = mapper.valueToTree(message.getDataAsMap());
-						source = mapper.readValue(node.toString(), com.nowellpoint.client.sforce.model.StreamingEvent.class);
-					} catch (Exception e) {
+						//source = StreamingEvent.
+					} catch (IOException e) {
 						LOGGER.error(e);
 					}
 					
