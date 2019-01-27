@@ -36,9 +36,12 @@ import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 
-public abstract class AbstractSalesforceClient {
-	
-	private static final Logger LOGGER = Logger.getLogger(AbstractSalesforceClient.class.getName());
+import lombok.Value;
+
+@Value
+final class Sforce {
+
+	private static final Logger LOGGER = Logger.getLogger(Sforce.class.getName());
 	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -58,6 +61,17 @@ public abstract class AbstractSalesforceClient {
 	private static final String PUSH_TOPIC_FIELDS = "Id,ApiVersion,Description,IsActive,IsDeleted,CreatedDate,"
 			+ "LastModifiedById,LastModifiedDate,Name,NotifyForFields,NotifyForOperationCreate,NotifyForOperationDelete,"
 			+ "NotifyForOperations,NotifyForOperationUndelete,NotifyForOperationUpdate,Query";
+	
+	private Token token;
+	
+	/**
+	 * 
+	 * @param token
+	 */
+	
+	public Sforce(Token token) {
+		this.token = token;
+	}
 
 	/**
      * Retrieves the <code>Identity</code> associated with the Token
@@ -65,7 +79,7 @@ public abstract class AbstractSalesforceClient {
      * @param token the token returned from one of the authenticate methods.
      */
 	
-	protected Identity getIdentity(Token token) {
+	public Identity getIdentity() {
 		Identity identity = null;
 		
 		if (IDENTITY_CACHE.containsKey(token.getId())) {
@@ -100,9 +114,9 @@ public abstract class AbstractSalesforceClient {
      * @param token the token returned from one of the authenticate methods.
      */
 	
-	protected DescribeGlobalResult describeGlobal(Token token) {
+	public DescribeGlobalResult describeGlobal() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -128,9 +142,9 @@ public abstract class AbstractSalesforceClient {
      * @param token the token returned from one of the authenticate methods.
      */
 	
-	protected User getUser(Token token) {
+	public User getUser() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getSObjects())
      			.bearerAuthorization(token.getAccessToken())
@@ -157,9 +171,9 @@ public abstract class AbstractSalesforceClient {
      * @param token the token returned from one of the authenticate methods.
      */
 	
-	protected Organization getOrganization(Token token) {
+	public Organization getOrganization() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -189,8 +203,8 @@ public abstract class AbstractSalesforceClient {
      * @param sobject the name of the sobject to describe
      */
 	
-	protected DescribeResult describeSObject(Token token, String sobject) {
-		return describeSObject(token, sobject, null);
+	public DescribeResult describeSObject(String sobject) {
+		return describeSObject(sobject, null);
 	}
 	
 	/**
@@ -201,9 +215,9 @@ public abstract class AbstractSalesforceClient {
      * @param modifiedSince returns objects if they have been modified since this date
      */
 	
-	protected DescribeResult describeSObject(Token token, String sobject, Date modifiedSince) {
+	public DescribeResult describeSObject(String sobject, Date modifiedSince) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getSObjects().concat(sobject).concat("/describe"))
 				.header("If-Modified-Since", modifiedSince != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(modifiedSince) : null)
@@ -224,9 +238,9 @@ public abstract class AbstractSalesforceClient {
 		return result;
 	}
 	
-	protected Theme getTheme(Token token) {
+	public Theme getTheme() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("theme"))
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -245,9 +259,9 @@ public abstract class AbstractSalesforceClient {
 		return result;
 	}
 	
-	protected Long count(Token token, String query) {
+	public Long count(String query) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -268,9 +282,9 @@ public abstract class AbstractSalesforceClient {
 		return totalSize;
 	}
 	
-	protected CreateResult createPushTopic(Token token, PushTopicRequest request) {
+	public CreateResult createPushTopic(PushTopicRequest request) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		String body = mapper.createObjectNode()
 				.put("Name", request.getName())
@@ -301,9 +315,9 @@ public abstract class AbstractSalesforceClient {
 		}
 	}
 	
-	protected void updatePushTopic(Token token, String topicId, PushTopicRequest request) {
+	public void updatePushTopic(String topicId, PushTopicRequest request) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		String body = mapper.createObjectNode()
 				.put("Name", request.getName())
@@ -330,9 +344,9 @@ public abstract class AbstractSalesforceClient {
 		}
 	}
 	
-	protected PushTopic getPushTopic(Token token, String pushTopicId) {
+	public PushTopic getPushTopic(String pushTopicId) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
      			.bearerAuthorization(token.getAccessToken())
@@ -353,9 +367,9 @@ public abstract class AbstractSalesforceClient {
 		return pushTopic;
 	}
 	
-	protected void deletePushTopic(Token token, String topicId) {
+	public void deletePushTopic(String topicId) {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.delete(identity.getUrls().getSObjects().concat("PushTopic/").concat(topicId))
 				.bearerAuthorization(token.getAccessToken())
@@ -366,9 +380,9 @@ public abstract class AbstractSalesforceClient {
 		}
 	}
 	
-	protected Set<UserLicense> getUserLicenses(Token token) {
+	public Set<UserLicense> getUserLicenses() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -390,9 +404,9 @@ public abstract class AbstractSalesforceClient {
 		
 	}
 	
-	protected Set<ApexClass> getApexClasses(Token token) {
+	public Set<ApexClass> getApexClasses() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -413,9 +427,9 @@ public abstract class AbstractSalesforceClient {
 		return apexClasses;
 	}
 	
-	protected Set<ApexTrigger> getApexTriggers(Token token) {
+	public Set<ApexTrigger> getApexTriggers() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -436,9 +450,9 @@ public abstract class AbstractSalesforceClient {
 		return apexTriggers;
 	}
 	
-	protected Set<RecordType> getRecordTypes(Token token) {
+	public Set<RecordType> getRecordTypes() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -459,9 +473,9 @@ public abstract class AbstractSalesforceClient {
 		return recordTypes;
 	}
 	
-	protected Set<UserRole> getUserRoles(Token token) {
+	public Set<UserRole> getUserRoles() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -482,9 +496,9 @@ public abstract class AbstractSalesforceClient {
 		return userRoles;
 	}
 	
-	protected Set<Profile> getProfiles(Token token) {
+	public Set<Profile> getProfiles() {
 		
-		Identity identity = getIdentity(token);
+		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -505,7 +519,7 @@ public abstract class AbstractSalesforceClient {
 		return profiles;
 	}
 	
-	protected Resources getResources(Token token) {
+	public Resources getResources() {
 		
 		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
 				.acceptCharset(StandardCharsets.UTF_8)
@@ -516,9 +530,9 @@ public abstract class AbstractSalesforceClient {
 		return response.getEntity(Resources.class);
 	}
 	
-	protected Limits getLimits(Token token) {
+	public Limits getLimits() {
 		
-		Resources resources = getResources(token);
+		Resources resources = getResources();
 		
 		HttpResponse response = RestResource.get(token.getInstanceUrl().concat(resources.getLimits()))
 				.acceptCharset(StandardCharsets.UTF_8)

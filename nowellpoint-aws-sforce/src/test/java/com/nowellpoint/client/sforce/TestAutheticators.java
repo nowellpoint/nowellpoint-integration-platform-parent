@@ -10,6 +10,7 @@ import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.util.SecretsManager;
 
 public class TestAutheticators {
 	
@@ -24,8 +25,8 @@ public class TestAutheticators {
 	public void testUsernamePasswordAuthentication() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
-				.setClientId(System.getProperty(""))
-				.setClientSecret(System.getProperty(""))
+				.setClientId(SecretsManager.getSalesforceClientId())
+				.setClientSecret(SecretsManager.getSalesforceClientSecret())
 				.setUsername(System.getenv("SALESFORCE_USERNAME"))
 				.setPassword(System.getenv("SALESFORCE_PASSWORD"))
 				.setSecurityToken(System.getenv("SALESFORCE_SECURITY_TOKEN"))
