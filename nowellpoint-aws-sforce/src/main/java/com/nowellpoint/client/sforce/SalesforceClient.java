@@ -23,6 +23,7 @@ import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.PushTopic;
+import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
@@ -303,7 +304,7 @@ final class SalesforceClient implements Salesforce {
 				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
 				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
 				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
-				.put("IsActive", request.isActive())
+				.put("IsActive", request.getIsActive())
 				.put("Description", request.getDescription())
 				.put("NotifyForFields", request.getNotifyForFields())
 				.toString();
@@ -337,7 +338,7 @@ final class SalesforceClient implements Salesforce {
 				.put("NotifyForOperationUpdate", request.getNotifyForOperationUpdate())
 				.put("NotifyForOperationUndelete", request.getNotifyForOperationUndelete())
 				.put("NotifyForOperationDelete", request.getNotifyForOperationDelete())
-				.put("IsActive", request.isActive())
+				.put("IsActive", request.getIsActive())
 				.put("NotifyForFields", "All")
 				.toString();
 		

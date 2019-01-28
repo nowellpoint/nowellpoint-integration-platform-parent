@@ -48,11 +48,11 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.nowellpoint.client.sforce.PushTopicRequest;
 import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.PushTopic;
+import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
@@ -705,7 +705,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private String savePushTopic(Token token, StreamingEventListener listener) {
 		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
-				.active(listener.getActive())
+				.isActive(listener.getActive())
 				.apiVersion(listener.getApiVersion())
 				.description(listener.getDescription())
 				.name(listener.getName())

@@ -13,6 +13,7 @@ import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Organization;
 import com.nowellpoint.client.sforce.model.Profile;
 import com.nowellpoint.client.sforce.model.PushTopic;
+import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Theme;
