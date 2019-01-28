@@ -14,8 +14,6 @@ import com.nowellpoint.util.SecretsManager;
 
 public class TestAutheticators {
 	
-	private static Salesforce client = SalesforceClientBuilder.builder().build().getClient();
-	
 	@BeforeClass
 	public static void init() {
 		
@@ -46,7 +44,9 @@ public class TestAutheticators {
 			assertNotNull(token.getSignature());
 			assertNotNull(token.getTokenType());
 			
-			Identity identity = client.getIdentity(token);
+			Sforce sforce = SforceClientBuilder.defaultClient(token);
+			
+			Identity identity = sforce.getIdentity();
 			
 			assertNotNull(identity);
 			assertNotNull(identity.getActive());
@@ -66,19 +66,19 @@ public class TestAutheticators {
 			
 			long startTime = System.currentTimeMillis();
 			
-			DescribeGlobalResult describeGlobalSobjectsResult = client.describeGlobal(response.getToken());
+			DescribeGlobalResult describeGlobalSobjectsResult = sforce.describeGlobal();
 			
 			assertNotNull(describeGlobalSobjectsResult.getSObjects());
 			
-			DescribeResult describeSobjectResult = client.describeSObject(response.getToken(), "Account");
+			DescribeResult describeSobjectResult = sforce.describeSObject("Account");
 			
 			assertNotNull(describeSobjectResult.getName());
 			
-			Theme theme = client.getTheme(response.getToken());
+			Theme theme = sforce.getTheme();
 
 			assertNotNull(theme.getThemeItems());
 			
-			Long count = client.count(response.getToken(), "Select count() from Account");
+			Long count = sforce.count("Select count() from Account");
 			
 			assertNotNull(count);
 			
