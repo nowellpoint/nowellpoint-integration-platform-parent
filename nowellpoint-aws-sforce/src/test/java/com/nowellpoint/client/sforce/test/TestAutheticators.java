@@ -1,10 +1,18 @@
-package com.nowellpoint.client.sforce;
+package com.nowellpoint.client.sforce.test;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientException;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -44,9 +52,9 @@ public class TestAutheticators {
 			assertNotNull(token.getSignature());
 			assertNotNull(token.getTokenType());
 			
-			Sforce sforce = SforceClientBuilder.defaultClient(token);
+			Salesforce client = SalesforceClientBuilder.defaultClient(token);
 			
-			Identity identity = sforce.getIdentity();
+			Identity identity = client.getIdentity();
 			
 			assertNotNull(identity);
 			assertNotNull(identity.getActive());
@@ -66,19 +74,19 @@ public class TestAutheticators {
 			
 			long startTime = System.currentTimeMillis();
 			
-			DescribeGlobalResult describeGlobalSobjectsResult = sforce.describeGlobal();
+			DescribeGlobalResult describeGlobalSobjectsResult = client.describeGlobal();
 			
 			assertNotNull(describeGlobalSobjectsResult.getSObjects());
 			
-			DescribeResult describeSobjectResult = sforce.describeSObject("Account");
+			DescribeResult describeSobjectResult = client.describeSObject("Account");
 			
 			assertNotNull(describeSobjectResult.getName());
 			
-			Theme theme = sforce.getTheme();
+			Theme theme = client.getTheme();
 
 			assertNotNull(theme.getThemeItems());
 			
-			Long count = sforce.count("Select count() from Account");
+			Long count = client.count("Select count() from Account");
 			
 			assertNotNull(count);
 			

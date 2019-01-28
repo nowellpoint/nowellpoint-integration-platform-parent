@@ -7,7 +7,6 @@ import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
-import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
@@ -26,10 +25,6 @@ import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.util.SecretsManager;
 
 public class SalesforceServiceImpl implements SalesforceService {
-	
-	private static final Salesforce client = SalesforceClientBuilder.builder()
-			.build()
-			.getClient();
 	
 	@Override
 	public Token getToken(String authorizationCode) {
@@ -62,56 +57,56 @@ public class SalesforceServiceImpl implements SalesforceService {
 	
 	@Override
 	public Identity getIdentity(Token token) {
-		return client.getIdentity(token);
+		return SalesforceClientBuilder.defaultClient(token).getIdentity();
 	}
 	
 	@Override
 	public Organization getOrganization(Token token) {
-		return client.getOrganization(token);
+		return SalesforceClientBuilder.defaultClient(token).getOrganization();
 	}
 	
 	@Override
 	public DescribeGlobalResult describeGlobal(Token token) {
-		return client.describeGlobal(token);
+		return SalesforceClientBuilder.defaultClient(token).describeGlobal();
 	}
 	
 	@Override
 	public Set<UserLicense> getUserLicenses(Token token) {
-		return client.getUserLicenses(token);
+		return SalesforceClientBuilder.defaultClient(token).getUserLicenses();
 	}
 	
 	@Override
 	public Set<ApexClass> getApexClasses(Token token) {
-		return client.getApexClasses(token);
+		return SalesforceClientBuilder.defaultClient(token).getApexClasses();
 	}
 	
 	@Override
 	public Set<ApexTrigger> getApexTriggers(Token token) {
-		return client.getApexTriggers(token);
+		return SalesforceClientBuilder.defaultClient(token).getApexTriggers();
 	}
 	
 	@Override
 	public Set<RecordType> getRecordTypes(Token token) {
-		return client.getRecordTypes(token);
+		return SalesforceClientBuilder.defaultClient(token).getRecordTypes();
 	}
 	
 	@Override
 	public Set<UserRole> getUserRoles(Token token) {
-		return client.getUserRoles(token);
+		return SalesforceClientBuilder.defaultClient(token).getUserRoles();
 	}
 	
 	@Override
 	public Set<Profile> getProfiles(Token token) {
-		return client.getProfiles(token);
+		return SalesforceClientBuilder.defaultClient(token).getProfiles();
 	}
 	
 	@Override
 	public Resources getResources(Token token) {
-		return client.getResources(token);
+		return SalesforceClientBuilder.defaultClient(token).getResources();
 	}
 	
 	@Override
 	public Limits getLimits(Token token) {
-		return client.getLimits(token);
+		return SalesforceClientBuilder.defaultClient(token).getLimits();
 	}
 }

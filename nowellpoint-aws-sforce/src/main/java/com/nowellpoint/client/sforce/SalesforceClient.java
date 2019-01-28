@@ -39,9 +39,9 @@ import com.nowellpoint.http.Status;
 import lombok.Value;
 
 @Value
-final class Sforce {
+final class SalesforceClient implements Salesforce {
 
-	private static final Logger LOGGER = Logger.getLogger(Sforce.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SalesforceClient.class.getName());
 	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +69,7 @@ final class Sforce {
 	 * @param token
 	 */
 	
-	public Sforce(Token token) {
+	public SalesforceClient(Token token) {
 		this.token = token;
 	}
 
@@ -79,6 +79,7 @@ final class Sforce {
      * @param token the token returned from one of the authenticate methods.
      */
 	
+	@Override
 	public Identity getIdentity() {
 		Identity identity = null;
 		
@@ -114,6 +115,7 @@ final class Sforce {
      * @param token the token returned from one of the authenticate methods.
      */
 	
+	@Override
 	public DescribeGlobalResult describeGlobal() {
 		
 		Identity identity = getIdentity();
@@ -142,6 +144,7 @@ final class Sforce {
      * @param token the token returned from one of the authenticate methods.
      */
 	
+	@Override
 	public User getUser() {
 		
 		Identity identity = getIdentity();
@@ -171,6 +174,7 @@ final class Sforce {
      * @param token the token returned from one of the authenticate methods.
      */
 	
+	@Override
 	public Organization getOrganization() {
 		
 		Identity identity = getIdentity();
@@ -203,6 +207,7 @@ final class Sforce {
      * @param sobject the name of the sobject to describe
      */
 	
+	@Override
 	public DescribeResult describeSObject(String sobject) {
 		return describeSObject(sobject, null);
 	}
@@ -215,6 +220,7 @@ final class Sforce {
      * @param modifiedSince returns objects if they have been modified since this date
      */
 	
+	@Override
 	public DescribeResult describeSObject(String sobject, Date modifiedSince) {
 		
 		Identity identity = getIdentity();
@@ -238,6 +244,7 @@ final class Sforce {
 		return result;
 	}
 	
+	@Override
 	public Theme getTheme() {
 		
 		Identity identity = getIdentity();
@@ -259,6 +266,7 @@ final class Sforce {
 		return result;
 	}
 	
+	@Override
 	public Long count(String query) {
 		
 		Identity identity = getIdentity();
@@ -282,6 +290,7 @@ final class Sforce {
 		return totalSize;
 	}
 	
+	@Override
 	public CreateResult createPushTopic(PushTopicRequest request) {
 		
 		Identity identity = getIdentity();
@@ -315,6 +324,7 @@ final class Sforce {
 		}
 	}
 	
+	@Override
 	public void updatePushTopic(String topicId, PushTopicRequest request) {
 		
 		Identity identity = getIdentity();
@@ -344,6 +354,7 @@ final class Sforce {
 		}
 	}
 	
+	@Override
 	public PushTopic getPushTopic(String pushTopicId) {
 		
 		Identity identity = getIdentity();
@@ -367,6 +378,7 @@ final class Sforce {
 		return pushTopic;
 	}
 	
+	@Override
 	public void deletePushTopic(String topicId) {
 		
 		Identity identity = getIdentity();
@@ -380,6 +392,7 @@ final class Sforce {
 		}
 	}
 	
+	@Override
 	public Set<UserLicense> getUserLicenses() {
 		
 		Identity identity = getIdentity();
@@ -404,6 +417,7 @@ final class Sforce {
 		
 	}
 	
+	@Override
 	public Set<ApexClass> getApexClasses() {
 		
 		Identity identity = getIdentity();
@@ -427,6 +441,7 @@ final class Sforce {
 		return apexClasses;
 	}
 	
+	@Override
 	public Set<ApexTrigger> getApexTriggers() {
 		
 		Identity identity = getIdentity();
@@ -450,6 +465,7 @@ final class Sforce {
 		return apexTriggers;
 	}
 	
+	@Override
 	public Set<RecordType> getRecordTypes() {
 		
 		Identity identity = getIdentity();
@@ -473,6 +489,7 @@ final class Sforce {
 		return recordTypes;
 	}
 	
+	@Override
 	public Set<UserRole> getUserRoles() {
 		
 		Identity identity = getIdentity();
@@ -496,6 +513,7 @@ final class Sforce {
 		return userRoles;
 	}
 	
+	@Override
 	public Set<Profile> getProfiles() {
 		
 		Identity identity = getIdentity();
@@ -519,6 +537,7 @@ final class Sforce {
 		return profiles;
 	}
 	
+	@Override
 	public Resources getResources() {
 		
 		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
@@ -530,6 +549,7 @@ final class Sforce {
 		return response.getEntity(Resources.class);
 	}
 	
+	@Override
 	public Limits getLimits() {
 		
 		Resources resources = getResources();

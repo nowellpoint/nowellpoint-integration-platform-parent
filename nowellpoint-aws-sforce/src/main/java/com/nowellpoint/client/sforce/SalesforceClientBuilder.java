@@ -4,10 +4,10 @@ import com.nowellpoint.client.sforce.model.Token;
 
 import lombok.Builder;
 
-class SforceClientBuilder {
+public class SalesforceClientBuilder {
 
 	@Builder(builderMethodName = "defaultClient")
-	public static Sforce defaultClient(Token token) {
-		return new Sforce(token);
+	public static Salesforce defaultClient(Token token) {
+		return new SalesforceClient(token);
 	}
 }

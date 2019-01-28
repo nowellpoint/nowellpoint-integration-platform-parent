@@ -1,7 +1,14 @@
-package com.nowellpoint.client.sforce;
+package com.nowellpoint.client.sforce.test;
 
 import org.junit.Test;
 
+import com.nowellpoint.client.sforce.Authenticators;
+import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.OauthRequests;
+import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.util.SecretsManager;
@@ -25,9 +32,9 @@ public class TestSalesforceClient {
 			
 			Token token = response.getToken();
 			
-			Sforce sforce = SforceClientBuilder.defaultClient(token);
+			Salesforce client = SalesforceClientBuilder.defaultClient(token);
 			
-			Identity identity = sforce.getIdentity();
+			Identity identity = client.getIdentity();
 			
 			System.out.println(identity.getDisplayName());
 			

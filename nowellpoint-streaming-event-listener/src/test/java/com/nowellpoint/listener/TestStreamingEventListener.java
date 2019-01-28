@@ -39,6 +39,7 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.Salesforce;
+import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
@@ -169,9 +170,9 @@ public class TestStreamingEventListener {
 		
 		Token token = oauthAthenticationResponse.getToken();
 		
-		Sforce sforce = SforceClientBuilder.defaultClient(token);
+		Salesforce client = SalesforceClientBuilder.defaultClient(token);
 		
-		Identity identity = sforce.getIdentity();
+		Identity identity = client.getIdentity();
 		
 		int i = 0;
 		

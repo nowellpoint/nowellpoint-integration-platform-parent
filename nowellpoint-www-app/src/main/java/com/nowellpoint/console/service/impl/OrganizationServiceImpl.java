@@ -230,11 +230,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			Date now = getCurrentDateTime();
 			
-			Salesforce client = SalesforceClientBuilder.builder()
-					.build()
-					.getClient();
+			Salesforce client = SalesforceClientBuilder.defaultClient(token);
 			
-			PushTopic pushTopic = client.getPushTopic(token, topicId);
+			PushTopic pushTopic = client.getPushTopic(topicId);
 			
 			if (pushTopic.getCreatedDate().equals(pushTopic.getLastModifiedDate())) {
 				
@@ -719,17 +717,15 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.query(listener.getQuery())
 				.build();
 		
-		Salesforce client = SalesforceClientBuilder.builder()
-				.build()
-				.getClient();
+		Salesforce client = SalesforceClientBuilder.defaultClient(token);
 		
 		String topicId = listener.getTopicId();
 		
 		if (Assert.isNullOrEmpty(topicId)) {
-			CreateResult createResult = client.createPushTopic(token, pushTopicRequest);
+			CreateResult createResult = client.createPushTopic(pushTopicRequest);
 			topicId = createResult.getId();
 		} else {
-			client.updatePushTopic(token, listener.getTopicId(), pushTopicRequest);
+			client.updatePushTopic(listener.getTopicId(), pushTopicRequest);
 		}
 		
 		return topicId;
