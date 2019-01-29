@@ -1,7 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
         <#include "sidebar.ftl" />
-        <content id="content">
+        <div id="content">
             <div class="container-fluid pt-4 pb-2 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
@@ -95,5 +95,5 @@
                     ${organization.dashboard.lastRefreshedOn?date?string.long} - ${organization.dashboard.lastRefreshedOn?time?string.medium}
                 </span>
             </div>
-        </content>
+        </div>
     </@t.page>

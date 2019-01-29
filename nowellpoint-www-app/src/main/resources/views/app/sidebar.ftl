@@ -1,15 +1,5 @@
-<div id="sidebar" class="sidebar">
-    <div class="container-fluid pt-4 pb-2 pr-3 pl-3">
-        <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h4 class="dashhead-title font-weight-normal">&nbsp;</h4>
-                    </div>
-                    <div class="dashhead-toolbar">
-
-                    </div>
-                </div>
-    </div>    
-    <ul class="nav nav-stacked flex-md-column nav-flex-icons border-top">
+<nav id="sidebar">  
+    <ul class="nav nav-stacked flex-md-column nav-flex-icons pt-4">
         <li class="nav-item">
                 <a class="nav-link" href="${START_URI}">
                     &emsp;<i class="fa fa-star fa-1x"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["start"]}</span>
@@ -25,4 +15,4 @@
                 &emsp;<i class="fa fa-exchange fa-1x"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["streaming.events"]}</span></a>
         </li>
     </ul>
-</div>
+</nav>

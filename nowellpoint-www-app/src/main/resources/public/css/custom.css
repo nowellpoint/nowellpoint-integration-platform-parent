@@ -12,21 +12,8 @@ header {
     border-bottom: 1px solid lightGray;
 }
 main {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
     display: flex;
-}
-content {
-    position: absolute;
-    height: 100%;
-    left: 250px;
-    right: 0;
-    top: 0px;    
-    margin-right: 0px;
-    margin-top: 50px; 
-    overflow: auto;
+    width: 100%;
 }
 footer {
     position: fixed; /* Set the navbar to fixed position */
@@ -46,43 +33,73 @@ footer {
 .unique-color {
 	background-color: #3F729B;
 }
+.unique-color-dark {
+    background-color: #1C2331;
+}
+
+/* The content style */
+#content {
+    width: calc(100% - 250px);
+    background-color: #f5f5f5;
+    position: absolute;
+    min-height: 100vh;
+    transition: all 0.3s;
+    right: 0;
+    top: 0;    
+    margin-top: 52px; 
+    overflow: auto;
+}
+
+#content.active {
+    width: 100%;
+}
 
 /* The side navigation menu */
-.sidebar {
-    height: 100%;
-    width: 250px; /* 0 width - change this with JavaScript */
-    top: 0px;
-    left: 0;
-    border-right: 1px solid lightGray;
+#sidebar {
+    width: 250px;
+    height: 100vh;
+    transition: all 0.3s;
+    border-right: 1px #1C2331;
     overflow-x: hidden;
-    background-color: #fafafa;
+    background-color: #1C2331;
     position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-    margin-top: 50px;
-    z-index: 1; /* Stay on top */
+    margin-top: 52px;
+    top: 0;
+    left: 0;
+    z-index: 999;
 }
 
-/* The navigation menu links */
-.sidebar a {
-    text-decoration: none;
+#sidebar.active {
+    margin-left: -250px;
+}
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
     display: block;
-    transition: 0.3s;
 }
 
-.sidebar a:hover {
-    background: lightGray;
+#sidebar ul li a:hover {
+    color: #7386D5;
+    background: #f5f5f5;
+}
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #fff;
+    background: #6d7fcc;
 }
 
-.active {
-    background-color: #D9EAFC !important;
-}
-
-/* Position and style the close button (top right corner) */
-.sidebar .title {
-    position: absolute;
-    top: 18px;
-    font-size: 24px;
-    left: 25px;
-    font-family: "Georgia, serif";
+a[data-toggle="collapse"] {
+    position: relative;
 }
 
 .spinner {
@@ -272,8 +289,24 @@ footer {
    to {transform: rotate(359deg);}
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        width: 100%;
+    }
+    #content.active {
+        width: calc(100% - 250px);
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
 }

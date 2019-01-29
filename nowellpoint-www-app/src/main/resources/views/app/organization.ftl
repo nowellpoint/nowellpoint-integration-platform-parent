@@ -1,7 +1,7 @@
 <#import "template.html" as t>
     <@t.page>
         <#include "sidebar.ftl" />
-        <content id="content">
+        <div id="content">
             <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
@@ -17,5 +17,5 @@
                     <#include "organization-billing-address.ftl" />
                 </div>
             </div>
-        </content>
+        </div>
     </@t.page>
