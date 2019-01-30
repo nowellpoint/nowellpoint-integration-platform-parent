@@ -68,12 +68,7 @@ public class TopicSubscription {
 	
 	public void reconnect(TopicConfiguration configuration) {
 		this.configuration = configuration;
-		reconnect();
-	}
-	
-	private void reconnect() {
 		connect();
-		subscribe();
 	}
 	
 	private void stopHttpClient() {
@@ -93,7 +88,7 @@ public class TopicSubscription {
 		stopHttpClient();
 	}
 	
-	public void subscribe() {
+	private void subscribe() {
 		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
@@ -205,6 +200,7 @@ public class TopicSubscription {
 			
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
+				subscribe();
 				if (! message.isSuccessful()) {
 					LOGGER.error(channel.getChannelId() + ": " + message.toString());
 				}
@@ -216,11 +212,7 @@ public class TopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
-					LOGGER.info(client.isDisconnected());
 					LOGGER.error(channel.getChannelId() + ": " + message.toString());
-					//if (client.isDisconnected()) {
-						//reconnect();
-					//}
 				}
 			}
 		});

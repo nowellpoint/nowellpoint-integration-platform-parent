@@ -23,9 +23,9 @@ import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 
-public class StreamingEventListener extends AbstractTopicSubscriptionManager {
+public class StreamingEventListener extends TopicSubscriptionCache {
 	
-	private static StreamingEventListener instance = new StreamingEventListener();
+	private static StreamingEventListener INSTANCE = new StreamingEventListener();
 	
 	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
 	private static final String BUCKET = "streaming-event-listener-us-east-1-600862814314";
@@ -41,8 +41,30 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 	private StreamingEventListener() {}
 	
 	public void start() {
-		
 		mongoConnect();
+		startListeners();
+        startQueue();
+	}
+	
+	public void stop() {
+		stopQueue();
+		disconnectAll();
+		mongoDisconnect();
+	}
+	
+	public static StreamingEventListener getInstance() {
+		return INSTANCE;
+	}
+	
+	private void mongoConnect() {
+		MongoConnection.getInstance().connect();
+	}
+	
+	private void mongoDisconnect() {
+		MongoConnection.getInstance().disconnect();
+	}
+	
+	private void startListeners() {
 		
 		ListObjectsV2Request request = new ListObjectsV2Request()
 				.withBucketName(BUCKET)
@@ -74,8 +96,10 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
         	request.setContinuationToken(result.getNextContinuationToken());
 			
         } while (result.isTruncated());
-		
-    	try {
+	}
+	
+	private void startQueue() {
+		try {
     		connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(), AmazonSQSClientBuilder.defaultClient());
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
@@ -119,24 +143,6 @@ public class StreamingEventListener extends AbstractTopicSubscriptionManager {
 		} catch (JMSException e) {
 			LOGGER.error(e);
 		} 
-	}
-	
-	public void stop() {
-		stopQueue();
-		disconnectAll();
-		mongoDisconnect();
-	}
-	
-	public static StreamingEventListener getInstance() {
-		return instance;
-	}
-	
-	private void mongoConnect() {
-		MongoConnection.getInstance().connect();
-	}
-	
-	private void mongoDisconnect() {
-		MongoConnection.getInstance().disconnect();
 	}
 	
 	private void stopQueue() {

@@ -17,10 +17,10 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 
-public abstract class AbstractTopicSubscriptionManager {
+public abstract class TopicSubscriptionCache {
 	
 	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
-	private static final Jsonb jsonb = JsonbBuilder.create(getJsonbConfig());
+	private static final Jsonb JSON_BUILDER = JsonbBuilder.create(getJsonbConfig());
 		
 	protected void put(String key, TopicSubscription topicSubscription) {
 		TOPIC_SUBSCRIPTIONS.put(key, topicSubscription);
@@ -33,16 +33,8 @@ public abstract class AbstractTopicSubscriptionManager {
 		TOPIC_SUBSCRIPTIONS.clear();
 	}
 	
-	protected TopicSubscription get(String key) {
-		return TOPIC_SUBSCRIPTIONS.get(key);
-	}
-	
 	protected void connect(String key) {
 		get(key).connect();
-	}
-	
-	protected void subscribe(String key) {
-		get(key).subscribe();
 	}
 	
 	protected void disconnect(String key) {
@@ -57,31 +49,34 @@ public abstract class AbstractTopicSubscriptionManager {
 		TOPIC_SUBSCRIPTIONS.remove(key);
 	}
 	
-	protected void replace(String key, TopicSubscription topicSubscription) {
-		TOPIC_SUBSCRIPTIONS.replace(key, topicSubscription);
-	}
-	
 	protected TopicConfiguration readConfiguration(S3Object s3object) {
-		return jsonb.fromJson(s3object.getObjectContent(), TopicConfiguration.class);
+		return JSON_BUILDER.fromJson(s3object.getObjectContent(), TopicConfiguration.class);
 	}
 	
 	protected S3Event readEvent(TextMessage message) throws JsonbException, JMSException {
-		return jsonb.fromJson(message.getText(), S3Event.class);
+		return JSON_BUILDER.fromJson(message.getText(), S3Event.class);
+	}
+	
+	private TopicSubscription get(String key) {
+		return TOPIC_SUBSCRIPTIONS.get(key);
 	}
 	
 	private static JsonbConfig getJsonbConfig() {
-		return new JsonbConfig().withNullValues(Boolean.TRUE).withPropertyVisibilityStrategy(new PropertyVisibilityStrategy() {
-
-			@Override
-			public boolean isVisible(Field field) {
-				return true;
-			}
-
-			@Override
-			public boolean isVisible(Method method) {
-				return false;
-			}
-			
-		});
+		return new JsonbConfig()
+				.withNullValues(Boolean.TRUE)
+				.withPropertyVisibilityStrategy(
+						new PropertyVisibilityStrategy() {
+							
+							@Override
+							public boolean isVisible(Field field) {
+								return true;
+							}
+							
+							@Override
+							public boolean isVisible(Method method) {
+								return false;
+							}
+							
+						});
 	}
 }

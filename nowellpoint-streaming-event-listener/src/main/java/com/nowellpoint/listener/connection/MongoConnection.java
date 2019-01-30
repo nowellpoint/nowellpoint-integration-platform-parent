@@ -11,7 +11,7 @@ import com.nowellpoint.util.SecretsManager;
 
 public class MongoConnection {
 
-	private static MongoConnection instance = new MongoConnection();
+	private static MongoConnection INSTANCE = new MongoConnection();
 	
 	private MongoClient mongoClient;
 	private Datastore datastore;
@@ -41,6 +41,6 @@ public class MongoConnection {
 	}
 	
 	public static MongoConnection getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 }
