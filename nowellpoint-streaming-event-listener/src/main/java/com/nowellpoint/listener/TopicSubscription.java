@@ -213,6 +213,7 @@ public class TopicSubscription {
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				if (! message.isSuccessful()) {
 					LOGGER.error(channel.getChannelId() + ": " + message.toString());
+					// TODO: reconnect
 				}
 			}
 		});

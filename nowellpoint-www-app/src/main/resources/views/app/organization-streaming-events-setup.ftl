@@ -2,14 +2,14 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <content id="content">
-            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
-                <div class="dashhead">
-                    <div class="dashhead-titles">
-                        <h4 class="dashhead-title font-weight-normal">${labels["setup.event.listener"]}</h4>
-                    </div>
-                </div>
-            </div>
-            <hr>
+            <div class="container-fluid mt-2 pt-3 pr-1 pl-1">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent">
+                        <li class="breadcrumb-item"><a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">${messages["setup"]}</li>
+                    </ol>
+                </nav>
+            </div>    
             <div class="container-fluid p-3">
                 <form id="streaming-event-listener-form" role="form" method="post" action="${eventListener.href}">
                     <div class="flextable">
