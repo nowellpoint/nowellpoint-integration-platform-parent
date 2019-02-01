@@ -57,9 +57,6 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
 				-> setupStreamingEvents(request, response));
 		
-		get(Path.Route.ORGANIZATION_STREAMING_EVENTS_FEED, (request, response)
-				-> streamingEventsFeed(request, response));
-		
 		post(Path.Route.ORGANIZATION_STREAMING_EVENTS_SETUP, (request, response)
 				-> saveEventListener(request, response));
 		
@@ -152,25 +149,7 @@ public class OrganizationController extends BaseController {
 		return processTemplate(templateProcessRequest);
 	};	
 	
-	private static String streamingEventsFeed(Request request, Response response) {
-		
-		String organizationId = getIdentity(request).getOrganization().getId();
-		
-		List<FeedItem> list = ServiceClient.getInstance()
-				.organization()
-				.getStreamingEventsFeed(organizationId);
-		
-		Map<String,Object> model = getModel();
-		model.put("feed", list);
-		
-    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(OrganizationController.class)
-				.model(model)
-				.templateName(Templates.ORGANIZATION_STREAMING_EVENTS)
-				.build();
-		
-		return processTemplate(templateProcessRequest);
-	};	
+	
 	
 	/**
 	 * 
@@ -193,6 +172,10 @@ public class OrganizationController extends BaseController {
 				.stream()
 				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
+		
+		List<FeedItem> feedItems = ServiceClient.getInstance()
+				.organization()
+				.getStreamingEventsFeed(organizationId, source);
 		
 		ZoneId utc = ZoneId.of( "UTC" );
 		LocalDate today = LocalDate.now( utc );
@@ -228,6 +211,7 @@ public class OrganizationController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
+		model.put("feedItems", feedItems);
 		model.put("TODAY", today);
 		model.put("FIRST_DAY_OF_WEEK", firstDayOfWeek);
 		model.put("FIRST_DAY_OF_MONTH", firstDayOfMonth);

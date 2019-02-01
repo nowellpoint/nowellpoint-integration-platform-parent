@@ -45,6 +45,8 @@ public interface OrganizationService {
 	
 	public List<FeedItem> getStreamingEventsFeed(String id);
 	
+	public List<FeedItem> getStreamingEventsFeed(String id, String source);
+	
 	public List<AggregationResult> getEventsLastDays(String id, Integer days);
 	
 	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days);

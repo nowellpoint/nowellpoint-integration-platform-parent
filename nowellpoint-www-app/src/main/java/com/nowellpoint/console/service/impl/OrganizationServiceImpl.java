@@ -576,6 +576,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
+	public List<FeedItem> getStreamingEventsFeed(String id, String source){
+		return dao.getStreamingEventsBySource(new ObjectId(id), source)
+				.stream()
+				.map(s -> FeedItem.of(s))
+				.collect(Collectors.toList());
+	}
+	
+	@Override
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException {
 		
 		Organization organization = get(id);

@@ -47,6 +47,21 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 		
 		return streamingEventsList;
 	}
+
+	public List<StreamingEvent> getStreamingEventsBySource(ObjectId organizationId, String source) {
+		
+		FindOptions options = new FindOptions().limit(50);
+		
+		List<StreamingEvent> streamingEventsList = getDatastore().createQuery(StreamingEvent.class)
+				.field("organizationId")
+				.equal(organizationId)
+				.field("source")
+				.equal(source)
+				.order("-eventDate")
+				.asList(options);
+		
+		return streamingEventsList;
+	}
 	
 	public List<AggregationResult> getEventsBySourceByDays(ObjectId organizationId, String source, Integer days) {
 		
