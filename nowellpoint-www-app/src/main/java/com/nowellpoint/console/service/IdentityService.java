@@ -5,6 +5,8 @@ import com.nowellpoint.console.model.IdentityRequest;
 
 public interface IdentityService {
 	
+	public void start();
+	
 	public Identity get(String id);
 	
 	public Identity getBySubject(String subject);

@@ -78,7 +78,6 @@ public class Bootstrap implements SparkApplication {
 		get(Path.Route.HEALTH_CHECK, (request, response) 
 				-> healthCheck(request, response));
 		
-		
 		exception(BadRequestException.class, (exception, request, response) -> {
 			response.status(400);
 			response.body(exception.getMessage());

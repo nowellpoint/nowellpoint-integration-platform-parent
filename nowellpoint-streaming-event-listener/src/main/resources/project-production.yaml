@@ -1,0 +1,11 @@
+logger:
+    level: INFO
+swarm:
+    http:
+        port: 8080
+    https:
+        certificate:
+            generate: true
+        port: 8443
+sceret:
+    name: /production/console
