@@ -17,15 +17,17 @@
     </head>
 
     <body>
-
-        <header>
-            <div class="container-fluid">
-                <a href="/"><h3>${messages["application.title"]}</h3></a>
-            </div>
-        </header>
-        <main>
-        <#nested/>
-        </main>    
+        
+            <header>
+                <div class="container-fluid">
+                    <a href="/"><h3>${messages["application.title"]}</h3></a>
+                </div>
+            </header>
+            <br>
+            <br>
+            <br>
+            <#nested/>
+          
         <footer>    
             <div class="container-fluid">
                 <div class="text-center">

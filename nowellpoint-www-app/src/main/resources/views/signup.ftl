@@ -5,9 +5,9 @@
                 <div class="col-2"></div>
                 <div class="col-10">
                     <!--Section heading-->
-                    <h2 class="section-heading h1">${labels['signup.title']}</h2>
+                    <h2>${labels['signup.title']}</h2>
                     <!--Section description-->
-                    <p class="section-description">${labels['fill.form']}&nbsp;<a href="${links['login']}/">${labels['login']}</a></p>
+                    <p>${labels['fill.form']}&nbsp;<a href="${links['login']}/">${labels['login']}</a></p>
                 </div>
             </div>
             <!-- <#if errorMessage??> -->
