@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import com.nowellpoint.console.api.IdentityResource;
 import com.nowellpoint.console.api.OrganizationResource;
-import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.DashboardController;
@@ -46,8 +45,6 @@ public class Routes {
 				halt();
 			}
 		}
-		
-		ServiceClient.getInstance().identity().start();
 		
 		AdministrationController.configureRoutes();
 		IndexController.configureRoutes(configuration);

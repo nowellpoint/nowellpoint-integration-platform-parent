@@ -33,9 +33,24 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>io.thorntail.servers</groupId>
-			<artifactId>web</artifactId>
-			<version>${version.wildfly.swarm}</version>
+			<groupId>io.thorntail</groupId>
+			<artifactId>undertow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>ejb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>jsonp</artifactId>
+		</dependency>
+		<dependency>
+  			<groupId>io.thorntail</groupId>
+  			<artifactId>jsonb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>microprofile-health</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sparkjava</groupId>

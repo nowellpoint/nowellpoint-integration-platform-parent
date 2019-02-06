@@ -7,10 +7,9 @@ swarm:
         certificate:
             generate: true
         port: 8443
+        only: true
     management:
         http:
-          port: 5990
-        https:
-          port: 5993    
+            disable: true        
 secret: 
     name: /sandbox/console

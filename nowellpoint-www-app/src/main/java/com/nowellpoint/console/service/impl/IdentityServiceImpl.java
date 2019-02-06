@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.ws.rs.BadRequestException;
@@ -35,7 +33,6 @@ import com.nowellpoint.util.SecretsManager;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
-import com.okta.sdk.resource.group.Group;
 import com.okta.sdk.resource.user.PasswordCredential;
 import com.okta.sdk.resource.user.User;
 import com.okta.sdk.resource.user.UserBuilder;
@@ -71,18 +68,6 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 	
 	public IdentityServiceImpl() {
 		dao = new IdentityDAO(com.nowellpoint.console.entity.Identity.class, datastore);
-	}
-	
-	@Override
-	public void start() {
-		
-		Runnable task = () -> {
-			Group group = client.getGroup(SecretsManager.getOktaDefaultGroupId());
-			LOGGER.info("**** Identity Group: " + group.getResourceHref());
-		};
-		
-		ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-		service.scheduleAtFixedRate(task, 0, 24, TimeUnit.HOURS);
 	}
 	
 	@Override
