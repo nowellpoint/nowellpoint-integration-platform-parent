@@ -158,8 +158,6 @@ public class SignUpController extends BaseController {
 				.identity()
 				.get(id);
 		
-		System.out.println(Path.Route.ACCOUNT_ACTIVATE.replace(":id", identity.getId()));
-		
 		Map<String, Object> model = new HashMap<>();
 		model.put("registration", identity);
 		model.put("ACCOUNT_ACTIVATE_URI", Path.Route.ACCOUNT_ACTIVATE.replace(":id", identity.getId()));

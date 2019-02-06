@@ -744,6 +744,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
 		entity.setLastUpdatedBy(entity.getCreatedBy());
 		dao.save(entity);
+		entity = dao.get(entity.getId());
+		putEntry(entity.getId().toString(), entity);
 		return Organization.of(entity);
 	}
 	
