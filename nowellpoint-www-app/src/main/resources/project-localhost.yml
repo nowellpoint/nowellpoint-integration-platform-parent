@@ -13,3 +13,6 @@ swarm:
             disable: true        
 secret: 
     name: /sandbox/console
+salesforce:
+    oauth:
+        callback: https://localhost:8443/salesforce/oauth/callback/    

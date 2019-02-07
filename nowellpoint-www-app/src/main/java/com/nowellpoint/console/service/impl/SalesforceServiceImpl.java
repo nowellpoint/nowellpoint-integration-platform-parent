@@ -21,7 +21,6 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 import com.nowellpoint.console.service.SalesforceService;
-import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.util.SecretsManager;
 
 public class SalesforceServiceImpl implements SalesforceService {
@@ -29,7 +28,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 	@Override
 	public Token getToken(String authorizationCode) {
 		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST.builder()
-				.setCallbackUri(EnvironmentVariables.getSalesforceRedirectUri())
+				.setCallbackUri(System.getProperty("salesforce.oauth.callback"))
 				.setClientId(SecretsManager.getSalesforceClientId())
 				.setClientSecret(SecretsManager.getSalesforceClientSecret())
 				.setCode(authorizationCode)

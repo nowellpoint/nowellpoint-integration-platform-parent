@@ -11,6 +11,8 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.BaseController;
 
+import com.okta.sdk.resource.ResourceException;
+
 import org.eclipse.jetty.http.HttpStatus;
 
 import spark.Request;
@@ -21,7 +23,11 @@ public class Exceptions extends BaseController {
 	public static void configureExceptionRoutes() {
 		
 		exception(ServiceException.class, (exception, request, response) -> {
-			serveServiceException(exception, request, response);
+			serviceException(exception, request, response);
+		});
+		
+		exception(ResourceException.class, (exception, request, response) -> {
+			resourceException(exception, request, response);
 		});
 		
 		
@@ -43,7 +49,22 @@ public class Exceptions extends BaseController {
 		return processTemplate(templateProcessRequest);
     };
     
-    private static String serveServiceException(Exception exception, Request request, Response response) {
+    private static String serviceException(ServiceException exception, Request request, Response response) {
+		response.status(HttpStatus.BAD_REQUEST_400);
+		
+		Map<String, Object> model = new HashMap<String,Object>();
+		model.put("errorMessage", exception.getMessage());
+
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
+				.controllerClass(AuthenticationController.class)
+				.model(model)
+				.templateName(Templates.ERROR)
+				.build();
+
+		return processTemplate(templateProcessRequest);
+    };
+    
+    private static String resourceException(ResourceException exception, Request request, Response response) {
 		response.status(HttpStatus.BAD_REQUEST_400);
 		
 		Map<String, Object> model = new HashMap<String,Object>();

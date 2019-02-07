@@ -139,7 +139,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		Dashboard dashboard = Dashboard.builder()
 				.build();
 		
+		Address address = Address.builder()
+				.addedOn(getCurrentDateTime())
+				.updatedOn(getCurrentDateTime())
+				.build();
+		
 		Organization organization = Organization.builder()
+				.address(address)
 				.dashboard(dashboard)
 				.domain(request.getDomain())
 				.streamingEventListeners(plan.getStreamingEventListeners())

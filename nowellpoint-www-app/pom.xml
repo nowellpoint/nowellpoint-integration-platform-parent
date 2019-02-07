@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>nowellpoint-www-app</artifactId>
@@ -18,7 +21,7 @@
 		<version.war.plugin>2.5</version.war.plugin>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -45,8 +48,8 @@
 			<artifactId>jsonp</artifactId>
 		</dependency>
 		<dependency>
-  			<groupId>io.thorntail</groupId>
-  			<artifactId>jsonb</artifactId>
+			<groupId>io.thorntail</groupId>
+			<artifactId>jsonb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.thorntail</groupId>
@@ -230,6 +233,30 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
+						<version>3.5.42</version>
+						<!-- 
+						<configuration>
+							<images>
+								<image>
+									<name>${project.artifactId}:${project.version}</name>
+									<build>
+										<from>docker-registry.default.svc:5000/test/baseJdkImage</from>
+										<entryPoint>
+											<exec>
+												<arg>java</arg>
+												<arg>$JAVA_OPTS</arg>
+												<arg>-Djava.security.egd=file:/dev/./urandom</arg>
+												<arg>-jar</arg>
+												<arg>/maven/${project.artifactId}.${project.packaging}</arg>
+											</exec>
+										</entryPoint>
+										<assembly>
+											<descriptorRef>artifact</descriptorRef>
+										</assembly>
+									</build>
+								</image>
+							</images>
+						</configuration>  -->
 						<executions>
 							<execution>
 								<goals>

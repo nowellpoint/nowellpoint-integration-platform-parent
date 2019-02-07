@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.validation.ValidationException;
-
 import org.apache.commons.lang3.RandomStringUtils;
 
 import com.nowellpoint.console.exception.ConsoleException;
@@ -24,7 +22,6 @@ import com.nowellpoint.oauth.model.AuthenticationRequest;
 import com.nowellpoint.oauth.model.OktaOAuthProvider;
 import com.nowellpoint.oauth.model.TokenResponse;
 import com.nowellpoint.util.SecretsManager;
-import com.okta.sdk.resource.ResourceException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -38,43 +35,34 @@ public class ConsoleServiceImpl implements ConsoleService {
 		
 		String uuid = UUID.randomUUID().toString();
 		
-		try {
-    		
-    		OrganizationRequest organizationRequest = OrganizationRequest.builder()
-    				.domain(uuid)
-    				.email(request.getEmail())
-    				.firstName(request.getFirstName())
-    				.lastName(request.getLastName())
-    				.name(uuid)
-    				.planId(request.getPlanId())
-    				.build();
-    		
-    		Organization organization = ServiceClient.getInstance()
-    				.organization()
-    				.create(organizationRequest);
+		OrganizationRequest organizationRequest = OrganizationRequest.builder()
+				.domain(uuid)
+				.email(request.getEmail())
+				.firstName(request.getFirstName())
+				.lastName(request.getLastName())
+				.name(uuid)
+				.planId(request.getPlanId())
+				.build();
+		
+		Organization organization = ServiceClient.getInstance()
+				.organization()
+				.create(organizationRequest);
 
-    		IdentityRequest identityRequest = IdentityRequest.builder()
-        			.email(request.getEmail())
-        			.firstName(request.getFirstName())
-        			.lastName(request.getLastName())
-        			.locale(request.getLocale())
-        			.organizationId(organization.getId())
-        			.password(generatePassword())
-        			.timeZone(request.getTimeZone())
-        			.build();
-    		
-    		Identity identity = ServiceClient.getInstance()
-        			.identity()
-        			.create(identityRequest);
-			
-			return identity;
-			
-    	} catch (ResourceException e) {
-    		e.printStackTrace();
-    		throw new ConsoleException(e.getError().getMessage());
-    	} catch (ValidationException e) {
-    		throw new ConsoleException(e.getMessage());
-    	}
+		IdentityRequest identityRequest = IdentityRequest.builder()
+    			.email(request.getEmail())
+    			.firstName(request.getFirstName())
+    			.lastName(request.getLastName())
+    			.locale(request.getLocale())
+    			.organizationId(organization.getId())
+    			.password(generatePassword())
+    			.timeZone(request.getTimeZone())
+    			.build();
+		
+		Identity identity = ServiceClient.getInstance()
+    			.identity()
+    			.create(identityRequest);
+		
+		return identity;
 	}
 	
 	@Override
