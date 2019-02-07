@@ -82,12 +82,10 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Identity getIdentity() {
-		Identity identity = null;
 		
-		if (IDENTITY_CACHE.containsKey(token.getId())) {
-			LOGGER.info("cache entry found");
-			identity = IDENTITY_CACHE.get(token.getId());
-		} else {
+		Identity identity = get();
+		
+		if (identity == null)  {
 			
 			HttpResponse response = RestResource.get(token.getId())
 					.acceptCharset(StandardCharsets.UTF_8)
@@ -102,9 +100,7 @@ final class SalesforceClient implements Salesforce {
 				throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 			}
 			
-			LOGGER.info("cache entry not found");
-			
-			IDENTITY_CACHE.put(token.getId(), identity);
+			put(identity);
 		}
 		
 		return identity;
@@ -562,5 +558,13 @@ final class SalesforceClient implements Salesforce {
 				.execute();
 		
 		return response.getEntity(Limits.class);
+	}
+	
+	private Identity get() {
+		return IDENTITY_CACHE.get(token.getId());
+	}
+	
+	private void put(Identity identity) {
+		IDENTITY_CACHE.put(token.getId(), identity);
 	}
 }

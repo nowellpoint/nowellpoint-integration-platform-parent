@@ -4,6 +4,4 @@ sceret:
     name: /production/console
 salesforce:
     oauth:
-        callback: https://www.nowellpoint.com/salesforce/oauth/callback/    
-    api:
-        version: 44.0
+        callback: https://www.nowellpoint.com/salesforce/oauth/callback/        

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.ws.rs.InternalServerErrorException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.Plan;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
@@ -375,7 +376,7 @@ public class SignUpController extends BaseController {
 		
 		try {
 			
-			String authUrl = new StringBuilder("https://login.salesforce.com/services/oauth2/authorize")
+			String authUrl = new StringBuilder(Salesforce.AUTHORIZE_URI)
 					.append("?response_type=code")
 					.append("&client_id=")
 					.append(SecretsManager.getSalesforceClientId())

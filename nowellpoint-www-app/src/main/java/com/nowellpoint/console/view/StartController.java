@@ -7,10 +7,10 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.EnvironmentVariables;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.util.SecretsManager;
@@ -59,12 +59,12 @@ public class StartController extends BaseController {
 		
 		try {
 			
-			String authUrl = new StringBuilder(EnvironmentVariables.getSalesforceAuthorizeUri())
+			String authUrl = new StringBuilder(Salesforce.AUTHORIZE_URI)
 					.append("?response_type=code")
 					.append("&client_id=")
 					.append(SecretsManager.getSalesforceClientId())
 					.append("&redirect_uri=")
-					.append(EnvironmentVariables.getSalesforceRedirectUri())
+					.append(System.getProperty("salesforce.oauth.callback"))
 					.append("&scope=")
 					.append(URLEncoder.encode("refresh_token api", "UTF-8"))
 					.append("&prompt=login")

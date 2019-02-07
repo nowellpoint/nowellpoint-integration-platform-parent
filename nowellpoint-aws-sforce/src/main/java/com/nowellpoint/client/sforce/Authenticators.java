@@ -7,14 +7,13 @@ import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
 import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
 import com.nowellpoint.http.Status;
 
 public class Authenticators {
-	
-	private static final String OAUTH_TOKEN_URI = "https://login.salesforce.com/services/oauth2/token";
 	
 	public static final AuthorizationGrantResponseFactory AUTHORIZATION_GRANT_AUTHENTICATOR = new AuthorizationGrantResponseFactory();
 	public static final PasswordGrantResponseFactory PASSWORD_GRANT_AUTHENTICATOR = new PasswordGrantResponseFactory();
@@ -28,7 +27,7 @@ public class Authenticators {
 			Optional.of(authorizationGrantRequest.getCode()).orElseThrow(() -> new IllegalArgumentException("missing auth code"));
 			Optional.of(authorizationGrantRequest.getCallbackUri()).orElseThrow(() -> new IllegalArgumentException("missing callback uri"));
 			
-			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+			HttpResponse httpResponse = RestResource.post(Salesforce.TOKEN_URI)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -62,7 +61,7 @@ public class Authenticators {
 			Optional.of(usernamePasswordGrantRequest.getUsername()).orElseThrow(() -> new IllegalArgumentException("missing username"));
 			Optional.of(usernamePasswordGrantRequest.getPassword()).orElseThrow(() -> new IllegalArgumentException("missing password"));
 			
-			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+			HttpResponse httpResponse = RestResource.post(Salesforce.TOKEN_URI)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 					.accept(MediaType.APPLICATION_JSON)
 					.acceptCharset(StandardCharsets.UTF_8)
@@ -96,7 +95,7 @@ public class Authenticators {
 			Optional.of(refreshTokenGrantRequest.getClientSecret()).orElseThrow(() -> new IllegalArgumentException("missing clientSecret"));
 			Optional.of(refreshTokenGrantRequest.getRefreshToken()).orElseThrow(() -> new IllegalArgumentException("missing refreshToken"));
 			
-			HttpResponse httpResponse = RestResource.post(OAUTH_TOKEN_URI)
+			HttpResponse httpResponse = RestResource.post(Salesforce.TOKEN_URI)
 					.acceptCharset(StandardCharsets.UTF_8)
 					.accept(MediaType.APPLICATION_JSON)
 					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
