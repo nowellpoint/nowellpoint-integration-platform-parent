@@ -22,7 +22,7 @@ import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
 
 public interface Salesforce {
-	public static final String API_VERSION = "44.0";
+	public static final String API_VERSION = "45.0";
 	public static final String AUTHORIZE_URI = "https://login.salesforce.com/services/oauth2/authorize";
 	public static final String TOKEN_URI = "https://login.salesforce.com/services/oauth2/token";
 	public static final String REFRESH_URI = "https://login.salesforce.com/services/oauth2/refresh";

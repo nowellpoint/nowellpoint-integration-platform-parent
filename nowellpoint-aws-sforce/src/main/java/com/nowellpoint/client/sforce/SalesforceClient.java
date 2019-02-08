@@ -4,16 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
-import com.nowellpoint.client.sforce.model.Count;
 import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
@@ -43,11 +40,8 @@ import lombok.Value;
 final class SalesforceClient implements Salesforce {
 
 	private static final Logger LOGGER = Logger.getLogger(SalesforceClient.class.getName());
-	private static Map<String,Identity> IDENTITY_CACHE = new ConcurrentHashMap<String,Identity>();
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
-	
-	private static final String API_VERSION = "44.0";
 	
 	private static final String USER_FIELDS = "Id,Username,LastName,FirstName,Name,CompanyName,Division,Department,"
 			+ "Title,Street,City,State,PostalCode,Country,Latitude,Longitude,"
@@ -64,6 +58,7 @@ final class SalesforceClient implements Salesforce {
 			+ "NotifyForOperations,NotifyForOperationUndelete,NotifyForOperationUpdate,Query";
 	
 	private Token token;
+	private Identity identity;
 	
 	/**
 	 * 
@@ -72,6 +67,7 @@ final class SalesforceClient implements Salesforce {
 	
 	public SalesforceClient(Token token) {
 		this.token = token;
+		this.identity = queryIdentity();
 	}
 
 	/**
@@ -82,27 +78,6 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Identity getIdentity() {
-		
-		Identity identity = get();
-		
-		if (identity == null)  {
-			
-			HttpResponse response = RestResource.get(token.getId())
-					.acceptCharset(StandardCharsets.UTF_8)
-					.accept(MediaType.APPLICATION_JSON)
-					.bearerAuthorization(token.getAccessToken())
-					.queryParameter("version", "latest")
-					.execute();
-			
-			if (response.getStatusCode() == Status.OK) {
-				identity = response.getEntity(Identity.class);
-			} else {
-				throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
-			}
-			
-			put(identity);
-		}
-		
 		return identity;
 	}
 
@@ -120,7 +95,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		DescribeGlobalResult describeGlobalResult = null;
@@ -146,7 +121,7 @@ final class SalesforceClient implements Salesforce {
 		Identity identity = getIdentity();
 		
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getSObjects())
-     			.bearerAuthorization(token.getAccessToken())
+     			.bearerAuthorization(getToken().getAccessToken())
      			.path("User")
      			.path(identity.getUserId())
      			.queryParameter("fields", USER_FIELDS)
@@ -178,7 +153,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.path("Organization")
      			.path(identity.getOrganizationId())
      			.queryParameter("fields", ORGANIZATION_FIELDS)
@@ -224,7 +199,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getSObjects().concat(sobject).concat("/describe"))
 				.header("If-Modified-Since", modifiedSince != null ? new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'").format(modifiedSince) : null)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		DescribeResult result = null;
@@ -248,7 +223,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getRest().concat("theme"))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		Theme result = null;
@@ -270,15 +245,15 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse httpResponse = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.queryParameter("q", query)
 				.execute();
 		
 		Long totalSize = Long.valueOf(0);
 		
 		if (httpResponse.getStatusCode() == Status.OK) {
-			Count count = httpResponse.getEntity(Count.class);
-			totalSize = count.getRecords().get(0).getExpr0();
+			QueryResult count = httpResponse.getEntity(QueryResult.class);
+			totalSize = count.getTotalSize();
 		} else {
 			LOGGER.warning(httpResponse.getAsString());
 		}
@@ -307,7 +282,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.post(identity.getUrls().getSObjects().concat("PushTopic/"))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.body(body)
 				.contentType(MediaType.APPLICATION_JSON)
                 .execute();
@@ -340,7 +315,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.post(identity.getUrls().getSObjects().concat("PushTopic/").concat(topicId).concat("?_HttpMethod=PATCH"))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.body(body)
 				.contentType(MediaType.APPLICATION_JSON)
                 .execute();
@@ -356,7 +331,7 @@ final class SalesforceClient implements Salesforce {
 		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.get(identity.getUrls().getSObjects())
-     			.bearerAuthorization(token.getAccessToken())
+     			.bearerAuthorization(getToken().getAccessToken())
      			.path("PushTopic")
      			.path(pushTopicId)
      			.queryParameter("fields", PUSH_TOPIC_FIELDS)
@@ -380,7 +355,7 @@ final class SalesforceClient implements Salesforce {
 		Identity identity = getIdentity();
 		
 		HttpResponse response = RestResource.delete(identity.getUrls().getSObjects().concat("PushTopic/").concat(topicId))
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		if (response.getStatusCode() != Status.NO_CONTENT) {
@@ -396,7 +371,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", UserLicense.QUERY)
      			.execute();
 		
@@ -421,7 +396,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", ApexClass.QUERY)
      			.execute();
 		
@@ -445,7 +420,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", ApexTrigger.QUERY)
      			.execute();
 		
@@ -469,7 +444,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", RecordType.QUERY)
      			.execute();
 		
@@ -498,7 +473,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", Profile.QUERY)
      			.execute();
 		
@@ -520,7 +495,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		return response.getEntity(Resources.class);
@@ -534,7 +509,7 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(token.getInstanceUrl().concat(resources.getLimits()))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
 				.execute();
 		
 		return response.getEntity(Limits.class);
@@ -547,18 +522,19 @@ final class SalesforceClient implements Salesforce {
 		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
+				.bearerAuthorization(getToken().getAccessToken())
      			.queryParameter("q", query)
      			.execute();
 		
 		Set<T> records = Collections.emptySet();
 		
 		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = null;
-			do {
-				queryResult = response.getEntity(QueryResult.class);
-				records = queryResult.getRecords(type);
-			} while (! queryResult.getDone());
+			QueryResult queryResult = response.getEntity(QueryResult.class);
+			records = queryResult.getRecords(type);
+			while(! queryResult.getDone()) {
+				queryResult = queryMore(queryResult.getNextRecordsUrl());
+				records.addAll(queryResult.getRecords(type));
+			}
 			
 		} else {
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
@@ -567,11 +543,33 @@ final class SalesforceClient implements Salesforce {
 		return records;
 	}
 	
-	private Identity get() {
-		return IDENTITY_CACHE.get(token.getId());
+	private QueryResult queryMore(String nextRecordsUrl) {
+		
+		HttpResponse response = RestResource.get(getToken().getInstanceUrl().concat(nextRecordsUrl))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(getToken().getAccessToken())
+     			.execute();
+		
+		if (response.getStatusCode() == Status.OK) {
+			return response.getEntity(QueryResult.class);
+		} else {
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+		}
 	}
 	
-	private void put(Identity identity) {
-		IDENTITY_CACHE.put(token.getId(), identity);
+	private Identity queryIdentity() {
+		HttpResponse response = RestResource.get(token.getId())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+				.queryParameter("version", "latest")
+				.execute();
+		
+		if (response.getStatusCode() == Status.OK) {
+			return response.getEntity(Identity.class);
+		} else {
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+		}
 	}
 }

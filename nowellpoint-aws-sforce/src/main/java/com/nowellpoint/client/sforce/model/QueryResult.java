@@ -17,7 +17,7 @@ public class QueryResult {
 	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	
-	@Getter @JsonProperty("totalSize") private Integer totalSize;
+	@Getter @JsonProperty("totalSize") private Long totalSize;
 	@Getter @JsonProperty("done") private Boolean done;
 	@Getter @JsonProperty("nextRecordsUrl") private String nextRecordsUrl;
 	@Getter @JsonProperty("records") private JsonNode[] records;

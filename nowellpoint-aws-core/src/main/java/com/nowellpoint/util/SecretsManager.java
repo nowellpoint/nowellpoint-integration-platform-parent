@@ -23,8 +23,6 @@ public class SecretsManager {
     			.withRegion(System.getenv("AWS_REGION"))
     			.withCredentials(new AWSStaticCredentialsProvider(credentials))
     			.build();
-    	
-    	System.out.println(System.getProperty("secret.name"));
 
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId(
         		System.getProperty("secret.name") != null ? System.getProperty("secret.name"): System.getenv("AWS_SECRET_NAME"));

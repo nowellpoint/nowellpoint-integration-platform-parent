@@ -31,7 +31,5 @@ public class ApexClass extends SObject {
 	@Getter @JsonProperty("ApiVersion") private Double apiVersion;
 	@Getter @JsonProperty("Name") private String name;
 	
-	public ApexClass() {
-		
-	}
+	public ApexClass() { }
 }
