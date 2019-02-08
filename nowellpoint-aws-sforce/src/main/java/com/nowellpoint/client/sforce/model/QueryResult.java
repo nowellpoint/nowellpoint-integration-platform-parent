@@ -15,17 +15,16 @@ import lombok.Getter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QueryResult {
 	
+	private static final ObjectMapper objectMapper = new ObjectMapper();
+	
 	@Getter @JsonProperty("totalSize") private Integer totalSize;
 	@Getter @JsonProperty("done") private Boolean done;
 	@Getter @JsonProperty("nextRecordsUrl") private String nextRecordsUrl;
 	@Getter @JsonProperty("records") private JsonNode[] records;
 	
-	public QueryResult() {
-		
-	}
+	public QueryResult() { }
 	
 	public <T> Set<T> getRecords(Class<T> valueType) {
-		ObjectMapper objectMapper = new ObjectMapper();
 		return Arrays.asList(records).stream()
 				.map(r -> {
 					try {

@@ -712,6 +712,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			return organization;
 			
 		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
 			logger.severe("Unable to sync organization: " + e.getMessage());
 			return instance;
 		}

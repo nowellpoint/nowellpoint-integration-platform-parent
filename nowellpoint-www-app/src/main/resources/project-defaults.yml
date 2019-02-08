@@ -4,4 +4,5 @@ sceret:
     name: /production/console
 salesforce:
     oauth:
-        callback: https://www.nowellpoint.com/salesforce/oauth/callback/        
+        callback: https://www.nowellpoint.com/salesforce/oauth/callback/      
+hostname: www.nowellpoint.com        

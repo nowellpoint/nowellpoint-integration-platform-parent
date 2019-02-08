@@ -129,7 +129,6 @@ final class SalesforceClient implements Salesforce {
 			describeGlobalResult = response.getEntity(DescribeGlobalResult.class);
 		} else {
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
-			//throw new ServiceException(response.getEntity(SalesforceApiError.class));
 		}
 		
 		return describeGlobalResult;
@@ -317,7 +316,7 @@ final class SalesforceClient implements Salesforce {
 			return response.getEntity(CreateResult.class);
 		} else {
 			//[{"message":"Topic Name: data value too large: NOWELLPOINT_OPPORTUNITY_PUSH_TOPIC (max length=25)","errorCode":"STRING_TOO_LONG","fields":["Name"]}]
-			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntityList(ApiError.class).get(0));
 		}
 	}
 	
@@ -347,7 +346,7 @@ final class SalesforceClient implements Salesforce {
                 .execute();
 		
 		if (response.getStatusCode() != Status.NO_CONTENT) {
-			throw new SalesforceClientException(response.getEntityList(ApiError.class).get(0));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntityList(ApiError.class).get(0));
 		}
 	}
 	
@@ -369,7 +368,7 @@ final class SalesforceClient implements Salesforce {
 		if (response.getStatusCode() == Status.OK) {
 			pushTopic = response.getEntity(PushTopic.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ApiError.class));
 		}
 		
 		return pushTopic;
@@ -432,7 +431,7 @@ final class SalesforceClient implements Salesforce {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			apexClasses = queryResult.getRecords(ApexClass.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 		
 		return apexClasses;
@@ -480,7 +479,7 @@ final class SalesforceClient implements Salesforce {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			recordTypes = queryResult.getRecords(RecordType.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 		
 		return recordTypes;
@@ -488,26 +487,7 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Set<UserRole> getUserRoles() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(token.getAccessToken())
-     			.queryParameter("q", UserRole.QUERY)
-     			.execute();
-		
-		Set<UserRole> userRoles = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			userRoles = queryResult.getRecords(UserRole.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
-		}
-		
-		return userRoles;
+		return query(UserRole.class, UserRole.QUERY);
 	}
 	
 	@Override
@@ -528,7 +508,7 @@ final class SalesforceClient implements Salesforce {
 			QueryResult queryResult = response.getEntity(QueryResult.class);
 			profiles = queryResult.getRecords(Profile.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 		
 		return profiles;
@@ -558,6 +538,33 @@ final class SalesforceClient implements Salesforce {
 				.execute();
 		
 		return response.getEntity(Limits.class);
+	}
+	
+	private <T> Set<T> query(Class<T> type, String query) {
+		
+		Identity identity = getIdentity();
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(token.getAccessToken())
+     			.queryParameter("q", query)
+     			.execute();
+		
+		Set<T> records = Collections.emptySet();
+		
+		if (response.getStatusCode() == Status.OK) {
+			QueryResult queryResult = null;
+			do {
+				queryResult = response.getEntity(QueryResult.class);
+				records = queryResult.getRecords(type);
+			} while (! queryResult.getDone());
+			
+		} else {
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+		}
+		
+		return records;
 	}
 	
 	private Identity get() {

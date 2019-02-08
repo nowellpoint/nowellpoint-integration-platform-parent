@@ -11,7 +11,5 @@ public class ApiError {
 	@Getter @JsonProperty("errorCode") private String errorCode;
 	@Getter @JsonProperty("fields") private String[] fields;
 	
-	public ApiError() {
-		
-	}
+	public ApiError() { }
 }
