@@ -6,10 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends SObject {
 
-	/**
-	 * 
-	 */
-
 	private static final long serialVersionUID = 3163086585922281575L;
 	
 	@JsonProperty("AboutMe")

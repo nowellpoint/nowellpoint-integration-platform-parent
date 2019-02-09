@@ -7,13 +7,7 @@ public class Account extends SObject {
 	
 	private static final long serialVersionUID = 1402870861788633127L;
 	
-	public static final String QUERY = "Select "
-			+ "Id, "
-			+ "Name, "
-			+ "CreatedById, "
-			+ "CreatedDate, "
-			+ "LastModifiedById, "
-			+ "LastModifiedDate "
+	public static final String QUERY = SOBJECT_QUERY
 			+ "From Account ";
 
 	public Account() { }

@@ -12,6 +12,14 @@ import lombok.Getter;
 public class SObject implements Serializable {
 	
 	private static final long serialVersionUID = 8436267729392469449L;
+	
+	protected static final String SOBJECT_QUERY = "Select "
+			+ "Id, "
+			+ "Name, "
+			+ "CreatedById, "
+			+ "CreatedDate, "
+			+ "LastModifiedById, "
+			+ "LastModifiedDate ";
 
 	@Getter @JsonProperty("attributes") private Attributes attributes;
 	@Getter @JsonProperty("Id") private String id;

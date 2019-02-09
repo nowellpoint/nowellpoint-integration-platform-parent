@@ -365,99 +365,22 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Set<UserLicense> getUserLicenses() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(getToken().getAccessToken())
-     			.queryParameter("q", UserLicense.QUERY)
-     			.execute();
-		
-		Set<UserLicense> userLicenses = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			userLicenses = queryResult.getRecords(UserLicense.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
-		}
-		
-		return userLicenses;
-		
+		return query(UserLicense.class, UserLicense.QUERY);
 	}
 	
 	@Override
 	public Set<ApexClass> getApexClasses() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(getToken().getAccessToken())
-     			.queryParameter("q", ApexClass.QUERY)
-     			.execute();
-		
-		Set<ApexClass> apexClasses = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			apexClasses = queryResult.getRecords(ApexClass.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
-		}
-		
-		return apexClasses;
+		return query(ApexClass.class, ApexClass.QUERY);
 	}
 	
 	@Override
 	public Set<ApexTrigger> getApexTriggers() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(getToken().getAccessToken())
-     			.queryParameter("q", ApexTrigger.QUERY)
-     			.execute();
-		
-		Set<ApexTrigger> apexTriggers = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			apexTriggers = queryResult.getRecords(ApexTrigger.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
-		}
-		
-		return apexTriggers;
+		return query(ApexTrigger.class, ApexTrigger.QUERY);
 	}
 	
 	@Override
 	public Set<RecordType> getRecordTypes() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(getToken().getAccessToken())
-     			.queryParameter("q", RecordType.QUERY)
-     			.execute();
-		
-		Set<RecordType> recordTypes = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			recordTypes = queryResult.getRecords(RecordType.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
-		}
-		
-		return recordTypes;
+		return query(RecordType.class, RecordType.QUERY);
 	}
 	
 	@Override
@@ -467,26 +390,7 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Set<Profile> getProfiles() {
-		
-		Identity identity = getIdentity();
-		
-		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-				.bearerAuthorization(getToken().getAccessToken())
-     			.queryParameter("q", Profile.QUERY)
-     			.execute();
-		
-		Set<Profile> profiles = Collections.emptySet();
-		
-		if (response.getStatusCode() == Status.OK) {
-			QueryResult queryResult = response.getEntity(QueryResult.class);
-			profiles = queryResult.getRecords(Profile.class);
-		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
-		}
-		
-		return profiles;
+		return query(Profile.class, Profile.QUERY);
 	}
 	
 	@Override
