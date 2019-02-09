@@ -48,4 +48,5 @@ public interface Salesforce {
 	public Set<Profile> getProfiles();
 	public Resources getResources();
 	public Limits getLimits();
+	public <T> Set<T> query(Class<T> type, String query);
 }

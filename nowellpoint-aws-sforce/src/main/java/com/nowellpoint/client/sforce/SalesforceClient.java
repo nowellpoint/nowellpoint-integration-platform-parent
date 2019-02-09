@@ -492,7 +492,7 @@ final class SalesforceClient implements Salesforce {
 	@Override
 	public Resources getResources() {
 		
-		HttpResponse response = RestResource.get(token.getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
+		HttpResponse response = RestResource.get(getToken().getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(getToken().getAccessToken())
@@ -506,7 +506,7 @@ final class SalesforceClient implements Salesforce {
 		
 		Resources resources = getResources();
 		
-		HttpResponse response = RestResource.get(token.getInstanceUrl().concat(resources.getLimits()))
+		HttpResponse response = RestResource.get(getToken().getInstanceUrl().concat(resources.getLimits()))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
 				.bearerAuthorization(getToken().getAccessToken())
@@ -515,7 +515,8 @@ final class SalesforceClient implements Salesforce {
 		return response.getEntity(Limits.class);
 	}
 	
-	private <T> Set<T> query(Class<T> type, String query) {
+	@Override
+	public <T> Set<T> query(Class<T> type, String query) {
 		
 		Identity identity = getIdentity();
 		
@@ -537,7 +538,7 @@ final class SalesforceClient implements Salesforce {
 			}
 			
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntityList(ApiError.class).get(0));
 		}
 		
 		return records;
@@ -554,6 +555,7 @@ final class SalesforceClient implements Salesforce {
 		if (response.getStatusCode() == Status.OK) {
 			return response.getEntity(QueryResult.class);
 		} else {
+			//[{"message":"\nLastModifiedById, LastModifiedDate, From Account \n                                   ^\nERROR at Row:1:Column:78\nunexpected token: 'From'","errorCode":"MALFORMED_QUERY"}]
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 	}

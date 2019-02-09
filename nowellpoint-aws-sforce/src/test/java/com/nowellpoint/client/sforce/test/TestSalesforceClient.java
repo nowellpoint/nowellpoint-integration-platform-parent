@@ -2,6 +2,8 @@ package com.nowellpoint.client.sforce.test;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Set;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -13,6 +15,7 @@ import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientException;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
+import com.nowellpoint.client.sforce.model.Account;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
@@ -90,7 +93,9 @@ public class TestSalesforceClient {
 			
 			assertNotNull(count);
 			
-			System.out.println(count);
+			Set<Account> accounts = client.query(Account.class, Account.QUERY);
+			
+			System.out.println(accounts.size());
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			
@@ -99,8 +104,8 @@ public class TestSalesforceClient {
 			System.out.println(e.getMessage());
 			System.out.println(e.getErrorDescription());
 		} catch (SalesforceClientException e) {
-			System.out.println(e.getMessage());
 			System.out.println(e.getErrorCode());
+			System.out.println(e.getMessage());
 		} 
 	}
 }
