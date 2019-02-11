@@ -46,7 +46,8 @@ footer {
     transition: all 0.3s;
     right: 0;
     top: 0;    
-    margin-top: 52px; 
+    margin-top: 52px;
+    margin-bottom 10px;
     overflow: auto;
 }
 

@@ -72,7 +72,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="container-fluid pr-5 pl-5 mb-2">
                 <div class="card w-100">
                     <div class="card-body">
@@ -102,6 +101,6 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
         <script type="text/javascript" src="/js/organization.js"></script>
     </@t.page>

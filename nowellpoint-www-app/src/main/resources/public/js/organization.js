@@ -4,7 +4,6 @@
  */
 
 $(document).on('click', 'button#refresh', function () {
-    alert('refresh');
     $.ajax({
         type: 'GET',
         url: '/app/organization/refresh/',
