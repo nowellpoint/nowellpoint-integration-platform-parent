@@ -209,7 +209,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>www-app</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>io.thorntail</groupId>

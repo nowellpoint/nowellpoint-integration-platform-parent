@@ -23,6 +23,7 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
 import com.okta.sdk.resource.ResourceException;
 
@@ -381,7 +382,7 @@ public class SignUpController extends BaseController {
 					.append("&client_id=")
 					.append(SecretsManager.getSalesforceClientId())
 					.append("&redirect_uri=")
-					.append(System.getProperty("salesforce.oauth.callback"))
+					.append(System.getProperty(Properties.SALESFORCE_OAUTH_CALLBACK))
 					.append("&scope=")
 					.append(URLEncoder.encode("refresh_token api", "UTF-8"))
 					.append("&prompt=login")

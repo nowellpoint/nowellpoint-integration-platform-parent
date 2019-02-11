@@ -1,18 +1,22 @@
-<nav id="sidebar">  
-    <ul class="nav nav-stacked flex-md-column nav-flex-icons pt-4">
+<nav id="sidebar" class="border-right">  
+    <ul class="nav nav-stacked nav-bordered flex-md-column pt-4">
         <li class="nav-item">
                 <a class="nav-link" href="${START_URI}">
-                    &emsp;<i class="fa fa-star fa-1x"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["start"]}</span>
+                    <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["start"]}</span>
                 </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="${DASHBOARD_URI}">
-                &emsp;<i class="fa fa-dashboard fa-1x"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["dashboard"]}</span></a>
+            <a class="nav-link" href="${ORGANIZATION_URI}">
+                <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["organization"]}</span></a>
         </li>
-        <li class="nav-header">&emsp;${messages["organization"]}</li>
+        <li class="nav-header">${messages["streaming.events"]}</li>
         <li class="nav-item">
-            <a class="nav-link" href="${ORGANIZATION_STREAMING_EVENTS_URI}">
-                &emsp;<i class="fa fa-exchange fa-1x"></i><span class="clearfix d-none d-sm-inline-block">&emsp;${messages["streaming.events"]}</span></a>
+            <a class="nav-link" href="${STREAMING_EVENTS_URI}">
+                <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["dashboard"]}</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${STREAMING_EVENTS_SOURCES_URI}">
+                <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["sources"]}</span></a>
         </li>
     </ul>
 </nav>

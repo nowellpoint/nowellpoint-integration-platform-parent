@@ -66,23 +66,23 @@ public class TestSalesforceServices {
 		
 		logger.info(organization.getConnection().getRefreshToken());
 		
-		Token token = ServiceClient.getInstance()
-				.salesforce()
-				.refreshToken(organization.getConnection().getRefreshToken());
-		
 		long startTime = System.currentTimeMillis();
-		
-		logger.info(token.getRefreshToken());
 		
 		Organization updatedOrganization = ServiceClient.getInstance()
 				.organization()
-				.update(organization.getId(), token);
+				.refresh(organization.getId());
 		
 		long executionTime = System.currentTimeMillis() - startTime;
 		
 		logger.info("execution time: " + Long.valueOf(executionTime));
 		
 		logger.info(updatedOrganization.getLastUpdatedOn());
+		
+		Token token = ServiceClient.getInstance()
+				.salesforce()
+				.refreshToken(organization.getConnection().getRefreshToken());
+		
+		logger.info(token.getRefreshToken());
 		
 		Resources resources = ServiceClient.getInstance()
 				.salesforce()

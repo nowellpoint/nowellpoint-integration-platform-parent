@@ -58,10 +58,11 @@ public class TemplateManager {
 			model.put("identity", identity);
 			model.put("LOGOUT_URI", Path.Route.LOGOUT);
 			model.put("START_URI", Path.Route.START);
-			model.put("DASHBOARD_URI", Path.Route.DASHBOARD);
 			model.put("USER_PROFILE_URI", Path.Route.USER_PROFILE);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
-			model.put("ORGANIZATION_STREAMING_EVENTS_URI", Path.Route.ORGANIZATION_STREAMING_EVENTS);
+			model.put("STREAMING_EVENTS_URI", Path.Route.STREAMING_EVENTS);
+			model.put("STREAMING_EVENTS_SOURCES_URI", Path.Route.STREAMING_EVENTS_SOURCES);
+			model.put("STREAMING_EVENTS_SETUP_URI", Path.Route.STREAMING_EVENTS_SETUP);
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}

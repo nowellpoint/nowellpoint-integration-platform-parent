@@ -3,7 +3,6 @@ package com.nowellpoint.console.service;
 import java.io.IOException;
 import java.util.List;
 
-import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.AddressRequest;
 import com.nowellpoint.console.model.ContactRequest;
@@ -23,8 +22,6 @@ public interface OrganizationService {
 	
 	public Organization update(String id, String authorizationCode);
 	
-	public Organization update(String id, Token token);
-	
 	public Organization update(String id, StreamingEventListenerRequest request);
 	
 	public Organization update(String id, CreditCardRequest request);
@@ -38,6 +35,8 @@ public interface OrganizationService {
 	public Organization update(String id, ContactRequest request);
 	
 	public Organization update(String id, SubscriptionRequest request);
+	
+	public Organization refresh(String id);
 	
 	public void delete(String id);
 	

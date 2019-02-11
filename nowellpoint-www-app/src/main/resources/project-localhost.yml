@@ -16,4 +16,4 @@ secret:
 salesforce:
     oauth:
         callback: https://localhost:8443/salesforce/oauth/callback/    
-hostname: localhost
+domain: localhost

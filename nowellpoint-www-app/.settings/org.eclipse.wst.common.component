@@ -13,6 +13,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-sources/annotations"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/target/generated-test-sources/test-annotations"/>
         <dependent-module archiveName="nowellpoint-aws-core-1.0.10-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nowellpoint-aws-core/nowellpoint-aws-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>

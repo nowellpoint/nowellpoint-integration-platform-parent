@@ -12,6 +12,7 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.service.ServiceClient;
 
@@ -31,7 +32,6 @@ public abstract class AbstractConnection {
 	
 	public static final String CONNECTED = "Connected";
 	public static final String NOT_CONNECTED = "Not Connected";
-	private static final String API_VERSION = "44.0";
 	
 	@Value.Default
 	public String getStatus() {
@@ -45,7 +45,7 @@ public abstract class AbstractConnection {
 	
 	@Value.Derived
 	public String getApiVersion() {
-		return API_VERSION;
+		return Salesforce.API_VERSION;
 	}
 	
 	public static Connection of(com.nowellpoint.console.entity.Connection entity) {

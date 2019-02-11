@@ -48,17 +48,19 @@ public class Path {
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
-		public static final String ORGANIZATION_CONNECTED_USER = String.format(APPLICATION_CONTEXT, "organization/connected-user");
-		public static final String ORGANIZATION_STREAMING_EVENTS = String.format(APPLICATION_CONTEXT, "organization/streaming-events");
-		public static final String ORGANIZATION_STREAMING_EVENTS_FEED = String.format(APPLICATION_CONTEXT, "organization/streaming-events/feed");
-		public static final String ORGANIZATION_STREAMING_EVENTS_SETUP = String.format(APPLICATION_CONTEXT, "organization/streaming-events/setup/:source");
+		public static final String ORGANIZATION_CONNECT = String.format(APPLICATION_CONTEXT, "organization/connect");
+		public static final String ORGANIZATION_REFRESH = String.format(APPLICATION_CONTEXT, "organization/refresh");
 		
-		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
-		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
-		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card");
-		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact");
-		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address");
-		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber");
+//		public static final String ORGANIZATION_LIST_PLANS = String.format(APPLICATION_CONTEXT, "organization/:id/plans");
+//		public static final String ORGANIZATION_PLAN = String.format(APPLICATION_CONTEXT, "organization/:id/plans/:planId");
+//		public static final String ORGANIZATION_CREDIT_CARD = String.format(APPLICATION_CONTEXT, "organization/:id/credit-card");
+//		public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization/:id/billing-contact");
+//		public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization/:id/billing-address");
+//		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber");
+		
+		public static final String STREAMING_EVENTS = String.format(APPLICATION_CONTEXT, "streaming-events");
+		public static final String STREAMING_EVENTS_SOURCES = String.format(APPLICATION_CONTEXT, "streaming-events/sources");
+		public static final String STREAMING_EVENTS_SETUP = String.format(APPLICATION_CONTEXT, "streaming-events/setup/:source");
 	}
 	
 	public static class Resource {

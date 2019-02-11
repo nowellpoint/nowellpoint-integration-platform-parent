@@ -9,6 +9,7 @@ import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.RequestAttributes;
 import com.nowellpoint.console.util.Templates;
 import com.nowellpoint.oauth.model.OAuthClientException;
+import com.nowellpoint.util.Properties;
 
 import freemarker.template.Configuration;
 import spark.Request;
@@ -61,7 +62,7 @@ public class AuthenticationController {
 			Long expiresIn = token.getExpiresIn();
 			
 			try {			
-				response.cookie(System.getProperty("hostname"), "/", RequestAttributes.AUTH_TOKEN, Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(token).getBytes()), expiresIn.intValue(), true, true);
+				response.cookie(System.getProperty(Properties.DOMAIN), "/", RequestAttributes.AUTH_TOKEN, Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(token).getBytes()), expiresIn.intValue(), true, true);
 			} catch (IOException e) {
 				throw new InternalServerErrorException(e);
 			}

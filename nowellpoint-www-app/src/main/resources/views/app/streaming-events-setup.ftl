@@ -5,8 +5,9 @@
             <div class="container-fluid mt-2 pt-3 pr-1 pl-1">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent">
-                        <li class="breadcrumb-item"><a href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">${messages["setup"]}</li>
+                        <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
+                        <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_SOURCES_URI}">${labels["source"]}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">${labels["setup"]}</li>
                     </ol>
                 </nav>
             </div>
@@ -129,7 +130,7 @@
                         <br>
                         <div>
                             <div class="text-right">
-                                <a class="btn btn-secondary" role="button" href="${ORGANIZATION_STREAMING_EVENTS_URI}">${messages['cancel']}</a>&nbsp;
+                                <a class="btn btn-secondary" role="button" href="${STREAMING_EVENTS_URI}">${messages['cancel']}</a>&nbsp;
                                 <button type="button" id="save-streaming-event-listener" name="save-streaming-event-listener" class="btn btn-primary">${messages['save']}</button>
                             </div>
                         </div>
@@ -183,7 +184,7 @@
                                             <div class="date">${feedItem.lastUpdatedOn?date?string.long}&nbsp;&nbsp;${feedItem.lastUpdatedOn?time?string.medium}</div>
                                             <div class="text">${feedItem.body}</div>
                                         </div>
-                                    </#list>x
+                                    </#list>
                                 </div>    
                             </div>
                         </div>

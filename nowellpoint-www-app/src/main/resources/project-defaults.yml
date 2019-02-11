@@ -5,4 +5,4 @@ sceret:
 salesforce:
     oauth:
         callback: https://www.nowellpoint.com/salesforce/oauth/callback/      
-hostname: www.nowellpoint.com        
+domain: nowellpoint.com        

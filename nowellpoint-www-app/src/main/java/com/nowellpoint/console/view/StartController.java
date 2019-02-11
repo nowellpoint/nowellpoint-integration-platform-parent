@@ -13,6 +13,7 @@ import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
 
 import spark.Request;
@@ -24,7 +25,7 @@ public class StartController extends BaseController {
 		get(Path.Route.START, (request, response) 
 				-> viewStartPage(request, response));
 		
-		get(Path.Route.ORGANIZATION_CONNECTED_USER, (request, response) 
+		get(Path.Route.ORGANIZATION_CONNECT, (request, response) 
 				-> changeConnectedUser(request, response));
 	}
 
@@ -36,8 +37,8 @@ public class StartController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECTED_USER);
-		model.put("ORGANIZATION_STREAMING_EVENT_LISTENER_LABEL", String.format(
+		model.put("CHANGE_CONNECTED_USER_URI", Path.Route.ORGANIZATION_CONNECT);
+		model.put("STREAMING_EVENT_LISTENER_LABEL", String.format(
 				ResourceBundle.getBundle(StartController.class.getName(), getIdentity(request).getLocale()).getString("configured.streaming.event.listeners"),
 				organization.getStreamingEventListeners().stream().filter(e -> e.getActive()).count(),
 				organization.getStreamingEventListeners().size()));
@@ -64,7 +65,7 @@ public class StartController extends BaseController {
 					.append("&client_id=")
 					.append(SecretsManager.getSalesforceClientId())
 					.append("&redirect_uri=")
-					.append(System.getProperty("salesforce.oauth.callback"))
+					.append(System.getProperty(Properties.SALESFORCE_OAUTH_CALLBACK))
 					.append("&scope=")
 					.append(URLEncoder.encode("refresh_token api", "UTF-8"))
 					.append("&prompt=login")

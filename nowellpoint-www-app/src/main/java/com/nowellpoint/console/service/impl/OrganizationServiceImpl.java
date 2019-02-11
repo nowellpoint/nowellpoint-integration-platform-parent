@@ -163,13 +163,35 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
         		.salesforce()
         		.getToken(authorizationCode);
 		
-		return update(id, token);
+		Organization instance = get(id);
+		
+		com.nowellpoint.client.sforce.model.Identity identity = ServiceClient.getInstance()
+				.salesforce()
+				.getIdentity(token);
+		
+		Organization organization = Organization.builder()
+				.from(instance)
+				.connection(Connection.builder()
+						.connectedAs(identity.getUsername())
+						.connectedAt(getCurrentDateTime())
+						.id(identity.getId())
+						.instanceUrl(token.getInstanceUrl())
+						.isConnected(Boolean.TRUE)
+						.issuedAt(token.getIssuedAt())
+						.refreshToken(token.getRefreshToken())
+						.status(Connection.CONNECTED)
+						.tokenType(token.getTokenType())
+						.build())
+				.domain(identity.getOrganizationId())
+				.build();
+		
+		return update(organization);
 	}
 	
 	@Override
-	public Organization update(String id, Token token) {
+	public Organization refresh(String id) {
 		
-		Organization organization = syncOrganization(id, token);
+		Organization organization = syncOrganization(id);
 		
 		com.braintreegateway.CustomerRequest customerRequest = new com.braintreegateway.CustomerRequest()
 				.company(organization.getName());
@@ -644,9 +666,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return null;
 	}
 	
-	private Organization syncOrganization(String id, Token token) {
+	private Organization syncOrganization(String id) {
 		
 		Organization instance = get(id);
+		
+		Token token = ServiceClient.getInstance()
+				.salesforce()
+				.refreshToken(instance.getConnection().getRefreshToken());
 		
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		
@@ -682,17 +708,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.from(instance)
 					.dashboard(Dashboard.of(token))
 					.connection(Connection.builder()
-							.connectedAs(getIdentityTask.get().getUsername())
+							.from(instance.getConnection())
+							//.connectedAs(getIdentityTask.get().getUsername())
 							.connectedAt(getCurrentDateTime())
-							.id(getIdentityTask.get().getId())
+							//.id(getIdentityTask.get().getId())
 							.instanceUrl(token.getInstanceUrl())
-							.isConnected(Boolean.TRUE)
+							//.isConnected(Boolean.TRUE)
 							.issuedAt(token.getIssuedAt())
-							.refreshToken(token.getRefreshToken() != null ? token.getRefreshToken() : instance.getConnection().getRefreshToken())
-							.status(Connection.CONNECTED)
-							.tokenType(token.getTokenType())
+							//.refreshToken(token.getRefreshToken() != null ? token.getRefreshToken() : instance.getConnection().getRefreshToken())
+							//.status(Connection.CONNECTED)
+							//.tokenType(token.getTokenType())
 							.build())
-					.domain(getOrganizationTask.get().getId())
+					//.domain(getOrganizationTask.get().getId())
 					.name(getOrganizationTask.get().getName())
 					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.address(Address.builder()
