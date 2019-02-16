@@ -1,0 +1,17 @@
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/okta/TestOktaAuthentication.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/okta/Token.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/pdf/TestGenerateDocument.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestSubscriptionWebhook.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/sforce/TestSalesforceClient.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestCommunicationsResource.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/sendgrid/TestSendEmail.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/slack/Payload.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestScheduleBuilder.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestSalesforceConnector.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/google/drive/TestSpreadsheet.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestAuthenticate.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestAdministration.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestAuthenticators.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestAccountProfile.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/client/test/TestContactUs.java
+/Users/jherson/workspace/nowellpoint-integration-platform-parent/nowellpoint-aws-test/src/test/java/com/nowellpoint/slack/TestSlackWebApi.java

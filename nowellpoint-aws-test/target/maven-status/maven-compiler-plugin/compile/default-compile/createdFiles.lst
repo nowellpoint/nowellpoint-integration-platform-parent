@@ -1,0 +1,11 @@
+com/nowellpoint/client/model/TokenVerificationResponse.class
+com/nowellpoint/client/model/TokenVerificationResponse$Json.class
+com/nowellpoint/client/model/TokenResponse.class
+com/nowellpoint/client/model/AbstractTokenResponse.class
+com/nowellpoint/client/model/TokenResponse$1.class
+com/nowellpoint/client/ClientCredentialsAuthenticator.class
+com/nowellpoint/client/model/TokenVerificationResponse$1.class
+com/nowellpoint/client/model/TokenResponse$Builder.class
+com/nowellpoint/client/model/TokenVerificationResponse$Builder.class
+com/nowellpoint/client/model/AbstractTokenVerificationResponse.class
+com/nowellpoint/client/model/TokenResponse$Json.class
