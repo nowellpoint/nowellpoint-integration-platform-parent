@@ -53,7 +53,7 @@ public class TestSalesforceServices {
 	    logger.info(password);
 	}
 	
-	//@Test
+	@Test
 	public void testDashboardComponents() {
 		Organization organization = ServiceClient.getInstance()
 				.organization()

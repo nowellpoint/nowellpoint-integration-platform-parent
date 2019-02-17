@@ -62,7 +62,12 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-secretsmanager</artifactId>
-			<version>1.11.475</version>
+			<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-kms</artifactId>
+			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.immutables</groupId>

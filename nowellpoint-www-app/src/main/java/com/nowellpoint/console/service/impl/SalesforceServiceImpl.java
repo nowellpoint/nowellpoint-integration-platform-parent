@@ -1,7 +1,16 @@
 package com.nowellpoint.console.service.impl;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import com.amazonaws.util.Base64;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
@@ -20,15 +29,19 @@ import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
+import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.SalesforceService;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
 
-public class SalesforceServiceImpl implements SalesforceService {
+public class SalesforceServiceImpl extends AbstractService implements SalesforceService {
+	
+	private static final Logger LOGGER = Logger.getLogger(SalesforceServiceImpl.class.getName());
 	
 	@Override
 	public Token getToken(String authorizationCode) {
 		AuthorizationGrantRequest request = OauthRequests.AUTHORIZATION_GRANT_REQUEST.builder()
-				.setCallbackUri(System.getProperty("salesforce.oauth.callback"))
+				.setCallbackUri(System.getProperty(Properties.SALESFORCE_OAUTH_CALLBACK))
 				.setClientId(SecretsManager.getSalesforceClientId())
 				.setClientSecret(SecretsManager.getSalesforceClientSecret())
 				.setCode(authorizationCode)
@@ -45,7 +58,7 @@ public class SalesforceServiceImpl implements SalesforceService {
 		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
 				.setClientId(SecretsManager.getSalesforceClientId())
 				.setClientSecret(SecretsManager.getSalesforceClientSecret())
-				.setRefreshToken(refreshToken)
+				.setRefreshToken(decryptToken(refreshToken))
 				.build();
 		
 		OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
@@ -107,5 +120,14 @@ public class SalesforceServiceImpl implements SalesforceService {
 	@Override
 	public Limits getLimits(Token token) {
 		return SalesforceClientBuilder.defaultClient(token).getLimits();
+	}
+	
+	private String decryptToken(String refreshToken) {
+		try {
+			return new String( decryt( Base64.decode( refreshToken ) ) );
+		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			LOGGER.severe(ExceptionUtils.getStackTrace(e));
+			return null;
+		}
 	}
 }

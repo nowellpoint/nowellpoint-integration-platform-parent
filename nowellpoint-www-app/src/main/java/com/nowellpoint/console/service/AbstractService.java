@@ -140,8 +140,8 @@ public abstract class AbstractService {
 	protected <T extends Serializable> void putEntry(String key, T value) {
 		Jedis jedis = jedisPool.getResource();
 		try {
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-			byte[] bytes = cipher.doFinal(SerializationUtils.serialize(value));
+			//cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+			byte[] bytes = encrypt(SerializationUtils.serialize(value)); //cipher.doFinal(SerializationUtils.serialize(value));
 			jedis.set(key.getBytes(), bytes);
 		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
 			e.printStackTrace();
@@ -164,8 +164,8 @@ public abstract class AbstractService {
 		
 		if (bytes != null) {
 			try {
-				cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-				bytes = cipher.doFinal(bytes);
+				//cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+				bytes = decryt(bytes); //cipher.doFinal(bytes);
 				value = SerializationUtils.deserialize(bytes);
 			} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | SerializationException e) {
 				e.printStackTrace();
@@ -195,5 +195,15 @@ public abstract class AbstractService {
 				.equal("system.administrator@nowellpoint.com");
 				 
 		return query.get();
+	}
+	
+	protected byte[] encrypt(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+		cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+		return cipher.doFinal(bytes);
+	}
+	
+	protected byte[] decryt(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+		cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+		return cipher.doFinal(bytes);
 	}
 }

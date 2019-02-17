@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,15 +25,19 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.types.ObjectId;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.Base64;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
@@ -83,7 +89,7 @@ import com.nowellpoint.util.SecretsManager;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
-	private static final Logger logger = Logger.getLogger(OrganizationServiceImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
@@ -169,6 +175,14 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.salesforce()
 				.getIdentity(token);
 		
+		String ecryptedToken = null;
+		
+		try {
+			ecryptedToken = Base64.encodeAsString(encrypt(token.getRefreshToken().getBytes()));
+		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			LOGGER.severe(ExceptionUtils.getStackTrace(e));
+		}
+		
 		Organization organization = Organization.builder()
 				.from(instance)
 				.connection(Connection.builder()
@@ -178,7 +192,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.instanceUrl(token.getInstanceUrl())
 						.isConnected(Boolean.TRUE)
 						.issuedAt(token.getIssuedAt())
-						.refreshToken(token.getRefreshToken())
+						.refreshToken(ecryptedToken)
 						.status(Connection.CONNECTED)
 						.tokenType(token.getTokenType())
 						.build())
@@ -739,8 +753,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			return organization;
 			
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-			logger.severe("Unable to sync organization: " + e.getMessage());
+			LOGGER.severe("Unable to sync organization: " + ExceptionUtils.getStackTrace(e));
 			return instance;
 		}
 	}

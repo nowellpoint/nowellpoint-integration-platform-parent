@@ -1,5 +1,7 @@
 logger:
     level: DEBUG
+key:
+    id: 534e1894-56e5-413b-97fc-a3d6bbc0c51b
 sceret:
     name: /production/console
 salesforce:

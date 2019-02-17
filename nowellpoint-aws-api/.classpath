@@ -1,33 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/classes" path="src/main/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="target/test-classes" path="src/test/resources"/>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="var" path="M2_REPO/javax/enterprise/cdi-api/2.0.SP1/cdi-api-2.0.SP1.jar" sourcepath="M2_REPO/javax/enterprise/cdi-api/2.0.SP1/cdi-api-2.0.SP1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar" sourcepath="M2_REPO/javax/inject/javax.inject/1/javax.inject-1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar" sourcepath="M2_REPO/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0/javax.ws.rs-api-2.0.jar" sourcepath="M2_REPO/javax/ws/rs/javax.ws.rs-api/2.0/javax.ws.rs-api-2.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar" sourcepath="M2_REPO/javax/activation/activation/1.1/activation-1.1-sources.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java SE 8 [1.8.0_112]"/>
 	<classpathentry kind="var" path="M2_REPO/io/thorntail/cdi/2.3.0.Final/cdi-2.3.0.Final.jar" sourcepath="M2_REPO/io/thorntail/cdi/2.3.0.Final/cdi-2.3.0.Final-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/thorntail/container/2.3.0.Final/container-2.3.0.Final.jar" sourcepath="M2_REPO/io/thorntail/container/2.3.0.Final/container-2.3.0.Final-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/thorntail/spi/2.3.0.Final/spi-2.3.0.Final.jar" sourcepath="M2_REPO/io/thorntail/spi/2.3.0.Final/spi-2.3.0.Final-sources.jar"/>
@@ -113,7 +95,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/mongodb/mongo-java-driver/3.5.0/mongo-java-driver-3.5.0.jar" sourcepath="M2_REPO/org/mongodb/mongo-java-driver/3.5.0/mongo-java-driver-3.5.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-guava/2.8.11/jackson-datatype-guava-2.8.11.jar" sourcepath="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-guava/2.8.11/jackson-datatype-guava-2.8.11-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.8.11/jackson-datatype-jdk8-2.8.11.jar" sourcepath="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.8.11/jackson-datatype-jdk8-2.8.11-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/atlassian/fugue/fugue/2.6.1/fugue-2.6.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/atlassian/fugue/fugue/2.6.1/fugue-2.6.1.jar" sourcepath="M2_REPO/com/atlassian/fugue/fugue/2.6.1/fugue-2.6.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/atlassian/fugue/fugue/3.0.0/fugue-3.0.0.jar" sourcepath="M2_REPO/io/atlassian/fugue/fugue/3.0.0/fugue-3.0.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/javaslang/javaslang/2.0.0-RC4/javaslang-2.0.0-RC4.jar" sourcepath="M2_REPO/com/javaslang/javaslang/2.0.0-RC4/javaslang-2.0.0-RC4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/eclipse/jdt/org.eclipse.jdt.annotation/2.0.0/org.eclipse.jdt.annotation-2.0.0.jar" sourcepath="M2_REPO/org/eclipse/jdt/org.eclipse.jdt.annotation/2.0.0/org.eclipse.jdt.annotation-2.0.0-sources.jar"/>
@@ -159,17 +141,17 @@
 	<classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar" sourcepath="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/force/api/force-partner-api/39.0.0/force-partner-api-39.0.0.jar" sourcepath="M2_REPO/com/force/api/force-partner-api/39.0.0/force-partner-api-39.0.0-sources.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-core"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.475/aws-java-sdk-secretsmanager-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.475/aws-java-sdk-secretsmanager-1.11.475-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.475/aws-java-sdk-core-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.475/aws-java-sdk-core-1.11.475-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.486/aws-java-sdk-secretsmanager-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.486/aws-java-sdk-secretsmanager-1.11.486-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.486/aws-java-sdk-core-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.486/aws-java-sdk-core-1.11.486-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar" sourcepath="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7.jar" sourcepath="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.486/jmespath-java-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/jmespath-java/1.11.486/jmespath-java-1.11.486-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.486/aws-java-sdk-kms-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.486/aws-java-sdk-kms-1.11.486-sources.jar"/>
 	<classpathentry kind="src" path="/nowellpoint-aws-data"/>
 	<classpathentry kind="var" path="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0.jar" sourcepath="M2_REPO/javax/javaee-api/7.0/javaee-api-7.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0.jar" sourcepath="M2_REPO/com/sun/mail/javax.mail/1.5.0/javax.mail-1.5.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.486/aws-java-sdk-dynamodb-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-dynamodb/1.11.486/aws-java-sdk-dynamodb-1.11.486-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.486/aws-java-sdk-s3-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-s3/1.11.486/aws-java-sdk-s3-1.11.486-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.486/aws-java-sdk-kms-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-kms/1.11.486/aws-java-sdk-kms-1.11.486-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.486/aws-java-sdk-sns-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-sns/1.11.486/aws-java-sdk-sns-1.11.486-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.486/aws-java-sdk-sqs-1.11.486.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-sqs/1.11.486/aws-java-sdk-sqs-1.11.486-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.4/amazon-sqs-java-messaging-lib-1.0.4.jar" sourcepath="M2_REPO/com/amazonaws/amazon-sqs-java-messaging-lib/1.0.4/amazon-sqs-java-messaging-lib-1.0.4-sources.jar"/>
@@ -187,18 +169,6 @@
 	<classpathentry kind="src" path="target/generated-sources/annotations">
 		<attributes>
 			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path=".apt_generated_tests">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
