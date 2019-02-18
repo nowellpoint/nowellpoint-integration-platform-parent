@@ -179,7 +179,45 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Urls implements Serializable {
 
 	/**
-	 * 
+	 * {
+  
+  "folders": "/services/data/v44.0/folders",
+  "eclair": "/services/data/v44.0/eclair",
+  "prechatForms": "/services/data/v44.0/prechatForms",
+  "chatter": "/services/data/v44.0/chatter",
+  "tabs": "/services/data/v44.0/tabs",
+  "appMenu": "/services/data/v44.0/appMenu",
+  "quickActions": "/services/data/v44.0/quickActions",
+  "queryAll": "/services/data/v44.0/queryAll",
+  "commerce": "/services/data/v44.0/commerce",
+  "wave": "/services/data/v44.0/wave",
+  "iot": "/services/data/v44.0/iot",
+  "analytics": "/services/data/v44.0/analytics",
+  "search": "/services/data/v44.0/search",
+  "identity": "https://login.salesforce.com/id/00D300000000lnEEAQ/00530000000fo9KAAQ",
+  "composite": "/services/data/v44.0/composite",
+  "parameterizedSearch": "/services/data/v44.0/parameterizedSearch",
+  "fingerprint": "/services/data/v44.0/fingerprint",
+  "theme": "/services/data/v44.0/theme",
+  "nouns": "/services/data/v44.0/nouns",
+  "event": "/services/data/v44.0/event",
+  "serviceTemplates": "/services/data/v44.0/serviceTemplates",
+  "recent": "/services/data/v44.0/recent",
+  "connect": "/services/data/v44.0/connect",
+  "licensing": "/services/data/v44.0/licensing",
+  "process": "/services/data/v44.0/process",
+  "async-queries": "/services/data/v44.0/async-queries",
+  "dedupe": "/services/data/v44.0/dedupe",
+  "query": "/services/data/v44.0/query",
+  "jobs": "/services/data/v44.0/jobs",
+  "emailConnect": "/services/data/v44.0/emailConnect",
+  "consent": "/services/data/v44.0/consent",
+  "compactLayouts": "/services/data/v44.0/compactLayouts",
+  "knowledgeManagement": "/services/data/v44.0/knowledgeManagement",
+  "sobjects": "/services/data/v44.0/sobjects",
+  "actions": "/services/data/v44.0/actions",
+  "support": "/services/data/v44.0/support"
+}
 	 */
 	
 	private static final long serialVersionUID = -329107825780218997L;
@@ -231,103 +269,51 @@ public class Urls implements Serializable {
 		return enterprise;
 	}
 
-	public void setEnterprise(String enterprise) {
-		this.enterprise = enterprise;
-	}
-
 	public String getMetadata() {
 		return metadata;
-	}
-
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
 	}
 
 	public String getPartner() {
 		return partner;
 	}
 
-	public void setPartner(String partner) {
-		this.partner = partner;
-	}
-
 	public String getRest() {
 		return rest;
 	}
 
-	public void setRest(String rest) {
-		this.rest = rest;
-	}
-
-	public String getSobjects() {
+	public String getSObjects() {
 		return sobjects;
-	}
-
-	public void setSobjects(String sobjects) {
-		this.sobjects = sobjects;
 	}
 
 	public String getSearch() {
 		return search;
 	}
 
-	public void setSearch(String search) {
-		this.search = search;
-	}
-
 	public String getQuery() {
 		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
 	}
 
 	public String getRecent() {
 		return recent;
 	}
 
-	public void setRecent(String recent) {
-		this.recent = recent;
-	}
-
 	public String getProfile() {
 		return profile;
-	}
-
-	public void setProfile(String profile) {
-		this.profile = profile;
 	}
 
 	public String getFeeds() {
 		return feeds;
 	}
 
-	public void setFeeds(String feeds) {
-		this.feeds = feeds;
-	}
-
 	public String getFeedItems() {
 		return feedItems;
-	}
-
-	public void setFeedItems(String feedItems) {
-		this.feedItems = feedItems;
 	}
 
 	public String getGroups() {
 		return groups;
 	}
 
-	public void setGroups(String groups) {
-		this.groups = groups;
-	}
-
 	public String getUsers() {
 		return users;
-	}
-
-	public void setUsers(String users) {
-		this.users = users;
 	}
 }

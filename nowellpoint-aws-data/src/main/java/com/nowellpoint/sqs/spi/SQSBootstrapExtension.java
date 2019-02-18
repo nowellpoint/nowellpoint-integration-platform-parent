@@ -19,8 +19,10 @@ import javax.jms.Session;
 
 import org.jboss.logging.Logger;
 
+import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
 public class SQSBootstrapExtension implements Extension {
 	
@@ -59,8 +61,9 @@ public class SQSBootstrapExtension implements Extension {
 		
     	LOGGER.info("beginning the simple queue scanning process");
     	
+    	connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(),AmazonSQSClientBuilder.defaultClient());
+    	
     	try {
-    		connectionFactory = SQSConnectionFactory.builder().build();	
 			connection = connectionFactory.createConnection();
 			session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
 		} catch (JMSException e) {

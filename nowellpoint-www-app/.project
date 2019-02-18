@@ -3,21 +3,11 @@
   <name>nowellpoint-www-app</name>
   <comment>Sonatype helps open source projects to set up Maven repositories on https://oss.sonatype.org/. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>nowellpoint-aws-sdk</project>
     <project>nowellpoint-aws-core</project>
+    <project>nowellpoint-aws-admin</project>
     <project>nowellpoint-aws-sforce</project>
   </projects>
   <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <triggers>full,incremental,</triggers>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/tern.eclipse.ide.core.ternBuilder.launch</value>
-        </dictionary>
-      </arguments>
-    </buildCommand>
     <buildCommand>
       <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
       <triggers>full,incremental,</triggers>
@@ -35,47 +25,7 @@
       <name>org.eclipse.wst.common.project.facet.core.builder</name>
     </buildCommand>
     <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <triggers>full,incremental,</triggers>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.jst.web.kb.kbbuilder.launch</value>
-        </dictionary>
-      </arguments>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <triggers>full,incremental,</triggers>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.cdi.core.cdibuilder.launch</value>
-        </dictionary>
-      </arguments>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <triggers>full,incremental,</triggers>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/org.jboss.tools.ws.jaxrs.metamodelBuilder.launch</value>
-        </dictionary>
-      </arguments>
-    </buildCommand>
-    <buildCommand>
       <name>org.eclipse.wst.validation.validationbuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-      <triggers>full,incremental,</triggers>
-      <arguments>
-        <dictionary>
-          <key>LaunchConfigHandle</key>
-          <value>&lt;project&gt;/.externalToolBuilders/org.hibernate.eclipse.console.hibernateBuilder.launch</value>
-        </dictionary>
-      </arguments>
     </buildCommand>
     <buildCommand>
       <name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>

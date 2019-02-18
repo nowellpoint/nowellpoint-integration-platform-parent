@@ -3,10 +3,10 @@ package com.nowellpoint.client.resource;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.amazonaws.util.IOUtils;
 import com.nowellpoint.client.model.Organization;
 import com.nowellpoint.client.model.CreditCardRequest;
 import com.nowellpoint.client.model.DeleteResult;
+import com.amazonaws.util.IOUtils;
 import com.nowellpoint.client.model.AddressRequest;
 import com.nowellpoint.client.model.ContactRequest;
 import com.nowellpoint.client.model.Error;

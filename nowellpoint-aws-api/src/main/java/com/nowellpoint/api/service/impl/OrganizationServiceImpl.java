@@ -261,7 +261,6 @@ public class OrganizationServiceImpl extends AbstractOrganizationService impleme
 		super.update(newInstance);
 		
 		return newInstance;
-		
 	}
 	
 	@Override

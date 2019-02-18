@@ -179,277 +179,38 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Photos;
 import com.nowellpoint.client.sforce.model.Status;
 import com.nowellpoint.client.sforce.model.Urls;
+import lombok.Getter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Identity implements Serializable {
 
 	private static final long serialVersionUID = -4996085598592993920L;
-
-	@JsonProperty("id")
-	private String id;
-
-	@JsonProperty("asserted_user")
-	private Boolean asserted_user;
-
-	@JsonProperty("user_id")
-	private String user_id;
-
-	@JsonProperty("organization_id")
-	private String organization_id;
-
-	@JsonProperty("username")
-	private String username;
-
-	@JsonProperty("nick_name")
-	private String nick_name;
-
-	@JsonProperty("display_name")
-	private String display_name;
-
-	@JsonProperty("email")
-	private String email;
-	
-	@JsonProperty("first_name")
-	private String first_name;
-	
-	@JsonProperty("last_name")
-	private String last_name;
-	
-	@JsonProperty("status")
-	private Status status;
-	
-	@JsonProperty("addr_street")
-	private String addr_street;
-	
-	@JsonProperty("addr_city")
-	private String addr_city;
-	
-	@JsonProperty("addr_country")
-	private String addr_country;
-	
-	@JsonProperty("addr_state")
-	private String addr_state;
-	
-	@JsonProperty("addr_zip")
-	private String addr_zip;
-	
-	@JsonProperty("mobile_phone")
-	private String mobile_phone;
-
-	@JsonProperty("active")
-	private Boolean active;
-
-	@JsonProperty("user_type")
-	private String user_type;
-
-	@JsonProperty("language")
-	private String language;
-
-	@JsonProperty("locale")
-	private Locale locale;
-
-	@JsonProperty("utcOffset")
-	private String utcOffset;
-
-	@JsonProperty("photos")
-	private Photos photos;
-
-	@JsonProperty("urls")
-	private Urls urls;
+	@Getter @JsonProperty("id") private String id;
+	@Getter @JsonProperty("asserted_user") private Boolean assertedUser;
+	@Getter @JsonProperty("user_id") private String userId;
+	@Getter @JsonProperty("organization_id") private String organizationId;
+	@Getter @JsonProperty("username") private String username;
+	@Getter @JsonProperty("nick_name") private String nickName;
+	@Getter @JsonProperty("display_name") private String displayName;
+	@Getter @JsonProperty("email") private String email;
+	@Getter @JsonProperty("first_name") private String firstName;
+	@Getter @JsonProperty("last_name") private String lastName;
+	@Getter @JsonProperty("status") private Status status;
+	@Getter @JsonProperty("addr_street") private String street;
+	@Getter @JsonProperty("addr_city") private String city;
+	@Getter @JsonProperty("addr_country") private String country;
+	@Getter @JsonProperty("addr_state") private String state;
+	@Getter @JsonProperty("addr_zip") private String postalCode;
+	@Getter @JsonProperty("mobile_phone") private String mobilePhone;
+	@Getter @JsonProperty("active") private Boolean active;
+	@Getter @JsonProperty("user_type") private String userType;
+	@Getter @JsonProperty("language") private String language;
+	@Getter @JsonProperty("locale") private Locale locale;
+	@Getter @JsonProperty("utcOffset") private String utcOffset;
+	@Getter @JsonProperty("photos") private Photos photos;
+	@Getter @JsonProperty("urls") private Urls urls;
 
 	public Identity() {
 
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public Boolean getAssertedUser() {
-		return asserted_user;
-	}
-
-	public void setAssertedUser(Boolean asserted_user) {
-		this.asserted_user = asserted_user;
-	}
-
-	public String getUserId() {
-		return user_id;
-	}
-
-	public void setUserId(String userId) {
-		this.user_id = userId;
-	}
-
-	public String getOrganizationId() {
-		return organization_id;
-	}
-
-	public void setOrganizationId(String organizationId) {
-		this.organization_id = organizationId;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getNickName() {
-		return nick_name;
-	}
-
-	public void setNickName(String nickName) {
-		this.nick_name = nickName;
-	}
-
-	public String getDisplayName() {
-		return display_name;
-	}
-
-	public void setDisplayName(String displayName) {
-		this.display_name = displayName;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getFirstName() {
-		return first_name;
-	}
-
-	public void setFirstName(String firstName) {
-		this.first_name = firstName;
-	}
-
-	public String getLastName() {
-		return last_name;
-	}
-
-	public void setLastName(String lastName) {
-		this.last_name = lastName;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public String getAddrStreet() {
-		return addr_street;
-	}
-
-	public void setAddrStreet(String addrStreet) {
-		this.addr_street = addrStreet;
-	}
-
-	public String getAddrCity() {
-		return addr_city;
-	}
-
-	public void setAddrCity(String addrCity) {
-		this.addr_city = addrCity;
-	}
-
-	public String getAddrCountry() {
-		return addr_country;
-	}
-
-	public void setAddrCountry(String addrCountry) {
-		this.addr_country = addrCountry;
-	}
-
-	public String getAddrState() {
-		return addr_state;
-	}
-
-	public void setAddrState(String addrState) {
-		this.addr_state = addrState;
-	}
-
-	public String getAddrZip() {
-		return addr_zip;
-	}
-
-	public void setAddrZip(String addrZip) {
-		this.addr_zip = addrZip;
-	}
-
-	public String getMobilePhone() {
-		return mobile_phone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobile_phone = mobilePhone;
-	}
-
-	public Urls getUrls() {
-		return urls;
-	}
-
-	public void setUrls(Urls urls) {
-		this.urls = urls;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public String getUserType() {
-		return user_type;
-	}
-
-	public void setUserType(String userType) {
-		this.user_type = userType;
-	}
-
-	public String getLanguage() {
-		return language;
-	}
-
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
-	public String getUtcOffset() {
-		return utcOffset;
-	}
-
-	public void setUtcOffset(String utcOffset) {
-		this.utcOffset = utcOffset;
-	}
-
-	public Photos getPhotos() {
-		return photos;
-	}
-
-	public void setPhotos(Photos photos) {
-		this.photos = photos;
 	}
 }

@@ -1,6 +1,5 @@
 package com.nowellpoint.payables.invoice;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,17 +10,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-//import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-//import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-//import com.amazonaws.services.simpleemail.model.Body;
-//import com.amazonaws.services.simpleemail.model.Content;
-//import com.amazonaws.services.simpleemail.model.Destination;
-//import com.amazonaws.services.simpleemail.model.Message;
-//import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -79,8 +67,6 @@ public class InvoiceGenerator {
 			throw new IOException(e);
 		}
         
-        putObject(invoice.getInvoiceNumber(), baos);
-        
         return baos.toByteArray();
 	}
 	
@@ -91,29 +77,6 @@ public class InvoiceGenerator {
 	
 	private void setLocale(Locale locale) {
 		this.locale = locale;
-	}
-	
-	/**
-	 * 
-	 * @param keyName
-	 * @param baos
-	 */
-	
-	private void putObject(String keyName, ByteArrayOutputStream baos) {
-		byte[] bytes = baos.toByteArray();
-		
-		ObjectMetadata objectMetadata = new ObjectMetadata();
-		objectMetadata.setContentLength(bytes.length);
-		objectMetadata.setContentType("application/pdf");
-		
-		PutObjectRequest request = new PutObjectRequest(
-				"nowellpoint-invoices",
-				keyName,
-				new ByteArrayInputStream(bytes),
-				objectMetadata);
-		
-		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
-		s3client.putObject(request);
 	}
 	
 	/**
@@ -298,25 +261,7 @@ public class InvoiceGenerator {
 	    cell.setBorder(PdfPCell.NO_BORDER);
 	    cell.setPaddingBottom(30.0f);
 	    return cell;
-	}
-	
-//	private void sendInvoice(String customerId, String to, String name, String invoiceNumber) throws IOException {
-//        Destination destination = new Destination().withToAddresses(new String[] { to });
-//
-//        Content subject = new Content().withData(getLabel(InvoiceLabels.EMAIL_SUBJECT));
-//        Content textBody = new Content().withData("");
-//        Body body = new Body().withText(textBody);
-//
-//        Message message = new Message().withSubject(subject).withBody(body);
-//
-//        SendEmailRequest request = new SendEmailRequest().withSource(InvoiceLabels.PAY_TO_EMAIL).w
-//                .withDestination(destination).withMessage(message);
-//        
-//        AmazonSimpleEmailService client = AmazonSimpleEmailServiceClientBuilder.defaultClient();
-//        client.sendEmail(request);
-//	}
-	
-	//String customerId, String email, String name, String invoiceNumber, String base64EncodedContent, String apiKey
+	}                    
 	
 	private String getLabel(String key) {
 		return ResourceBundle.getBundle("invoice", locale).getString(key);

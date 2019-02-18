@@ -91,12 +91,12 @@ public class DocumentManagerFactoryImpl implements DocumentManagerFactory, AutoC
 	@Override
 	public MongoCollection<Document> getCollection(String collectionName) {
 		Assert.assertNotNullOrEmpty(collectionName, "getCollection function is missing collectionName parameter");
-		return (MongoCollection<Document>) database.getCollection(collectionName);
+		return database.getCollection(collectionName);
 	}
 	
 	@Override
 	public MongoCollection<Document> getCollection(Class<?> documentClass) {
-		return (MongoCollection<Document>) getCollection(resolveCollectionName(documentClass));
+		return getCollection(resolveCollectionName(documentClass));
 	}
 	
 	@Override

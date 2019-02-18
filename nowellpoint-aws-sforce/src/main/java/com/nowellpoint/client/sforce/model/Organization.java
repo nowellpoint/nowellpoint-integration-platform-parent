@@ -1,24 +1,61 @@
 package com.nowellpoint.client.sforce.model;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Organization implements Serializable {
-	
-	/**
-	 * 
-	 */
+public class Organization extends SObject {
 	
 	private static final long serialVersionUID = -1315510190045597737L;
 	
-	@JsonProperty(value="Id")
-	private String id;
-	
-	@JsonProperty(value="attributes")
-	private Attributes attributes;
+	public static final String QUERY = "Select "
+			+ "Address, "
+			+ "ComplianceBccEmail, "
+			+ "CreatedById, "
+			+ "CreatedDate, "
+			+ "DefaultAccountAccess, "
+			+ "DefaultCalendarAccess, "
+			+ "DefaultCampaignAccess, "
+			+ "DefaultCaseAccess, "
+			+ "DefaultContactAccess, "
+			+ "DefaultLeadAccess, "
+			+ "DefaultLocaleSidKey, "
+			+ "DefaultOpportunityAccess, "
+			+ "DefaultPricebookAccess, "
+			+ "Division, "
+			+ "Fax, "
+			+ "FiscalYearStartMonth, "
+			+ "GeocodeAccuracy, "
+			+ "Id, "
+			+ "InstanceName, "
+			+ "IsReadOnly, "
+			+ "IsSandbox, "
+			+ "LanguageLocaleKey, "
+			+ "LastModifiedById, "
+			+ "LastModifiedDate, "
+			+ "MonthlyPageViewsEntitlement,"
+			+ "MonthlyPageViewsUsed, "
+			+ "Name, "
+			+ "NamespacePrefix, "
+			+ "NumKnowledgeService, "
+			+ "OrganizationType, "
+			+ "Phone, "
+			+ "PreferencesConsentManagementEnabled, "
+			+ "PreferencesIndividualAutoCreateEnabled, "
+			+ "PreferencesLightningLoginEnabled, "
+			+ "PreferencesOnlyLLPermUserAllowed, "
+			+ "PreferencesRequireOpportunityProducts, "
+			+ "PreferencesTerminateOldestSession, "
+			+ "PreferencesTransactionSecurityPolicy, "
+			+ "PrimaryContact, "
+			+ "ReceivesAdminInfoEmails, "
+			+ "ReceivesInfoEmails, "
+			+ "SignupCountryIsoCode, "
+			+ "TrialExpirationDate, "
+			+ "UiSkin, "
+			+ "UsesStartDateAsFiscalYearName, "
+			+ "WebToCaseDefaultOrigin "
+			+ "From Organization";
 	
 	@JsonProperty(value="Division")
 	private String division;
@@ -56,24 +93,11 @@ public class Organization implements Serializable {
 	@JsonProperty(value="UsesStartDateAsFiscalYearName")
 	private Boolean usesStartDateAsFiscalYearName;
 	
+	@JsonProperty(value="Address")
+	private Address address;
+	
 	public Organization() {
 		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Attributes getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
 	}
 
 	public String getDivision() {
@@ -170,5 +194,13 @@ public class Organization implements Serializable {
 
 	public void setUsesStartDateAsFiscalYearName(Boolean usesStartDateAsFiscalYearName) {
 		this.usesStartDateAsFiscalYearName = usesStartDateAsFiscalYearName;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 }

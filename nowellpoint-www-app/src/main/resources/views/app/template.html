@@ -1,47 +1,46 @@
 <#macro page>
 
-    <!DOCTYPE HTML>
+    <!DOCTYPE html>
     <html lang="en">
 
     <head>
-
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-        <meta name="viewport" content="width=device-width" />
-        <meta name="description" content="">
-        <meta name="author" content="">
-
         <title>${messages["application.title"]}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!-- Theme CSS -->
-        <link rel="stylesheet" href="/v4/dist/toolkit-light.min.css" type="text/css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <!-- Bootstrap core CSS -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/css/custom.css" type="text/css" />
-        
-        <!-- Font Awesome Icons -->
-        <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+        <!-- Bootstrap theme -->
+        <link href="/css/toolkit-light.min.css" rel="stylesheet">
+        <!-- Bootstrap toggle -->
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+        <!-- Custom styles -->
+        <link href="/css/custom.css" rel="stylesheet">
 
-        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/additional-methods.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="/v4/dist/toolkit.min.js"></script>
+        <!-- JQuery -->
+        <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="/js/popper.min.js"></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+        <!-- Bootstrap toggle JavaScript -->
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+        <!-- Custom JavaScript -->
+        <script type="text/javascript" src="/js/common.js"></script>
 
     </head>
 
     <body>
-
-        <#include "navbar.html" />
-
-        <div id="content">
-            <#nested/>
-        </div>
-
+        <main>
+            <#include "header.ftl" />
+            <#nested />
+        </main>
+        <div id="wait" class="spinner hidden"></div>       
+        <#include "success-popup.ftl" />
     </body>
 
     </html>
-
 </#macro>

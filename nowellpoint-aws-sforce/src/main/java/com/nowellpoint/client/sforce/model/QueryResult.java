@@ -1,40 +1,39 @@
 package com.nowellpoint.client.sforce.model;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.Getter;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class QueryResult {
 	
-	private Integer totalSize;
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 	
-	private Boolean done;
+	@Getter @JsonProperty("totalSize") private Long totalSize;
+	@Getter @JsonProperty("done") private Boolean done;
+	@Getter @JsonProperty("nextRecordsUrl") private String nextRecordsUrl;
+	@Getter @JsonProperty("records") private JsonNode[] records;
 	
-	private ArrayNode records;
+	public QueryResult() { }
 	
-	public QueryResult() {
-		
-	}
-
-	public Integer getTotalSize() {
-		return totalSize;
-	}
-
-	public void setTotalSize(Integer totalSize) {
-		this.totalSize = totalSize;
-	}
-
-	public Boolean getDone() {
-		return done;
-	}
-
-	public void setDone(Boolean isDone) {
-		this.done = isDone;
-	}
-
-	public ArrayNode getRecords() {
-		return records;
-	}
-
-	public void setRecords(ArrayNode records) {
-		this.records = records;
+	public <T> Set<T> getRecords(Class<T> valueType) {
+		return Arrays.asList(records).stream()
+				.map(r -> {
+					try {
+						return objectMapper.readValue(r.toString(), valueType);
+					} catch (IOException e) {
+						e.printStackTrace();
+						return null;
+					}
+		})
+		.collect(Collectors.toSet());
 	}
 }

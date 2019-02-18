@@ -25,15 +25,7 @@ public class AggregateResult implements Serializable {
 		return attributes;
 	}
 
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
-	}
-
 	public Long getExpr0() {
 		return expr0;
-	}
-
-	public void setExpr0(Long expr0) {
-		this.expr0 = expr0;
 	}
 }

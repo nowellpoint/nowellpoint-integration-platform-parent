@@ -1,12 +1,7 @@
-FROM jboss/wildfly
-ADD deployments/ROOT.war /opt/jboss/wildfly/standalone/deployments/
+FROM amazoncorretto
 
-# Ensure signals are forwarded to the JVM process correctly for graceful shutdown
-#ENV LAUNCH_JBOSS_IN_BACKGROUND true
+ADD target/nowellpoint-www-app-thorntail.jar /opt/nowellpoint-www-app-thorntail.jar
 
-# Expose the ports we're interested in
-#EXPOSE 8443
+EXPOSE 8443
 
-# Set the default command to run on boot
-# This will boot WildFly in the standalone mode and bind to all interface
-#CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
+ENTRYPOINT ["java", "-jar", "/opt/nowellpoint-www-app-thorntail.jar", "-Dswarm.project.stage=localhost", "-Djava.net.preferIPv4Stack=true"]

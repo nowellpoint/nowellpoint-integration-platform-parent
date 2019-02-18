@@ -29,7 +29,7 @@ public interface TokenResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@ApiOperation(value = "Authenticate with the API", notes = "Returns the OAuth Token", response = Token.class)
-	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization, @FormParam("grant_type") String grantType);
+	public Response authenticate(@ApiParam(value = "basic authorization header", required = true) @HeaderParam("Authorization") String authorization, @ApiParam(value = "set the grant type. options are: password", required = true) @FormParam("grant_type") String grantType);
 	
 	@DELETE
 	@Path("token")

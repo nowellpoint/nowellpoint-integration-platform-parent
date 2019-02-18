@@ -7,7 +7,6 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.CreditCardRequest;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.nowellpoint.util.Properties;
 
 public class TestPaymentService {
 	
@@ -16,12 +15,10 @@ public class TestPaymentService {
 	@BeforeClass
 	public static void beforeClass() {
 		
-		Properties.loadProperties(System.getenv("NOWELLPOINT_PROPERTY_STORE"));
-		
-		gateway = new BraintreeGateway(Environment.parseEnvironment(System.getProperty(Properties.BRAINTREE_ENVIRONMENT)),
-				System.getProperty(Properties.BRAINTREE_MERCHANT_ID),
-				System.getProperty(Properties.BRAINTREE_PUBLIC_KEY),
-				System.getProperty(Properties.BRAINTREE_PRIVATE_KEY)
+		gateway = new BraintreeGateway(Environment.parseEnvironment(System.getProperty("BRAINTREE_ENVIRONMENT")),
+				System.getProperty("BRAINTREE_MERCHANT_ID"),
+				System.getProperty("BRAINTREE_PUBLIC_KEY"),
+				System.getProperty("Properties.BRAINTREE_PRIVATE_KEY")
 		);
 		
 		gateway.clientToken().generate();
