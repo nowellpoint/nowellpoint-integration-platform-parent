@@ -3,7 +3,6 @@ package com.nowellpoint.kms.test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -20,10 +19,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.Test;
 
-import com.amazonaws.services.kms.AWSKMS;
-import com.amazonaws.services.kms.AWSKMSClientBuilder;
-import com.amazonaws.services.kms.model.DecryptRequest;
-import com.amazonaws.services.kms.model.EncryptRequest;
 import com.amazonaws.util.Base64;
 import com.nowellpoint.util.SecretsManager;
 
@@ -36,30 +31,9 @@ public class TestEncryptDecryptKey {
 	@Test
 	public void testEncryptDecryptKey() {
 		
-		String keyId = "534e1894-56e5-413b-97fc-a3d6bbc0c51b";
 		String token = "5Aep8619juAXTkx27YWQC4qXSEFzysxOhJ6OZXq1v_n7fHJC2.7kH5RQ36kfM57wFXLMVhGVJtA4kEYCBEs6T2x";
 		
 		long start = System.currentTimeMillis();
-		
-		AWSKMS kmsClient = AWSKMSClientBuilder.defaultClient();
-		
-		ByteBuffer plainText = ByteBuffer.wrap(token.getBytes());
-		
-	    EncryptRequest encryptRequest = new EncryptRequest().withKeyId(keyId)
-	            .withPlaintext(plainText);
-	    
-	    ByteBuffer encryptedText = kmsClient.encrypt(encryptRequest).getCiphertextBlob();
-	    
-	    String s = Base64.encodeAsString( encryptedText.array() );
-
-	    DecryptRequest decryptRequest = new DecryptRequest().withCiphertextBlob(ByteBuffer.wrap(Base64.decode(s)));
-	    ByteBuffer decryptedText = kmsClient.decrypt(decryptRequest).getPlaintext();
-	    
-	    s = new String( decryptedText.array() );
-	    
-	    System.out.println(System.currentTimeMillis() - start);
-	    
-	    assertEquals(token, s);
 	    
 	    String keyString = SecretsManager.getRedisEncryptionKey();
 	    
@@ -81,7 +55,7 @@ public class TestEncryptDecryptKey {
 		    cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			byte[] bytes = cipher.doFinal(token.getBytes());
 			
-			s = Base64.encodeAsString( bytes );
+			String s = Base64.encodeAsString( bytes );
 			
 			System.out.println(s);
 			

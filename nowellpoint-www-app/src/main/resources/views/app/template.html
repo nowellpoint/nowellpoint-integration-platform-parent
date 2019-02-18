@@ -36,10 +36,10 @@
     <body>
         <main>
             <#include "header.ftl" />
-            <#nested />
+            <#nested />    
+        	<#include "success-popup.ftl" />
+        	<div id="wait" class="spinner hidden"></div>   
         </main>
-        <div id="wait" class="spinner hidden"></div>       
-        <#include "success-popup.ftl" />
     </body>
 
     </html>

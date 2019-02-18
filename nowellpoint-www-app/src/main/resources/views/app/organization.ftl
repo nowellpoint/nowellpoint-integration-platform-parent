@@ -86,10 +86,10 @@
                                             <td class="col-4">
                                                 <#if license.percentAvailable lt 6>
                                                     <div class="p2 bg-danger text-white text-center border border-danger rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
-                                                    <#elseif license.percentAvailable gt 10>
-                                                        <div class="p2 bg-success text-white text-center border border-success rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
-                                                        <#else>
-                                                            <div class="p2 bg-warning text-white text-center border border-warning rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
+                                                <#elseif license.percentAvailable gt 10>
+                                                    <div class="p2 bg-success text-white text-center border border-success rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
+                                                <#else>
+                                                    <div class="p2 bg-warning text-white text-center border border-warning rounded"><strong>${license.availableLicenses} of ${license.totalLicenses}</strong></div>
                                                 </#if>
                                             </td>
                                             <td class="col-2 text-right">${license.percentAvailable}%</td>

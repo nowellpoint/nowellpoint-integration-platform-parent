@@ -28,9 +28,11 @@
 
 	<profiles>
 		<profile>
-			<id>deploy</id>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
-				<finalName>nowellpoint-aws-admin</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -46,8 +48,7 @@
 									<goal>shade</goal>
 								</goals>
 								<configuration>
-									<!-- <minimizeJar>true</minimizeJar> <filters> <filter> <includes> 
-										<include>**</include> </includes> </filter> </filters> -->
+									<minimizeJar>true</minimizeJar>
 								</configuration>
 							</execution>
 						</executions>

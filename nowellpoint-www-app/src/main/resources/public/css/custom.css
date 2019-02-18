@@ -42,13 +42,12 @@ footer {
     width: calc(100% - 250px);
     background-color: #f5f5f5;
     position: absolute;
-    height: 100vh;
     transition: all 0.3s;
     right: 0;
-    top: 0;    
-    margin-top: 52px;
-    margin-bottom 10px;
+    top: 52px;
+    bottom: 0;
     overflow: auto;
+    padding-bottom: 10px;  
 }
 
 #content.active {
@@ -68,11 +67,11 @@ footer {
     transition: all 0.3s;
     border-right: 1px #D3D3D3;
     background-color: #f5f5f5;
-    overflow-x: hidden;
     position: fixed; /* Fixed Sidebar (stay in place on scroll) */
     margin-top: 52px;
     top: 0;
     left: 0;
+    overflow: hidden;
     z-index: 999;
 }
 
