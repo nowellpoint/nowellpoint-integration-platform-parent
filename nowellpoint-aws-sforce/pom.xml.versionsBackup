@@ -1,22 +1,36 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>nowellpoint-aws-admin</artifactId>
+	<artifactId>nowellpoint-aws-sforce</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint Administration Services</name>
+	<name>Nowellpoint Salesforce Services</name>
+	<description>Nowellpoint Salesforce Services jar</description>
 
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.11</version>
+		<version>1.0.10-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
-			<version>${version.aws.sdk}</version>
+			<groupId>com.nowellpoint</groupId>
+			<artifactId>nowellpoint-aws-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${version.lombok}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -28,9 +42,11 @@
 
 	<profiles>
 		<profile>
-			<id>deploy</id>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
-				<finalName>nowellpoint-aws-admin</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -46,8 +62,7 @@
 									<goal>shade</goal>
 								</goals>
 								<configuration>
-									<!-- <minimizeJar>true</minimizeJar> <filters> <filter> <includes> 
-										<include>**</include> </includes> </filter> </filters> -->
+									<minimizeJar>true</minimizeJar>
 								</configuration>
 							</execution>
 						</executions>

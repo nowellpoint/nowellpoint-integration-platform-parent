@@ -4,7 +4,7 @@
 	<groupId>com.nowellpoint</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.11</version>
+	<version>1.0.10-SNAPSHOT</version>
 	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>
@@ -68,10 +68,14 @@
 
 	<modules>
 		<module>nowellpoint-aws-core</module>
+		<module>nowellpoint-aws-sdk</module>
+		<module>nowellpoint-aws-data</module>
 		<module>nowellpoint-aws-sforce</module>
 		<module>nowellpoint-aws-admin</module>
+		<module>nowellpoint-payment-gateway-webhook</module>
+		<module>nowellpoint-sforce-outbound-message-service</module>
+		<module>nowellpoint-aws-api</module>
 		<module>nowellpoint-www-app</module>
-		<module>nowellpoint-streaming-event-listener</module>
 	</modules>
 
 	<build>
