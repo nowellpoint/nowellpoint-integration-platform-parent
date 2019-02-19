@@ -23,10 +23,6 @@ import com.amazonaws.util.Base64;
 import com.nowellpoint.util.SecretsManager;
 
 public class TestEncryptDecryptKey {
-	
-	private static Cipher cipher;
-	private static SecretKey secretKey;
-	private static IvParameterSpec iv;
 
 	@Test
 	public void testEncryptDecryptKey() {
@@ -46,11 +42,11 @@ public class TestEncryptDecryptKey {
 			key = sha.digest(key);
 			key = Arrays.copyOf(key, 32);
 		    
-		    secretKey = new SecretKeySpec(key, "AES");
+			SecretKey secretKey = new SecretKeySpec(key, "AES");
 		    
-		    cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
 		    
-		    iv = new IvParameterSpec(new byte[cipher.getBlockSize()]);
+			IvParameterSpec iv = new IvParameterSpec(new byte[cipher.getBlockSize()]);
 		    
 		    cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 			byte[] bytes = cipher.doFinal(token.getBytes());

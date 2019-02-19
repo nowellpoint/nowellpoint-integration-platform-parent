@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +23,9 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
@@ -86,6 +85,8 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
 import com.nowellpoint.util.SecretsManager;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
@@ -178,8 +179,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		String ecryptedToken = null;
 		
 		try {
-			ecryptedToken = Base64.encodeAsString(encrypt(token.getRefreshToken().getBytes()));
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			ecryptedToken = Base64.encodeAsString(SecureValue.encrypt(token.getRefreshToken().getBytes()));
+		} catch (SecureValueException e) {
 			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 		}
 		
@@ -198,6 +199,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.build())
 				.domain(identity.getOrganizationId())
 				.build();
+		
+		saveConfiguration(organization);
 		
 		return update(organization);
 	}
@@ -808,6 +811,22 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private void saveConfiguration(Organization organization) {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+		
+		JsonArrayBuilder builder = Json.createArrayBuilder();
+		
+		organization.getStreamingEventListeners().forEach(l -> {
+			JsonObject node = Json.createObjectBuilder().add("channel", "/topic/".concat(l.getName())).add("active", l.getActive()).add("source", l.getSource()).add("topicId", l.getTopicId()).build();
+			builder.add(node);
+		});
+		
+		JsonObject json = Json.createObjectBuilder()
+			     .add("organizationId", organization.getId())
+			     .add("apiVersion", organization.getConnection().getApiVersion())
+			     .add("refreshToken", organization.getConnection().getRefreshToken())
+			     .add("topics", builder.build())
+			     .build();
+		
+		LOGGER.info(json.toString());
 				
 		ObjectNode object = new ObjectMapper().createObjectNode()
 				.put("organizationId", organization.getId())

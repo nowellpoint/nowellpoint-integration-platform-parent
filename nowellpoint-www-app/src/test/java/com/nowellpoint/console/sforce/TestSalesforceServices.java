@@ -6,6 +6,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.logging.Logger;
 import org.junit.AfterClass;
@@ -71,6 +76,32 @@ public class TestSalesforceServices {
 		Organization updatedOrganization = ServiceClient.getInstance()
 				.organization()
 				.refresh(organization.getId());
+		
+		JsonArrayBuilder builder = Json.createArrayBuilder();
+		
+		organization.getStreamingEventListeners().forEach(l -> {
+			logger.info(l.getName());
+			logger.info(l.getActive());
+			logger.info(l.getSource());
+			logger.info(l.getTopicId());
+			JsonObject node = Json.createObjectBuilder()
+					.add("channel", "/topic/".concat(l.getName()))
+					.add("active", l.getActive())
+					.add("source", l.getSource())
+				//	.add
+				//	.add("topicId", (l.getTopicId() != null ? l.getTopicId() : JsonValue.NULL))
+					.build();
+			builder.add(node);
+		});
+		
+		JsonObject json = Json.createObjectBuilder()
+			     .add("organizationId", organization.getId())
+			     .add("apiVersion", organization.getConnection().getApiVersion())
+			     .add("refreshToken", organization.getConnection().getRefreshToken())
+			     .add("topics", builder.build())
+			     .build();
+		
+		logger.info(json.toString());
 		
 		long executionTime = System.currentTimeMillis() - startTime;
 		
