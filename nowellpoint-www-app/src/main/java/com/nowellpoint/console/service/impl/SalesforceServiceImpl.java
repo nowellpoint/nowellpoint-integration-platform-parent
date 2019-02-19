@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import com.amazonaws.util.Base64;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
@@ -121,7 +120,7 @@ public class SalesforceServiceImpl extends AbstractService implements Salesforce
 	
 	private String decryptToken(String refreshToken) {
 		try {
-			return new String( SecureValue.decrypt( Base64.decode( refreshToken ) ) );
+			return SecureValue.decryptBase64( refreshToken );
 		} catch (SecureValueException e) {
 			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 			return null;

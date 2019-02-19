@@ -37,13 +37,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.Base64;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -180,7 +176,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		String ecryptedToken = null;
 		
 		try {
-			ecryptedToken = Base64.encodeAsString(SecureValue.encrypt(token.getRefreshToken().getBytes()));
+			ecryptedToken = SecureValue.encryptBase64(token.getRefreshToken());
 		} catch (SecureValueException e) {
 			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 		}
