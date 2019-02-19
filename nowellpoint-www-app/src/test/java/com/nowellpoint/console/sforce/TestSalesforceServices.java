@@ -80,18 +80,12 @@ public class TestSalesforceServices {
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 		
 		organization.getStreamingEventListeners().forEach(l -> {
-			logger.info(l.getName());
-			logger.info(l.getActive());
-			logger.info(l.getSource());
-			logger.info(l.getTopicId());
-			JsonObject node = Json.createObjectBuilder()
+			builder.add(Json.createObjectBuilder()
 					.add("channel", "/topic/".concat(l.getName()))
 					.add("active", l.getActive())
 					.add("source", l.getSource())
-				//	.add
-				//	.add("topicId", (l.getTopicId() != null ? l.getTopicId() : JsonValue.NULL))
-					.build();
-			builder.add(node);
+					.add("topicId", l.getTopicId() != null ? Json.createValue(l.getTopicId()) : JsonValue.NULL)
+					.build());
 		});
 		
 		JsonObject json = Json.createObjectBuilder()

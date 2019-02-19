@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
@@ -815,8 +816,12 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 		
 		organization.getStreamingEventListeners().forEach(l -> {
-			JsonObject node = Json.createObjectBuilder().add("channel", "/topic/".concat(l.getName())).add("active", l.getActive()).add("source", l.getSource()).add("topicId", l.getTopicId()).build();
-			builder.add(node);
+			builder.add(Json.createObjectBuilder()
+					.add("channel", "/topic/".concat(l.getName()))
+					.add("active", l.getActive())
+					.add("source", l.getSource())
+					.add("topicId", l.getTopicId() != null ? Json.createValue(l.getTopicId()) : JsonValue.NULL)
+					.build());
 		});
 		
 		JsonObject json = Json.createObjectBuilder()
@@ -826,20 +831,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			     .add("topics", builder.build())
 			     .build();
 		
-		LOGGER.info(json.toString());
-				
-		ObjectNode object = new ObjectMapper().createObjectNode()
-				.put("organizationId", organization.getId())
-				.put("apiVersion", organization.getConnection().getApiVersion())
-				.put("refreshToken", organization.getConnection().getRefreshToken());
+		byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
 		
-		ArrayNode array = object.putArray("topics");
-		
-		organization.getStreamingEventListeners().forEach(l -> {
-			array.addObject().put("channel", "/topic/".concat(l.getName())).put("active", l.getActive()).put("source", l.getSource()).put("topicId", l.getTopicId());
-		});
-		
-		byte[] bytes = object.toString().getBytes(StandardCharsets.UTF_8);
 		InputStream input = new ByteArrayInputStream(bytes);
 		
 		ObjectMetadata metadata = new ObjectMetadata();
