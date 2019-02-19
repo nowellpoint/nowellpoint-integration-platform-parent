@@ -22,6 +22,7 @@ import org.jboss.logging.Logger;
 import com.mongodb.DuplicateKeyException;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
+import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
@@ -44,12 +45,16 @@ public class TopicSubscription {
     private TopicConfiguration configuration;
 	private HttpClient httpClient;
 	private BayeuxClient client;
+	
+	private boolean connected = Boolean.FALSE;
 
 	@Builder
 	private TopicSubscription(TopicConfiguration configuration) {
 		this.configuration = configuration;
-		this.connect();
-		this.subscribe();
+		connect();
+		if (connected) {
+			subscribe();
+		}
 	}
 	
 	private Token refreshToken(String refreshToken) {
@@ -60,10 +65,10 @@ public class TopicSubscription {
 				.setRefreshToken(refreshToken)
 				.build();
 		
-		OauthAuthenticationResponse oauthAthenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
+		OauthAuthenticationResponse response = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR
 				.authenticate(request);
 		
-		return oauthAthenticationResponse.getToken();
+		return response.getToken();
     }
 	
 	public void reconnect(TopicConfiguration configuration) {
@@ -80,11 +85,14 @@ public class TopicSubscription {
 	}
 	
 	public void disconnect() {
-		configuration.getTopics().stream().forEach( t -> {
-			client.getChannel(t.getChannel()).unsubscribe();
-		});
-		client.disconnect();
-		client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.DISCONNECTED);
+		if (connected) {
+			configuration.getTopics().stream().forEach( t -> {
+				client.getChannel(t.getChannel()).unsubscribe();
+			});
+			client.disconnect();
+			client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.DISCONNECTED);
+		}
+		
 		stopHttpClient();
 	}
 	
@@ -153,7 +161,14 @@ public class TopicSubscription {
 			return;
 		}
 		
-		Token token = refreshToken(configuration.getRefreshToken());
+		Token token;
+		
+		try {
+			token = refreshToken(configuration.getRefreshToken());
+		} catch (OauthException e) {
+			LOGGER.error("Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")");
+			return;
+		}
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, READ_TIMEOUT);
@@ -230,7 +245,7 @@ public class TopicSubscription {
         
         client.handshake();
         
-        boolean connected = client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.CONNECTED);
+        connected = client.waitFor(TimeUnit.SECONDS.toMillis(60), BayeuxClient.State.CONNECTED);
         
         if (! connected) {
         	stopHttpClient();

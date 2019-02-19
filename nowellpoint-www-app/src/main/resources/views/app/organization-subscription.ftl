@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-body">
+    	<h5 class="card-title">${labels['subscription']}</h5>
         <dl class="dl-vertical">
-            <h5 class="card-title">${labels['subscription']}</h5>
             <dt>${labels['plan.name']}</dt>
             <dd>${organization.subscription.planName}</dd>
             <dt>${labels['price']}</dt>
