@@ -14,3 +14,7 @@ swarm:
           port: 5993    
 secret: 
     name: /sandbox/console
+streaming:
+   event:
+      listener:
+         queue: streaming-event-listener-configuration-events-sandbox   

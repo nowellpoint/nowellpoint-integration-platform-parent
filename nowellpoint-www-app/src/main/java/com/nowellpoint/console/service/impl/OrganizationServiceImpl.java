@@ -81,6 +81,7 @@ import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
@@ -835,7 +836,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
         metadata.setContentType("application/json");
         metadata.setContentLength(bytes.length);
 		
-		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "configuration/".concat(organization.getId()), input, metadata);
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "configuration/"
+				.concat(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE))
+				.concat(organization.getId()), input, metadata);
         
         s3client.putObject(request);
 	}

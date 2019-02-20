@@ -31,6 +31,8 @@ import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.Payload;
 import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 import lombok.Builder;
 
@@ -46,11 +48,12 @@ public class TopicSubscription {
 	private HttpClient httpClient;
 	private BayeuxClient client;
 	
-	private boolean connected = Boolean.FALSE;
+	private boolean connected;
 
 	@Builder
 	private TopicSubscription(TopicConfiguration configuration) {
 		this.configuration = configuration;
+		this.connected = Boolean.FALSE;
 		connect();
 		if (connected) {
 			subscribe();
@@ -164,8 +167,9 @@ public class TopicSubscription {
 		Token token;
 		
 		try {
-			token = refreshToken(configuration.getRefreshToken());
-		} catch (OauthException e) {
+			LOGGER.info(configuration.getRefreshToken());
+			token = refreshToken(SecureValue.decryptBase64(configuration.getRefreshToken()));
+		} catch (OauthException | SecureValueException e) {
 			LOGGER.error("Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")");
 			return;
 		}

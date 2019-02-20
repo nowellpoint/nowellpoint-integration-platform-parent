@@ -17,3 +17,7 @@ salesforce:
     oauth:
         callback: https://localhost:8443/salesforce/oauth/callback/    
 domain: localhost
+streaming:
+   event:
+      listener:
+         queue: streaming-event-listener-configuration-events-sandbox
