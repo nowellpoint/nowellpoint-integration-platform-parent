@@ -167,7 +167,6 @@ public class TopicSubscription {
 		Token token;
 		
 		try {
-			LOGGER.info(configuration.getRefreshToken());
 			token = refreshToken(SecureValue.decryptBase64(configuration.getRefreshToken()));
 		} catch (OauthException | SecureValueException e) {
 			LOGGER.error("Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")");

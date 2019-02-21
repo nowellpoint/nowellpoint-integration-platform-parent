@@ -721,22 +721,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			
 			Organization organization = Organization.builder()
 					.from(instance)
-					.dashboard(Dashboard.of(token))
-					.connection(Connection.builder()
-							.from(instance.getConnection())
-							//.connectedAs(getIdentityTask.get().getUsername())
-							.connectedAt(getCurrentDateTime())
-							//.id(getIdentityTask.get().getId())
-							.instanceUrl(token.getInstanceUrl())
-							//.isConnected(Boolean.TRUE)
-							.issuedAt(token.getIssuedAt())
-							//.refreshToken(token.getRefreshToken() != null ? token.getRefreshToken() : instance.getConnection().getRefreshToken())
-							//.status(Connection.CONNECTED)
-							//.tokenType(token.getTokenType())
-							.build())
-					//.domain(getOrganizationTask.get().getId())
-					.name(getOrganizationTask.get().getName())
-					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.address(Address.builder()
 							.from(instance.getAddress())
 							.city(getOrganizationTask.get().getAddress().getCity())
@@ -749,6 +733,15 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 							.street(getOrganizationTask.get().getAddress().getStreet())
 							.updatedOn(getCurrentDateTime())
 							.build())
+					.connection(Connection.builder()
+							.from(instance.getConnection())
+							.connectedAt(getCurrentDateTime())
+							.instanceUrl(token.getInstanceUrl())
+							.issuedAt(token.getIssuedAt())
+							.build())
+					.dashboard(Dashboard.of(token))
+					.name(getOrganizationTask.get().getName())
+					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.build();
 			
 			return organization;
@@ -835,10 +828,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType("application/json");
         metadata.setContentLength(bytes.length);
-		
-		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "configuration/"
+        
+        String folder = "configuration/"
 				.concat(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE))
-				.concat(organization.getId()), input, metadata);
+				.concat("/")
+				.concat(organization.getId());
+		
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, folder, input, metadata);
         
         s3client.putObject(request);
 	}

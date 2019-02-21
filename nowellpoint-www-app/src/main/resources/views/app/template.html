@@ -39,10 +39,9 @@
         <main>
             <#include "header.ftl" />
             <#nested />    
-        	<#include "success-popup.ftl" />
-        	<div id="wait" class="spinner hidden"></div>   
-        </main>
+        	<#include "success-popup.ftl" />  
+        </main> 
     </body>
-
+    <div id="overlay" class="loader">Loading&#8230;</div>
     </html>
 </#macro>
