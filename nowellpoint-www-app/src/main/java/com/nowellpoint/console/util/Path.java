@@ -47,6 +47,7 @@ public class Path {
 		public static final String DASHBOARD = String.format(APPLICATION_CONTEXT, "dashboard");
 		public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration");
 		public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile");
+		public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications");
 		public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization");
 		public static final String ORGANIZATION_CONNECT = String.format(APPLICATION_CONTEXT, "organization/connect");
 		public static final String ORGANIZATION_REFRESH = String.format(APPLICATION_CONTEXT, "organization/refresh");

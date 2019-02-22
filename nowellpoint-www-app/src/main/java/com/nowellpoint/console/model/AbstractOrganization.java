@@ -24,6 +24,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
 	public abstract List<StreamingEventListener> getStreamingEventListeners();
+	public abstract List<Notification> getNotifications();
 	
 	@Value.Default
 	public String getOrganizationType() {
@@ -53,6 +54,7 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.connection(Connection.of(entity.getConnection()))
 				.dashboard(Dashboard.of(entity.getDashboard()))
 				.subscription(Subscription.of(entity.getSubscription()))
+				.notifications(Notifications.of(entity.getNotifications()))
 				.streamingEventListeners(StreamingEventListeners.of(entity.getStreamingEventListeners()))
 				.build();
 	}

@@ -59,6 +59,7 @@ public class TemplateManager {
 			model.put("LOGOUT_URI", Path.Route.LOGOUT);
 			model.put("START_URI", Path.Route.START);
 			model.put("USER_PROFILE_URI", Path.Route.USER_PROFILE);
+			model.put("NOTIFICATIONS", Path.Route.NOTIFICATIONS);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			model.put("STREAMING_EVENTS_URI", Path.Route.STREAMING_EVENTS);
 			model.put("STREAMING_EVENTS_SOURCES_URI", Path.Route.STREAMING_EVENTS_SOURCES);

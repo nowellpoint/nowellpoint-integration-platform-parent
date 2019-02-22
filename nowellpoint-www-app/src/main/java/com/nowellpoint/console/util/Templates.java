@@ -14,7 +14,7 @@ public class Templates {
 	public static final String START = String.format(APPLICATION_CONTEXT, "start.ftl");
 	public static final String ADMINISTRATION = String.format(APPLICATION_CONTEXT, "administration.html");
 	public static final String USER_PROFILE = String.format(APPLICATION_CONTEXT, "user-profile.ftl");
-	public static final String USER_PROFILE_INFORMATION = String.format(APPLICATION_CONTEXT, "identity-information.ftl");
+	public static final String NOTIFICATIONS = String.format(APPLICATION_CONTEXT, "notifications.ftl");
 	public static final String ORGANIZATION = String.format(APPLICATION_CONTEXT, "organization.ftl");
 	public static final String ORGANIZATION_CHANGE_PLAN = String.format(APPLICATION_CONTEXT, "organization-change-plan.html");
 	public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");

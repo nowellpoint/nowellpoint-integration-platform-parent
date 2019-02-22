@@ -16,7 +16,7 @@
                             </span>
                         </div>
                         <div class="dashhead-toolbar-item">
-                            <button type="button" id="refresh" name="refresh" class="btn bg-transparent"><i class="fa fa-sync fa-lg"></i></button>
+                            <button type="button" id="refresh" name="refresh" class="btn bg-transparent" data-toggle="tooltip" data-placement="top" title="${labels['refresh']}"><i class="fa fa-sync"></i></button>
                         </div>
                     </div>
                 </div>

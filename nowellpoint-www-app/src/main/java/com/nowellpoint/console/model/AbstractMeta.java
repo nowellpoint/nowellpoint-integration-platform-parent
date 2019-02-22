@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.nowellpoint.util.Properties;
 
 @Value.Immutable
 @Value.Style(typeImmutable = "*", jdkOnly=true)
@@ -24,7 +25,8 @@ public abstract class AbstractMeta {
 	public abstract @JsonIgnore @Nullable String getId();
 	
 	public String getHref() {		
-		return new StringBuilder().append(System.getProperty("hostname"))
+		return new StringBuilder().append("https://")
+				.append(System.getProperty(Properties.DOMAIN))
 				.append(getResourcePath())
 				.toString()
 				.replace(":id", getId());
