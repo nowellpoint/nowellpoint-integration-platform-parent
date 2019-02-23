@@ -23,6 +23,7 @@ import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.SalesforceService;
 import com.nowellpoint.util.Properties;
@@ -116,6 +117,11 @@ public class SalesforceServiceImpl extends AbstractService implements Salesforce
 	@Override
 	public Limits getLimits(Token token) {
 		return SalesforceClientBuilder.defaultClient(token).getLimits();
+	}
+	
+	@Override
+	public Set<SObject> getCustomObjects(Token token) {
+		return SalesforceClientBuilder.defaultClient(token).getCustomObjects();
 	}
 	
 	private String decryptToken(String refreshToken) {

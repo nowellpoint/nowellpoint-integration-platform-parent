@@ -2,7 +2,7 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <div id="content">
-            <div class="container-fluid mt-2 pt-3 pr-5 pl-5 mb-2">
+            <div class="container-fluid mt-2 pt-3 pr-5 pl-5 mb-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">&nbsp;</h6>
@@ -21,56 +21,15 @@
                     </div>
                 </div>
             </div>
-            <div class="container-fluid pr-5 pl-5 mb-2">
+            <div class="container-fluid pr-5 pl-5 mb-3">
                 <div class="card-deck">
                     <#include "organization-information.ftl" />
                     <#include "organization-subscription.ftl" />
                     <#include "organization-billing-address.ftl" />
                 </div>
             </div>
-            <div class="container-fluid pr-5 pl-5 mb-2">
-                <div class="card w-100">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.customObjectCount}</h4>
-                                    <span class="statcard-desc">${labels["custom.objects"]}</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.apexClassCount}</h4>
-                                    <span class="statcard-desc">${labels["apex.classes"]}</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.apexTriggerCount}</h4>
-                                    <span class="statcard-desc">${labels["apex.triggers"]}</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.recordTypeCount}</h4>
-                                    <span class="statcard-desc">${labels["record.types"]}</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.userRoleCount}</h4>
-                                    <span class="statcard-desc">${labels["user.roles"]}</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="statcard text-center p-1">
-                                    <h4 class="statcard-number">${organization.dashboard.profileCount}</h4>
-                                    <span class="statcard-desc">${labels["profiles"]}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="container-fluid pr-5 pl-5 mb-3">
+                <#include "organization-dashboard.ftl" />
             </div>
             <div class="container-fluid pr-5 pl-5 mb-2">
                 <div class="card w-100">

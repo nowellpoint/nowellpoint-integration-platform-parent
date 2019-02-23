@@ -14,6 +14,7 @@ import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 
 public interface SalesforceService {
 	public Token getToken(String authorizationCode);
@@ -22,6 +23,7 @@ public interface SalesforceService {
 	public Organization getOrganization(Token token);
 	public DescribeGlobalResult describeGlobal(Token token);
 	public Set<UserLicense> getUserLicenses(Token token);
+	public Set<SObject> getCustomObjects(Token token);
 	public Set<ApexClass> getApexClasses(Token token);
 	public Set<ApexTrigger> getApexTriggers(Token token);
 	public Set<RecordType> getRecordTypes(Token token);

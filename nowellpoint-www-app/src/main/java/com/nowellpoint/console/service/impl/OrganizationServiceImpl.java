@@ -66,6 +66,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
+import com.nowellpoint.console.model.DashboardComponent;
 import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
@@ -689,7 +690,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.salesforce()
 				.refreshToken(instance.getConnection().getRefreshToken());
 		
-		ExecutorService executor = Executors.newFixedThreadPool(2);
+		ExecutorService executor = Executors.newFixedThreadPool(9);
 		
 		FutureTask<com.nowellpoint.client.sforce.model.Organization> getOrganizationTask = new FutureTask<com.nowellpoint.client.sforce.model.Organization>(
 				new Callable<com.nowellpoint.client.sforce.model.Organization>() {
@@ -717,6 +718,97 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		executor.execute(getIdentityTask);
 		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.sobject.SObject>> getCustomObjectsTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.sobject.SObject>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.sobject.SObject>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.sobject.SObject> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+				 				.getCustomObjects(token);
+				   }
+				}
+		);
+		
+		executor.execute(getCustomObjectsTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>> getUserLicensesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.UserLicense>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.UserLicense> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserLicenses(token);
+				   }
+				}
+		);
+		
+		executor.execute(getUserLicensesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.ApexClass>> getApexClassesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.ApexClass>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.ApexClass>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.ApexClass> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexClasses(token);
+				   }
+				}
+		);
+		
+		executor.execute(getApexClassesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.ApexTrigger>> getApexTriggersTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.ApexTrigger>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.ApexTrigger>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.ApexTrigger> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexTriggers(token);
+				   }
+				}
+		);
+		
+		executor.execute(getApexTriggersTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.RecordType>> getRecordTypesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.RecordType>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.RecordType>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.RecordType> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getRecordTypes(token);
+				   }
+				}
+		);
+		
+		executor.execute(getRecordTypesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.UserRole>> getUserRolesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.UserRole>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.UserRole>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.UserRole> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserRoles(token);
+				   }
+				}
+		);
+		
+		executor.execute(getUserRolesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.Profile>> getProfilesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.Profile>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.Profile>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.Profile> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getProfiles(token);
+				   }
+				}
+		);
+		
+		executor.execute(getProfilesTask);
+		
 		try {
 			
 			Organization organization = Organization.builder()
@@ -739,7 +831,40 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 							.instanceUrl(token.getInstanceUrl())
 							.issuedAt(token.getIssuedAt())
 							.build())
-					.dashboard(Dashboard.of(token))
+					.dashboard(Dashboard.builder()
+							.from(instance.getDashboard())
+							.apexClass(DashboardComponent.builder()
+									.value(Double.valueOf(getApexClassesTask.get().size()))
+									.delta(instance.getDashboard().getApexClass().getValue() - getApexClassesTask.get().size())
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.apexTrigger(DashboardComponent.builder()
+									.value(Double.valueOf(getApexTriggersTask.get().size()))
+									.delta(instance.getDashboard().getApexTrigger().getValue() - getApexTriggersTask.get().size())
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.customObject(DashboardComponent.builder()
+									.value(Double.valueOf(getCustomObjectsTask.get().size()))
+									.delta(instance.getDashboard().getCustomObject().getValue() - Double.valueOf(getCustomObjectsTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.lastRefreshedOn(getCurrentDateTime())
+							.profile(DashboardComponent.builder()
+									.value(Double.valueOf(getProfilesTask.get().size()))
+									.delta(instance.getDashboard().getProfile().getValue() - Double.valueOf(getProfilesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.recordType(DashboardComponent.builder()
+									.value(Double.valueOf(getRecordTypesTask.get().size()))
+									.delta(instance.getDashboard().getRecordType().getValue() - Double.valueOf(getRecordTypesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.userRole(DashboardComponent.builder()
+									.value(Double.valueOf(getUserRolesTask.get().size()))
+									.delta(instance.getDashboard().getUserRole().getValue() - Double.valueOf(getUserRolesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.build())
 					.name(getOrganizationTask.get().getName())
 					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.build();

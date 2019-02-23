@@ -19,6 +19,8 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DuplicateKeyException;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
@@ -145,8 +147,6 @@ public class TopicSubscription {
 					LOGGER.info("**** end message received ****");
 				}
 			});
-			
-			LOGGER.info("Subscribed to channel: " + t.getChannel());
 		});
 	}
 	
@@ -240,8 +240,10 @@ public class TopicSubscription {
 			
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
-				if (! message.isSuccessful()) {
-					LOGGER.error(channel.getChannelId() + ": " + message.toString());
+				if (message.isSuccessful()) {
+					LOGGER.info("Subscribed to channel: " + message.toString());
+				} else {
+					LOGGER.error("Unable to subscribe to channel: " + message.toString());
 				}
 			}
 		});
