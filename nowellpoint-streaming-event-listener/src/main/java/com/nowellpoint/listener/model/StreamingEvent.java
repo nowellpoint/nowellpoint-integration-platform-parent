@@ -12,12 +12,12 @@ import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @Entity(value = "streaming.events", noClassnameStored = true)
 @Indexes(
 		@Index(fields = { @Field("replayId"), @Field("organizationId"), @Field("source") }, options = @IndexOptions(unique = true))

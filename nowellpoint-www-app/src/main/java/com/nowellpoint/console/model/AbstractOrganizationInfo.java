@@ -1,7 +1,5 @@
 package com.nowellpoint.console.model;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import org.immutables.value.Value;
@@ -21,7 +19,6 @@ public abstract class AbstractOrganizationInfo {
 	public abstract @Nullable String getDomain();
 	public abstract @Nullable String getPlan();
 	public abstract @Nullable String getName();
-	public abstract @Nullable List<Notification> getNotifications();
 	
 	@Value.Default
 	public Meta getMeta() {
@@ -38,7 +35,6 @@ public abstract class AbstractOrganizationInfo {
 				.name(source.getName())
 				.number(source.getNumber())
 				.plan(source.getSubscription().getPlanName())
-				.notifications(Notifications.of(source.getNotifications()))
 				.build();
 	}
 }
