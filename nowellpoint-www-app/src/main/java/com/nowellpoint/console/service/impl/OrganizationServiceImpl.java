@@ -811,6 +811,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		try {
 			
+			Double apexClasses = Double.valueOf(getApexClassesTask.get().size());
+			Double apexTriggers = Double.valueOf(getApexTriggersTask.get().size());
+			Double customObjects = Double.valueOf(getCustomObjectsTask.get().size());
+			Double profiles = Double.valueOf(getProfilesTask.get().size());
+			Double recordTypes = Double.valueOf(getRecordTypesTask.get().size());
+			Double userRoles = Double.valueOf(getUserRolesTask.get().size());
+			
 			Organization organization = Organization.builder()
 					.from(instance)
 					.address(Address.builder()
@@ -834,34 +841,34 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.dashboard(Dashboard.builder()
 							.from(instance.getDashboard())
 							.apexClass(DashboardComponent.builder()
-									.value(Double.valueOf(getApexClassesTask.get().size()))
-									.delta(getApexClassesTask.get().size() - instance.getDashboard().getApexClass().getValue())
+									.value(apexClasses)
+									.delta(apexClasses - instance.getDashboard().getApexClass().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.apexTrigger(DashboardComponent.builder()
-									.value(Double.valueOf(getApexTriggersTask.get().size()))
-									.delta(getApexTriggersTask.get().size() - instance.getDashboard().getApexTrigger().getValue())
+									.value(apexTriggers)
+									.delta(apexTriggers - instance.getDashboard().getApexTrigger().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.customObject(DashboardComponent.builder()
-									.value(Double.valueOf(getCustomObjectsTask.get().size()))
-									.delta(Double.valueOf(getCustomObjectsTask.get().size()) - instance.getDashboard().getCustomObject().getValue())
+									.value(customObjects)
+									.delta(customObjects - instance.getDashboard().getCustomObject().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.lastRefreshedOn(getCurrentDateTime())
 							.profile(DashboardComponent.builder()
-									.value(Double.valueOf(getProfilesTask.get().size()))
-									.delta(Double.valueOf(getProfilesTask.get().size()) - instance.getDashboard().getProfile().getValue())
+									.value(profiles)
+									.delta(profiles - instance.getDashboard().getProfile().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.recordType(DashboardComponent.builder()
-									.value(Double.valueOf(getRecordTypesTask.get().size()))
-									.delta(Double.valueOf(getRecordTypesTask.get().size()) - instance.getDashboard().getRecordType().getValue())
+									.value(recordTypes)
+									.delta(recordTypes - instance.getDashboard().getRecordType().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.userRole(DashboardComponent.builder()
-									.value(Double.valueOf(getUserRolesTask.get().size()))
-									.delta(Double.valueOf(getUserRolesTask.get().size()) - instance.getDashboard().getUserRole().getValue())
+									.value(userRoles)
+									.delta(userRoles - instance.getDashboard().getUserRole().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.build())
