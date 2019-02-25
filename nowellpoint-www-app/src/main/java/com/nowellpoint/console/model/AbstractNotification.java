@@ -1,5 +1,7 @@
 package com.nowellpoint.console.model;
 
+import java.util.Date;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,7 +17,8 @@ import com.nowellpoint.console.util.Path;
 public abstract class AbstractNotification extends AbstractResource {
 	public abstract String getSubject();
 	public abstract String getMessage();
-	public abstract String getWho();
+	public abstract String getReceivedFrom();
+	public abstract Date getReceivedOn();
 
 	
 	@Value.Default
@@ -38,15 +41,13 @@ public abstract class AbstractNotification extends AbstractResource {
 	
 	public static Notification of(com.nowellpoint.console.entity.Notification source) {
 		return source == null ? null : Notification.builder()
-				.createdBy(UserInfo.of(source.getCreatedBy()))
-				.createdOn(source.getCreatedOn())
 				.id(source.getId().toString())
 				.isRead(source.getIsRead())
 				.isUrgent(source.getIsUrgent())
-				.lastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
-				.lastUpdatedOn(source.getLastUpdatedOn())
 				.message(source.getMessage())
+				.receivedOn(source.getReceivedOn())
 				.subject(source.getSubject())
+				.receivedFrom(source.getReceivedFrom())
 				.build();
 	}
 }

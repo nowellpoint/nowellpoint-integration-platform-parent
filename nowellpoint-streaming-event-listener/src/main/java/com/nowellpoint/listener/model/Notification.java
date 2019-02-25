@@ -18,7 +18,7 @@ public class Notification implements Serializable {
 	private static final long serialVersionUID = 2829335541506907521L;
 
 	@Getter @Setter @Id private ObjectId id;
-	@Getter @Setter private String who;
+	@Getter @Setter private String receivedFrom;
 	@Getter @Setter private Date receivedOn;
 	@Getter @Setter private String subject;
 	@Getter @Setter private String message;

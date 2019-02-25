@@ -23,9 +23,6 @@ public class OrganizationController extends BaseController {
 		get(Path.Route.ORGANIZATION_REFRESH, (request, response)
 				-> refreshOrganization(request, response));
 		
-		get(Path.Route.NOTIFICATIONS, (request, response)
-				-> viewNotifications(request, response));
-		
 //		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
 //				-> listPlans(configuration, request, response));
 //		
@@ -86,26 +83,6 @@ public class OrganizationController extends BaseController {
 				.controllerClass(OrganizationController.class)
 				.model(model)
 				.templateName(Templates.ORGANIZATION)
-				.build();
-		
-		return processTemplate(templateProcessRequest);
-	}
-	
-	private static String viewNotifications(Request request, Response response) {
-		
-		String organizationId = getIdentity(request).getOrganization().getId();
-		
-		Organization organization = ServiceClient.getInstance()
-				.organization()
-				.get(organizationId);
-		
-		Map<String,Object> model = getModel();
-		model.put("organization", organization);
-    	
-    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(OrganizationController.class)
-				.model(model)
-				.templateName(Templates.NOTIFICATIONS)
 				.build();
 		
 		return processTemplate(templateProcessRequest);

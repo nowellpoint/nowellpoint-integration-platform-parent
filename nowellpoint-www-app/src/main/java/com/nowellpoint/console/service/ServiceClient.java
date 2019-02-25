@@ -2,6 +2,7 @@ package com.nowellpoint.console.service;
 
 import com.nowellpoint.console.service.impl.IdentityServiceImpl;
 import com.nowellpoint.console.service.impl.LeadServiceImpl;
+import com.nowellpoint.console.service.impl.NotificationServiceImpl;
 import com.nowellpoint.console.service.impl.OrganizationServiceImpl;
 import com.nowellpoint.console.service.impl.PlanServiceImpl;
 import com.nowellpoint.console.service.impl.SalesforceServiceImpl;
@@ -15,6 +16,7 @@ public class ServiceClient {
 	private IdentityService identity;
 	private LeadService lead;
 	private OrganizationService organization;
+	private NotificationService notification;
 	private PlanService plan;
 	private SalesforceService salesforce;
 	
@@ -52,6 +54,13 @@ public class ServiceClient {
 			organization = new OrganizationServiceImpl();
 		}
 		return organization;
+	}
+	
+	public NotificationService notification() {
+		if (notification == null) {
+			notification = new NotificationServiceImpl();
+		}
+		return notification;
 	}
 	
 	public PlanService plan() {

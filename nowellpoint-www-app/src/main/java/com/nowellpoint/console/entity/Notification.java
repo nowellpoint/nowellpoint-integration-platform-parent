@@ -6,9 +6,8 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Version;
 
-@Entity(value = "notifications")
+@Entity(value = "notifications", noClassnameStored = true)
 public class Notification implements Serializable {
 	
 	private static final long serialVersionUID = 9162304609981811453L;
@@ -16,10 +15,7 @@ public class Notification implements Serializable {
 	@Id
 	private ObjectId id;
 	
-	@Version
-	private Long version;
-	
-	private String who;
+	private String receivedFrom;
 	
 	private Date receivedOn;
 	
@@ -69,24 +65,20 @@ public class Notification implements Serializable {
 		this.isUrgent = isUrgent;
 	}
 	
-	public String getWho() {
-		return who;
+	public String getReceivedFrom() {
+		return receivedFrom;
 	}
 
 	public ObjectId getOrganizationId() {
 		return organizationId;
 	}
 
-	public void setWho(String who) {
-		this.who = who;
+	public void setReceivedFrom(String receivedFrom) {
+		this.receivedFrom = receivedFrom;
 	}
 
 	public ObjectId getId() {
 		return id;
-	}
-
-	public Long getVersion() {
-		return version;
 	}
 
 	public Date getReceivedOn() {
@@ -95,10 +87,6 @@ public class Notification implements Serializable {
 
 	public void setId(ObjectId id) {
 		this.id = id;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	public void setReceivedOn(Date receivedOn) {

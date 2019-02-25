@@ -253,7 +253,7 @@ public class TopicSubscription {
 							.organizationId(new ObjectId(configuration.getOrganizationId()))
 							.receivedOn(new Date())
 							.subject("Subscribed to channel")
-							.who("StreamingEventListener")
+							.receivedFrom("StreamingEventListener")
 							.build();
 					
 					MongoConnection.getInstance().getDatastore().save(notification);
@@ -269,7 +269,7 @@ public class TopicSubscription {
 							.organizationId(new ObjectId(configuration.getOrganizationId()))
 							.receivedOn(new Date())
 							.subject("Unable to subscribe to channel")
-							.who("StreamingEventListener")
+							.receivedFrom("StreamingEventListener")
 							.build();
 					
 					MongoConnection.getInstance().getDatastore().save(notification);
@@ -296,7 +296,7 @@ public class TopicSubscription {
 					.organizationId(new ObjectId(configuration.getOrganizationId()))
 					.receivedOn(new Date())
 					.subject("Unable to connect")
-					.who("StreamingEventListener")
+					.receivedFrom("StreamingEventListener")
 					.build();
 			
 			MongoConnection.getInstance().getDatastore().save(notification);

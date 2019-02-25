@@ -11,6 +11,7 @@ import com.nowellpoint.console.api.OrganizationResource;
 import com.nowellpoint.console.view.AdministrationController;
 import com.nowellpoint.console.view.AuthenticationController;
 import com.nowellpoint.console.view.IndexController;
+import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
@@ -53,6 +54,7 @@ public class Routes {
 		StartController.configureRoutes();
 		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes(configuration);
+		NotificationController.configureRoutes(configuration);
 		StreamingEventsController.configureRoutes(configuration);
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
