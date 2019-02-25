@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +23,10 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
@@ -37,13 +37,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.Base64;
 import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Environment;
 import com.braintreegateway.Result;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -70,6 +66,7 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
+import com.nowellpoint.console.model.DashboardComponent;
 import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
@@ -85,7 +82,10 @@ import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.UserContext;
 import com.nowellpoint.util.Assert;
+import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
@@ -178,8 +178,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		String ecryptedToken = null;
 		
 		try {
-			ecryptedToken = Base64.encodeAsString(encrypt(token.getRefreshToken().getBytes()));
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			ecryptedToken = SecureValue.encryptBase64(token.getRefreshToken());
+		} catch (SecureValueException e) {
 			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 		}
 		
@@ -198,6 +198,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 						.build())
 				.domain(identity.getOrganizationId())
 				.build();
+		
+		saveConfiguration(organization);
 		
 		return update(organization);
 	}
@@ -688,7 +690,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.salesforce()
 				.refreshToken(instance.getConnection().getRefreshToken());
 		
-		ExecutorService executor = Executors.newFixedThreadPool(2);
+		ExecutorService executor = Executors.newFixedThreadPool(9);
 		
 		FutureTask<com.nowellpoint.client.sforce.model.Organization> getOrganizationTask = new FutureTask<com.nowellpoint.client.sforce.model.Organization>(
 				new Callable<com.nowellpoint.client.sforce.model.Organization>() {
@@ -716,26 +718,101 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		executor.execute(getIdentityTask);
 		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.sobject.SObject>> getCustomObjectsTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.sobject.SObject>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.sobject.SObject>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.sobject.SObject> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+				 				.getCustomObjects(token);
+				   }
+				}
+		);
+		
+		executor.execute(getCustomObjectsTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>> getUserLicensesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.UserLicense>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.UserLicense> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserLicenses(token);
+				   }
+				}
+		);
+		
+		executor.execute(getUserLicensesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.ApexClass>> getApexClassesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.ApexClass>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.ApexClass>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.ApexClass> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexClasses(token);
+				   }
+				}
+		);
+		
+		executor.execute(getApexClassesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.ApexTrigger>> getApexTriggersTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.ApexTrigger>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.ApexTrigger>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.ApexTrigger> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getApexTriggers(token);
+				   }
+				}
+		);
+		
+		executor.execute(getApexTriggersTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.RecordType>> getRecordTypesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.RecordType>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.RecordType>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.RecordType> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getRecordTypes(token);
+				   }
+				}
+		);
+		
+		executor.execute(getRecordTypesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.UserRole>> getUserRolesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.UserRole>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.UserRole>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.UserRole> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getUserRoles(token);
+				   }
+				}
+		);
+		
+		executor.execute(getUserRolesTask);
+		
+		FutureTask<Set<com.nowellpoint.client.sforce.model.Profile>> getProfilesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.Profile>>(
+				new Callable<Set<com.nowellpoint.client.sforce.model.Profile>>() {
+					@Override
+					public Set<com.nowellpoint.client.sforce.model.Profile> call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getProfiles(token);
+				   }
+				}
+		);
+		
+		executor.execute(getProfilesTask);
+		
 		try {
 			
 			Organization organization = Organization.builder()
 					.from(instance)
-					.dashboard(Dashboard.of(token))
-					.connection(Connection.builder()
-							.from(instance.getConnection())
-							//.connectedAs(getIdentityTask.get().getUsername())
-							.connectedAt(getCurrentDateTime())
-							//.id(getIdentityTask.get().getId())
-							.instanceUrl(token.getInstanceUrl())
-							//.isConnected(Boolean.TRUE)
-							.issuedAt(token.getIssuedAt())
-							//.refreshToken(token.getRefreshToken() != null ? token.getRefreshToken() : instance.getConnection().getRefreshToken())
-							//.status(Connection.CONNECTED)
-							//.tokenType(token.getTokenType())
-							.build())
-					//.domain(getOrganizationTask.get().getId())
-					.name(getOrganizationTask.get().getName())
-					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.address(Address.builder()
 							.from(instance.getAddress())
 							.city(getOrganizationTask.get().getAddress().getCity())
@@ -748,6 +825,48 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 							.street(getOrganizationTask.get().getAddress().getStreet())
 							.updatedOn(getCurrentDateTime())
 							.build())
+					.connection(Connection.builder()
+							.from(instance.getConnection())
+							.connectedAt(getCurrentDateTime())
+							.instanceUrl(token.getInstanceUrl())
+							.issuedAt(token.getIssuedAt())
+							.build())
+					.dashboard(Dashboard.builder()
+							.from(instance.getDashboard())
+							.apexClass(DashboardComponent.builder()
+									.value(Double.valueOf(getApexClassesTask.get().size()))
+									.delta(instance.getDashboard().getApexClass().getValue() - getApexClassesTask.get().size())
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.apexTrigger(DashboardComponent.builder()
+									.value(Double.valueOf(getApexTriggersTask.get().size()))
+									.delta(instance.getDashboard().getApexTrigger().getValue() - getApexTriggersTask.get().size())
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.customObject(DashboardComponent.builder()
+									.value(Double.valueOf(getCustomObjectsTask.get().size()))
+									.delta(instance.getDashboard().getCustomObject().getValue() - Double.valueOf(getCustomObjectsTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.lastRefreshedOn(getCurrentDateTime())
+							.profile(DashboardComponent.builder()
+									.value(Double.valueOf(getProfilesTask.get().size()))
+									.delta(instance.getDashboard().getProfile().getValue() - Double.valueOf(getProfilesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.recordType(DashboardComponent.builder()
+									.value(Double.valueOf(getRecordTypesTask.get().size()))
+									.delta(instance.getDashboard().getRecordType().getValue() - Double.valueOf(getRecordTypesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.userRole(DashboardComponent.builder()
+									.value(Double.valueOf(getUserRolesTask.get().size()))
+									.delta(instance.getDashboard().getUserRole().getValue() - Double.valueOf(getUserRolesTask.get().size()))
+									.unit(DashboardComponent.AMOUNT)
+									.build())
+							.build())
+					.name(getOrganizationTask.get().getName())
+					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.build();
 			
 			return organization;
@@ -808,26 +927,39 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private void saveConfiguration(Organization organization) {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
-				
-		ObjectNode object = new ObjectMapper().createObjectNode()
-				.put("organizationId", organization.getId())
-				.put("apiVersion", organization.getConnection().getApiVersion())
-				.put("refreshToken", organization.getConnection().getRefreshToken());
 		
-		ArrayNode array = object.putArray("topics");
+		JsonArrayBuilder builder = Json.createArrayBuilder();
 		
 		organization.getStreamingEventListeners().forEach(l -> {
-			array.addObject().put("channel", "/topic/".concat(l.getName())).put("active", l.getActive()).put("source", l.getSource()).put("topicId", l.getTopicId());
+			builder.add(Json.createObjectBuilder()
+					.add("channel", "/topic/".concat(l.getName()))
+					.add("active", l.getActive())
+					.add("source", l.getSource())
+					.add("topicId", l.getTopicId() != null ? Json.createValue(l.getTopicId()) : JsonValue.NULL)
+					.build());
 		});
 		
-		byte[] bytes = object.toString().getBytes(StandardCharsets.UTF_8);
+		JsonObject json = Json.createObjectBuilder()
+			     .add("organizationId", organization.getId())
+			     .add("apiVersion", organization.getConnection().getApiVersion())
+			     .add("refreshToken", organization.getConnection().getRefreshToken())
+			     .add("topics", builder.build())
+			     .build();
+		
+		byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+		
 		InputStream input = new ByteArrayInputStream(bytes);
 		
 		ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType("application/json");
         metadata.setContentLength(bytes.length);
+        
+        String folder = "configuration/"
+				.concat(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE))
+				.concat("/")
+				.concat(organization.getId());
 		
-		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, "configuration/".concat(organization.getId()), input, metadata);
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, folder, input, metadata);
         
         s3client.putObject(request);
 	}

@@ -4,7 +4,7 @@
 	<groupId>com.nowellpoint</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.11</version>
+	<version>1.0.12-SNAPSHOT</version>
 	<name>Nowellpoint Integration Platform Parent</name>
 
 	<parent>
@@ -47,7 +47,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<docker.group.name>nowellpoint</docker.group.name>
-		<version.aws.sdk>1.11.486</version.aws.sdk>
+		<version.aws.sdk>1.11.500</version.aws.sdk>
 		<jackson.version>2.8.5</jackson.version>
 		<hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
 		<javax.el.version>2.2.4</javax.el.version>

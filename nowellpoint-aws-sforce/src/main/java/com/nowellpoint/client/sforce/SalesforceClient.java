@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -446,6 +447,14 @@ final class SalesforceClient implements Salesforce {
 		}
 		
 		return records;
+	}
+	
+	@Override
+	public Set<com.nowellpoint.client.sforce.model.sobject.SObject> getCustomObjects() {
+		DescribeGlobalResult result = describeGlobal();
+		return result.getSObjects().stream()
+				.filter(s -> s.getCustom())
+				.collect(Collectors.toSet());
 	}
 	
 	private QueryResult queryMore(String nextRecordsUrl) {

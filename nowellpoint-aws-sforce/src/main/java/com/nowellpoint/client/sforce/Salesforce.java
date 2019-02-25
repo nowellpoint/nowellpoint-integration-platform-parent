@@ -40,6 +40,7 @@ public interface Salesforce {
 	public PushTopic getPushTopic(String pushTopicId);
 	public void updatePushTopic(String topicId, PushTopicRequest request);
 	public void deletePushTopic(String topicId);
+	public Set<com.nowellpoint.client.sforce.model.sobject.SObject> getCustomObjects();
 	public Set<UserLicense> getUserLicenses();
 	public Set<ApexClass> getApexClasses();
 	public Set<ApexTrigger> getApexTriggers();

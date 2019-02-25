@@ -10,7 +10,7 @@ import com.nowellpoint.console.util.Path;
 
 @Value.Immutable
 @Value.Modifiable
-@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"transaction:transactions"})
+@Value.Style(typeImmutable = "*", jdkOnly=true, create = "new", depluralize = true, depluralizeDictionary = {"notification:notifications"})
 @JsonSerialize(as = OrganizationInfo.class)
 @JsonDeserialize(as = OrganizationInfo.class)
 public abstract class AbstractOrganizationInfo {

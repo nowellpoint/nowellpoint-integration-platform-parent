@@ -1,10 +1,12 @@
 logger:
     level: DEBUG
-key:
-    id: 534e1894-56e5-413b-97fc-a3d6bbc0c51b
 sceret:
-    name: /production/console
+    name: /production/console        
 salesforce:
     oauth:
         callback: https://www.nowellpoint.com/salesforce/oauth/callback/      
-domain: nowellpoint.com        
+domain: nowellpoint.com      
+streaming:
+   event:
+      listener:
+         queue: streaming-event-listener-configuration-events-production

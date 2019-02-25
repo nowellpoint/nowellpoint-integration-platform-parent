@@ -48,6 +48,8 @@ import com.nowellpoint.http.RestResource;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.util.SecretsManager;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 public class TestStreamingEventListener {
 	
@@ -157,12 +159,20 @@ public class TestStreamingEventListener {
 		
 		Document connection = organization.get("connection", Document.class);
 		
+		String refreshToken = null;
+		
+		try {
+			refreshToken = SecureValue.decryptBase64(connection.getString("refreshToken"));
+		} catch (SecureValueException e) {
+			e.printStackTrace();
+		}
+		
 		assertNotNull(connection.getString("refreshToken"));
 		
 		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
 				.setClientId(SecretsManager.getSalesforceClientId())
 				.setClientSecret(SecretsManager.getSalesforceClientSecret())
-				.setRefreshToken(connection.getString("refreshToken"))
+				.setRefreshToken(refreshToken)
 				.build();
 		
 		OauthAuthenticationResponse oauthAthenticationResponse = Authenticators.REFRESH_TOKEN_GRANT_AUTHENTICATOR

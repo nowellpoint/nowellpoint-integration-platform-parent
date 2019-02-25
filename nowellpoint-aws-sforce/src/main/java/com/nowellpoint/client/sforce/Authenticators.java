@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
-import com.nowellpoint.client.sforce.model.Error;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.Salesforce;
@@ -43,7 +42,7 @@ public class Authenticators {
 			if (httpResponse.getStatusCode() == Status.OK) {
 				token = httpResponse.getEntity(Token.class);
 			} else {
-				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
 			Identity identity = getIdentity(token.getId(), token.getAccessToken());
@@ -78,7 +77,7 @@ public class Authenticators {
 			if (httpResponse.getStatusCode() == Status.OK) {
 				token = httpResponse.getEntity(Token.class);
 			} else {
-				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
 			Identity identity = getIdentity(token.getId(), token.getAccessToken());
@@ -110,7 +109,7 @@ public class Authenticators {
 			if (httpResponse.getStatusCode() == Status.OK) {
 	    		token = httpResponse.getEntity(Token.class);
 			} else {
-				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
 			Identity identity = getIdentity(token.getId(), token.getAccessToken());
@@ -133,7 +132,7 @@ public class Authenticators {
     	if (httpResponse.getStatusCode() == Status.OK) {
     		identity = httpResponse.getEntity(Identity.class);
 		} else {
-			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(Error.class));
+			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 		}
     	
     	return identity;

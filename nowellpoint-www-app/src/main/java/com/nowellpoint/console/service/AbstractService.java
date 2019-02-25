@@ -1,24 +1,12 @@
 package com.nowellpoint.console.service;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Logger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 import org.bson.types.ObjectId;
 import org.modelmapper.AbstractConverter;
@@ -31,14 +19,16 @@ import org.mongodb.morphia.query.Query;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.nowellpoint.console.entity.Lead;
-import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.entity.Identity;
+import com.nowellpoint.console.entity.Lead;
+import com.nowellpoint.console.entity.Organization;
 import com.nowellpoint.console.entity.Plan;
+import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.model.OrganizationInfo;
 import com.nowellpoint.console.model.UserInfo;
 import com.nowellpoint.util.SecretsManager;
-import com.nowellpoint.console.entity.Organization;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -47,13 +37,11 @@ import redis.clients.jedis.Protocol;
 
 public abstract class AbstractService {
 	
+	private static final Logger LOGGER = Logger.getLogger(AbstractService.class.getName());
 	private static final MongoClientURI mongoClientUri;
 	protected static final Datastore datastore;
 	protected static final ModelMapper modelMapper;
 	protected static JedisPool jedisPool;
-	private static Cipher cipher;
-	private static SecretKey secretKey;
-	private static IvParameterSpec iv;
 	
 	static {
 		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()));
@@ -115,36 +103,15 @@ public abstract class AbstractService {
 				SecretsManager.getRedisPassword());
 		
 		jedisPool.getResource().flushDB();
-		
-		String keyString = SecretsManager.getRedisEncryptionKey();
-		
-		try {
-			byte[] key = keyString.getBytes("UTF-8");
-			
-			MessageDigest sha = MessageDigest.getInstance("SHA-512");
-			key = sha.digest(key);
-			key = Arrays.copyOf(key, 32);
-		    
-		    secretKey = new SecretKeySpec(key, "AES");
-		    
-		    cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-		    
-		    byte[] ivBytes = new byte[cipher.getBlockSize()];
-		    iv = new IvParameterSpec(ivBytes);
-		    
-		} catch (UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	protected <T extends Serializable> void putEntry(String key, T value) {
 		Jedis jedis = jedisPool.getResource();
 		try {
-			//cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-			byte[] bytes = encrypt(SerializationUtils.serialize(value)); //cipher.doFinal(SerializationUtils.serialize(value));
+			byte[] bytes = SecureValue.encrypt(SerializationUtils.serialize(value));
 			jedis.set(key.getBytes(), bytes);
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-			e.printStackTrace();
+		} catch (SecureValueException e) {
+			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 		} finally {
 			jedis.close();
 		}
@@ -164,11 +131,10 @@ public abstract class AbstractService {
 		
 		if (bytes != null) {
 			try {
-				//cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-				bytes = decryt(bytes); //cipher.doFinal(bytes);
+				bytes = SecureValue.decrypt(bytes);
 				value = SerializationUtils.deserialize(bytes);
-			} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | SerializationException e) {
-				e.printStackTrace();
+			} catch (SecureValueException e) {
+				LOGGER.severe(ExceptionUtils.getStackTrace(e));
 			}
 		}
 		
@@ -195,15 +161,5 @@ public abstract class AbstractService {
 				.equal("system.administrator@nowellpoint.com");
 				 
 		return query.get();
-	}
-	
-	protected byte[] encrypt(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-		return cipher.doFinal(bytes);
-	}
-	
-	protected byte[] decryt(byte[] bytes) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
-		cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-		return cipher.doFinal(bytes);
 	}
 }

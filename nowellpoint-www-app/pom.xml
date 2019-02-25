@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.11</version>
+		<version>1.0.12-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -158,11 +158,6 @@
 			<groupId>com.sendgrid</groupId>
 			<artifactId>sendgrid-java</artifactId>
 			<version>4.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.cometd.java</groupId>
-			<artifactId>cometd-java-client</artifactId>
-			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ocpsoft.prettytime</groupId>

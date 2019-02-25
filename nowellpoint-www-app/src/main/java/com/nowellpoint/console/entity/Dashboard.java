@@ -10,17 +10,17 @@ public class Dashboard implements Serializable {
 
 	private Date lastRefreshedOn;
 	
-	private Integer customObjectCount;
+	private DashboardComponent customObject;
 	
-	private Integer apexClassCount;
+	private DashboardComponent apexClass;
 	
-	private Integer apexTriggerCount;
+	private DashboardComponent apexTrigger;
 	
-	private Integer recordTypeCount;
+	private DashboardComponent recordType;
 	
-	private Integer userRoleCount;
+	private DashboardComponent userRole;
 	
-	private Integer profileCount;
+	private DashboardComponent profile;
 	
 	private Set<UserLicense> userLicenses;
 	
@@ -36,52 +36,52 @@ public class Dashboard implements Serializable {
 		this.lastRefreshedOn = lastRefreshedOn;
 	}
 
-	public Integer getCustomObjectCount() {
-		return customObjectCount;
+	public DashboardComponent getCustomObject() {
+		return customObject;
 	}
 
-	public void setCustomObjectCount(Integer customObjectCount) {
-		this.customObjectCount = customObjectCount;
+	public void setCustomObject(DashboardComponent customObject) {
+		this.customObject = customObject;
 	}
 
-	public Integer getApexClassCount() {
-		return apexClassCount;
+	public DashboardComponent getApexClass() {
+		return apexClass;
 	}
 
-	public void setApexClassCount(Integer apexClassCount) {
-		this.apexClassCount = apexClassCount;
+	public DashboardComponent getApexTrigger() {
+		return apexTrigger;
 	}
 
-	public Integer getApexTriggerCount() {
-		return apexTriggerCount;
+	public DashboardComponent getRecordType() {
+		return recordType;
 	}
 
-	public void setApexTriggerCount(Integer apexTriggerCount) {
-		this.apexTriggerCount = apexTriggerCount;
+	public DashboardComponent getUserRole() {
+		return userRole;
 	}
 
-	public Integer getRecordTypeCount() {
-		return recordTypeCount;
+	public DashboardComponent getProfile() {
+		return profile;
 	}
 
-	public void setRecordTypeCount(Integer recordTypeCount) {
-		this.recordTypeCount = recordTypeCount;
+	public void setApexClass(DashboardComponent apexClass) {
+		this.apexClass = apexClass;
 	}
 
-	public Integer getUserRoleCount() {
-		return userRoleCount;
+	public void setApexTrigger(DashboardComponent apexTrigger) {
+		this.apexTrigger = apexTrigger;
 	}
 
-	public void setUserRoleCount(Integer userRoleCount) {
-		this.userRoleCount = userRoleCount;
+	public void setRecordType(DashboardComponent recordType) {
+		this.recordType = recordType;
 	}
 
-	public Integer getProfileCount() {
-		return profileCount;
+	public void setUserRole(DashboardComponent userRole) {
+		this.userRole = userRole;
 	}
 
-	public void setProfileCount(Integer profileCount) {
-		this.profileCount = profileCount;
+	public void setProfile(DashboardComponent profile) {
+		this.profile = profile;
 	}
 
 	public Set<UserLicense> getUserLicenses() {

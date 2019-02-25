@@ -2,7 +2,9 @@ package com.nowellpoint.listener;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -22,15 +24,13 @@ import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
+import com.nowellpoint.util.Properties;
 
 public class StreamingEventListener extends TopicSubscriptionCache {
 	
 	private static StreamingEventListener INSTANCE = new StreamingEventListener();
 	
 	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
-	private static final String BUCKET = "streaming-event-listener-us-east-1-600862814314";
-	private static final String PREFIX = "configuration/";
-	private static final String QUEUE = "streaming-event-listener-configuration-events";
 	
 	private final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
@@ -66,9 +66,14 @@ public class StreamingEventListener extends TopicSubscriptionCache {
 	
 	private void startListeners() {
 		
+		String bucketName = System.getProperty(Properties.STREAMING_EVENT_LISTENER_BUCKET);
+		String prefix = "configuration/"
+				.concat(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE))
+				.concat("/");
+		
 		ListObjectsV2Request request = new ListObjectsV2Request()
-				.withBucketName(BUCKET)
-				.withPrefix(PREFIX)
+				.withBucketName(bucketName)
+				.withPrefix(prefix)
 				.withMaxKeys(1000);
 		
         ListObjectsV2Result result = null;
@@ -104,7 +109,10 @@ public class StreamingEventListener extends TopicSubscriptionCache {
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
             
-			session.createConsumer(session.createQueue(QUEUE)).setMessageListener(new MessageListener() {
+            Queue queue = session.createQueue(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE));
+            MessageConsumer messageConsumer = session.createConsumer(queue);
+            
+            messageConsumer.setMessageListener(new MessageListener() {
 				
 				@Override
 				public void onMessage(Message message) {

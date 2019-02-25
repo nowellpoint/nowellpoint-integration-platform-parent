@@ -18,5 +18,9 @@
             <a class="nav-link" href="${STREAMING_EVENTS_SOURCES_URI}">
                 <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["sources"]}</span></a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="${NOTIFICATIONS_URI}">
+                <span class="clearfix d-none d-sm-inline-block">&emsp;${messages["notifications"]}</span></a>
+        </li>
     </ul>
 </nav>

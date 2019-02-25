@@ -102,7 +102,7 @@ public class UserProfileController extends BaseController {
 				.controllerClass(UserProfileController.class)
 				.model(model)
 				.request(request)
-				.templateName(Templates.USER_PROFILE_INFORMATION)
+				.templateName(Templates.USER_PROFILE)
 				.build();
 		
 		return template.render();

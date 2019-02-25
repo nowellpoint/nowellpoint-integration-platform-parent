@@ -4,7 +4,7 @@
     <span class="navbar-brand">${messages["application.title"]}</span>
     <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav mr-auto">
-            
+
         </ul>
         <!-- navbar menu -->
         <ul class="navbar-nav navbar-right">

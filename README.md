@@ -1,19 +1,26 @@
 [![Build Status](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent.svg?branch=dev)](https://travis-ci.org/nowellpoint/nowellpoint-integration-platform-parent)
 
-# nowellpoint-aws
+# nowellpoint-integration-platform-parent
 Nowellpoint Small Business Integration Platform
 
-Salesforce Outbound Message Receiver:
+Set the following environment variables:
 
-endpoint: https://inbound.nowellpoint.com/salesforce/outbound-message/ 
+AWS_REGION=<region>
+AWS_ACCESS_KEY=<accessKey>
+AWS_SECRET_ACCESS_KEY=<secretAccessKey>
 
-Setup For Services:
+Openshift command line tools: https://docs.openshift.com/online/cli_reference/get_started_cli.html
+1) download command line tools from help menu
+2) move archieve to /usr/local/bin
+3) tar -xvf <archive>
+4) copy login command from menu: oc login https://api.pro-us-east-1.openshift.com --token=<token>
 
-AWS_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY
-NCS_PROPERTY_STORE
+nowellpoint-www-app
 
-Setup for Application:
+run local: run.sh
+deploy to openshift: mvn fabric8:deploy -Popenshift -DskipTests
 
-NCS_API_ENDPOINT
-NCS_API_KEY
+nowellpoint-streaming-event-listener
+
+run local: run.sh
+deploy to openshift: mvn fabric8:deploy -Popenshift -DskipTests

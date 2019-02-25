@@ -1,0 +1,16 @@
+logger:
+    level: INFO
+swarm:
+    http:
+        port: 8080
+    https:
+        certificate:
+            generate: true
+        port: 8443
+sceret:
+    name: /production/console
+streaming:
+   event:
+      listener:
+         bucket: streaming-event-listener-us-east-1-600862814314
+         queue: streaming-event-listener-configuration-events-production   

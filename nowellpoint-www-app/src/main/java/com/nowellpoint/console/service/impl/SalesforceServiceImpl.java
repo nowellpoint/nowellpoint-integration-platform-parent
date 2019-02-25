@@ -1,16 +1,10 @@
 package com.nowellpoint.console.service.impl;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import com.amazonaws.util.Base64;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.AuthorizationGrantRequest;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
@@ -29,10 +23,13 @@ import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.client.sforce.model.UserRole;
+import com.nowellpoint.client.sforce.model.sobject.SObject;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.SalesforceService;
 import com.nowellpoint.util.Properties;
 import com.nowellpoint.util.SecretsManager;
+import com.nowellpoint.util.SecureValue;
+import com.nowellpoint.util.SecureValueException;
 
 public class SalesforceServiceImpl extends AbstractService implements SalesforceService {
 	
@@ -122,10 +119,15 @@ public class SalesforceServiceImpl extends AbstractService implements Salesforce
 		return SalesforceClientBuilder.defaultClient(token).getLimits();
 	}
 	
+	@Override
+	public Set<SObject> getCustomObjects(Token token) {
+		return SalesforceClientBuilder.defaultClient(token).getCustomObjects();
+	}
+	
 	private String decryptToken(String refreshToken) {
 		try {
-			return new String( decryt( Base64.decode( refreshToken ) ) );
-		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+			return SecureValue.decryptBase64( refreshToken );
+		} catch (SecureValueException e) {
 			LOGGER.severe(ExceptionUtils.getStackTrace(e));
 			return null;
 		}

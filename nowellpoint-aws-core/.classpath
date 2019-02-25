@@ -2,15 +2,15 @@
 <classpath>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
+			<attribute name="test" value="true"/>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
 		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="test" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/classes" path="src/main/java">
@@ -38,12 +38,9 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.475/aws-java-sdk-secretsmanager-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.475/aws-java-sdk-secretsmanager-1.11.475-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.475/aws-java-sdk-core-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/aws-java-sdk-core/1.11.475/aws-java-sdk-core-1.11.475-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar" sourcepath="M2_REPO/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7.jar" sourcepath="M2_REPO/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.6.7/jackson-dataformat-cbor-2.6.7-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475.jar" sourcepath="M2_REPO/com/amazonaws/jmespath-java/1.11.475/jmespath-java-1.11.475-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value/2.7.4/value-2.7.4.jar" sourcepath="M2_REPO/org/immutables/value/2.7.4/value-2.7.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/builder/2.7.4/builder-2.7.4.jar" sourcepath="M2_REPO/org/immutables/builder/2.7.4/builder-2.7.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/immutables/value-fixture/2.7.4/value-fixture-2.7.4.jar" sourcepath="M2_REPO/org/immutables/value-fixture/2.7.4/value-fixture-2.7.4-sources.jar"/>
@@ -79,8 +76,8 @@
 	</classpathentry>
 	<classpathentry kind="src" output="target/test-classes" path=".apt_generated_tests">
 		<attributes>
-			<attribute name="optional" value="true"/>
 			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>

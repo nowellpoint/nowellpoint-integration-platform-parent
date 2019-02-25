@@ -3,7 +3,6 @@ package com.nowellpoint.client.sforce.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.nowellpoint.client.sforce.Error;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateResult {

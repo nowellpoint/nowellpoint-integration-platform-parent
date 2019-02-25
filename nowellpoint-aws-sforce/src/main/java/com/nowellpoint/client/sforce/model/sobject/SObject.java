@@ -7,10 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SObject implements Serializable {
 
-	/**
-	 * 
-	 */
-	
 	private static final long serialVersionUID = -4468699493936717073L;
 	
 	private Boolean activateable;

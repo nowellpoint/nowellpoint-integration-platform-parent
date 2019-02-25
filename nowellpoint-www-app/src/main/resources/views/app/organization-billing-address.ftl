@@ -47,8 +47,8 @@
 -->
 <div class="card">
     <div class="card-body">
+    	<h5 class="card-title">${labels['billing.address']}</h5>
         <dl class="dl-vertical">
-            <h5 class="card-title">${labels['billing.address']}</h5>
             <dt>${labels['street']}</dt>
             <dd>${(organization.subscription.billingAddress.street)!}&nbsp;</dd>
             <dt>${labels['city']}</dt>
