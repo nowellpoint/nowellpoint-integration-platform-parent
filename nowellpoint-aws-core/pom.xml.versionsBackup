@@ -2,26 +2,60 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>nowellpoint-aws-admin</artifactId>
+	<artifactId>nowellpoint-aws-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Nowellpoint Administration Services</name>
-
+	<name>Core Library Functions</name>
+	<description>Nowellpoint Core Library Functions jar</description>
+	
 	<parent>
 		<groupId>com.nowellpoint</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.12</version>
+		<version>1.0.12-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5</version>
+		</dependency>
+		<dependency>
 			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-s3</artifactId>
+			<artifactId>aws-java-sdk-secretsmanager</artifactId>
 			<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value</artifactId>
+			<version>${version.immutables}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>builder</artifactId>
+			<version>${version.immutables}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.immutables</groupId>
+			<artifactId>value-fixture</artifactId>
+			<version>${version.immutables}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${version.junit}</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
