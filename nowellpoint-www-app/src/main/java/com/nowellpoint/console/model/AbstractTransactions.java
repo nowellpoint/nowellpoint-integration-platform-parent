@@ -11,9 +11,7 @@ import org.immutables.value.Value;
 public abstract class AbstractTransactions {
 	public static Set<Transaction> of(Set<com.nowellpoint.console.entity.Transaction> source) {
 		return source == null ? Collections.emptySet() : source.stream()
-				.map(f -> {
-					return Transaction.of(f);
-				})
+				.map(f -> Transaction.of(f))
 				.collect(Collectors.toSet());
 	}
 }

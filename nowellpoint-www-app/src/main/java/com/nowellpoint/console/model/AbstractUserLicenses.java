@@ -12,9 +12,7 @@ import org.immutables.value.Value;
 public abstract class AbstractUserLicenses {
 	public static List<UserLicense> of(Set<com.nowellpoint.console.entity.UserLicense> source) {
 		return source == null ? Collections.emptyList() : source.stream()
-				.map(f -> {
-					return UserLicense.of(f);
-				})
+				.map(f -> UserLicense.of(f))
 				.collect(Collectors.toList());
 	}
 }

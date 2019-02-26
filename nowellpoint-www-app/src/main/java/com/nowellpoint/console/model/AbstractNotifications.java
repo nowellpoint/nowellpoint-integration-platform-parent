@@ -11,9 +11,7 @@ import org.immutables.value.Value;
 public abstract class AbstractNotifications {
 	public static List<Notification> of(List<com.nowellpoint.console.entity.Notification> source) {
 		return source == null ? Collections.emptyList() : source.stream()
-				.map(f -> {
-					return Notification.of(f);
-				})
+				.map(n -> Notification.of(n))
 				.collect(Collectors.toList());
 	}
 }

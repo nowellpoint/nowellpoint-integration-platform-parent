@@ -11,9 +11,7 @@ import org.immutables.value.Value;
 public abstract class AbstractFeatures {
 	public static Set<Feature> of(Set<com.nowellpoint.console.entity.Feature> source) {
 		return source == null ? Collections.emptySet() : source.stream()
-				.map(f -> {
-					return Feature.of(f);
-				})
+				.map(f -> Feature.of(f))
 				.collect(Collectors.toSet());
 	}
 }

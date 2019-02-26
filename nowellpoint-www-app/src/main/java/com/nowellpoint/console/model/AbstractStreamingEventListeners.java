@@ -11,9 +11,7 @@ import org.immutables.value.Value;
 public abstract class AbstractStreamingEventListeners {
 	public static Set<StreamingEventListener> of(Set<com.nowellpoint.console.entity.StreamingEventListener> source) {
 		return source == null ? Collections.emptySet() : source.stream()
-				.map(f -> {
-					return StreamingEventListener.of(f);
-				})
+				.map(f -> StreamingEventListener.of(f))
 				.collect(Collectors.toSet());
 	}
 }
