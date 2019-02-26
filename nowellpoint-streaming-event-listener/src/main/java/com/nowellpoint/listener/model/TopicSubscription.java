@@ -1,4 +1,4 @@
-package com.nowellpoint.listener;
+package com.nowellpoint.listener.model;
 
 import java.io.IOException;
 import java.util.Date;
@@ -27,11 +27,11 @@ import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.model.TopicConfiguration;
+import com.nowellpoint.entity.model.Notification;
+import com.nowellpoint.entity.model.Payload;
+import com.nowellpoint.entity.model.StreamingEvent;
+import com.nowellpoint.listener.StreamingEventListener;
 import com.nowellpoint.listener.connection.MongoConnection;
-import com.nowellpoint.listener.model.Notification;
-import com.nowellpoint.listener.model.Payload;
-import com.nowellpoint.listener.model.StreamingEvent;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;

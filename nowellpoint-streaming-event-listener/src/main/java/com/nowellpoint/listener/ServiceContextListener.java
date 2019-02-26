@@ -5,7 +5,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 @WebListener
-public class StreamingEventContextListener implements ServletContextListener {
+public class ServiceContextListener implements ServletContextListener {
     private StreamingEventListener listener;
     
     @Override

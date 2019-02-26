@@ -1,5 +1,8 @@
 package com.nowellpoint.listener;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -7,6 +10,10 @@ import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+import javax.json.bind.config.PropertyVisibilityStrategy;
 
 import org.jboss.logging.Logger;
 
@@ -15,6 +22,7 @@ import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.event.S3EventNotification;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -22,15 +30,16 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.nowellpoint.listener.connection.MongoConnection;
-import com.nowellpoint.listener.model.S3Event;
 import com.nowellpoint.listener.model.TopicConfiguration;
+import com.nowellpoint.listener.model.TopicSubscription;
 import com.nowellpoint.util.Properties;
 
-public class StreamingEventListener extends TopicSubscriptionCache {
+public class StreamingEventListener extends Cache {
 	
 	private static StreamingEventListener INSTANCE = new StreamingEventListener();
 	
 	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
+	private static final Jsonb JSON_BUILDER = JsonbBuilder.create(getJsonbConfig());
 	
 	private final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
@@ -119,7 +128,7 @@ public class StreamingEventListener extends TopicSubscriptionCache {
 					TextMessage textMessage = (TextMessage) message;
 					try {
 						
-						S3Event event = readEvent(textMessage);
+						S3EventNotification event = S3EventNotification.parseJson(textMessage.getText());
 						
 						event.getRecords().stream().forEach(record -> {
 							
@@ -160,5 +169,28 @@ public class StreamingEventListener extends TopicSubscriptionCache {
 		} catch (JMSException e) {
 			LOGGER.error(e);
 		}
+	}
+	
+	private TopicConfiguration readConfiguration(S3Object s3object) {
+		return JSON_BUILDER.fromJson(s3object.getObjectContent(), TopicConfiguration.class);
+	}
+	
+	private static JsonbConfig getJsonbConfig() {
+		return new JsonbConfig()
+				.withNullValues(Boolean.TRUE)
+				.withPropertyVisibilityStrategy(
+						new PropertyVisibilityStrategy() {
+							
+							@Override
+							public boolean isVisible(Field field) {
+								return true;
+							}
+							
+							@Override
+							public boolean isVisible(Method method) {
+								return false;
+							}
+							
+						});
 	}
 }

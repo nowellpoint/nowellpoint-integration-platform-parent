@@ -1,4 +1,4 @@
-package com.nowellpoint.listener.model;
+package com.nowellpoint.entity.model;
 
 import java.io.Serializable;
 import java.util.Date;

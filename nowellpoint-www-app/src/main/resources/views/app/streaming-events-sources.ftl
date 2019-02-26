@@ -21,10 +21,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <#list organization.streamingEventListeners?sort_by("source") as eventListener>
+                        <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
                             <tr class="d-flex">
                                 <td class="col-3">
-                                    <div class="circle"><span class="initials">${eventListener.prefix}</span></div>
+                                    <span class="fa-stack fa-lg" style="color:#00cc6a">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fas fa-inverse fa-stack-1x">${eventListener.prefix}</i>
+                                    </span>
+                                    <!-- <div class="circle"><span class="initials">${eventListener.prefix}</span></div>-->
                                 </td>
                                 <td class="col-3 align-middle"><a href="${eventListener.href}">${eventListener.source}</a></td>
                                 <td class="col-3 align-middle">
