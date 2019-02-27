@@ -22,16 +22,16 @@
                 </div>
 
                 <ul class="nav nav-bordered">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#configuration" data-toggle="tab">${labels["configuration"]}</a>
+                     <li class="nav-item">
+                        <a class="nav-link active" href="#monitoring" data-toggle="tab">${labels["monitoring"]}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#monitoring" data-toggle="tab">${labels["monitoring"]}</a>
+                        <a class="nav-link" href="#configuration" data-toggle="tab">${labels["configuration"]}</a>
                     </li>
                 </ul>
                 <hr>
                 <div class="tab-content clearfix">
-                    <div class="tab-pane active" id="configuration">
+                    <div class="tab-pane" id="configuration">
                         <form id="streaming-event-listener-form" role="form" method="post" action="${eventListener.href}">
                             <div class="card bg-light">
                                 <div class="card-body">
@@ -136,7 +136,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="monitoring">
+                    <div class="tab-pane active" id="monitoring">
                         <div class="row">
                             <div class="col-3">
                                 <div class="card bg-light">
