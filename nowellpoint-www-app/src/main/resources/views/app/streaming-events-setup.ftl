@@ -20,9 +20,8 @@
 
                     </div>
                 </div>
-
                 <ul class="nav nav-bordered">
-                     <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link active" href="#monitoring" data-toggle="tab">${labels["monitoring"]}</a>
                     </li>
                     <li class="nav-item">
@@ -39,7 +38,7 @@
                                         <div class="col-6">
                                             <label for="notifyForOperationCreate">${labels["streaming.event.listener.status"]}</label>
                                             <div class="pull-right">
-                                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" ${eventListener.active?then('checked','')}>
+                                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" ${eventListener.active?then( 'checked', '')}>
                                             </div>
                                         </div>
                                     </div>
@@ -54,7 +53,7 @@
                                                 <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
                                             </span>
                                             <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationCreate?then('checked','')}>
+                                                <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationCreate?then( 'checked', '')}>
                                             </div>
                                         </div>
                                     </div>
@@ -69,7 +68,7 @@
                                         <div class="col-6">
                                             <label for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
                                             <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUpdate?then('checked','')}>
+                                                <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUpdate?then( 'checked', '')}>
                                             </div>
                                         </div>
                                     </div>
@@ -84,7 +83,7 @@
                                         <div class="col-6">
                                             <label for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
                                             <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationDelete?then('checked','')}>
+                                                <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationDelete?then( 'checked', '')}>
                                             </div>
                                         </div>
                                     </div>
@@ -99,7 +98,7 @@
                                         <div class="col-6">
                                             <label for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
                                             <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUndelete?then('checked','')}>
+                                                <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUndelete?then( 'checked', '')}>
                                             </div>
                                         </div>
                                     </div>
@@ -135,15 +134,23 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="tab-pane active" id="monitoring">
+                        <div class="flextable">
+                            <div class="flextable-item flextable-primary">
+
+                            </div>
+                            <div class="flextable-item">
+                                ${labels['timezone']}: ${labels['utc']}
+                            </div>
+                        </div>
+                        <br>
                         <div class="row">
                             <div class="col-3">
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <span>${labels['events.received.today']}</span>
-                                        <h1 class="display-3">${EVENTS_RECEIVED_TODAY}</h1>
-                                        <span class="text-primary">${TODAY} (${labels['utc']})</span>
+                                        <h2>${EVENTS_RECEIVED_TODAY}</h2>
+                                        <span class="text-success">${TODAY}</span>
                                     </div>
                                 </div>
                             </div>
@@ -151,8 +158,8 @@
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <span>${labels['events.received.this.week']}</span>
-                                        <h1 class="display-3">${EVENTS_RECEIVED_THIS_WEEK}</h1>
-                                        <span class="text-primary">${FIRST_DAY_OF_WEEK} (${labels['utc']})</span>
+                                        <h2>${EVENTS_RECEIVED_THIS_WEEK}</h2>
+                                        <span class="text-success">${FIRST_DAY_OF_WEEK}</span>
                                     </div>
                                 </div>
                             </div>
@@ -160,8 +167,8 @@
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <span>${labels['events.received.this.month']}</span>
-                                        <h1 class="display-3">${EVENTS_RECEIVED_THIS_MONTH}</h1>
-                                        <span class="text-primary">${FIRST_DAY_OF_MONTH} (${labels['utc']})</span>
+                                        <h2>${EVENTS_RECEIVED_THIS_MONTH}</h2>
+                                        <span class="text-success">${FIRST_DAY_OF_MONTH}</span>
                                     </div>
                                 </div>
                             </div>
@@ -169,8 +176,8 @@
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <span>${labels['events.received.this.year']}</span>
-                                        <h1 class="display-3">${EVENTS_RECEIVED_THIS_YEAR}</h1>
-                                        <span class="text-primary">${FIRST_DAY_OF_YEAR} (${labels['utc']})</span>
+                                        <h2>${EVENTS_RECEIVED_THIS_YEAR}</h2>
+                                        <span class="text-success">${FIRST_DAY_OF_YEAR}</span>
                                     </div>
                                 </div>
                             </div>
@@ -185,12 +192,13 @@
                                             <div class="text">${feedItem.body}</div>
                                         </div>
                                     </#list>
-                                </div>    
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div> <!-- content -->
+        </div>
+        <!-- content -->
         <script type="text/javascript" src="/js/organization.js"></script>
     </@t.page>

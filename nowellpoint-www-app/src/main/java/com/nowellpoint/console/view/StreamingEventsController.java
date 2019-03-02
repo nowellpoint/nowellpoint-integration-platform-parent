@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -180,14 +181,16 @@ public class StreamingEventsController extends BaseController {
 			}
 		});
 		
+		Locale locale = getIdentity(request).getLocale();
+		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
 		model.put("feedItems", feedItems);
-		model.put("TODAY", today);
-		model.put("FIRST_DAY_OF_WEEK", firstDayOfWeek);
-		model.put("FIRST_DAY_OF_MONTH", firstDayOfMonth);
-		model.put("FIRST_DAY_OF_YEAR", firstDayOfYear);
+		model.put("TODAY", formatToday(today, locale));
+		model.put("FIRST_DAY_OF_WEEK", formatToday(firstDayOfWeek, locale));
+		model.put("FIRST_DAY_OF_MONTH", formatToday(firstDayOfMonth, locale));
+		model.put("FIRST_DAY_OF_YEAR", formatToday(firstDayOfYear, locale));
 		model.put("EVENTS_RECEIVED_TODAY", eventsToday);
 		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
 		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
@@ -271,5 +274,9 @@ public class StreamingEventsController extends BaseController {
 				.append(result.getCount())
 				.append("]")
 				.toString();
+	}
+	
+	private static String formatToday(LocalDate today, Locale locale) {
+		return today.format(DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy", locale)); 
 	}
 }
