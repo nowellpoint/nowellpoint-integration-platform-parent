@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -602,8 +603,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public List<AggregationResult> getEventsLastDays(String id, Integer days) {
-		return dao.getEventsLastDays(new ObjectId(id), days);
+	public List<AggregationResult> getEventsLastDays(String id, Integer days, TimeZone timeZone) {
+		return dao.getEventsLastDays(new ObjectId(id), days, timeZone);
 	}
 	
 	@Override
@@ -613,7 +614,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	@Override
 	public List<FeedItem> getStreamingEventsFeed(String id) {
-		return dao.getStreamingEvents(new ObjectId(id))
+		return dao.getStreamingEvents(new ObjectId(id), TimeZone.getDefault())
 				.stream()
 				.map(s -> FeedItem.of(s))
 				.collect(Collectors.toList());

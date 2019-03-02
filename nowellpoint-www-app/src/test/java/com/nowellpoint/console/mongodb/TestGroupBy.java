@@ -11,6 +11,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -144,7 +145,7 @@ public class TestGroupBy {
 		
 		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
 		
-		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId(ORGANIZATION_ID), 7);
+		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId(ORGANIZATION_ID), 7, TimeZone.getDefault());
 		
 		String data = results.stream()
 				.sorted(Comparator.reverseOrder())

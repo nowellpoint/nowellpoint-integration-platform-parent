@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class StreamingEventsController extends BaseController {
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsLastDays(organizationId, 7);
+				.getEventsLastDays(organizationId, 7, TimeZone.getTimeZone(ZoneId.of( "UTC" )));
 		
 		String data = results.stream()
 				.sorted(Comparator.reverseOrder())
@@ -79,7 +80,7 @@ public class StreamingEventsController extends BaseController {
 		
 		List<FeedItem> feedItems = ServiceClient.getInstance()
 				.organization()
-				.getStreamingEventsFeed(organizationId);
+				.getStreamingEventsFeed(organizationId, getIdentity(request).getTimeZone());
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
@@ -137,6 +138,10 @@ public class StreamingEventsController extends BaseController {
 		
 		String source = request.params(":source");
 		
+		ZoneId timeZone = ZoneId.of(request.queryParamOrDefault("viewTimeZone", "UTC"));
+		
+		System.out.println(timeZone);
+		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
 				.get(organizationId);
@@ -185,6 +190,8 @@ public class StreamingEventsController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
+		model.put("viewAsUtc", Boolean.TRUE);
+		model.put("viewAsUserTimeZone", Boolean.FALSE);
 		model.put("eventListener", eventListener.get());
 		model.put("feedItems", feedItems);
 		model.put("TODAY", formatToday(today, locale));

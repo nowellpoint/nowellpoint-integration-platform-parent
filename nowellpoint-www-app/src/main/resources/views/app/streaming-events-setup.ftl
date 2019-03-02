@@ -140,7 +140,15 @@
 
                             </div>
                             <div class="flextable-item">
-                                ${labels['timezone']}: ${labels['utc']}
+                                ${labels['timezone']}:
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary ${viewAsUtc?then('active','')}">
+                                        ${labels['utc']}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary ${viewAsUserTimeZone?then('active','')}">
+                                        ${identity.timeZone}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <br>

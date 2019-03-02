@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +36,7 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 		super(entityClass, ds);
 	}
 	
-	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId) {
+	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId, TimeZone timeZone) {
 		
 		FindOptions options = new FindOptions().limit(50);
 		
@@ -82,18 +83,18 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 		return eventDateAggregator(days, query);
 	}
 	
-	public List<AggregationResult> getEventsLastDays(ObjectId organizationId, Integer days) {
+	public List<AggregationResult> getEventsLastDays(ObjectId organizationId, Integer days, TimeZone timeZone) {
 		
-		ZoneId utc = ZoneId.of( "UTC" );
+		ZoneId zoneId = ZoneId.of( timeZone.getID() );
 		
-		LocalDate startDate = LocalDate.now(utc).minusDays(days);
+		LocalDate startDate = LocalDate.now(zoneId).minusDays(days);
 		
 		Query<StreamingEvent> query = getDatastore().createQuery(StreamingEvent.class)
 				.field("organizationId")
 				.equal(organizationId)
 				.field("eventDate")
 				.greaterThanOrEq(Date.from(startDate.atStartOfDay()
-					      .atZone(utc)
+					      .atZone(zoneId)
 					      .toInstant()));
 		
 		return eventDateAggregator(days, query);
