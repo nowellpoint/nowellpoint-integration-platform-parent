@@ -190,6 +190,9 @@ public class StreamingEventsController extends BaseController {
 		model.put("viewAsUtc", zoneId.getId().equals("UTC") ? Boolean.TRUE : Boolean.FALSE);
 		model.put("viewAsDefaultTimeZone", zoneId.getId().equals(getIdentity(request).getTimeZone()) ? Boolean.TRUE : Boolean.FALSE);
 		model.put("eventListener", eventListener.get());
+		model.put("feedItems1", feedItems.stream().limit(17).collect(Collectors.toList()));
+		model.put("feedItems2", feedItems.stream().skip(17).limit(17).collect(Collectors.toList()));
+		model.put("feedItems3", feedItems.stream().skip(34).collect(Collectors.toList()));
 		model.put("feedItems", feedItems);
 		model.put("UTC", ZoneId.of( "UTC" ).getDisplayName(TextStyle.SHORT, locale));
 		model.put("DEFAULT_TIME_ZONE", ZoneId.of(getIdentity(request).getTimeZone()).getDisplayName(TextStyle.FULL, locale));
