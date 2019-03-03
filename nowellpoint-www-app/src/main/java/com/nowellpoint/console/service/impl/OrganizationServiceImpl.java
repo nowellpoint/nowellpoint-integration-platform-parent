@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -602,13 +603,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public List<AggregationResult> getEventsLastDays(String id, Integer days) {
-		return dao.getEventsLastDays(new ObjectId(id), days);
+	public List<AggregationResult> getEventsLastDays(String id, Integer days, TimeZone timeZone) {
+		return dao.getEventsLastDays(new ObjectId(id), days, timeZone);
 	}
 	
 	@Override
-	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days) {
-		return dao.getEventsBySourceByDays(new ObjectId(id), source, days);
+	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days, TimeZone timeZone) {
+		return dao.getEventsBySourceByDays(new ObjectId(id), source, days, timeZone);
 	}
 	
 	@Override

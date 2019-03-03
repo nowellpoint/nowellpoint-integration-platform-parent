@@ -49,9 +49,9 @@ $(document).on('click', 'button#editBillingAddress', function () {
 });
 
 /*-----------------------------------------------------------
- *
- *
- */
+*
+*
+*/
 
 $(document).on('click', 'button#save-payment-information', function () {
 

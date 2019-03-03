@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class StreamingEventsController extends BaseController {
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsLastDays(organizationId, 7);
+				.getEventsLastDays(organizationId, 7, TimeZone.getTimeZone(ZoneId.of( "UTC" )));
 		
 		String data = results.stream()
 				.sorted(Comparator.reverseOrder())
@@ -79,7 +80,7 @@ public class StreamingEventsController extends BaseController {
 		
 		List<FeedItem> feedItems = ServiceClient.getInstance()
 				.organization()
-				.getStreamingEventsFeed(organizationId);
+				.getStreamingEventsFeed(organizationId, getIdentity(request).getTimeZone());
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
@@ -137,6 +138,8 @@ public class StreamingEventsController extends BaseController {
 		
 		String source = request.params(":source");
 		
+		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
+		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
 				.get(organizationId);
@@ -150,8 +153,7 @@ public class StreamingEventsController extends BaseController {
 				.organization()
 				.getStreamingEventsFeed(organizationId, source);
 		
-		ZoneId utc = ZoneId.of( "UTC" );
-		LocalDate today = LocalDate.now( utc );
+		LocalDate today = LocalDate.now( zoneId );
 		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
 		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
 		LocalDate firstDayOfYear = LocalDate.of(today.getYear(), 1, 1);
@@ -159,7 +161,7 @@ public class StreamingEventsController extends BaseController {
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue());
+				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue(), TimeZone.getTimeZone(zoneId));
 		
 		AtomicLong eventsToday = new AtomicLong(0);
 		AtomicLong eventsThisWeek = new AtomicLong(0);
@@ -185,10 +187,15 @@ public class StreamingEventsController extends BaseController {
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
+		model.put("viewAsUtc", zoneId.getId().equals("UTC") ? Boolean.TRUE : Boolean.FALSE);
+		model.put("viewAsDefaultTimeZone", zoneId.getId().equals(getIdentity(request).getTimeZone()) ? Boolean.TRUE : Boolean.FALSE);
 		model.put("eventListener", eventListener.get());
 		model.put("feedItems1", feedItems.stream().limit(17).collect(Collectors.toList()));
 		model.put("feedItems2", feedItems.stream().skip(17).limit(17).collect(Collectors.toList()));
 		model.put("feedItems3", feedItems.stream().skip(34).collect(Collectors.toList()));
+		model.put("feedItems", feedItems);
+		model.put("UTC", ZoneId.of( "UTC" ).getDisplayName(TextStyle.SHORT, locale));
+		model.put("DEFAULT_TIME_ZONE", ZoneId.of(getIdentity(request).getTimeZone()).getDisplayName(TextStyle.FULL, locale));
 		model.put("TODAY", formatToday(today, locale));
 		model.put("FIRST_DAY_OF_WEEK", formatToday(firstDayOfWeek, locale));
 		model.put("FIRST_DAY_OF_MONTH", formatToday(firstDayOfMonth, locale));
@@ -197,6 +204,8 @@ public class StreamingEventsController extends BaseController {
 		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
 		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
 		model.put("EVENTS_RECEIVED_THIS_YEAR", eventsThisYear);
+		model.put("VIEW_AS_UTC_HREF", Path.Route.STREAMING_EVENTS_SETUP.replace(":source", source).concat("?zoneId=UTC"));
+		model.put("VIEW_AS_DEFAULT_TIMEZONE_HREF", Path.Route.STREAMING_EVENTS_SETUP.replace(":source", source).concat("?zoneId=").concat(getIdentity(request).getTimeZone()));
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StreamingEventsController.class)
