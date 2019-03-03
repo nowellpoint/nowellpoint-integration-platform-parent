@@ -189,9 +189,9 @@
                         <hr>
                         <div class="row">
                             <div class="col-12">
-                                <h2>${EVENTS_RECEIVED_THIS_YEAR}</h2>
+                                <h4>${labels['streaming.events.feed']}</h4>
                             </div>
-                            <div class="col-4 pb-3">
+                            <div class="col-4 pb-3 border-right">
                                 <div class="activity-feed">
                                     <#list feedItems1 as feedItem>
                                         <div class="feed-item">
@@ -201,7 +201,7 @@
                                     </#list>
                                 </div>
                             </div>
-                            <div class="col-4 pb-3">
+                            <div class="col-4 pb-3 border-right">
                                 <div class="activity-feed">
                                     <#list feedItems2 as feedItem>
                                         <div class="feed-item">

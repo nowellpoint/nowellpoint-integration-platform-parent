@@ -25,12 +25,13 @@ public abstract class AbstractFeedItem {
 	public abstract Date getLastUpdatedOn();
 	
 	private static final String SUBJECT = "%s %s";
-	private static final String BODY = "%s was %s by %s";
+	private static final String BODY = "%s was <span class='%s font-weight-bold'>%s</span> by %s";
 	
 	public static FeedItem of(com.nowellpoint.console.entity.StreamingEvent entity) {
 		return entity == null ? null : FeedItem.builder()
 				.body(String.format(BODY, 
 						entity.getPayload().getName(), 
+						getTextColor(entity.getType()),
 						entity.getType(), 
 						entity.getPayload().getLastModifiedById()))
 				.createdOn(entity.getPayload().getCreatedDate())
@@ -42,5 +43,17 @@ public abstract class AbstractFeedItem {
 						entity.getType()))
 				.type(StreamingEvent.class.getSimpleName())
 				.build();
+	}
+	
+	private static String getTextColor(String eventType) {
+		if ("UPDATED".equalsIgnoreCase(eventType)) {
+			return "text-primary";
+		} else if ("CREATED".equalsIgnoreCase(eventType)) {
+			return "text-success";
+		} else if ("DELETED".equalsIgnoreCase(eventType)) {
+			return "text-danger";
+		} else {
+			return "text-warning";
+		}
 	}
 }
