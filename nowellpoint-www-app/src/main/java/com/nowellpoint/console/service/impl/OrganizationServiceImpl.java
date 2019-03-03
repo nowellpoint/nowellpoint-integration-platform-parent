@@ -608,13 +608,13 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days) {
-		return dao.getEventsBySourceByDays(new ObjectId(id), source, days);
+	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days, TimeZone timeZone) {
+		return dao.getEventsBySourceByDays(new ObjectId(id), source, days, timeZone);
 	}
 	
 	@Override
 	public List<FeedItem> getStreamingEventsFeed(String id) {
-		return dao.getStreamingEvents(new ObjectId(id), TimeZone.getDefault())
+		return dao.getStreamingEvents(new ObjectId(id))
 				.stream()
 				.map(s -> FeedItem.of(s))
 				.collect(Collectors.toList());

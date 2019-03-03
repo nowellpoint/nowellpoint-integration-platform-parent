@@ -142,12 +142,8 @@
                             <div class="flextable-item">
                                 ${labels['timezone']}:
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-primary ${viewAsUtc?then('active','')}">
-                                        ${labels['utc']}
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary ${viewAsUserTimeZone?then('active','')}">
-                                        ${identity.timeZone}
-                                    </button>
+                                    <a class="btn btn-outline-primary ${viewAsUtc?then('active','')}" href="${VIEW_AS_UTC_HREF}" role="button">${UTC}</a>
+                                    <a class="btn btn-outline-primary ${viewAsDefaultTimeZone?then('active','')}" href="${VIEW_AS_DEFAULT_TIMEZONE_HREF}" role="button">${DEFAULT_TIME_ZONE}</a>
                                 </div>
                             </div>
                         </div>

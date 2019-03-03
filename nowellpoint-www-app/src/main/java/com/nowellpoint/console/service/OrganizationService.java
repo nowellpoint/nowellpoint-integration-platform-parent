@@ -49,5 +49,5 @@ public interface OrganizationService {
 	
 	public List<AggregationResult> getEventsLastDays(String id, Integer days, TimeZone timeZone);
 	
-	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days);
+	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days, TimeZone timeZone);
 }

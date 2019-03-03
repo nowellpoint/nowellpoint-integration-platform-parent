@@ -36,7 +36,7 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 		super(entityClass, ds);
 	}
 	
-	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId, TimeZone timeZone) {
+	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId) {
 		
 		FindOptions options = new FindOptions().limit(50);
 		
@@ -64,11 +64,11 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 		return streamingEventsList;
 	}
 	
-	public List<AggregationResult> getEventsBySourceByDays(ObjectId organizationId, String source, Integer days) {
+	public List<AggregationResult> getEventsBySourceByDays(ObjectId organizationId, String source, Integer days, TimeZone timeZone) {
 		
-		ZoneId utc = ZoneId.of( "UTC" );
+		ZoneId zoneId = ZoneId.of( timeZone.getID() );
 		
-		LocalDate startDate = LocalDate.now(utc).minusDays(days);
+		LocalDate startDate = LocalDate.now(zoneId).minusDays(days);
 		
 		Query<StreamingEvent> query = getDatastore().createQuery(StreamingEvent.class)
 				.field("organizationId")
@@ -77,7 +77,7 @@ public class OrganizationDAO extends BasicDAO<Organization, ObjectId> {
 				.equal(source)
 				.field("eventDate")
 				.greaterThanOrEq(Date.from(startDate.atStartOfDay()
-					      .atZone(utc)
+					      .atZone(zoneId)
 					      .toInstant()));
 		
 		return eventDateAggregator(days, query);

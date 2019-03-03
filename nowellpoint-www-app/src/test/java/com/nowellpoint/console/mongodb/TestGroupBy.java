@@ -66,7 +66,7 @@ public class TestGroupBy {
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
 				.organization()
-				.getEventsBySourceByDays(organization.getId().toString(), "Account", daysBetween.intValue());
+				.getEventsBySourceByDays(organization.getId().toString(), "Account", daysBetween.intValue(), TimeZone.getDefault());
 		
 		AtomicLong eventsToday = new AtomicLong(0);
 		AtomicLong eventsThisWeek = new AtomicLong(0);
