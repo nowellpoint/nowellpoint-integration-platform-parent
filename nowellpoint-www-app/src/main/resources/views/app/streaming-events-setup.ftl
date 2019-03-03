@@ -184,9 +184,32 @@
                         </div>
                         <hr>
                         <div class="row">
+                            <div class="col-12">
+                                <h2>${EVENTS_RECEIVED_THIS_YEAR}</h2>
+                            </div>
                             <div class="col-4 pb-3">
                                 <div class="activity-feed">
-                                    <#list feedItems as feedItem>
+                                    <#list feedItems1 as feedItem>
+                                        <div class="feed-item">
+                                            <div class="date">${feedItem.lastUpdatedOn?date?string.long}&nbsp;&nbsp;${feedItem.lastUpdatedOn?time?string.medium}</div>
+                                            <div class="text">${feedItem.body}</div>
+                                        </div>
+                                    </#list>
+                                </div>
+                            </div>
+                            <div class="col-4 pb-3">
+                                <div class="activity-feed">
+                                    <#list feedItems2 as feedItem>
+                                        <div class="feed-item">
+                                            <div class="date">${feedItem.lastUpdatedOn?date?string.long}&nbsp;&nbsp;${feedItem.lastUpdatedOn?time?string.medium}</div>
+                                            <div class="text">${feedItem.body}</div>
+                                        </div>
+                                    </#list>
+                                </div>
+                            </div>
+                            <div class="col-4 pb-3">
+                                <div class="activity-feed">
+                                    <#list feedItems3 as feedItem>
                                         <div class="feed-item">
                                             <div class="date">${feedItem.lastUpdatedOn?date?string.long}&nbsp;&nbsp;${feedItem.lastUpdatedOn?time?string.medium}</div>
                                             <div class="text">${feedItem.body}</div>

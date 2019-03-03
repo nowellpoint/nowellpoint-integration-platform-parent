@@ -186,7 +186,9 @@ public class StreamingEventsController extends BaseController {
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
 		model.put("eventListener", eventListener.get());
-		model.put("feedItems", feedItems);
+		model.put("feedItems1", feedItems.stream().limit(17).collect(Collectors.toList()));
+		model.put("feedItems2", feedItems.stream().skip(17).limit(17).collect(Collectors.toList()));
+		model.put("feedItems3", feedItems.stream().skip(34).collect(Collectors.toList()));
 		model.put("TODAY", formatToday(today, locale));
 		model.put("FIRST_DAY_OF_WEEK", formatToday(firstDayOfWeek, locale));
 		model.put("FIRST_DAY_OF_MONTH", formatToday(firstDayOfMonth, locale));
