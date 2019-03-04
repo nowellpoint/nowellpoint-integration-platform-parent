@@ -16,6 +16,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#dashboard" data-toggle="tab">${labels["dashboard"]}</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#limits" data-toggle="tab">${labels["limits"]}</a>
+                    </li>
                 </ul>
                 <hr>
             </div>
@@ -79,6 +82,7 @@
                         </div>
                     </div>
                 </div>
+                <#include "organization-limits.ftl" />
             </div>
         </div>
         <script type="text/javascript" src="/js/organization.js"></script>

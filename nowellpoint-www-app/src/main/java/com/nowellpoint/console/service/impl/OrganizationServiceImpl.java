@@ -69,6 +69,7 @@ import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
 import com.nowellpoint.console.model.DashboardComponent;
 import com.nowellpoint.console.model.FeedItem;
+import com.nowellpoint.console.model.Limits;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -691,7 +692,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.salesforce()
 				.refreshToken(instance.getConnection().getRefreshToken());
 		
-		ExecutorService executor = Executors.newFixedThreadPool(9);
+		ExecutorService executor = Executors.newFixedThreadPool(10);
 		
 		FutureTask<com.nowellpoint.client.sforce.model.Organization> getOrganizationTask = new FutureTask<com.nowellpoint.client.sforce.model.Organization>(
 				new Callable<com.nowellpoint.client.sforce.model.Organization>() {
@@ -810,6 +811,19 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		executor.execute(getProfilesTask);
 		
+		FutureTask<com.nowellpoint.client.sforce.model.Limits> getLimitsTask = new FutureTask<com.nowellpoint.client.sforce.model.Limits>(
+				new Callable<com.nowellpoint.client.sforce.model.Limits>() {
+					@Override
+					public com.nowellpoint.client.sforce.model.Limits call() {
+						return ServiceClient.getInstance()
+								.salesforce()
+								.getLimits(token);
+				   }
+				}
+		);
+		
+		executor.execute(getLimitsTask);
+		
 		try {
 			
 			Double apexClasses = Double.valueOf(getApexClassesTask.get().size());
@@ -874,6 +888,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 									.build())
 							.build())
 					.name(getOrganizationTask.get().getName())
+					.limits(Limits.of(getLimitsTask.get()))
 					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.build();
 			
