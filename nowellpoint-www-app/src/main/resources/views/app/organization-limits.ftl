@@ -17,10 +17,10 @@
                 <span class="text-muted">ConcurrentAsyncGetReportInstances</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.concurrentAsyncGetReportInstances.max}
+                ${(organization.limits.concurrentAsyncGetReportInstances.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.concurrentAsyncGetReportInstances.remaining}
+                ${(organization.limits.concurrentAsyncGetReportInstances.remaining!)}
             </div>
         </div>
         <hr>
@@ -29,10 +29,10 @@
                 <span class="text-muted">ConcurrentSyncReportRuns</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.concurrentSyncReportRuns.max}
+                ${(organization.limits.concurrentSyncReportRuns.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.concurrentSyncReportRuns.remaining}
+                ${(organization.limits.concurrentSyncReportRuns.remaining!)}
             </div>
         </div>
         <hr>
@@ -41,10 +41,10 @@
                 <span class="text-muted">DailyAnalyticsDataflowJobExecutions</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyAnalyticsDataflowJobExecutions.max}
+                ${(organization.limits.dailyAnalyticsDataflowJobExecutions.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyAnalyticsDataflowJobExecutions.remaining}
+                ${(organization.limits.dailyAnalyticsDataflowJobExecutions.remaining!)}
             </div>
         </div>
         <hr>
@@ -53,10 +53,10 @@
                 <span class="text-muted">DailyAsyncApexExecutions</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyAsyncApexExecutions.max}
+                ${(organization.limits.dailyAsyncApexExecutions.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyAsyncApexExecutions.remaining}
+                ${(organization.limits.dailyAsyncApexExecutions.remaining!)}
             </div>
         </div>
         <hr>
@@ -65,10 +65,10 @@
                 <span class="text-muted">DailyDurableGenericStreamingApiEvents</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyDurableGenericStreamingApiEvents.max}
+                ${(organization.limits.dailyDurableGenericStreamingApiEvents.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyDurableGenericStreamingApiEvents.remaining}
+                ${(organization.limits.dailyDurableGenericStreamingApiEvents.remaining!)}
             </div>
         </div>
         <hr>
@@ -77,10 +77,10 @@
                 <span class="text-muted">DailyDurableStreamingApiEvents</span>
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyDurableStreamingApiEvents.max}
+                ${(organization.limits.dailyDurableStreamingApiEvents.max!)}
             </div>
             <div class="col-3 text-right">
-                ${organization.limits.dailyDurableStreamingApiEvents.remaining}
+                ${(organization.limits.dailyDurableStreamingApiEvents.remaining!)}
             </div>
         </div>
         <hr>

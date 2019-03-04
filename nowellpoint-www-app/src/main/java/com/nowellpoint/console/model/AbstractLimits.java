@@ -19,6 +19,22 @@ public abstract class AbstractLimits {
 	public abstract @Nullable Limit getDailyAsyncApexExecutions();
 	public abstract @Nullable Limit getDailyDurableGenericStreamingApiEvents();
 	public abstract @Nullable Limit getDailyDurableStreamingApiEvents();
+	public abstract @Nullable Limit dailyWorkflowEmails();
+	public abstract @Nullable Limit dataStorageMB();
+	public abstract @Nullable Limit durableStreamingApiConcurrentClients();
+	public abstract @Nullable Limit fileStorageMB();
+	public abstract @Nullable Limit hourlyAsyncReportRuns();
+	public abstract @Nullable Limit hourlyDashboardRefreshes();
+	public abstract @Nullable Limit hourlyDashboardResults();
+	public abstract @Nullable Limit hourlyDashboardStatuses();
+	public abstract @Nullable Limit hourlyODataCallout();
+	public abstract @Nullable Limit hourlySyncReportRuns();
+	public abstract @Nullable Limit hourlyTimeBasedWorkflow();
+	public abstract @Nullable Limit massEmail();
+	public abstract @Nullable Limit monthlyPlatformEvents();
+	public abstract @Nullable Limit package2VersionCreates();
+	public abstract @Nullable Limit singleEmail();
+	public abstract @Nullable Limit streamingApiConcurrentClients();
 	
 	public static Limits of(com.nowellpoint.client.sforce.model.Limits source) {
 		return source == null ? Limits.builder().build() : Limits.builder()
