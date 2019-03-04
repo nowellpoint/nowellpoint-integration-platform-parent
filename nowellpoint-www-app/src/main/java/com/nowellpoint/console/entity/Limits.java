@@ -9,6 +9,22 @@ public class Limits implements Serializable {
 	private Limit dailyAnalyticsDataflowJobExecutions;
 	private Limit dailyAsyncApexExecutions;
 	private Limit dailyDurableGenericStreamingApiEvents;
+	private Limit dailyWorkflowEmails;
+	private Limit dataStorageMB;
+	private Limit durableStreamingApiConcurrentClients;
+	private Limit fileStorageMB;
+	private Limit hourlyAsyncReportRuns;
+	private Limit hourlyDashboardRefreshes;
+	private Limit hourlyDashboardResults;
+	private Limit hourlyDashboardStatuses;
+	private Limit hourlyODataCallout;
+	private Limit hourlySyncReportRuns;
+	private Limit hourlyTimeBasedWorkflow;
+	private Limit massEmail;
+	private Limit monthlyPlatformEvents;
+	private Limit package2VersionCreates;
+	private Limit singleEmail;
+	private Limit streamingApiConcurrentClients; 
 	private Limit dailyDurableStreamingApiEvents;
 	
 	public Limits() {
@@ -61,5 +77,133 @@ public class Limits implements Serializable {
 
 	public void setDailyDurableStreamingApiEvents(Limit dailyDurableStreamingApiEvents) {
 		this.dailyDurableStreamingApiEvents = dailyDurableStreamingApiEvents;
+	}
+
+	public Limit getDailyWorkflowEmails() {
+		return dailyWorkflowEmails;
+	}
+
+	public Limit getDataStorageMB() {
+		return dataStorageMB;
+	}
+
+	public Limit getDurableStreamingApiConcurrentClients() {
+		return durableStreamingApiConcurrentClients;
+	}
+
+	public Limit getFileStorageMB() {
+		return fileStorageMB;
+	}
+
+	public Limit getHourlyAsyncReportRuns() {
+		return hourlyAsyncReportRuns;
+	}
+
+	public Limit getHourlyDashboardRefreshes() {
+		return hourlyDashboardRefreshes;
+	}
+
+	public Limit getHourlyDashboardResults() {
+		return hourlyDashboardResults;
+	}
+
+	public Limit getHourlyDashboardStatuses() {
+		return hourlyDashboardStatuses;
+	}
+
+	public Limit getHourlyODataCallout() {
+		return hourlyODataCallout;
+	}
+
+	public Limit getHourlySyncReportRuns() {
+		return hourlySyncReportRuns;
+	}
+
+	public Limit getHourlyTimeBasedWorkflow() {
+		return hourlyTimeBasedWorkflow;
+	}
+
+	public Limit getMassEmail() {
+		return massEmail;
+	}
+
+	public Limit getMonthlyPlatformEvents() {
+		return monthlyPlatformEvents;
+	}
+
+	public Limit getPackage2VersionCreates() {
+		return package2VersionCreates;
+	}
+
+	public Limit getSingleEmail() {
+		return singleEmail;
+	}
+
+	public Limit getStreamingApiConcurrentClients() {
+		return streamingApiConcurrentClients;
+	}
+
+	public void setDailyWorkflowEmails(Limit dailyWorkflowEmails) {
+		this.dailyWorkflowEmails = dailyWorkflowEmails;
+	}
+
+	public void setDataStorageMB(Limit dataStorageMB) {
+		this.dataStorageMB = dataStorageMB;
+	}
+
+	public void setDurableStreamingApiConcurrentClients(Limit durableStreamingApiConcurrentClients) {
+		this.durableStreamingApiConcurrentClients = durableStreamingApiConcurrentClients;
+	}
+
+	public void setFileStorageMB(Limit fileStorageMB) {
+		this.fileStorageMB = fileStorageMB;
+	}
+
+	public void setHourlyAsyncReportRuns(Limit hourlyAsyncReportRuns) {
+		this.hourlyAsyncReportRuns = hourlyAsyncReportRuns;
+	}
+
+	public void setHourlyDashboardRefreshes(Limit hourlyDashboardRefreshes) {
+		this.hourlyDashboardRefreshes = hourlyDashboardRefreshes;
+	}
+
+	public void setHourlyDashboardResults(Limit hourlyDashboardResults) {
+		this.hourlyDashboardResults = hourlyDashboardResults;
+	}
+
+	public void setHourlyDashboardStatuses(Limit hourlyDashboardStatuses) {
+		this.hourlyDashboardStatuses = hourlyDashboardStatuses;
+	}
+
+	public void setHourlyODataCallout(Limit hourlyODataCallout) {
+		this.hourlyODataCallout = hourlyODataCallout;
+	}
+
+	public void setHourlySyncReportRuns(Limit hourlySyncReportRuns) {
+		this.hourlySyncReportRuns = hourlySyncReportRuns;
+	}
+
+	public void setHourlyTimeBasedWorkflow(Limit hourlyTimeBasedWorkflow) {
+		this.hourlyTimeBasedWorkflow = hourlyTimeBasedWorkflow;
+	}
+
+	public void setMassEmail(Limit massEmail) {
+		this.massEmail = massEmail;
+	}
+
+	public void setMonthlyPlatformEvents(Limit monthlyPlatformEvents) {
+		this.monthlyPlatformEvents = monthlyPlatformEvents;
+	}
+
+	public void setPackage2VersionCreates(Limit package2VersionCreates) {
+		this.package2VersionCreates = package2VersionCreates;
+	}
+
+	public void setSingleEmail(Limit singleEmail) {
+		this.singleEmail = singleEmail;
+	}
+
+	public void setStreamingApiConcurrentClients(Limit streamingApiConcurrentClients) {
+		this.streamingApiConcurrentClients = streamingApiConcurrentClients;
 	}
 }

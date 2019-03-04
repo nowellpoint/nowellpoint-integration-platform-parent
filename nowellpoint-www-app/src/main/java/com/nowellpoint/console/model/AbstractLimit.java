@@ -22,14 +22,14 @@ public abstract class AbstractLimit {
 	}
 	
 	public static Limit of (com.nowellpoint.client.sforce.model.Limit source) {
-		return source == null ? null : Limit.builder()
+		return source == null ? Limit.builder().build() : Limit.builder()
 				.max(source.getMax())
 				.remaining(source.getRemaining())
 				.build();
 	}
 	
 	public static Limit of(com.nowellpoint.console.entity.Limit source) {
-		return source == null ? null : Limit.builder()
+		return source == null ? Limit.builder().build() : Limit.builder()
 				.max(source.getMax())
 				.remaining(source.getRemaining())
 				.build();

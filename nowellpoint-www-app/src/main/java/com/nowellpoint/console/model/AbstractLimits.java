@@ -44,6 +44,9 @@ public abstract class AbstractLimits {
 				.dailyAsyncApexExecutions(Limit.of(source.getDailyAsyncApexExecutions()))
 				.dailyDurableGenericStreamingApiEvents(Limit.of(source.getDailyDurableGenericStreamingApiEvents()))
 				.dailyDurableStreamingApiEvents(Limit.of(source.getDailyDurableStreamingApiEvents()))
+				.dailyWorkflowEmails(Limit.of(source.getDailyWorkflowEmails()))
+				.dataStorageMB(Limit.of(source.getDataStorageMB()))
+				
 				.build();
 	}
 	
@@ -55,6 +58,8 @@ public abstract class AbstractLimits {
 				.dailyAsyncApexExecutions(Limit.of(source.getDailyAsyncApexExecutions()))
 				.dailyDurableGenericStreamingApiEvents(Limit.of(source.getDailyDurableGenericStreamingApiEvents()))
 				.dailyDurableStreamingApiEvents(Limit.of(source.getDailyDurableStreamingApiEvents()))
+				.dailyWorkflowEmails(Limit.of(source.getDailyWorkflowEmails()))
+				.dataStorageMB(Limit.of(source.getDataStorageMB()))
 				.build();
 	}
 }

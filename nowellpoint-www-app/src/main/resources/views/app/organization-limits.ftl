@@ -84,5 +84,29 @@
             </div>
         </div>
         <hr>
+        <div class="row">
+            <div class="col-6">
+                <span class="text-muted">DailyWorkflowEmails</span>
+            </div>
+            <div class="col-3 text-right">
+                
+            </div>
+            <div class="col-3 text-right">
+                
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-6">
+                <span class="text-muted">DataStorageMB</span>
+            </div>
+            <div class="col-3 text-right">
+                
+            </div>
+            <div class="col-3 text-right">
+                
+            </div>
+        </div>
+        <hr>
     </div>
 </div>
