@@ -14,6 +14,7 @@ import java.util.TimeZone;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.util.Path;
+import com.nowellpoint.console.util.Templates;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.BeansWrapperBuilder;
@@ -66,6 +67,24 @@ public class TemplateManager {
 			model.put("STREAMING_EVENTS_SETUP_URI", Path.Route.STREAMING_EVENTS_SETUP);
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
+		}
+
+		model.put("START", Boolean.FALSE);
+		model.put("ORGANIZATION", Boolean.FALSE);
+		model.put("STREAMING_EVENTS", Boolean.FALSE);
+		model.put("STREAMING_EVENTS_SOURCES", Boolean.FALSE);
+		model.put("NOTIFICATIONS", Boolean.FALSE);
+		
+		if (Templates.START.equals(request.getTemplateName())) {
+			model.put("START", Boolean.TRUE);
+		} else if (Templates.ORGANIZATION.equals(request.getTemplateName())) {
+			model.put("ORGANIZATION", Boolean.TRUE);
+		} else if (Templates.STREAMING_EVENTS.equals(request.getTemplateName())) {
+			model.put("STREAMING_EVENTS", Boolean.TRUE);
+		} else if (Templates.STREAMING_EVENTS_SOURCES.equals(request.getTemplateName())) {
+			model.put("STREAMING_EVENTS_SOURCES", Boolean.TRUE);
+		} else if (Templates.NOTIFICATIONS.equals(request.getTemplateName())) {
+			model.put("NOTIFICATIONS", Boolean.TRUE);
 		}
 		
 		try {

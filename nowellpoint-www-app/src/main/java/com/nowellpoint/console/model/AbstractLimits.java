@@ -1,7 +1,5 @@
 package com.nowellpoint.console.model;
 
-import javax.annotation.Nullable;
-
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,28 +11,28 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = Limits.class)
 @JsonDeserialize(as = Limits.class)
 public abstract class AbstractLimits {
-	public abstract @Nullable Limit getConcurrentAsyncGetReportInstances();
-	public abstract @Nullable Limit getConcurrentSyncReportRuns();
-	public abstract @Nullable Limit getDailyAnalyticsDataflowJobExecutions();
-	public abstract @Nullable Limit getDailyAsyncApexExecutions();
-	public abstract @Nullable Limit getDailyDurableGenericStreamingApiEvents();
-	public abstract @Nullable Limit getDailyDurableStreamingApiEvents();
-	public abstract @Nullable Limit dailyWorkflowEmails();
-	public abstract @Nullable Limit dataStorageMB();
-	public abstract @Nullable Limit durableStreamingApiConcurrentClients();
-	public abstract @Nullable Limit fileStorageMB();
-	public abstract @Nullable Limit hourlyAsyncReportRuns();
-	public abstract @Nullable Limit hourlyDashboardRefreshes();
-	public abstract @Nullable Limit hourlyDashboardResults();
-	public abstract @Nullable Limit hourlyDashboardStatuses();
-	public abstract @Nullable Limit hourlyODataCallout();
-	public abstract @Nullable Limit hourlySyncReportRuns();
-	public abstract @Nullable Limit hourlyTimeBasedWorkflow();
-	public abstract @Nullable Limit massEmail();
-	public abstract @Nullable Limit monthlyPlatformEvents();
-	public abstract @Nullable Limit package2VersionCreates();
-	public abstract @Nullable Limit singleEmail();
-	public abstract @Nullable Limit streamingApiConcurrentClients();
+	public abstract Limit getConcurrentAsyncGetReportInstances();
+	public abstract Limit getConcurrentSyncReportRuns();
+	public abstract Limit getDailyAnalyticsDataflowJobExecutions();
+	public abstract Limit getDailyAsyncApexExecutions();
+	public abstract Limit getDailyDurableGenericStreamingApiEvents();
+	public abstract Limit getDailyDurableStreamingApiEvents();
+	public abstract Limit getDailyWorkflowEmails();
+	public abstract Limit getDataStorageMB();
+	public abstract Limit getDurableStreamingApiConcurrentClients();
+	public abstract Limit getFileStorageMB();
+	public abstract Limit getHourlyAsyncReportRuns();
+	public abstract Limit getHourlyDashboardRefreshes();
+	public abstract Limit getHourlyDashboardResults();
+	public abstract Limit getHourlyDashboardStatuses();
+	public abstract Limit getHourlyODataCallout();
+	public abstract Limit getHourlySyncReportRuns();
+	public abstract Limit getHourlyTimeBasedWorkflow();
+	public abstract Limit getMassEmail();
+	public abstract Limit getMonthlyPlatformEvents();
+	public abstract Limit getPackage2VersionCreates();
+	public abstract Limit getSingleEmail();
+	public abstract Limit getStreamingApiConcurrentClients();
 	
 	public static Limits of(com.nowellpoint.client.sforce.model.Limits source) {
 		return source == null ? Limits.builder().build() : Limits.builder()
@@ -46,7 +44,20 @@ public abstract class AbstractLimits {
 				.dailyDurableStreamingApiEvents(Limit.of(source.getDailyDurableStreamingApiEvents()))
 				.dailyWorkflowEmails(Limit.of(source.getDailyWorkflowEmails()))
 				.dataStorageMB(Limit.of(source.getDataStorageMB()))
-				
+				.durableStreamingApiConcurrentClients(Limit.of(source.getDurableStreamingApiConcurrentClients()))
+				.fileStorageMB(Limit.of(source.getFileStorageMB()))
+				.hourlyAsyncReportRuns(Limit.of(source.getHourlyAsyncReportRuns()))
+				.hourlyDashboardRefreshes(Limit.of(source.getHourlyDashboardRefreshes()))
+				.hourlyDashboardResults(Limit.of(source.getHourlyDashboardResults()))
+				.hourlyDashboardStatuses(Limit.of(source.getHourlyDashboardStatuses()))
+				.hourlyODataCallout(Limit.of(source.getHourlyODataCallout()))
+				.hourlySyncReportRuns(Limit.of(source.getHourlySyncReportRuns()))
+				.hourlyTimeBasedWorkflow(Limit.of(source.getHourlyTimeBasedWorkflow()))
+				.massEmail(Limit.of(source.getMassEmail()))
+				.monthlyPlatformEvents(Limit.of(source.getMonthlyPlatformEvents()))
+				.package2VersionCreates(Limit.of(source.getPackage2VersionCreates()))
+				.singleEmail(Limit.of(source.getSingleEmail()))
+				.streamingApiConcurrentClients(Limit.of(source.getStreamingApiConcurrentClients()))
 				.build();
 	}
 	
@@ -60,6 +71,20 @@ public abstract class AbstractLimits {
 				.dailyDurableStreamingApiEvents(Limit.of(source.getDailyDurableStreamingApiEvents()))
 				.dailyWorkflowEmails(Limit.of(source.getDailyWorkflowEmails()))
 				.dataStorageMB(Limit.of(source.getDataStorageMB()))
+				.durableStreamingApiConcurrentClients(Limit.of(source.getDurableStreamingApiConcurrentClients()))
+				.fileStorageMB(Limit.of(source.getFileStorageMB()))
+				.hourlyAsyncReportRuns(Limit.of(source.getHourlyAsyncReportRuns()))
+				.hourlyDashboardRefreshes(Limit.of(source.getHourlyDashboardRefreshes()))
+				.hourlyDashboardResults(Limit.of(source.getHourlyDashboardResults()))
+				.hourlyDashboardStatuses(Limit.of(source.getHourlyDashboardStatuses()))
+				.hourlyODataCallout(Limit.of(source.getHourlyODataCallout()))
+				.hourlySyncReportRuns(Limit.of(source.getHourlySyncReportRuns()))
+				.hourlyTimeBasedWorkflow(Limit.of(source.getHourlyTimeBasedWorkflow()))
+				.massEmail(Limit.of(source.getMassEmail()))
+				.monthlyPlatformEvents(Limit.of(source.getMonthlyPlatformEvents()))
+				.package2VersionCreates(Limit.of(source.getPackage2VersionCreates()))
+				.singleEmail(Limit.of(source.getSingleEmail()))
+				.streamingApiConcurrentClients(Limit.of(source.getStreamingApiConcurrentClients()))
 				.build();
 	}
 }

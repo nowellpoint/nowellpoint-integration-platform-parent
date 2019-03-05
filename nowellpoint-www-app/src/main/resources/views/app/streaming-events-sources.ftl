@@ -28,7 +28,6 @@
                                         <i class="fas fa-circle fa-stack-2x"></i>
                                         <i class="fas fa-inverse fa-stack-1x">${eventListener.prefix}</i>
                                     </span>
-                                    <!-- <div class="circle"><span class="initials">${eventListener.prefix}</span></div>-->
                                 </td>
                                 <td class="col-3 align-middle"><a href="${eventListener.href}">${eventListener.source}</a></td>
                                 <td class="col-3 align-middle">
