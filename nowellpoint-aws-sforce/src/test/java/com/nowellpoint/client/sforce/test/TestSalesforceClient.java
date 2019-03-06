@@ -19,6 +19,7 @@ import com.nowellpoint.client.sforce.model.Account;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
+import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.util.SecretsManager;
@@ -96,6 +97,20 @@ public class TestSalesforceClient {
 			Set<Account> accounts = client.query(Account.class, Account.QUERY);
 			
 			System.out.println(accounts.size());
+			
+			Limits limits = client.getLimits();
+			
+			System.out.println(limits.getDailyApiRequests().getChatterDesktop().getMax());
+			System.out.println(limits.getDailyApiRequests().getChatterDesktop().getRemaining());
+			//System.out.println(limits.getDailyApiRequests().getChatterMobileForBlackBerry());
+			System.out.println(limits.getDailyApiRequests().getMax());
+			System.out.println(limits.getDailyApiRequests().getRemaining());
+//			System.out.println(limits.getDailyApiRequests().getSalesAutomation());
+//			System.out.println(limits.getDailyApiRequests().getSalesforceA());
+//			System.out.println(limits.getDailyApiRequests().getSalesforceChatter());
+//			System.out.println(limits.getDailyApiRequests().getSalesforceFiles());
+//			System.out.println(limits.getDailyApiRequests().getSalesforceForAndroid());
+//			System.out.println(limits.getDailyApiRequests().getSalesforceForIOS());
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			

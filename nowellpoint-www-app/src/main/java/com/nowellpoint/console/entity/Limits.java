@@ -26,6 +26,10 @@ public class Limits implements Serializable {
 	private Limit singleEmail;
 	private Limit streamingApiConcurrentClients; 
 	private Limit dailyDurableStreamingApiEvents;
+	private Limit dailyApiRequests;
+	private Limit dailyBulkApiRequests;
+	private Limit dailyGenericStreamingApiEvents;
+	private Limit dailyStreamingApiEvents;
 	
 	public Limits() {
 		
@@ -205,5 +209,37 @@ public class Limits implements Serializable {
 
 	public void setStreamingApiConcurrentClients(Limit streamingApiConcurrentClients) {
 		this.streamingApiConcurrentClients = streamingApiConcurrentClients;
+	}
+
+	public Limit getDailyApiRequests() {
+		return dailyApiRequests;
+	}
+
+	public Limit getDailyBulkApiRequests() {
+		return dailyBulkApiRequests;
+	}
+
+	public Limit getDailyGenericStreamingApiEvents() {
+		return dailyGenericStreamingApiEvents;
+	}
+
+	public Limit getDailyStreamingApiEvents() {
+		return dailyStreamingApiEvents;
+	}
+
+	public void setDailyApiRequests(Limit dailyApiRequests) {
+		this.dailyApiRequests = dailyApiRequests;
+	}
+
+	public void setDailyBulkApiRequests(Limit dailyBulkApiRequests) {
+		this.dailyBulkApiRequests = dailyBulkApiRequests;
+	}
+
+	public void setDailyGenericStreamingApiEvents(Limit dailyGenericStreamingApiEvents) {
+		this.dailyGenericStreamingApiEvents = dailyGenericStreamingApiEvents;
+	}
+
+	public void setDailyStreamingApiEvents(Limit dailyStreamingApiEvents) {
+		this.dailyStreamingApiEvents = dailyStreamingApiEvents;
 	}
 }

@@ -21,6 +21,11 @@ public abstract class AbstractLimit {
 		return Long.valueOf(0);
 	}
 	
+	@Value.Derived
+	public Long getUsed() {
+		return getMax() - getRemaining();
+	}
+	
 	public static Limit of (com.nowellpoint.client.sforce.model.Limit source) {
 		return source == null ? Limit.builder().build() : Limit.builder()
 				.max(source.getMax())

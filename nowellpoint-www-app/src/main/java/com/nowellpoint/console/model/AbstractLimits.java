@@ -122,10 +122,34 @@ public abstract class AbstractLimits {
 		return Limit.builder().build();
 	}
 	
+	@Value.Default
+	public Limit getDailyApiRequests() {
+		return Limit.builder().build();
+	}
+	
+	@Value.Default
+	public Limit getDailyBulkApiRequests() {
+		return Limit.builder().build();
+	}
+	
+	@Value.Default
+	public Limit getDailyGenericStreamingApiEvents() {
+		return Limit.builder().build();
+	}
+	
+	@Value.Default
+	public Limit getDailyStreamingApiEvents() {
+		return Limit.builder().build();
+	}
+	
 	public static Limits of(com.nowellpoint.client.sforce.model.Limits source) {
 		return source == null ? Limits.builder().build() : Limits.builder()
 				.concurrentAsyncGetReportInstances(Limit.of(source.getConcurrentAsyncGetReportInstances()))
 				.concurrentSyncReportRuns(Limit.of(source.getConcurrentSyncReportRuns()))
+				.dailyApiRequests(Limit.of(source.getDailyApiRequests()))
+				.dailyBulkApiRequests(Limit.of(source.getDailyBulkApiRequests()))
+				.dailyGenericStreamingApiEvents(Limit.of(source.getDailyGenericStreamingApiEvents()))
+				.dailyStreamingApiEvents(Limit.of(source.getDailyStreamingApiEvents()))
 				.dailyAnalyticsDataflowJobExecutions(Limit.of(source.getDailyAnalyticsDataflowJobExecutions()))
 				.dailyAsyncApexExecutions(Limit.of(source.getDailyAsyncApexExecutions()))
 				.dailyDurableGenericStreamingApiEvents(Limit.of(source.getDailyDurableGenericStreamingApiEvents()))
@@ -153,6 +177,10 @@ public abstract class AbstractLimits {
 		return source == null ? Limits.builder().build() : Limits.builder()
 				.concurrentAsyncGetReportInstances(Limit.of(source.getConcurrentAsyncGetReportInstances()))
 				.concurrentSyncReportRuns(Limit.of(source.getConcurrentSyncReportRuns()))
+				.dailyApiRequests(Limit.of(source.getDailyApiRequests()))
+				.dailyBulkApiRequests(Limit.of(source.getDailyBulkApiRequests()))
+				.dailyGenericStreamingApiEvents(Limit.of(source.getDailyGenericStreamingApiEvents()))
+				.dailyStreamingApiEvents(Limit.of(source.getDailyStreamingApiEvents()))
 				.dailyAnalyticsDataflowJobExecutions(Limit.of(source.getDailyAnalyticsDataflowJobExecutions()))
 				.dailyAsyncApexExecutions(Limit.of(source.getDailyAsyncApexExecutions()))
 				.dailyDurableGenericStreamingApiEvents(Limit.of(source.getDailyDurableGenericStreamingApiEvents()))
