@@ -11,20 +11,20 @@ public class Limit implements Serializable {
 	private static final long serialVersionUID = -7491926015649603540L;
 
 	@JsonProperty("Max")
-	private Long max;
+	private Integer max;
 	
 	@JsonProperty("Remaining")
-	private Long remaining;
+	private Integer remaining;
 	
 	public Limit() {
 		
 	}
 
-	public Long getMax() {
+	public Integer getMax() {
 		return max;
 	}
 
-	public Long getRemaining() {
+	public Integer getRemaining() {
 		return remaining;
 	}
 }

@@ -4,26 +4,26 @@ import java.io.Serializable;
 
 public class Limit implements Serializable {
 	private static final long serialVersionUID = 8845240136479794409L;
-	private Long max;
-	private Long remaining;
+	private Integer max;
+	private Integer remaining;
 	
 	public Limit() {
 		
 	}
 
-	public Long getMax() {
+	public Integer getMax() {
 		return max;
 	}
 
-	public Long getRemaining() {
+	public Integer getRemaining() {
 		return remaining;
 	}
 
-	public void setMax(Long max) {
+	public void setMax(Integer max) {
 		this.max = max;
 	}
 
-	public void setRemaining(Long remaining) {
+	public void setRemaining(Integer remaining) {
 		this.remaining = remaining;
 	}
 }

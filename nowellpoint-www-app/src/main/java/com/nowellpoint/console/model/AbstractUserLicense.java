@@ -17,31 +17,31 @@ public abstract class AbstractUserLicense {
 	public abstract String getStatus();
 	
 	@Value.Default
-	public Integer getTotalLicenses() {
+	public Integer getMax() {
 		return 0;
 	}
 	
 	@Value.Default
-	public Integer getUsedLicenses() {
+	public Integer getUsed() {
 		return 0;
 	}
 	
 	@Value.Derived
-	public Integer getAvailableLicenses() {
-		return getTotalLicenses() - getUsedLicenses();
+	public Integer getAvailable() {
+		return getMax() - getUsed();
 	}
 	
 	@Value.Derived
 	public Double getPercentAvailable() {
-		if (getTotalLicenses() == 0) {
+		if (getMax() == 0) {
 			return Double.valueOf(0);
-		} else if (getUsedLicenses() == 0) {
+		} else if (getUsed() == 0) {
 			return Double.valueOf(100);
-		} else if (getAvailableLicenses() == 0) {
+		} else if (getAvailable() == 0) {
 			return Double.valueOf(0);
 		} else {
-			return BigDecimal.valueOf(getAvailableLicenses())
-					.divide(BigDecimal.valueOf(getTotalLicenses()), 2, BigDecimal.ROUND_HALF_EVEN)
+			return BigDecimal.valueOf(getAvailable())
+					.divide(BigDecimal.valueOf(getMax()), 2, BigDecimal.ROUND_DOWN)
 					.multiply(BigDecimal.valueOf(100))
 					.doubleValue();
 		}
@@ -51,8 +51,8 @@ public abstract class AbstractUserLicense {
 		return source == null ? null : UserLicense.builder()
 				.name(source.getName())
 				.status(source.getStatus())
-				.totalLicenses(source.getTotalLicenses())
-				.usedLicenses(source.getUsedLicenses())
+				.max(source.getTotalLicenses())
+				.used(source.getUsedLicenses())
 				.build();
 	}
 	
@@ -60,8 +60,8 @@ public abstract class AbstractUserLicense {
 		return source == null ? null : UserLicense.builder()
 				.name(source.getName())
 				.status(source.getStatus())
-				.totalLicenses(source.getTotalLicenses())
-				.usedLicenses(source.getUsedLicenses())
+				.max(source.getTotalLicenses())
+				.used(source.getUsedLicenses())
 				.build();
 	}
 }
