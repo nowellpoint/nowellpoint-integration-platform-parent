@@ -22,7 +22,7 @@ public interface SalesforceService {
 	public Identity getIdentity(Token token);
 	public Organization getOrganization(Token token);
 	public DescribeGlobalResult describeGlobal(Token token);
-	public Set<UserLicense> getUserLicenses(Token token);
+	public UserLicense[] getUserLicenses(Token token);
 	public Set<SObject> getCustomObjects(Token token);
 	public Set<ApexClass> getApexClasses(Token token);
 	public Set<ApexTrigger> getApexTriggers(Token token);

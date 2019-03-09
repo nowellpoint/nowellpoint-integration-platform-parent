@@ -55,7 +55,7 @@ public abstract class AbstractLimit {
 	public static Limit of(com.nowellpoint.console.entity.Limit source) {
 		return source == null ? Limit.builder().build() : Limit.builder()
 				.max(source.getMax())
-				.available(source.getRemaining())
+				.available(source.getAvailable())
 				.build();
 	}
 }

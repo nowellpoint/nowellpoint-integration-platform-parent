@@ -28,9 +28,9 @@ public class UserLicense implements Serializable {
 	
 	private String status;
 	
-	private Integer totalLicenses;
+	private Integer max;
 	
-	private Integer usedLicenses;
+	private Integer used;
 
 	public UserLicense() {
 		
@@ -52,19 +52,19 @@ public class UserLicense implements Serializable {
 		this.status = status;
 	}
 
-	public Integer getTotalLicenses() {
-		return totalLicenses;
+	public Integer getMax() {
+		return max;
 	}
 
-	public void setTotalLicenses(Integer totalLicenses) {
-		this.totalLicenses = totalLicenses;
+	public void setMax(Integer max) {
+		this.max = max;
 	}
 
-	public Integer getUsedLicenses() {
-		return usedLicenses;
+	public Integer getUsed() {
+		return used;
 	}
 
-	public void setUsedLicenses(Integer usedLicenses) {
-		this.usedLicenses = usedLicenses;
+	public void setUsed(Integer used) {
+		this.used = used;
 	}
 }

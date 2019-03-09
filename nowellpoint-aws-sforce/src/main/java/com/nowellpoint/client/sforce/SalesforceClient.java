@@ -365,8 +365,9 @@ final class SalesforceClient implements Salesforce {
 	}
 	
 	@Override
-	public Set<UserLicense> getUserLicenses() {
-		return query(UserLicense.class, UserLicense.QUERY);
+	public UserLicense[] getUserLicenses() {
+		Set<UserLicense> result = query(UserLicense.class, UserLicense.QUERY);
+		return result.toArray(new UserLicense[result.size()]);
 	}
 	
 	@Override

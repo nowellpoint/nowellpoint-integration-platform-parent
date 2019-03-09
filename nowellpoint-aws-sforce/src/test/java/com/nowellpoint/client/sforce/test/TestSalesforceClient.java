@@ -22,6 +22,7 @@ import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Limits;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.client.sforce.model.UserLicense;
 import com.nowellpoint.util.SecretsManager;
 
 public class TestSalesforceClient {
@@ -100,19 +101,13 @@ public class TestSalesforceClient {
 			
 			Limits limits = client.getLimits();
 			
-			System.out.println(limits.getDailyApiRequests().getChatterDesktop().getMax());
-			System.out.println(limits.getDailyApiRequests().getChatterDesktop().getRemaining());
-			//System.out.println(limits.getDailyApiRequests().getChatterMobileForBlackBerry());
-			System.out.println(limits.getDailyApiRequests().getMax());
-			System.out.println(limits.getDailyApiRequests().getRemaining());
-//			System.out.println(limits.getDailyApiRequests().getSalesAutomation());
-//			System.out.println(limits.getDailyApiRequests().getSalesforceA());
-//			System.out.println(limits.getDailyApiRequests().getSalesforceChatter());
-//			System.out.println(limits.getDailyApiRequests().getSalesforceFiles());
-//			System.out.println(limits.getDailyApiRequests().getSalesforceForAndroid());
-//			System.out.println(limits.getDailyApiRequests().getSalesforceForIOS());
+			assertNotNull(limits);
 			
 			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
+			
+			UserLicense[] userLicenses = client.getUserLicenses();
+			
+			assertNotNull(userLicenses);
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());

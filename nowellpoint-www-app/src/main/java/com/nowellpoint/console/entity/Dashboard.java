@@ -24,6 +24,8 @@ public class Dashboard implements Serializable {
 	
 	private Set<UserLicense> userLicenses;
 	
+	private Limits limits;
+	
 	public Dashboard() {
 		
 	}
@@ -90,5 +92,13 @@ public class Dashboard implements Serializable {
 
 	public void setUserLicenses(Set<UserLicense> userLicenses) {
 		this.userLicenses = userLicenses;
+	}
+	
+	public Limits getLimits() {
+		return limits;
+	}
+
+	public void setLimits(Limits limits) {
+		this.limits = limits;
 	}
 }

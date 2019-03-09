@@ -79,6 +79,7 @@ import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
 import com.nowellpoint.console.model.UserInfo;
+import com.nowellpoint.console.model.UserLicenses;
 import com.nowellpoint.console.service.AbstractService;
 import com.nowellpoint.console.service.OrganizationService;
 import com.nowellpoint.console.service.ServiceClient;
@@ -733,10 +734,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		executor.execute(getCustomObjectsTask);
 		
-		FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>> getUserLicensesTask = new FutureTask<Set<com.nowellpoint.client.sforce.model.UserLicense>>(
-				new Callable<Set<com.nowellpoint.client.sforce.model.UserLicense>>() {
+		FutureTask<com.nowellpoint.client.sforce.model.UserLicense[]> getUserLicensesTask = new FutureTask<com.nowellpoint.client.sforce.model.UserLicense[]>(
+				new Callable<com.nowellpoint.client.sforce.model.UserLicense[]>() {
 					@Override
-					public Set<com.nowellpoint.client.sforce.model.UserLicense> call() {
+					public com.nowellpoint.client.sforce.model.UserLicense[] call() {
 						return ServiceClient.getInstance()
 								.salesforce()
 								.getUserLicenses(token);
@@ -871,6 +872,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 									.unit(DashboardComponent.AMOUNT)
 									.build())
 							.lastRefreshedOn(getCurrentDateTime())
+							.limits(Limits.of(getLimitsTask.get()))
 							.profile(DashboardComponent.builder()
 									.value(profiles)
 									.delta(profiles - instance.getDashboard().getProfile().getValue())
@@ -881,6 +883,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 									.delta(recordTypes - instance.getDashboard().getRecordType().getValue())
 									.unit(DashboardComponent.AMOUNT)
 									.build())
+							.userLicenses(UserLicenses.of(getUserLicensesTask.get()))
 							.userRole(DashboardComponent.builder()
 									.value(userRoles)
 									.delta(userRoles - instance.getDashboard().getUserRole().getValue())
@@ -888,7 +891,6 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 									.build())
 							.build())
 					.name(getOrganizationTask.get().getName())
-					.limits(Limits.of(getLimitsTask.get()))
 					.organizationType(getOrganizationTask.get().getOrganizationType())
 					.build();
 			

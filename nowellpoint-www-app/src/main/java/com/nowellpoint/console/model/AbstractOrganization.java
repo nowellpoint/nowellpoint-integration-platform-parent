@@ -23,7 +23,6 @@ public abstract class AbstractOrganization extends AbstractResource {
 	public abstract @Nullable Connection getConnection();
 	public abstract Dashboard getDashboard();
 	public abstract Subscription getSubscription();
-	public abstract Limits getLimits();
 	public abstract List<StreamingEventListener> getStreamingEventListeners();
 	
 	@Value.Default
@@ -47,7 +46,6 @@ public abstract class AbstractOrganization extends AbstractResource {
 				.domain(entity.getDomain())
 				.lastUpdatedBy(UserInfo.of(entity.getLastUpdatedBy()))
 				.lastUpdatedOn(entity.getLastUpdatedOn())
-				.limits(Limits.of(entity.getLimits()))
 				.name(entity.getName())
 				.number(entity.getNumber())
 				.organizationType(entity.getOrganizationType())

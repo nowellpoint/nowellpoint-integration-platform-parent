@@ -16,7 +16,7 @@
                     ${labels['max']}
                 </div>
                 <div class="col-2 text-right">
-                    ${labels['percent']}
+                    &nbsp;
                 </div>
             </div>
             <hr>
@@ -36,15 +36,9 @@
                         <div class="col-2 text-right">
                             <span class="text-muted">${license.max}</span>
                         </div>
-                        <div class="col-2 text-right">
-                            <#if license.percentAvailable lt 6>
-                            <span class="text-danger">${license.percentAvailable}&#37;</span>
-                        <#elseif license.percentAvailable gt 10>
-                            <span class="text-success">${license.percentAvailable}&#37;</span>
-                        <#else>  
-                            <span class="text-warning">${license.percentAvailable}&#37;</span>
-                        </#if>
-                            
+                        <div class="col-1"></div>    
+                        <div class="col-1 text-right">
+                            <@usage percent=license.percentAvailable/>   
                         </div>
                     </div>
                     <hr>

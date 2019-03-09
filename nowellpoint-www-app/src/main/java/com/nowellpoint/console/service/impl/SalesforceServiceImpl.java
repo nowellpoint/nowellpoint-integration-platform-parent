@@ -80,7 +80,7 @@ public class SalesforceServiceImpl extends AbstractService implements Salesforce
 	}
 	
 	@Override
-	public Set<UserLicense> getUserLicenses(Token token) {
+	public UserLicense[] getUserLicenses(Token token) {
 		return SalesforceClientBuilder.defaultClient(token).getUserLicenses();
 	}
 	

@@ -51,8 +51,8 @@ public abstract class AbstractUserLicense {
 		return source == null ? null : UserLicense.builder()
 				.name(source.getName())
 				.status(source.getStatus())
-				.max(source.getTotalLicenses())
-				.used(source.getUsedLicenses())
+				.max(source.getMax())
+				.used(source.getUsed())
 				.build();
 	}
 	

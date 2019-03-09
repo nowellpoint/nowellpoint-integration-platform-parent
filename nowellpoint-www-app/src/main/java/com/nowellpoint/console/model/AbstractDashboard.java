@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public abstract class AbstractDashboard {
 	
 	public abstract List<UserLicense> getUserLicenses();
+	public abstract Limits getLimits();
 	
 	@Value.Default
 	public DashboardComponent getCustomObject() {
@@ -89,6 +90,7 @@ public abstract class AbstractDashboard {
 				.apexTrigger(DashboardComponent.of(source.getApexTrigger()))
 				.customObject(DashboardComponent.of(source.getCustomObject()))
 				.lastRefreshedOn(source.getLastRefreshedOn())
+				.limits(Limits.of(source.getLimits()))
 				.profile(DashboardComponent.of(source.getProfile()))
 				.userLicenses(UserLicenses.of(source.getUserLicenses()))
 				.userRole(DashboardComponent.of(source.getUserRole()))
