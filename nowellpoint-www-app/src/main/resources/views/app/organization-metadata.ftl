@@ -1,92 +1,89 @@
 <div class="container-fluid pr-5 pl-5 mb-3">
     <div class="card w-100">
         <div class="card-body">
-            <h5 class="card-title">${labels['metadata']}</h5>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-2">
-                    <span>${labels["custom.objects"]}</span>
+            <div class="row">
+                <div class="col-4 text-center">
+                    <div class="statcard p-3 border-right">
+                        <h3 class="statcard-number">${organization.dashboard.apexClass.absoluteValue?string(",##0")}
+                            <#if organization.dashboard.customObject.delta gt 0>
+                                <small class="delta-indicator delta-positive">${organization.dashboard.apexClass.delta}</small>
+                            </#if>
+                            <#if organization.dashboard.customObject.delta lt 0>
+                                <small class="delta-indicator delta-negative">${organization.dashboard.apexClass.delta}</small>
+                            </#if>
+                        </h3>
+                        <span class="statcard-desc">${labels["apex.classes"]}</span>
+                    </div>
                 </div>
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.customObject.absoluteValue}</span>
+                <div class="col-4 text-center">
+                    <div class="statcard p-3 border-right">
+                        <h3 class="statcard-number">${organization.dashboard.apexTrigger.absoluteValue?string(",##0")}
+                            <#if organization.dashboard.customObject.delta gt 0>
+                                <small class="delta-indicator delta-positive">${organization.dashboard.apexTrigger.delta}</small>
+                            </#if>
+                            <#if organization.dashboard.customObject.delta lt 0>
+                                <small class="delta-indicator delta-negative">${organization.dashboard.apexTrigger.delta}</small>
+                            </#if>    
+                        </h3>
+                        <span class="statcard-desc">${labels["apex.triggers"]}</span>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="statcard p-3">
+                        <h3 class="statcard-number">${organization.dashboard.customObject.absoluteValue?string(",##0")}
                     <#if organization.dashboard.customObject.delta gt 0>
                         <small class="delta-indicator delta-positive">${organization.dashboard.customObject.delta}</small>
                     </#if>
                     <#if organization.dashboard.customObject.delta lt 0>
                         <small class="delta-indicator delta-negative">${organization.dashboard.customObject.delta}</small>
-                    </#if>
+                    </#if>    
+                </h3>
+                        <span class="statcard-desc">${labels["custom.objects"]}</span>
+                    </div>
                 </div>
-                <div class="col-3"></div>
-                <div class="col-2">
-                    <span>${labels["record.types"]}</span>
-                </div>    
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.recordType.absoluteValue}</span>
-                    <#if organization.dashboard.customObject.delta gt 0>
-                        <small class="delta-indicator delta-positive">${organization.dashboard.recordType.delta}</small>
-                    </#if>
-                    <#if organization.dashboard.customObject.delta lt 0>
-                        <small class="delta-indicator delta-negative">${organization.dashboard.recordType.delta}</small>
-                    </#if>
-                </div>
-                <div class="col-3"></div>
-            </div>    
-            <div class="row mb-1">
-                <div class="col-2">
-                    <span>${labels["apex.classes"]}</span>
-                </div>
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.apexClass.absoluteValue}</span>
-                    <#if organization.dashboard.customObject.delta gt 0>
-                        <small class="delta-indicator delta-positive">${organization.dashboard.apexClass.delta}</small>
-                    </#if>
-                    <#if organization.dashboard.customObject.delta lt 0>
-                        <small class="delta-indicator delta-negative">${organization.dashboard.apexClass.delta}</small>
-                    </#if>
-                </div>
-                <div class="col-3"></div>
-                <div class="col-2">
-                    <span>${labels["user.roles"]}</span>
-                </div>    
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.userRole.absoluteValue}</span>
-                    <#if organization.dashboard.customObject.delta gt 0>
-                        <small class="delta-indicator delta-positive">${organization.dashboard.userRole.delta}</small>
-                    </#if>
-                    <#if organization.dashboard.customObject.delta lt 0>
-                        <small class="delta-indicator delta-negative">${organization.dashboard.userRole.delta}</small>
-                    </#if>
-                </div>
-                <div class="col-3"></div>
-            </div>    
+            </div>
+            <hr>
             <div class="row">
-                <div class="col-2">
-                    <span>${labels["apex.triggers"]}</span>
-                </div>
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.apexTrigger.absoluteValue}</span>
-                    <#if organization.dashboard.customObject.delta gt 0>
-                        <small class="delta-indicator delta-positive">${organization.dashboard.apexTrigger.delta}</small>
-                    </#if>
-                    <#if organization.dashboard.customObject.delta lt 0>
-                        <small class="delta-indicator delta-negative">${organization.dashboard.apexTrigger.delta}</small>
-                    </#if>
-                </div>
-                <div class="col-3"></div>
-                <div class="col-2">
-                    <span>${labels["profiles"]}</span>
-                </div>    
-                <div class="col-1 text-right">
-                    <span class="text-muted">${organization.dashboard.profile.absoluteValue}</span>
+                <div class="col-4 text-center">
+                    <div class="statcard p-3 border-right">
+                        <h3 class="statcard-number">${organization.dashboard.profile.absoluteValue?string(",##0")}
                     <#if organization.dashboard.customObject.delta gt 0>
                         <small class="delta-indicator delta-positive">${organization.dashboard.profile.delta}</small>
                     </#if>
                     <#if organization.dashboard.customObject.delta lt 0>
                         <small class="delta-indicator delta-negative">${organization.dashboard.profile.delta}</small>
-                    </#if>
+                    </#if>  
+                </h3>
+                        <span class="statcard-desc">${labels["profiles"]}</span>
+                    </div>
                 </div>
-                <div class="col-3"></div>
-            </div>    
+                <div class="col-4 text-center">
+                    <div class="statcard p-3 border-right">
+                        <h3 class="statcard-number">${organization.dashboard.userRole.absoluteValue?string(",##0")}
+                            <#if organization.dashboard.customObject.delta gt 0>
+                        <small class="delta-indicator delta-positive">${organization.dashboard.userRole.delta}</small>
+                    </#if>
+                    <#if organization.dashboard.customObject.delta lt 0>
+                        <small class="delta-indicator delta-negative">${organization.dashboard.userRole.delta}</small>
+                    </#if>
+                </h3>
+                        <span class="statcard-desc">${labels["user.roles"]}</span>
+                    </div>
+                </div>
+                <div class="col-4 text-center">
+                    <div class="statcard p-3">
+                        <h3 class="statcard-number">${organization.dashboard.recordType.absoluteValue?string(",##0")}
+                            <#if organization.dashboard.customObject.delta gt 0>
+                                <small class="delta-indicator delta-positive">${organization.dashboard.recordType.delta}</small>
+                            </#if>
+                            <#if organization.dashboard.customObject.delta lt 0>
+                                <small class="delta-indicator delta-negative">${organization.dashboard.recordType.delta}</small>
+                            </#if>
+                        </h3>
+                        <span class="statcard-desc">${labels["record.types"]}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>    
+    </div>
 </div>

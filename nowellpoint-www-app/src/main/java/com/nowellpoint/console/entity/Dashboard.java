@@ -10,17 +10,17 @@ public class Dashboard implements Serializable {
 
 	private Date lastRefreshedOn;
 	
-	private DashboardComponent customObject;
+	private MetadataComponent customObject;
 	
-	private DashboardComponent apexClass;
+	private MetadataComponent apexClass;
 	
-	private DashboardComponent apexTrigger;
+	private MetadataComponent apexTrigger;
 	
-	private DashboardComponent recordType;
+	private MetadataComponent recordType;
 	
-	private DashboardComponent userRole;
+	private MetadataComponent userRole;
 	
-	private DashboardComponent profile;
+	private MetadataComponent profile;
 	
 	private Set<UserLicense> userLicenses;
 	
@@ -38,51 +38,51 @@ public class Dashboard implements Serializable {
 		this.lastRefreshedOn = lastRefreshedOn;
 	}
 
-	public DashboardComponent getCustomObject() {
+	public MetadataComponent getCustomObject() {
 		return customObject;
 	}
 
-	public void setCustomObject(DashboardComponent customObject) {
+	public void setCustomObject(MetadataComponent customObject) {
 		this.customObject = customObject;
 	}
 
-	public DashboardComponent getApexClass() {
+	public MetadataComponent getApexClass() {
 		return apexClass;
 	}
 
-	public DashboardComponent getApexTrigger() {
+	public MetadataComponent getApexTrigger() {
 		return apexTrigger;
 	}
 
-	public DashboardComponent getRecordType() {
+	public MetadataComponent getRecordType() {
 		return recordType;
 	}
 
-	public DashboardComponent getUserRole() {
+	public MetadataComponent getUserRole() {
 		return userRole;
 	}
 
-	public DashboardComponent getProfile() {
+	public MetadataComponent getProfile() {
 		return profile;
 	}
 
-	public void setApexClass(DashboardComponent apexClass) {
+	public void setApexClass(MetadataComponent apexClass) {
 		this.apexClass = apexClass;
 	}
 
-	public void setApexTrigger(DashboardComponent apexTrigger) {
+	public void setApexTrigger(MetadataComponent apexTrigger) {
 		this.apexTrigger = apexTrigger;
 	}
 
-	public void setRecordType(DashboardComponent recordType) {
+	public void setRecordType(MetadataComponent recordType) {
 		this.recordType = recordType;
 	}
 
-	public void setUserRole(DashboardComponent userRole) {
+	public void setUserRole(MetadataComponent userRole) {
 		this.userRole = userRole;
 	}
 
-	public void setProfile(DashboardComponent profile) {
+	public void setProfile(MetadataComponent profile) {
 		this.profile = profile;
 	}
 

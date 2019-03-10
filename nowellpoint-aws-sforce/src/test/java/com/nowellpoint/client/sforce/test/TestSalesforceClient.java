@@ -20,6 +20,7 @@ import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Limits;
+import com.nowellpoint.client.sforce.model.Resources;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.UserLicense;
@@ -103,11 +104,17 @@ public class TestSalesforceClient {
 			
 			assertNotNull(limits);
 			
-			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
-			
 			UserLicense[] userLicenses = client.getUserLicenses();
 			
 			assertNotNull(userLicenses);
+			
+			Resources resources = client.getResources();
+			
+			assertNotNull(resources);
+			
+			System.out.println(resources.getIdentity());
+			
+			System.out.println("Process duration (ms): " + (System.currentTimeMillis() - startTime));
 			
 		} catch (OauthException e) {
 			System.out.println(e.getStatusCode());

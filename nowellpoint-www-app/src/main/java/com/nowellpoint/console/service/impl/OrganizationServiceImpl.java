@@ -67,9 +67,9 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
-import com.nowellpoint.console.model.DashboardComponent;
 import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Limits;
+import com.nowellpoint.console.model.MetadataComponent;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
@@ -856,38 +856,38 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 							.build())
 					.dashboard(Dashboard.builder()
 							.from(instance.getDashboard())
-							.apexClass(DashboardComponent.builder()
+							.apexClass(MetadataComponent.builder()
 									.value(apexClasses)
 									.delta(apexClasses - instance.getDashboard().getApexClass().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
-							.apexTrigger(DashboardComponent.builder()
+							.apexTrigger(MetadataComponent.builder()
 									.value(apexTriggers)
 									.delta(apexTriggers - instance.getDashboard().getApexTrigger().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
-							.customObject(DashboardComponent.builder()
+							.customObject(MetadataComponent.builder()
 									.value(customObjects)
 									.delta(customObjects - instance.getDashboard().getCustomObject().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
 							.lastRefreshedOn(getCurrentDateTime())
 							.limits(Limits.of(getLimitsTask.get()))
-							.profile(DashboardComponent.builder()
+							.profile(MetadataComponent.builder()
 									.value(profiles)
 									.delta(profiles - instance.getDashboard().getProfile().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
-							.recordType(DashboardComponent.builder()
+							.recordType(MetadataComponent.builder()
 									.value(recordTypes)
 									.delta(recordTypes - instance.getDashboard().getRecordType().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
 							.userLicenses(UserLicenses.of(getUserLicensesTask.get()))
-							.userRole(DashboardComponent.builder()
+							.userRole(MetadataComponent.builder()
 									.value(userRoles)
 									.delta(userRoles - instance.getDashboard().getUserRole().getValue())
-									.unit(DashboardComponent.AMOUNT)
+									.unit(MetadataComponent.QUANTITY)
 									.build())
 							.build())
 					.name(getOrganizationTask.get().getName())

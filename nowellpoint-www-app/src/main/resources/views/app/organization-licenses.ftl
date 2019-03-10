@@ -28,13 +28,13 @@
                             <span class="text-muted">${license.name}</span>
                         </div>
                         <div class="col-2 text-right">
-                            <span class="text-muted">${license.used}</span>
+                            <span class="text-muted">${license.used?string(",##0")}</span>
                         </div>
                         <div class="col-2 text-right">
-                            <span class="text-muted">${license.available}</span>
+                            <span class="text-muted">${license.available?string(",##0")}</span>
                         </div>
                         <div class="col-2 text-right">
-                            <span class="text-muted">${license.max}</span>
+                            <span class="text-muted">${license.max?string(",##0")}</span>
                         </div>
                         <div class="col-1"></div>    
                         <div class="col-1 text-right">

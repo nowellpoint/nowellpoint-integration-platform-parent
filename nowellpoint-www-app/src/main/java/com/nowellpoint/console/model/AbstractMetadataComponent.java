@@ -7,9 +7,10 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly = true, create = "new")
-public abstract class AbstractDashboardComponent {
+public abstract class AbstractMetadataComponent {
 	public static final String PERCENT = "PERCENT";
 	public static final String AMOUNT = "AMOUNT";
+	public static final String QUANTITY = "QUANTITY";
 	
 	public abstract @Nullable String getUnit();
 	
@@ -28,8 +29,8 @@ public abstract class AbstractDashboardComponent {
 		return Math.abs(getValue());
 	}
 	
-	public static DashboardComponent of(com.nowellpoint.console.entity.DashboardComponent source) {
-		return source == null ? DashboardComponent.builder().build() : DashboardComponent.builder()
+	public static MetadataComponent of(com.nowellpoint.console.entity.MetadataComponent source) {
+		return source == null ? MetadataComponent.builder().build() : MetadataComponent.builder()
 				.delta(source.getDelta())
 				.unit(source.getUnit())
 				.value(source.getValue())
