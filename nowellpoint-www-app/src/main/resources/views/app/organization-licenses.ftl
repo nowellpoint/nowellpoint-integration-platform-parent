@@ -38,7 +38,7 @@
                         </div>
                         <div class="col-1"></div>    
                         <div class="col-1 text-right">
-                            <@usage percent=license.percentAvailable/>   
+                            <@usage percent=license.percentAvailable max=license.max/>   
                         </div>
                     </div>
                     <hr>

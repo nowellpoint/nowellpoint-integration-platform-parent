@@ -1,13 +1,9 @@
 package com.nowellpoint.listener.connection;
 
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
-import com.nowellpoint.entity.model.Notification;
-import com.nowellpoint.entity.model.StreamingEvent;
+import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.util.SecretsManager;
 
 public class MongoConnection {
@@ -15,7 +11,7 @@ public class MongoConnection {
 	private static MongoConnection INSTANCE = new MongoConnection();
 	
 	private MongoClient mongoClient;
-	private Datastore datastore;
+	private MongoDatabase mongoDatabase;
 
 	private MongoConnection() {}
 	
@@ -25,21 +21,16 @@ public class MongoConnection {
     	
     	MongoClientURI mongoClientUri = new MongoClientURI(clientUri, options);
 		mongoClient = new MongoClient(mongoClientUri);
-        
-        final Morphia morphia = new Morphia();
-        morphia.map(Notification.class);
-        morphia.map(StreamingEvent.class);
-
-        datastore = morphia.createDatastore(mongoClient, mongoClientUri.getDatabase());
-        datastore.ensureIndexes();
+		
+		mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
 	}
 	
 	public void disconnect() {
 		mongoClient.close();
 	}
 	
-	public Datastore getDatastore() {
-		return datastore;
+	public MongoDatabase getMongoDatabase() {
+		return mongoDatabase;
 	}
 	
 	public static MongoConnection getInstance() {

@@ -27,16 +27,40 @@
             <#include "organization-licenses.ftl" />
             <#include "organization-limits.ftl" />
         </div>
-        <#macro usage percent>
+        <#macro usage percent max>
             <div class="progress" style="height:20px">
-                <#if percent lt 6>
+                <#if max == 0>
+                    <div class="progress-bar bg-light" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                <#elseif percent lt 6>
                     <div class="progress-bar bg-danger" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
-                    <#elseif percent gt 10>
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
-                        <#else>
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                <#elseif percent gt 10>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                <#else>
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 100%; height=20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
                 </#if>
             </div>
         </#macro>
+        <#macro limitsView label limit>
+            <div class="row">
+                <div class="col-4">
+                    <span class="text-muted">${label}</span>
+                </div>
+                <div class="col-2 text-right">
+                    <span class="text-muted">${limit.used?string(",##0")}</span>
+                </div>
+                <div class="col-2 text-right">
+                    <span class="text-muted">${limit.available?string(",##0")}</span>
+                </div>
+                <div class="col-2 text-right">
+                    <span class="text-muted">${limit.max?string(",##0")}</span>
+                </div>
+                <div class="col-1"></div>    
+                <div class="col-1">
+                    <@usage percent=limit.percentAvailable
+                            max=limit.max/> 
+                </div>
+            </div>
+            <hr>
+        </#macro>    
         <script type="text/javascript" src="/js/organization.js"></script>
     </@t.page>

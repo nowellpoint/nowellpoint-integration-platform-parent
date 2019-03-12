@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
@@ -20,16 +21,14 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
-import com.mongodb.DuplicateKeyException;
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.entity.model.Notification;
-import com.nowellpoint.entity.model.Payload;
-import com.nowellpoint.entity.model.StreamingEvent;
 import com.nowellpoint.listener.StreamingEventListener;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.util.SecretsManager;
@@ -121,28 +120,28 @@ public class TopicSubscription {
 						LOGGER.error(e);
 					}
 					
-					Payload payload = Payload.builder()
-							.id(source.getSobject().getId())
-							.name(source.getSobject().getName())
-							.createdById(source.getSobject().getCreatedById())
-							.createdDate(source.getSobject().getCreatedDate())
-							.lastModifiedById(source.getSobject().getLastModifiedById())
-							.lastModifiedDate(source.getSobject().getLastModifiedDate())
-							.build();
+					Document payload = new Document()
+							.append("id", source.getSobject().getId())
+							.append("name", source.getSobject().getName())
+							.append("createdById", source.getSobject().getCreatedById())
+							.append("createdDate", source.getSobject().getCreatedDate())
+							.append("lastModifiedById", source.getSobject().getLastModifiedById())
+							.append("lastModifiedDate", source.getSobject().getLastModifiedDate());
 					
-					StreamingEvent streamingEvent = StreamingEvent.builder()
-							.eventDate(source.getEvent().getCreatedDate())
-							.organizationId(new ObjectId(configuration.getOrganizationId()))
-							.replayId(source.getEvent().getReplayId())
-							.type(source.getEvent().getType())
-							.source(t.getSource())
-							.payload(payload)
-							.build();
+					Document streamingEvent = new Document()
+							.append("eventDate", source.getEvent().getCreatedDate())
+							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
+							.append("replayId", source.getEvent().getReplayId())
+							.append("type", source.getEvent().getType())
+							.append("source", t.getSource())
+							.append("payload", payload);
 					
 					try {
-						MongoConnection.getInstance().getDatastore().save(streamingEvent);
-					} catch (DuplicateKeyException e) {
-						LOGGER.warn(e.getErrorMessage());
+						writeStreamingEvent(streamingEvent);
+					} catch (MongoWriteException e) {
+		                if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+		                	LOGGER.warn(e.getMessage());
+		                }
 					}
 					
 					LOGGER.info("message processed in (ms): ".concat(String.valueOf(System.currentTimeMillis() - start)));
@@ -246,33 +245,31 @@ public class TopicSubscription {
 					
 					LOGGER.info("Subscribed to channel: " + message.toString());
 					
-					Notification notification = Notification.builder()
-							.isRead(Boolean.FALSE)
-							.isUrgent(Boolean.FALSE)
-							.message(message.toString())
-							.organizationId(new ObjectId(configuration.getOrganizationId()))
-							.receivedOn(new Date())
-							.subject("Subscribed to channel")
-							.receivedFrom("StreamingEventListener")
-							.build();
+					Document notification = new Document()
+							.append("isRead", Boolean.FALSE)
+							.append("isUrgent", Boolean.FALSE)
+							.append("message", message.toString())
+							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
+							.append("receivedOn", new Date())
+							.append("subject", "Subscribed to channel")
+							.append("receivedFrom", "StreamingEventListener");
 					
-					MongoConnection.getInstance().getDatastore().save(notification);
+					writeNotification(notification);
 					
 				} else {
 					
 					LOGGER.error("Unable to subscribe to channel: " + message.toString());
 					
-					Notification notification = Notification.builder()
-							.isRead(Boolean.FALSE)
-							.isUrgent(Boolean.TRUE)
-							.message(message.toString())
-							.organizationId(new ObjectId(configuration.getOrganizationId()))
-							.receivedOn(new Date())
-							.subject("Unable to subscribe to channel")
-							.receivedFrom("StreamingEventListener")
-							.build();
+					Document notification = new Document()
+							.append("isRead", Boolean.FALSE)
+							.append("isUrgent", Boolean.TRUE)
+							.append("message", message.toString())
+							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
+							.append("receivedOn", new Date())
+							.append("subject", "Unable to subscribe to channel")
+							.append("receivedFrom", "StreamingEventListener");
 					
-					MongoConnection.getInstance().getDatastore().save(notification);
+					writeNotification(notification);
 				}
 			}
 		});
@@ -289,17 +286,24 @@ public class TopicSubscription {
         	
         	LOGGER.error(error);
         	
-        	Notification notification = Notification.builder()
-					.isRead(Boolean.FALSE)
-					.isUrgent(Boolean.TRUE)
-					.message(error)
-					.organizationId(new ObjectId(configuration.getOrganizationId()))
-					.receivedOn(new Date())
-					.subject("Unable to connect")
-					.receivedFrom("StreamingEventListener")
-					.build();
+        	Document notification = new Document()
+					.append("isRead", Boolean.FALSE)
+					.append("isUrgent", Boolean.TRUE)
+					.append("message", error)
+					.append("organizationId", new ObjectId(configuration.getOrganizationId()))
+					.append("receivedOn", new Date())
+					.append("subject", "Unable to connect")
+					.append("receivedFrom", "StreamingEventListener");
 			
-			MongoConnection.getInstance().getDatastore().save(notification);
+			writeNotification(notification);
         }
+	}
+	
+	private void writeNotification(Document notification) {
+		MongoConnection.getInstance().getMongoDatabase().getCollection("notifications").insertOne(notification);
+	}
+	
+	private void writeStreamingEvent(Document streamingEvent) {
+		MongoConnection.getInstance().getMongoDatabase().getCollection("streaming.events").insertOne(streamingEvent);
 	}
 }
