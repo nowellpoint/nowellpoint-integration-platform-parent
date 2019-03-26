@@ -6,7 +6,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent">
                         <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
-                        <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_SOURCES_URI}">${labels["source"]}</a></li>
+                        <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_TOPICS_URI}">${messages["topics"]}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">${labels["setup"]}</li>
                     </ol>
                 </nav>
@@ -35,7 +35,7 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <label for="notifyForOperationCreate">${labels["streaming.event.listener.status"]}</label>
                                             <div class="pull-right">
                                                 <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" ${eventListener.active?then( 'checked', '')}>
@@ -48,7 +48,7 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <span>
                                                 <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
                                             </span>
@@ -59,13 +59,13 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <hr>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <label for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
                                             <div class="pull-right">
                                                 <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUpdate?then( 'checked', '')}>
@@ -74,13 +74,13 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <hr>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <label for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
                                             <div class="pull-right">
                                                 <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationDelete?then( 'checked', '')}>
@@ -89,13 +89,13 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <hr>
                                         </div>
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             <label for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
                                             <div class="pull-right">
                                                 <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUndelete?then( 'checked', '')}>
@@ -111,12 +111,12 @@
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-5">
                                                 <span>${labels["created"]}:</span>
                                                 <span class="text-primary">${eventListener.createdBy.name}</span>
                                                 <span>,&nbsp;${eventListener.createdOn?date?string.long} ${eventListener.createdOn?time?string.medium}</span>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-5">
                                                 <span>${labels["last.updated"]}:</span>
                                                 <span class="text-primary">${eventListener.lastUpdatedBy.name}</span>
                                                 <span>,&nbsp;${eventListener.lastUpdatedOn?date?string.long} ${eventListener.lastUpdatedOn?time?string.medium}</span>

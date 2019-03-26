@@ -60,8 +60,8 @@ public class Path {
 //		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber");
 		
 		public static final String STREAMING_EVENTS = String.format(APPLICATION_CONTEXT, "streaming-events");
-		public static final String STREAMING_EVENTS_SOURCES = String.format(APPLICATION_CONTEXT, "streaming-events/sources");
-		public static final String STREAMING_EVENTS_SETUP = String.format(APPLICATION_CONTEXT, "streaming-events/setup/:source");
+		public static final String STREAMING_EVENTS_TOPICS = String.format(APPLICATION_CONTEXT, "streaming-events/topics");
+		public static final String STREAMING_EVENTS_TOPICS_SETUP = String.format(APPLICATION_CONTEXT, "streaming-events/topics/:source");
 	}
 	
 	public static class Resource {

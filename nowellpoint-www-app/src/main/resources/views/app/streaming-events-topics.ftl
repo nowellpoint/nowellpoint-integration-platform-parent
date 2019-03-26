@@ -6,7 +6,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent">
                         <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
-                        <li class="breadcrumb-item">${messages["sources"]}</li>
+                        <li class="breadcrumb-item">${messages["topics"]}</li>
                     </ol>
                 </nav>
             </div>

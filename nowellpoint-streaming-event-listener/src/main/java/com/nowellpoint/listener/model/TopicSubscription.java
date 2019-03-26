@@ -108,43 +108,35 @@ public class TopicSubscription {
 				@Override
 				public void onMessage(ClientSessionChannel channel, Message message) {
 					
-					Long start = System.currentTimeMillis();
-					
 					LOGGER.info("**** start message received ****");
-					
-					com.nowellpoint.client.sforce.model.StreamingEvent source = null;
 		
 					try {
-						source = com.nowellpoint.client.sforce.model.StreamingEvent.of(message.getDataAsMap());
+						
+						com.nowellpoint.client.sforce.model.StreamingEvent source = 
+								com.nowellpoint.client.sforce.model.StreamingEvent.of(message.getDataAsMap());
+						
+						Document payload = new Document()
+								.append("id", source.getSobject().getId())
+								.append("name", source.getSobject().getName())
+								.append("createdById", source.getSobject().getCreatedById())
+								.append("createdDate", source.getSobject().getCreatedDate())
+								.append("lastModifiedById", source.getSobject().getLastModifiedById())
+								.append("lastModifiedDate", source.getSobject().getLastModifiedDate());
+						
+						Document streamingEvent = new Document()
+								.append("eventDate", source.getEvent().getCreatedDate())
+								.append("organizationId", new ObjectId(configuration.getOrganizationId()))
+								.append("replayId", source.getEvent().getReplayId())
+								.append("type", source.getEvent().getType())
+								.append("source", t.getSource())
+								.append("payload", payload);
+						
+						writeStreamingEvent(streamingEvent);
+						
 					} catch (IOException e) {
 						LOGGER.error(e);
 					}
 					
-					Document payload = new Document()
-							.append("id", source.getSobject().getId())
-							.append("name", source.getSobject().getName())
-							.append("createdById", source.getSobject().getCreatedById())
-							.append("createdDate", source.getSobject().getCreatedDate())
-							.append("lastModifiedById", source.getSobject().getLastModifiedById())
-							.append("lastModifiedDate", source.getSobject().getLastModifiedDate());
-					
-					Document streamingEvent = new Document()
-							.append("eventDate", source.getEvent().getCreatedDate())
-							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
-							.append("replayId", source.getEvent().getReplayId())
-							.append("type", source.getEvent().getType())
-							.append("source", t.getSource())
-							.append("payload", payload);
-					
-					try {
-						writeStreamingEvent(streamingEvent);
-					} catch (MongoWriteException e) {
-		                if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-		                	LOGGER.warn(e.getMessage());
-		                }
-					}
-					
-					LOGGER.info("message processed in (ms): ".concat(String.valueOf(System.currentTimeMillis() - start)));
 					LOGGER.info("**** end message received ****");
 				}
 			});
@@ -304,6 +296,12 @@ public class TopicSubscription {
 	}
 	
 	private void writeStreamingEvent(Document streamingEvent) {
-		MongoConnection.getInstance().getMongoDatabase().getCollection("streaming.events").insertOne(streamingEvent);
+		try {
+			MongoConnection.getInstance().getMongoDatabase().getCollection("streaming.events").insertOne(streamingEvent);
+		} catch (MongoWriteException e) {
+            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+            	LOGGER.warn(e.getMessage());
+            }
+		}
 	}
 }

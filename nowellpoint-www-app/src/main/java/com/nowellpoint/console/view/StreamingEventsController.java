@@ -44,13 +44,13 @@ public class StreamingEventsController extends BaseController {
 		get(Path.Route.STREAMING_EVENTS, (request, response) 
 				-> viewStreamingEvents(request, response));
 		
-		get(Path.Route.STREAMING_EVENTS_SOURCES, (request, response) 
+		get(Path.Route.STREAMING_EVENTS_TOPICS, (request, response) 
 				-> viewStreamingEventsSources(request, response));
 		
-		get(Path.Route.STREAMING_EVENTS_SETUP, (request, response)
+		get(Path.Route.STREAMING_EVENTS_TOPICS_SETUP, (request, response)
 				-> setupStreamingEvents(request, response));
 		
-		post(Path.Route.STREAMING_EVENTS_SETUP, (request, response)
+		post(Path.Route.STREAMING_EVENTS_TOPICS_SETUP, (request, response)
 				-> saveEventListener(request, response));
 	}
 	
@@ -117,7 +117,7 @@ public class StreamingEventsController extends BaseController {
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StreamingEventsController.class)
 				.model(model)
-				.templateName(Templates.STREAMING_EVENTS_SOURCES)
+				.templateName(Templates.STREAMING_EVENTS_TOPICS)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -204,8 +204,8 @@ public class StreamingEventsController extends BaseController {
 		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
 		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
 		model.put("EVENTS_RECEIVED_THIS_YEAR", eventsThisYear);
-		model.put("VIEW_AS_UTC_HREF", Path.Route.STREAMING_EVENTS_SETUP.replace(":source", source).concat("?zoneId=UTC"));
-		model.put("VIEW_AS_DEFAULT_TIMEZONE_HREF", Path.Route.STREAMING_EVENTS_SETUP.replace(":source", source).concat("?zoneId=").concat(getIdentity(request).getTimeZone()));
+		model.put("VIEW_AS_UTC_HREF", Path.Route.STREAMING_EVENTS_TOPICS_SETUP.replace(":topic", source).concat("?zoneId=UTC"));
+		model.put("VIEW_AS_DEFAULT_TIMEZONE_HREF", Path.Route.STREAMING_EVENTS_TOPICS_SETUP.replace(":source", source).concat("?zoneId=").concat(getIdentity(request).getTimeZone()));
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StreamingEventsController.class)

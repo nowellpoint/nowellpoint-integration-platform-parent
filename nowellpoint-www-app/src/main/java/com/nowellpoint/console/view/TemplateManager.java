@@ -63,8 +63,8 @@ public class TemplateManager {
 			model.put("NOTIFICATIONS_URI", Path.Route.NOTIFICATIONS);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			model.put("STREAMING_EVENTS_URI", Path.Route.STREAMING_EVENTS);
-			model.put("STREAMING_EVENTS_SOURCES_URI", Path.Route.STREAMING_EVENTS_SOURCES);
-			model.put("STREAMING_EVENTS_SETUP_URI", Path.Route.STREAMING_EVENTS_SETUP);
+			model.put("STREAMING_EVENTS_TOPICS_URI", Path.Route.STREAMING_EVENTS_TOPICS);
+			model.put("STREAMING_EVENTS_SETUP_URI", Path.Route.STREAMING_EVENTS_TOPICS_SETUP);
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}
@@ -72,7 +72,7 @@ public class TemplateManager {
 		model.put("START", Boolean.FALSE);
 		model.put("ORGANIZATION", Boolean.FALSE);
 		model.put("STREAMING_EVENTS", Boolean.FALSE);
-		model.put("STREAMING_EVENTS_SOURCES", Boolean.FALSE);
+		model.put("STREAMING_EVENTS_TOPICS", Boolean.FALSE);
 		model.put("NOTIFICATIONS", Boolean.FALSE);
 		
 		if (Templates.START.equals(request.getTemplateName())) {
@@ -81,8 +81,8 @@ public class TemplateManager {
 			model.put("ORGANIZATION", Boolean.TRUE);
 		} else if (Templates.STREAMING_EVENTS.equals(request.getTemplateName())) {
 			model.put("STREAMING_EVENTS", Boolean.TRUE);
-		} else if (Templates.STREAMING_EVENTS_SOURCES.equals(request.getTemplateName())) {
-			model.put("STREAMING_EVENTS_SOURCES", Boolean.TRUE);
+		} else if (Templates.STREAMING_EVENTS_TOPICS.equals(request.getTemplateName())) {
+			model.put("STREAMING_EVENTS_TOPICS", Boolean.TRUE);
 		} else if (Templates.NOTIFICATIONS.equals(request.getTemplateName())) {
 			model.put("NOTIFICATIONS", Boolean.TRUE);
 		}

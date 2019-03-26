@@ -11,7 +11,7 @@
             <a class="nav-link ${STREAMING_EVENTS?then('active','')}" href="${STREAMING_EVENTS_URI}">${messages["dashboard"]}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link ${STREAMING_EVENTS_SOURCES?then('active','')}" href="${STREAMING_EVENTS_SOURCES_URI}">${messages["sources"]}</a>
+            <a class="nav-link ${STREAMING_EVENTS_TOPICS?then('active','')}" href="${STREAMING_EVENTS_TOPICS_URI}">${messages["topics"]}</a>
         </li>
         <li class="nav-item">
             <a class="nav-link ${NOTIFICATIONS?then('active','')}" href="${NOTIFICATIONS_URI}">${messages["notifications"]}</a>
