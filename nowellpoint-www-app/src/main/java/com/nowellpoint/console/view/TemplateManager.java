@@ -64,29 +64,29 @@ public class TemplateManager {
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			model.put("STREAMING_EVENTS_URI", Path.Route.STREAMING_EVENTS);
 			model.put("STREAMING_EVENTS_TOPICS_URI", Path.Route.STREAMING_EVENTS_TOPICS);
-			model.put("STREAMING_EVENTS_SETUP_URI", Path.Route.STREAMING_EVENTS_TOPICS_SETUP);
+			
+			model.put("START", Boolean.FALSE);
+			model.put("ORGANIZATION", Boolean.FALSE);
+			model.put("STREAMING_EVENTS", Boolean.FALSE);
+			model.put("STREAMING_EVENTS_TOPICS", Boolean.FALSE);
+			model.put("NOTIFICATIONS", Boolean.FALSE);
+			
+			if (Templates.START.equals(request.getTemplateName())) {
+				model.put("START", Boolean.TRUE);
+			} else if (Templates.ORGANIZATION.equals(request.getTemplateName())) {
+				model.put("ORGANIZATION", Boolean.TRUE);
+			} else if (Templates.STREAMING_EVENTS.equals(request.getTemplateName())) {
+				model.put("STREAMING_EVENTS", Boolean.TRUE);
+			} else if (Templates.STREAMING_EVENTS_TOPICS.equals(request.getTemplateName()) || Templates.STREAMING_EVENTS_TOPICS_SETUP.equals(request.getTemplateName())) {
+				model.put("STREAMING_EVENTS_TOPICS", Boolean.TRUE);
+			} else if (Templates.NOTIFICATIONS.equals(request.getTemplateName())) {
+				model.put("NOTIFICATIONS", Boolean.TRUE);
+			}
+			
 		} else {
 			model.put("LOGIN_URI", Path.Route.LOGIN);
 		}
 
-		model.put("START", Boolean.FALSE);
-		model.put("ORGANIZATION", Boolean.FALSE);
-		model.put("STREAMING_EVENTS", Boolean.FALSE);
-		model.put("STREAMING_EVENTS_TOPICS", Boolean.FALSE);
-		model.put("NOTIFICATIONS", Boolean.FALSE);
-		
-		if (Templates.START.equals(request.getTemplateName())) {
-			model.put("START", Boolean.TRUE);
-		} else if (Templates.ORGANIZATION.equals(request.getTemplateName())) {
-			model.put("ORGANIZATION", Boolean.TRUE);
-		} else if (Templates.STREAMING_EVENTS.equals(request.getTemplateName())) {
-			model.put("STREAMING_EVENTS", Boolean.TRUE);
-		} else if (Templates.STREAMING_EVENTS_TOPICS.equals(request.getTemplateName())) {
-			model.put("STREAMING_EVENTS_TOPICS", Boolean.TRUE);
-		} else if (Templates.NOTIFICATIONS.equals(request.getTemplateName())) {
-			model.put("NOTIFICATIONS", Boolean.TRUE);
-		}
-		
 		try {
 			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
 			model.put("labels", new ResourceBundleModel(ResourceBundle.getBundle(request.getControllerClass().getName(), locale), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
@@ -94,9 +94,6 @@ public class TemplateManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	
-//		ModelAndView modelAndView = new ModelAndView(model, (request.getTemplateName().endsWith(".html") ? 
-//				request.getTemplateName() : request.getTemplateName() + ".html"));
 		
 		ModelAndView modelAndView = new ModelAndView(model, request.getTemplateName());
     	

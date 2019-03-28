@@ -210,7 +210,7 @@ public class StreamingEventsController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(StreamingEventsController.class)
 				.model(model)
-				.templateName(Templates.STREAMING_EVENTS_SETUP)
+				.templateName(Templates.STREAMING_EVENTS_TOPICS_SETUP)
 				.build();
 		
 		return processTemplate(templateProcessRequest);

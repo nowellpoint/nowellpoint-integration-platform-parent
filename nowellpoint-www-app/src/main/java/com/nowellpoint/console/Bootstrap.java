@@ -89,81 +89,8 @@ public class Bootstrap implements SparkApplication {
 		});
 		
 		configureExceptionRoutes();
-
-		//
-		// exception handlers
-		//
-
-//		exception(ServiceUnavailableException.class, (exception, request, response) -> {
-//			LOG.error(InternalServerErrorException.class.getName(), exception);
-//
-//			Map<String, Object> model = new HashMap<>();
-//			model.put("errorMessage", exception.getMessage());
-//			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-//
-//			Writer output = new StringWriter();
-//			try {
-//				Template template = configuration.getTemplate("error.html");
-//				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-//				environment.process();
-//				response.status(500);
-//				response.body(output.toString());
-//				output.flush();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				halt();
-//			}
-//		});
-//
-//
-//		exception(InternalServerErrorException.class, (exception, request, response) -> {
-//			LOG.error(InternalServerErrorException.class.getName(), exception);
-//
-//			Map<String, Object> model = new HashMap<>();
-//			model.put("errorMessage", exception.getMessage());
-//			model.put("messages", new ResourceBundleModel(ResourceBundle.getBundle("messages", Locale.getDefault()), new DefaultObjectWrapperBuilder(Configuration.getVersion()).build()));
-//
-//			Writer output = new StringWriter();
-//			try {
-//				Template template = configuration.getTemplate("error.html");
-//				freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-//				environment.process();
-//				response.status(500);
-//				response.body(output.toString());
-//				output.flush();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				halt();
-//			}
-//		});
-//
-//		exception(Exception.class, (exception, request, response) -> {
-//			LOG.error(Exception.class.getName(), exception);
-//			response.status(500);
-//			response.body(generateExceptionPage(configuration, exception.getMessage()));
-//		});
+		
 	}
-
-//	private static String generateExceptionPage(Configuration configuration, String errorMessage) {
-//		Map<String, Object> model = new HashMap<>();
-//		model.put("errorMessage", errorMessage);
-//
-//		String page = null;
-//
-//		Writer output = new StringWriter();
-//		try {
-//			Template template = configuration.getTemplate("error.html");
-//			freemarker.core.Environment environment = template.createProcessingEnvironment(model, output);
-//			environment.process();
-//			page = output.toString();
-//			output.flush();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			halt();
-//		}
-//
-//		return page;
-//	}
 
 	/**
 	 * 

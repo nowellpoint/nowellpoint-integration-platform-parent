@@ -29,7 +29,6 @@ import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.StreamingEventListener;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
@@ -39,7 +38,7 @@ import lombok.Builder;
 
 public class TopicSubscription {
 	
-	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
+	private static final Logger LOGGER = Logger.getLogger(TopicSubscription.class);
 	private static final String REPLAY = "replay";
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 

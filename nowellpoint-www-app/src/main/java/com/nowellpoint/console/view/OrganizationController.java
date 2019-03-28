@@ -48,6 +48,14 @@ public class OrganizationController extends BaseController {
 //				-> getInvoice(configuration, request, response));
 	}
 	
+	public static void configureRoutes() {
+		get(Path.Route.ORGANIZATION, (request, response) 
+				-> viewOrganization(request, response));
+		
+		get(Path.Route.ORGANIZATION_REFRESH, (request, response)
+				-> refreshOrganization(request, response));
+	}
+	
 	private static String viewOrganization(Request request, Response response) {
 
 		String organizationId = getIdentity(request).getOrganization().getId();

@@ -1,5 +1,5 @@
 <nav id="sidebar" class="border-right">  
-    <ul class="nav nav-stacked nav-bordered flex-md-column pt-4">
+    <ul class="nav nav-stacked nav-bordered flex-md-column pl-2 pt-4">
         <li class="nav-item">
             <a class="nav-link ${START?then('active','')}" href="${START_URI}">${messages["start"]}</a>
         </li>

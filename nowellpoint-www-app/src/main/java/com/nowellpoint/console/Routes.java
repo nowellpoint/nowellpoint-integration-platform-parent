@@ -1,0 +1,22 @@
+package com.nowellpoint.console;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+@WebListener
+public class Routes implements ServletContextListener {
+	
+	@Override
+    public void contextInitialized(ServletContextEvent event) { 
+		
+		
+		
+		System.out.println("context init");
+	}
+	
+	@Override
+    public void contextDestroyed(ServletContextEvent event) {
+		
+	}
+}

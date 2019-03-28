@@ -24,6 +24,8 @@ import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -94,6 +96,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private static final Logger LOGGER = Logger.getLogger(OrganizationServiceImpl.class.getName());
 	private static final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
+	
+	//@Inject
+    //private Event<Organization> event;
 	
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			Environment.parseEnvironment(SecretsManager.getBraintreeEnvironment()),
@@ -203,6 +208,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.build();
 		
 		saveConfiguration(organization);
+		
+	//	event.fire(organization);
 		
 		return update(organization);
 	}

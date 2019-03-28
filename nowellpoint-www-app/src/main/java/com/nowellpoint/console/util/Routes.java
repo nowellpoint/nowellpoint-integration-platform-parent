@@ -53,7 +53,7 @@ public class Routes {
 		AuthenticationController.configureRoutes(configuration);
 		StartController.configureRoutes();
 		UserProfileController.configureRoutes(configuration);
-		OrganizationController.configureRoutes(configuration);
+		OrganizationController.configureRoutes();
 		NotificationController.configureRoutes(configuration);
 		StreamingEventsController.configureRoutes(configuration);
 		IdentityResource.configureRoutes();

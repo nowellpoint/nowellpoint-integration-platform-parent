@@ -14,6 +14,9 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.config.PropertyVisibilityStrategy;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.jboss.logging.Logger;
 
@@ -34,9 +37,8 @@ import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.listener.model.TopicSubscription;
 import com.nowellpoint.util.Properties;
 
-public class StreamingEventListener extends Cache {
-	
-	private static StreamingEventListener INSTANCE = new StreamingEventListener();
+@WebListener
+public class StreamingEventListener extends Cache implements ServletContextListener {
 	
 	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
 	private static final Jsonb JSON_BUILDER = JsonbBuilder.create(getJsonbConfig());
@@ -47,22 +49,18 @@ public class StreamingEventListener extends Cache {
 	private SQSConnection connection;
 	private Session session;
 	
-	private StreamingEventListener() {}
-	
-	public void start() {
+	@Override
+    public void contextInitialized(ServletContextEvent event) {    
 		mongoConnect();
 		startListeners();
         startQueue();
 	}
 	
-	public void stop() {
+	@Override
+    public void contextDestroyed(ServletContextEvent event) {
 		stopQueue();
 		disconnectAll();
 		mongoDisconnect();
-	}
-	
-	public static StreamingEventListener getInstance() {
-		return INSTANCE;
 	}
 	
 	private void mongoConnect() {
