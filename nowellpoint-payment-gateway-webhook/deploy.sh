@@ -15,13 +15,7 @@ s3://aws-microservices/nowellpoint-payment-gateway-webhook.jar
 #--memory-size 256
 
 aws lambda update-function-code \
---function-name PaymentGatewayWebhook \
---s3-bucket aws-microservices \
---s3-key nowellpoint-payment-gateway-webhook.jar \
---no-publish
-
-aws lambda update-function-code \
---function-name SubscriptionProcessingService \
+--function-name arn:aws:lambda:us-east-1:600862814314:function:streaming-event-handler \
 --s3-bucket aws-microservices \
 --s3-key nowellpoint-payment-gateway-webhook.jar \
 --no-publish

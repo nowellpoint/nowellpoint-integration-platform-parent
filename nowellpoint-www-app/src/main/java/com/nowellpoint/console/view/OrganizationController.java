@@ -10,43 +10,10 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class OrganizationController extends BaseController {
-	
-	public static void configureRoutes(Configuration configuration) {
-		get(Path.Route.ORGANIZATION, (request, response) 
-				-> viewOrganization(request, response));
-		
-		get(Path.Route.ORGANIZATION_REFRESH, (request, response)
-				-> refreshOrganization(request, response));
-		
-//		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
-//				-> listPlans(configuration, request, response));
-//		
-//		get(Path.Route.ORGANIZATION_PLAN, (request, response) 
-//				-> reviewPlan(configuration, request, response));
-//		
-//		post(Path.Route.ORGANIZATION_PLAN, (request, response) 
-//				-> setPlan(configuration, request, response));
-//		
-//		post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-//				-> updatePaymentMethod(configuration, request, response));
-//		
-//		post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response)
-//				-> updateBillingAddress(configuration, request, response));
-		
-//		delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
-//				-> OrganizationController.removeCreditCard(configuration, request, response));
-//			
-//		post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
-//				-> updateBillingContact(configuration, request, response));
-//		
-//		get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
-//				-> getInvoice(configuration, request, response));
-	}
 	
 	public static void configureRoutes() {
 		get(Path.Route.ORGANIZATION, (request, response) 
@@ -54,6 +21,30 @@ public class OrganizationController extends BaseController {
 		
 		get(Path.Route.ORGANIZATION_REFRESH, (request, response)
 				-> refreshOrganization(request, response));
+		
+//		get(Path.Route.ORGANIZATION_LIST_PLANS, (request, response) 
+//		-> listPlans(configuration, request, response));
+//
+//get(Path.Route.ORGANIZATION_PLAN, (request, response) 
+//		-> reviewPlan(configuration, request, response));
+//
+//post(Path.Route.ORGANIZATION_PLAN, (request, response) 
+//		-> setPlan(configuration, request, response));
+//
+//post(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+//		-> updatePaymentMethod(configuration, request, response));
+//
+//post(Path.Route.ORGANIZATION_BILLING_ADDRESS, (request, response)
+//		-> updateBillingAddress(configuration, request, response));
+
+//delete(Path.Route.ORGANIZATION_CREDIT_CARD, (request, response) 
+//		-> OrganizationController.removeCreditCard(configuration, request, response));
+//	
+//post(Path.Route.ORGANIZATION_BILLING_CONTACT, (request, response) 
+//		-> updateBillingContact(configuration, request, response));
+//
+//get(Path.Route.ORGANIZATION_GET_INVOICE, (request, response) 
+//		-> getInvoice(configuration, request, response));
 	}
 	
 	private static String viewOrganization(Request request, Response response) {

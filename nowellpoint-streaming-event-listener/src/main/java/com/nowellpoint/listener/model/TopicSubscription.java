@@ -21,6 +21,9 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
+import com.amazonaws.services.lambda.AWSLambdaAsync;
+import com.amazonaws.services.lambda.AWSLambdaAsyncClientBuilder;
+import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.Authenticators;
@@ -100,6 +103,9 @@ public class TopicSubscription {
 	}
 	
 	private void subscribe() {
+		
+		final AWSLambdaAsync lambda = AWSLambdaAsyncClientBuilder.defaultClient();
+		
 		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
@@ -107,7 +113,9 @@ public class TopicSubscription {
 				@Override
 				public void onMessage(ClientSessionChannel channel, Message message) {
 					
-					LOGGER.info("**** start message received ****");
+					LOGGER.info(String.format("Message received for organization: %s from %s", 
+							configuration.getOrganizationId(), 
+							message.getChannel()));
 		
 					try {
 						
@@ -132,11 +140,15 @@ public class TopicSubscription {
 						
 						writeStreamingEvent(streamingEvent);
 						
+						InvokeRequest request = new InvokeRequest()
+								.withFunctionName("streaming-event-handler")
+								.withPayload(streamingEvent.toJson());
+						
+						lambda.invokeAsync(request);
+						
 					} catch (IOException e) {
 						LOGGER.error(e);
-					}
-					
-					LOGGER.info("**** end message received ****");
+					}					
 				}
 			});
 		});

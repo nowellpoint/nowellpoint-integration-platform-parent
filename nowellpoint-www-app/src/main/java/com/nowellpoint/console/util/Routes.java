@@ -55,7 +55,7 @@ public class Routes {
 		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes();
 		NotificationController.configureRoutes(configuration);
-		StreamingEventsController.configureRoutes(configuration);
+		StreamingEventsController.configureRoutes();
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
 		SalesforceOauthController.configureRoutes();

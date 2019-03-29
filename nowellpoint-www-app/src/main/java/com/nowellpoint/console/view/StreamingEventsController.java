@@ -33,13 +33,12 @@ import com.nowellpoint.console.util.MessageProvider;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class StreamingEventsController extends BaseController {
 	
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		
 		get(Path.Route.STREAMING_EVENTS, (request, response) 
 				-> viewStreamingEvents(request, response));

@@ -2,6 +2,8 @@ package com.nowellpoint.listener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -38,8 +40,9 @@ import com.nowellpoint.listener.model.TopicSubscription;
 import com.nowellpoint.util.Properties;
 
 @WebListener
-public class StreamingEventListener extends Cache implements ServletContextListener {
+public class StreamingEventListener implements ServletContextListener {
 	
+	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 	private static final Logger LOGGER = Logger.getLogger(StreamingEventListener.class);
 	private static final Jsonb JSON_BUILDER = JsonbBuilder.create(getJsonbConfig());
 	
@@ -190,5 +193,36 @@ public class StreamingEventListener extends Cache implements ServletContextListe
 							}
 							
 						});
+	}
+	
+	private void put(String key, TopicSubscription topicSubscription) {
+		TOPIC_SUBSCRIPTIONS.put(key, topicSubscription);
+	}
+	
+	private void disconnectAll() {
+		TOPIC_SUBSCRIPTIONS.keySet().stream().forEach(k -> {
+			TOPIC_SUBSCRIPTIONS.get(k).disconnect();
+		});
+		TOPIC_SUBSCRIPTIONS.clear();
+	}
+	
+	private void disconnect(String key) {
+		if (containsKey(key)) {
+			get(key).disconnect();
+		}
+	}
+	
+	private void reconnect(String key, TopicConfiguration configuration) {
+		if (containsKey(key)) {
+			get(key).reconnect(configuration);
+		}
+	}
+	
+	private Boolean containsKey(String key) {
+		return TOPIC_SUBSCRIPTIONS.containsKey(key);
+	}
+	
+	private TopicSubscription get(String key) {
+		return TOPIC_SUBSCRIPTIONS.get(key);
 	}
 }
