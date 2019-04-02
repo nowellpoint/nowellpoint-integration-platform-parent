@@ -24,9 +24,7 @@ import com.mongodb.client.model.Filters;
 
 public class StreamingEventHandler implements RequestStreamHandler {
 	
-	private MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", getSecretValue("MONGO_CLIENT_URI")), new MongoClientOptions.Builder());
-	private MongoClient mongoClient = new MongoClient(mongoClientUri);
-	private MongoDatabase mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase());
+	private MongoClient mongoClient;
 
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -35,14 +33,17 @@ public class StreamingEventHandler implements RequestStreamHandler {
 		
 		ObjectId organizationId = new ObjectId(streamingEvent.get("organizationId").get("$oid").asText());
 		
-		Document organization = mongoDatabase.getCollection("organizations").find(Filters.eq("_id", organizationId)).first();
+		Document organization = getDatabase(context)
+				.getCollection("organizations")
+				.find(Filters.eq("_id", organizationId))
+				.first();
 	
 		context.getLogger().log(organization.getString("name"));
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected String getSecretValue(String secret) {
+	private String getSecretValue(String secret) {
     	AWSSecretsManager client  = AWSSecretsManagerClientBuilder.defaultClient();
     	GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest().withSecretId("/sandbox/console");
         GetSecretValueResult getSecretValueResult = client.getSecretValue(getSecretValueRequest);
@@ -56,5 +57,19 @@ public class StreamingEventHandler implements RequestStreamHandler {
     	}
         
         return secretMap.get(secret);
-    }    
+    }  
+	
+	private MongoDatabase getDatabase(Context context) {
+		
+		MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", getSecretValue("MONGO_CLIENT_URI")), new MongoClientOptions.Builder());
+		
+		if (mongoClient != null) {
+			context.getLogger().log("using cached database instance");
+		} else {		
+			context.getLogger().log("creating new database instance");
+			mongoClient = new MongoClient(mongoClientUri);
+		}
+		
+		return mongoClient.getDatabase(mongoClientUri.getDatabase());
+	}
 }

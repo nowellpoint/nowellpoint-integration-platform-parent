@@ -35,11 +35,11 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-5">
+                                        <div class="col-6">
                                             <label for="notifyForOperationCreate">${labels["streaming.event.listener.status"]}</label>
-                                            <div class="pull-right">
-                                                <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" ${eventListener.active?then( 'checked', '')}>
-                                            </div>
+                                        </div>    
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['active']}" data-off="${labels['inactive']}" data-width="100" ${eventListener.active?then( 'checked', '')}>
                                         </div>
                                     </div>
                                 </div>
@@ -48,58 +48,38 @@
                             <div class="card bg-light">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-5">
-                                            <span>
-                                                <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
-                                            </span>
-                                            <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationCreate?then( 'checked', '')}>
-                                            </div>
+                                        <div class="col-6">
+                                            <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" {eventListener.notifyForOperationCreate?then( 'checked', '')}>
                                         </div>
                                     </div>
-
+                                    <hr>
                                     <div class="row">
-                                        <div class="col-5">
-                                            <hr>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-5">
+                                        <div class="col-6">
                                             <label for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
-                                            <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUpdate?then( 'checked', '')}>
-                                            </div>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationUpdate?then( 'checked', '')}>
                                         </div>
                                     </div>
-
+                                    <hr>
                                     <div class="row">
-                                        <div class="col-5">
-                                            <hr>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-5">
+                                        <div class="col-6">
                                             <label for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
-                                            <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationDelete?then( 'checked', '')}>
-                                            </div>
+                                        </div>    
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationDelete?then( 'checked', '')}>
                                         </div>
                                     </div>
-
+                                    <hr>
                                     <div class="row">
-                                        <div class="col-5">
-                                            <hr>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-5">
+                                        <div class="col-6">
                                             <label for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
-                                            <div class="pull-right">
-                                                <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" ${eventListener.notifyForOperationUndelete?then( 'checked', '')}>
-                                            </div>
+                                        </div>    
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationUndelete?then( 'checked', '')}>
                                         </div>
                                     </div>
                                 </div>

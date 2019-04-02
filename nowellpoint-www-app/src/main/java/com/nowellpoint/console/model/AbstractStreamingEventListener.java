@@ -39,6 +39,11 @@ public abstract class AbstractStreamingEventListener {
 		return Path.Route.STREAMING_EVENTS_TOPICS_SETUP.replace(":source", getSource());
 	}
 	
+	@Value.Derived
+	public String getChannel() {
+		return "/topic/".concat(getName());
+	}
+	
 	@Value.Default
 	public Boolean getNotifyForOperationCreate() {
 		return Boolean.FALSE;

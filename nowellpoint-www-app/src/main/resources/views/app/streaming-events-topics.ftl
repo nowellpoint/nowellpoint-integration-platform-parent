@@ -14,8 +14,8 @@
                 <table class="table">
                     <thead>
                         <tr class="d-flex">
-                            <th class="col-3">${labels['prefix']}</th>
-                            <th class="col-3">${labels['source']}</th>
+                            <th class="col-2">${labels['source']}</th>
+                            <th class="col-4">${labels['channel']}</th>
                             <th class="col-3">${labels['topic.id']}</th>
                             <th class="col-3 text-center">${labels['active']}</th>
                         </tr>
@@ -23,30 +23,26 @@
                     <tbody>
                         <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
                             <tr class="d-flex">
+                                <td class="col-2">
+                                    <a href="${eventListener.href}">${eventListener.source}</a>
+                                </td>
+                                <td class="col-4">
+                                    ${eventListener.channel}
+                                </td>
                                 <td class="col-3">
-                                    <span class="fa-stack fa-lg" style="color:#00cc6a">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fas fa-inverse fa-stack-1x">${eventListener.prefix}</i>
-                                    </span>
+                                    ${eventListener.topicId!''}    
                                 </td>
-                                <td class="col-3 align-middle"><a href="${eventListener.href}">${eventListener.source}</a></td>
-                                <td class="col-3 align-middle">
-                                    <#if eventListener.topicId??>
-                                        ${eventListener.topicId}
-                                        <#else>
-                                            &nbsp;
-                                    </#if>
-                                </td>
-                                <td class="col-3 text-center align-middle">
-                                    <#if eventListener.active>
-                                        <h5><span class="badge badge-success">${labels['active']}</span></h5>
-                                        <#else>
-                                            <h5><span class="badge badge-danger">${labels['inactive']}</span></h5>
-                                    </#if>
+                                <td class="col-3 text-center">
+                                    <h5>${eventListener.active?then("<span class='badge badge-success'>${labels['active']}</span>","<span class='badge badge-danger'>${labels['inactive']}</span>")}</h5>
                                 </td>
                             </tr>
                         </#list>
                     </tbody>
                 </table>
             </div>
+            <!--
+<span class="fa-stack fa-lg" style="color:#00cc6a">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fas fa-inverse fa-stack-1x"></i>
+                                    </span>-->
     </@t.page>
