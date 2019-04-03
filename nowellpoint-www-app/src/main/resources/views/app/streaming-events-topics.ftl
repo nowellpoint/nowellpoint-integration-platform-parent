@@ -10,7 +10,8 @@
                     </ol>
                 </nav>
             </div>
-            <div class="container-fluid p-4">
+            <div class="container-fluid">
+                <!--
                 <table class="table">
                     <thead>
                         <tr class="d-flex">
@@ -30,7 +31,7 @@
                                     ${eventListener.channel}
                                 </td>
                                 <td class="col-3">
-                                    ${eventListener.topicId!''}    
+                                    ${eventListener.topicId!''}
                                 </td>
                                 <td class="col-3 text-center">
                                     <h5>${eventListener.active?then("<span class='badge badge-success'>${labels['active']}</span>","<span class='badge badge-danger'>${labels['inactive']}</span>")}</h5>
@@ -39,10 +40,70 @@
                         </#list>
                     </tbody>
                 </table>
-            </div>
-            <!--
+                -->
+
+                <div class="accordian pl-3 pr-3" id="event-listener-list">
+                    <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
+                        <div class="card mb-3">
+                            <div class="card-header" id="heading-${eventListener.source}">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-${eventListener.source}" aria-expanded="true" aria-controls="collapse-${eventListener.source}"><i class="fas fa-angle-right fa-lg"></i></button>&nbsp;${eventListener.source}    
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button class="btn btn-link" type="button">${eventListener.active?then("<i class='fas fa-circle-notch text-success fa-lg'></i>","<i class='fas fa-circle-notch text-danger fa-lg'></i>")}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="collapse-${eventListener.source}" class="collapse" aria-labelledBy="heading-${eventListener.source}" data-parent="#event-listener-list">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="notifyForOperationCreate">${labels["notify.on.create"]}</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationCreate" name="notifyForOperationCreate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationCreate?then( 'checked', '')}>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="notifyForOperationUpdate">${labels["notify.on.update"]}</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationUpdate" name="notifyForOperationUpdate" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationUpdate?then( 'checked', '')}>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="notifyForOperationDelete">${labels["notify.on.delete"]}</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationDelete" name="notifyForOperationDelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationDelete?then( 'checked', '')}>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label for="notifyForOperationUndelete">${labels["notify.on.undelete"]}</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <input type="checkbox" id="notifyForOperationUndelete" name="notifyForOperationUndelete" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['enabled']}" data-off="${labels['disabled']}" data-width="100" ${eventListener.notifyForOperationUndelete?then( 'checked', '')}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </#list>
+                </div>
+                <!--
 <span class="fa-stack fa-lg" style="color:#00cc6a">
                                         <i class="fas fa-circle fa-stack-2x"></i>
                                         <i class="fas fa-inverse fa-stack-1x"></i>
                                     </span>-->
+
+
+            </div>
+
     </@t.page>
