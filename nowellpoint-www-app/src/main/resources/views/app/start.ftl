@@ -2,17 +2,16 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <div id="content">
-            <div class="container-fluid pt-4 pb-2 pr-3 pl-3">
+            <div class="container-fluid mt-2 pt-3 pr-3 pl-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
-                        <h4 class="dashhead-title font-weight-normal">${messages['start']}</h4>
+                        <h6 class="dashhead-subtitle"></h6>
+                        <h3 class="dashhead-title">${messages['start']}</h3>
                     </div>
                     <div class="dashhead-toolbar">
-
                     </div>
                 </div>
-            </div>
-            <div class="container-fluid border-top p-3">
+                <hr>
                 <div class="card-columns">
                     <div class="card">
                         <div class="card-body">
@@ -42,7 +41,6 @@
                         <div class="card-footer bg-transparent"><a href="${STREAMING_EVENTS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.streaming.event.listeners']}</a></div>
                     </div>
                 </div>
-                
             </div>
         </div>
     </@t.page>

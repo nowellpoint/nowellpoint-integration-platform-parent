@@ -36,20 +36,17 @@ import com.nowellpoint.console.util.Templates;
 import spark.Request;
 import spark.Response;
 
-public class StreamingEventsController extends BaseController {
+public class EventStreamsController extends BaseController {
 	
 	public static void configureRoutes() {
 		
-		get(Path.Route.STREAMING_EVENTS, (request, response) 
+		get(Path.Route.EVENT_STREAMS, (request, response) 
 				-> viewStreamingEvents(request, response));
 		
-		get(Path.Route.STREAMING_EVENTS_TOPICS, (request, response) 
-				-> viewStreamingEventsSources(request, response));
-		
-		get(Path.Route.STREAMING_EVENTS_TOPICS_SETUP, (request, response)
+		get(Path.Route.EVENT_STREAMS_SETUP, (request, response)
 				-> setupStreamingEvents(request, response));
 		
-		post(Path.Route.STREAMING_EVENTS_TOPICS_SETUP, (request, response)
+		post(Path.Route.EVENT_STREAMS_SETUP, (request, response)
 				-> saveEventListener(request, response));
 	}
 	
@@ -87,9 +84,9 @@ public class StreamingEventsController extends BaseController {
 		model.put("data", data);
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(StreamingEventsController.class)
+				.controllerClass(EventStreamsController.class)
 				.model(model)
-				.templateName(Templates.STREAMING_EVENTS)
+				.templateName(Templates.EVENT_STREAMS)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -114,7 +111,7 @@ public class StreamingEventsController extends BaseController {
 		model.put("organization", organization);
 		
 		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(StreamingEventsController.class)
+				.controllerClass(EventStreamsController.class)
 				.model(model)
 				.templateName(Templates.STREAMING_EVENTS_TOPICS)
 				.build();
@@ -134,82 +131,82 @@ public class StreamingEventsController extends BaseController {
 	private static String setupStreamingEvents(Request request, Response response) {
 		
 		String organizationId = getIdentity(request).getOrganization().getId();
-		
-		String source = request.params(":source");
-		
-		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
-		
+//		
+//		String source = request.params(":source");
+//		
+//		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
+//		
 		Organization organization = ServiceClient.getInstance()
 				.organization()
 				.get(organizationId);
-		
-		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
-				.stream()
-				.filter(e -> source.equals(e.getSource()))
-				.findFirst();
-		
-		List<FeedItem> feedItems = ServiceClient.getInstance()
-				.organization()
-				.getStreamingEventsFeed(organizationId, source);
-		
-		LocalDate today = LocalDate.now( zoneId );
-		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
-		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
-		LocalDate firstDayOfYear = LocalDate.of(today.getYear(), 1, 1);
-		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
-		
-		List<AggregationResult> results = ServiceClient.getInstance()
-				.organization()
-				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue(), TimeZone.getTimeZone(zoneId));
-		
-		AtomicLong eventsToday = new AtomicLong(0);
-		AtomicLong eventsThisWeek = new AtomicLong(0);
-		AtomicLong eventsThisMonth = new AtomicLong(0);
-		AtomicLong eventsThisYear = new AtomicLong(0);
-		
-		results.forEach(r -> {
-			if (r.getGroupByDate().isEqual(today)) {
-				eventsToday.set(r.getCount());
-			} 
-			if (r.getGroupByDate().isEqual(firstDayOfWeek) || r.getGroupByDate().isAfter(firstDayOfWeek)) {
-				eventsThisWeek.addAndGet(r.getCount());
-			} 
-			if (r.getGroupByDate().isEqual(firstDayOfMonth) || r.getGroupByDate().isAfter(firstDayOfMonth)) {
-				eventsThisMonth.addAndGet(r.getCount());
-			}
-			if (r.getGroupByDate().isEqual(firstDayOfYear) || r.getGroupByDate().isAfter(firstDayOfYear)) {
-				eventsThisYear.addAndGet(r.getCount());
-			}
-		});
-		
-		Locale locale = getIdentity(request).getLocale();
+//		
+//		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
+//				.stream()
+//				.filter(e -> source.equals(e.getSource()))
+//				.findFirst();
+//		
+//		List<FeedItem> feedItems = ServiceClient.getInstance()
+//				.organization()
+//				.getStreamingEventsFeed(organizationId, source);
+//		
+//		LocalDate today = LocalDate.now( zoneId );
+//		LocalDate firstDayOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+//		LocalDate firstDayOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+//		LocalDate firstDayOfYear = LocalDate.of(today.getYear(), 1, 1);
+//		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
+//		
+//		List<AggregationResult> results = ServiceClient.getInstance()
+//				.organization()
+//				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue(), TimeZone.getTimeZone(zoneId));
+//		
+//		AtomicLong eventsToday = new AtomicLong(0);
+//		AtomicLong eventsThisWeek = new AtomicLong(0);
+//		AtomicLong eventsThisMonth = new AtomicLong(0);
+//		AtomicLong eventsThisYear = new AtomicLong(0);
+//		
+//		results.forEach(r -> {
+//			if (r.getGroupByDate().isEqual(today)) {
+//				eventsToday.set(r.getCount());
+//			} 
+//			if (r.getGroupByDate().isEqual(firstDayOfWeek) || r.getGroupByDate().isAfter(firstDayOfWeek)) {
+//				eventsThisWeek.addAndGet(r.getCount());
+//			} 
+//			if (r.getGroupByDate().isEqual(firstDayOfMonth) || r.getGroupByDate().isAfter(firstDayOfMonth)) {
+//				eventsThisMonth.addAndGet(r.getCount());
+//			}
+//			if (r.getGroupByDate().isEqual(firstDayOfYear) || r.getGroupByDate().isAfter(firstDayOfYear)) {
+//				eventsThisYear.addAndGet(r.getCount());
+//			}
+//		});
+//		
+//		Locale locale = getIdentity(request).getLocale();
 		
 		Map<String,Object> model = getModel();
 		model.put("organization", organization);
-		model.put("viewAsUtc", zoneId.getId().equals("UTC") ? Boolean.TRUE : Boolean.FALSE);
-		model.put("viewAsDefaultTimeZone", zoneId.getId().equals(getIdentity(request).getTimeZone()) ? Boolean.TRUE : Boolean.FALSE);
-		model.put("eventListener", eventListener.get());
-		model.put("feedItems1", feedItems.stream().limit(17).collect(Collectors.toList()));
-		model.put("feedItems2", feedItems.stream().skip(17).limit(17).collect(Collectors.toList()));
-		model.put("feedItems3", feedItems.stream().skip(34).collect(Collectors.toList()));
-		model.put("feedItems", feedItems);
-		model.put("UTC", ZoneId.of( "UTC" ).getDisplayName(TextStyle.SHORT, locale));
-		model.put("DEFAULT_TIME_ZONE", ZoneId.of(getIdentity(request).getTimeZone()).getDisplayName(TextStyle.FULL, locale));
-		model.put("TODAY", formatToday(today, locale));
-		model.put("FIRST_DAY_OF_WEEK", formatToday(firstDayOfWeek, locale));
-		model.put("FIRST_DAY_OF_MONTH", formatToday(firstDayOfMonth, locale));
-		model.put("FIRST_DAY_OF_YEAR", formatToday(firstDayOfYear, locale));
-		model.put("EVENTS_RECEIVED_TODAY", eventsToday);
-		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
-		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
-		model.put("EVENTS_RECEIVED_THIS_YEAR", eventsThisYear);
-		model.put("VIEW_AS_UTC_HREF", Path.Route.STREAMING_EVENTS_TOPICS_SETUP.replace(":topic", source).concat("?zoneId=UTC"));
-		model.put("VIEW_AS_DEFAULT_TIMEZONE_HREF", Path.Route.STREAMING_EVENTS_TOPICS_SETUP.replace(":source", source).concat("?zoneId=").concat(getIdentity(request).getTimeZone()));
+//		model.put("viewAsUtc", zoneId.getId().equals("UTC") ? Boolean.TRUE : Boolean.FALSE);
+//		model.put("viewAsDefaultTimeZone", zoneId.getId().equals(getIdentity(request).getTimeZone()) ? Boolean.TRUE : Boolean.FALSE);
+//		model.put("eventListener", eventListener.get());
+//		model.put("feedItems1", feedItems.stream().limit(17).collect(Collectors.toList()));
+//		model.put("feedItems2", feedItems.stream().skip(17).limit(17).collect(Collectors.toList()));
+//		model.put("feedItems3", feedItems.stream().skip(34).collect(Collectors.toList()));
+//		model.put("feedItems", feedItems);
+//		model.put("UTC", ZoneId.of( "UTC" ).getDisplayName(TextStyle.SHORT, locale));
+//		model.put("DEFAULT_TIME_ZONE", ZoneId.of(getIdentity(request).getTimeZone()).getDisplayName(TextStyle.FULL, locale));
+//		model.put("TODAY", formatToday(today, locale));
+//		model.put("FIRST_DAY_OF_WEEK", formatToday(firstDayOfWeek, locale));
+//		model.put("FIRST_DAY_OF_MONTH", formatToday(firstDayOfMonth, locale));
+//		model.put("FIRST_DAY_OF_YEAR", formatToday(firstDayOfYear, locale));
+//		model.put("EVENTS_RECEIVED_TODAY", eventsToday);
+//		model.put("EVENTS_RECEIVED_THIS_WEEK", eventsThisWeek);
+//		model.put("EVENTS_RECEIVED_THIS_MONTH", eventsThisMonth);
+//		model.put("EVENTS_RECEIVED_THIS_YEAR", eventsThisYear);
+//		model.put("VIEW_AS_UTC_HREF", Path.Route.EVENT_STREAMS_SETUP.replace(":topic", source).concat("?zoneId=UTC"));
+//		model.put("VIEW_AS_DEFAULT_TIMEZONE_HREF", Path.Route.EVENT_STREAMS_SETUP.replace(":source", source).concat("?zoneId=").concat(getIdentity(request).getTimeZone()));
 		
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
-				.controllerClass(StreamingEventsController.class)
+				.controllerClass(EventStreamsController.class)
 				.model(model)
-				.templateName(Templates.STREAMING_EVENTS_TOPICS_SETUP)
+				.templateName(Templates.EVENT_STREAMS_SETUP)
 				.build();
 		
 		return processTemplate(templateProcessRequest);
@@ -251,7 +248,7 @@ public class StreamingEventsController extends BaseController {
 		
 		ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
-		response.header("location", Path.Route.STREAMING_EVENTS);
+		response.header("location", Path.Route.EVENT_STREAMS);
 		
 		return "";
 	};	

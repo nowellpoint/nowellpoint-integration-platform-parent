@@ -15,7 +15,7 @@ import com.nowellpoint.console.view.NotificationController;
 import com.nowellpoint.console.view.OrganizationController;
 import com.nowellpoint.console.view.SignUpController;
 import com.nowellpoint.console.view.StartController;
-import com.nowellpoint.console.view.StreamingEventsController;
+import com.nowellpoint.console.view.EventStreamsController;
 import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.console.view.SalesforceOauthController;
 import com.nowellpoint.content.model.IsoCountry;
@@ -55,7 +55,7 @@ public class Routes {
 		UserProfileController.configureRoutes(configuration);
 		OrganizationController.configureRoutes();
 		NotificationController.configureRoutes(configuration);
-		StreamingEventsController.configureRoutes();
+		EventStreamsController.configureRoutes();
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
 		SalesforceOauthController.configureRoutes();

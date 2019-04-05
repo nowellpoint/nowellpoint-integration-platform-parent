@@ -1,12 +1,5 @@
 <hr>
-<#if notifications?size==0>
-    <div class="row">
-        <div class="col-12">
-            ${labels['empty.notification.list']}
-        </div>    
-    </div>  
-    <hr>
-<#else>
+<#if notifications?size gt 0>
     <#list notifications as notification>
         <div class="row">
             <div class="col-2">
@@ -22,13 +15,16 @@
                 <span class="text-muted">${notification.message}</span>
             </div>
             <div class="col-1">
-                <#if notification.isUrgent>
-                    <i class="fa fa-arrow-alt-circle-left text-danger"></i>
-                <#else>
-                    &nbsp;
-                </#if>
+                ${notification.isUrgent?then( '<i class="fa fa-arrow-alt-circle-left text-danger"></i>', '')}
             </div>
         </div>    
         <hr>    
     </#list>
+<#else>
+    <div class="row">
+        <div class="col-12">
+            ${labels['empty.notification.list']}
+        </div>    
+    </div>  
+    <hr>
 </#if>

@@ -1,5 +1,5 @@
 <!-- navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark unique-color fixed-top scrolling-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark unique-color-dark fixed-top scrolling-navbar">
     <button id="toggleSidebar" type="button" class="btn btn-link"><i class="fa fa-bars fa-1x text-white"></i></button>&emsp;
     <span class="navbar-brand">${messages["application.title"]}</span>
     <div class="collapse navbar-collapse" id="navbarContent">

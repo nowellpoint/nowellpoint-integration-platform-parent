@@ -20,7 +20,7 @@ public class Templates {
 	public static final String ORGANIZATION_PAYMENT_METHOD = String.format(APPLICATION_CONTEXT, "organization-payment-method.html");
 	public static final String ORGANIZATION_BILLING_ADDRESS = String.format(APPLICATION_CONTEXT, "organization-billing-address.html");
 	public static final String ORGANIZATION_BILLING_CONTACT = String.format(APPLICATION_CONTEXT, "organization-billing-contact.html");
-	public static final String STREAMING_EVENTS = String.format(APPLICATION_CONTEXT, "streaming-events.ftl");
+	public static final String EVENT_STREAMS = String.format(APPLICATION_CONTEXT, "event-streams.ftl");
 	public static final String STREAMING_EVENTS_TOPICS = String.format(APPLICATION_CONTEXT, "streaming-events-topics.ftl");
-	public static final String STREAMING_EVENTS_TOPICS_SETUP = String.format(APPLICATION_CONTEXT, "streaming-events-topics-setup.ftl");
+	public static final String EVENT_STREAMS_SETUP = String.format(APPLICATION_CONTEXT, "event-streams-setup.ftl");
 }

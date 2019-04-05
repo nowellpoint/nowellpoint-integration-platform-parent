@@ -6,15 +6,8 @@
         <li class="nav-item">
             <a class="nav-link ${ORGANIZATION?then('active','')}" href="${ORGANIZATION_URI}">${messages["organization"]}</a>
         </li>
-        <li class="nav-header">${messages["streaming.events"]}</li>
         <li class="nav-item">
-            <a class="nav-link ${STREAMING_EVENTS?then('active','')}" href="${STREAMING_EVENTS_URI}">${messages["dashboard"]}</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link ${STREAMING_EVENTS_TOPICS?then('active','')}" href="${STREAMING_EVENTS_TOPICS_URI}">${messages["topics"]}</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link ${NOTIFICATIONS?then('active','')}" href="${NOTIFICATIONS_URI}">${messages["notifications"]}</a>
+            <a class="nav-link ${EVENT_STREAMS?then('active','')}" href="${EVENT_STREAMS_URI}">${messages["event.streams"]}</a>
         </li>
     </ul>
 </nav>

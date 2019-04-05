@@ -2,16 +2,30 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <div id="content">
-            <div class="container-fluid mt-2 pt-3 pr-1 pl-1">
+            <div class="container-fluid pt-3 pr-2 pl-2">
+                <div class="dashhead">
+                    <div class="dashhead-titles">
+                        <h6 class="dashhead-subtitle">${labels['salesforce']}</h6>
+                        <h3 class="dashhead-title">${messages["event.streams"]}</h3>
+                    </div>
+                    <div class="dashhead-toolbar">
+                        <div class="dashhead-toolbar-item">
+                            <a class="btn btn-secondary" href="${EVENT_STREAMS_SETUP_URI}" role="button">${labels["create.event.stream"]}</a>
+                        </div>    
+                    </div>
+                </div>
+                <hr>
+                
+                
+                <!--
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent">
-                        <li class="breadcrumb-item"><a href="${STREAMING_EVENTS_URI}">${messages["streaming.events"]}</a></li>
+                        <li class="breadcrumb-item"><a href="${EVENT_STREAMS_URI}">${messages["event.streams"]}</a></li>
                         <li class="breadcrumb-item">${messages["topics"]}</li>
                     </ol>
                 </nav>
-            </div>
-            <div class="container-fluid">
-                <!--
+            
+                
                 <table class="table">
                     <thead>
                         <tr class="d-flex">
@@ -42,20 +56,21 @@
                 </table>
                 -->
 
-                <div class="accordian pl-3 pr-3" id="event-listener-list">
+               <!-- <div class="accordian pl-3 pr-3" id="event-listener-list"> 
+                <div class="row">
                     <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
                         <div class="card mb-3">
                             <div class="card-header" id="heading-${eventListener.source}">
                                 <div class="row">
                                     <div class="col-6">
-                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-${eventListener.source}" aria-expanded="true" aria-controls="collapse-${eventListener.source}"><i class="fas fa-angle-right fa-lg"></i></button>&nbsp;${eventListener.source}    
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-${eventListener.source}" aria-expanded="true" aria-controls="collapse-${eventListener.source}"><i class="fas fa-angle-right fa-lg"></i></button>&nbsp;<a href="${eventListener.href}">${eventListener.source}</a> 
                                     </div>
                                     <div class="col-6 text-right">
                                         <button class="btn btn-link" type="button">${eventListener.active?then("<i class='fas fa-circle-notch text-success fa-lg'></i>","<i class='fas fa-circle-notch text-danger fa-lg'></i>")}</button>
                                     </div>
                                 </div>
                             </div>
-                            <div id="collapse-${eventListener.source}" class="collapse" aria-labelledBy="heading-${eventListener.source}" data-parent="#event-listener-list">
+                         <div id="collapse-${eventListener.source}" class="collapse" aria-labelledBy="heading-${eventListener.source}" data-parent="#event-listener-list">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-6">
@@ -93,10 +108,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                           </div>
                         </div>
                     </#list>
-                </div>
+                </div>    
+               <!-- </div> -->
                 <!--
 <span class="fa-stack fa-lg" style="color:#00cc6a">
                                         <i class="fas fa-circle fa-stack-2x"></i>
@@ -105,5 +121,5 @@
 
 
             </div>
-
+        </div>
     </@t.page>
