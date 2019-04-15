@@ -269,6 +269,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.notifyForOperationDelete(request.getNotifyForOperationDelete())
 					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
 					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
+					.startedOn(request.isActive() && ! listenerOptional.get().getActive() ? new Date() : listenerOptional.get().getStartedOn())
 					.build();
 			
 			String topicId = savePushTopic(token, listener);

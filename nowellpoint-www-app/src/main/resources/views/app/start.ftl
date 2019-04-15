@@ -38,7 +38,7 @@
                             <h5 class="card-title">${labels['streaming.event.listeners']}</h5>
                             <span>${STREAMING_EVENT_LISTENER_LABEL}</span>
                         </div>
-                        <div class="card-footer bg-transparent"><a href="${STREAMING_EVENTS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.streaming.event.listeners']}</a></div>
+                        <div class="card-footer bg-transparent"><a href="${EVENT_STREAMS_URI}" style="text-decoration: none"><i class="fa fa-arrow-right fa-lg p-1"></i>&nbsp;${labels['configure.streaming.event.listeners']}</a></div>
                     </div>
                 </div>
             </div>

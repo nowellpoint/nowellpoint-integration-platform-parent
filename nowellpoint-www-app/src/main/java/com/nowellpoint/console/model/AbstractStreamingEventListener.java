@@ -29,6 +29,7 @@ public abstract class AbstractStreamingEventListener {
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @Nullable UserInfo getLastUpdatedBy();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
+	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getStartedOn();
 	public abstract @Nullable Meta getMeta();
 	
 	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
@@ -69,6 +70,11 @@ public abstract class AbstractStreamingEventListener {
 		return Boolean.FALSE;
 	}
 	
+	@Value.Default
+	public Boolean getCustom() {
+		return Boolean.FALSE;
+	}
+	
 	@Value.Derived
 	public String getQuery() {
 		return String.format(QUERY, getSource());
@@ -92,6 +98,7 @@ public abstract class AbstractStreamingEventListener {
 				.active(source.getActive())
 				.createdBy(UserInfo.of(source.getCreatedBy()))
 				.createdOn(source.getCreatedOn())
+				.custom(source.getCustom())
 				.description(source.getDescription())
 				.lastUpdatedBy(UserInfo.of(source.getLastUpdatedBy()))
 				.lastUpdatedOn(source.getLastUpdatedOn())
@@ -101,6 +108,7 @@ public abstract class AbstractStreamingEventListener {
 				.notifyForOperationUndelete(source.getNotifyForOperationUndelete())
 				.notifyForOperationUpdate(source.getNotifyForOperationUpdate())
 				.source(source.getSource())
+				.startedOn(source.getStartedOn())
 				.prefix(source.getPrefix())
 				.topicId(source.getTopicId())
 				.build();

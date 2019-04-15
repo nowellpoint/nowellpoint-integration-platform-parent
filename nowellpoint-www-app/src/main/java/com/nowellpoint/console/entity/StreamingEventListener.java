@@ -29,6 +29,8 @@ public class StreamingEventListener implements Serializable {
 	
 	private Boolean active;
 	
+	private Boolean custom;
+	
 	private Date createdOn;
 	
 	@Reference
@@ -38,6 +40,8 @@ public class StreamingEventListener implements Serializable {
 	
 	@Reference
 	private Identity lastUpdatedBy;
+	
+	private Date startedOn;
 	
 	public StreamingEventListener() {
 		
@@ -123,6 +127,14 @@ public class StreamingEventListener implements Serializable {
 		this.active = active;
 	}
 
+	public Boolean getCustom() {
+		return custom;
+	}
+
+	public void setCustom(Boolean custom) {
+		this.custom = custom;
+	}
+
 	public Date getCreatedOn() {
 		return createdOn;
 	}
@@ -153,5 +165,13 @@ public class StreamingEventListener implements Serializable {
 
 	public void setLastUpdatedBy(Identity lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	public Date getStartedOn() {
+		return startedOn;
+	}
+
+	public void setStartedOn(Date startedOn) {
+		this.startedOn = startedOn;
 	}
 }

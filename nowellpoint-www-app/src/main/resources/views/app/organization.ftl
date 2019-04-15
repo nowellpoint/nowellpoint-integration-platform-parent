@@ -10,7 +10,7 @@
                     </div>
                     <div class="dashhead-toolbar">
                         <div class="dashhead-toolbar-item">
-                            <button type="button" id="refresh" name="refresh" class="btn btn-secondary">
+                            <button type="button" id="refresh" name="refresh" class="btn btn-light">
                                 <i class="fa fa-sync"></i>&emsp;${labels['refresh']}
                             </button>
                         </div>
