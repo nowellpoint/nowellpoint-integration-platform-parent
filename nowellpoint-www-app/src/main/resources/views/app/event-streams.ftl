@@ -19,19 +19,18 @@
                         <span class="h5 text-white">${labels['standard.objects']}</span>
                     </div>
                     <div class="card-body">
-                        <!--<h5 class="card-title">${labels['standard.objects']}</h5>-->
                         <div class="row">
                             <div class="col-2">
                                 ${labels['source']}
-                            </div>
-                            <div class="col-3">
-                                ${labels['started.on']}
                             </div>
                             <div class="col-3">
                                 ${labels['topic.id']}
                             </div>
                             <div class="col-1">
                                 ${labels['status']}
+                            </div>
+                            <div class="col-3">
+                                ${labels['started.on']}
                             </div>
                             <div class="col-3 text-right">
                                 ${labels['action']}
@@ -40,28 +39,27 @@
                         <hr>
                         <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
                             <#if ! eventListener.custom>
-                            <div class="row">
-                                <div class="col-2">
-                                    <a href="${eventListener.href}">${eventListener.source}</a>
+                                <div class="row align-items-center">
+                                    <div class="col-2">
+                                        <a href="${eventListener.href}">${eventListener.source}</a>
+                                    </div>
+                                    <div class="col-3">
+                                        <span class="text-muted">${eventListener.topicId!''}</span>
+                                    </div>
+                                    <div class="col-1">
+                                        <span class="text-muted">${eventListener.active?then("Started","")}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <span class="text-muted">${eventListener.active?then(eventListener.startedOn?date?string.iso,"")}&nbsp;
+                                            ${eventListener.active?then(eventListener.startedOn?time?string.iso,"")}</span>
+                                    </div>
+                                    <div class="col-3 text-right">
+                                        ${eventListener.active?then("
+                                        <button id='action-button' name='action-button' class='btn btn-sm btn-danger' data-href='${EVENT_STREAMS_URI}${eventListener.source}/stop/' type='button'><i class='fas fa-stop-circle'></i>&nbsp;${labels['stop']}</button>", "
+                                        <button id='action-button' name='action-button' class='btn btn-sm btn-success' data-href='${EVENT_STREAMS_URI}${eventListener.source}/start/' type='button'><i class='fas fa-play-circle'></i>&nbsp;${labels['start']}</button>")}
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <span class="text-muted">${eventListener.active?then(eventListener.startedOn?date?string.long,"")}
-                                    ${eventListener.active?then(" @ ","")}
-                                    ${eventListener.active?then(eventListener.startedOn?time?string.medium,"")}</span>
-                                </div>
-                                <div class="col-3">
-                                    <span class="text-muted">${eventListener.topicId!''}</span>
-                                </div>
-                                <div class="col-1">
-                                    <span class="text-muted">${eventListener.active?then("Started","")}</span>
-                                </div>
-                                <div class="col-3 text-right">
-                                    ${eventListener.active?then("
-                                    <button id='action-button' name='action-button' class='btn btn-sm btn-danger' data-href='${EVENT_STREAMS_URI}${eventListener.source}/stop/' type='button'><i class='fas fa-stop-circle'></i>&nbsp;${labels['stop']}</button>", "
-                                    <button id='action-button' name='action-button' class='btn btn-sm btn-success' data-href='${EVENT_STREAMS_URI}${eventListener.source}/start/' type='button'><i class='fas fa-play-circle'></i>&nbsp;${labels['start']}</button>")}
-                                </div>
-                            </div>
-                            <hr>
+                                <hr>
                             </#if>
                         </#list>
                     </div>
@@ -77,5 +75,6 @@
 
             </div>
         </div>
+        <#include "success-popup.ftl" />
         <script type="text/javascript" src="/js/event-stream.js"></script>
     </@t.page>

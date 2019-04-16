@@ -4,10 +4,23 @@
 */
 
 $(document).on('click', 'button#action-button', function () {
-	
-	
-
-    alert($(this).data("href"));
+   
+    $.ajax({
+        type: 'POST',
+        url: $(this).data("href"),
+        dataType: "html",
+        complete: function (response) {
+            if (response.status == 200) {
+                $('#success-modal').modal('toggle');
+                setTimeout(function () {
+                    $('#success-modal').modal('toggle');
+                    $(location).attr('href', response.getResponseHeader('location'));
+                }, 2000);
+            } else {
+                $form.prepend(response.responseText);
+            }
+        }
+    });
 
     return false;
 });

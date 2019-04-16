@@ -60,6 +60,7 @@ public class Path {
 //		public static final String ORGANIZATION_GET_INVOICE = String.format(APPLICATION_CONTEXT, "organization/:id/invoice/:invoiceNumber");
 		
 		public static final String EVENT_STREAMS = String.format(APPLICATION_CONTEXT, "event-streams");
+		public static final String EVENT_STREAMS_ACTION = String.format(APPLICATION_CONTEXT, "event-streams/:source/:action");
 		public static final String EVENT_STREAMS_SETUP = String.format(APPLICATION_CONTEXT, "event-streams-setup");
 	}
 	

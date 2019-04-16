@@ -2,8 +2,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <p class="text-success"><span class="icon icon-check fa fa-4x"></span></p>
-                <p class="text-success">${messages["success"]}</p>
+                <span class="text-success"><span class="icon icon-check fa fa-4x"></span></span><br>
+                <span class="text-success">${messages["success"]}</span>
             </div>
         </div>
     </div>

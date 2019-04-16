@@ -48,6 +48,9 @@ public class EventStreamsController extends BaseController {
 		
 		post(Path.Route.EVENT_STREAMS_SETUP, (request, response)
 				-> saveEventListener(request, response));
+		
+		post(Path.Route.EVENT_STREAMS_ACTION, (request, response)
+				-> processAction(request, response));
 	}
 	
 	/**
@@ -252,6 +255,29 @@ public class EventStreamsController extends BaseController {
 		
 		return "";
 	};	
+	
+	private static String processAction(Request request, Response response) {
+		
+		String source = request.params(":source");
+		String action = request.params(":action");
+		
+		Boolean active = "start".equals(action) ? Boolean.TRUE : Boolean.FALSE;
+		
+		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
+				.active(active)
+				.notifyForOperationCreate(active)
+				.notifyForOperationDelete(active)
+				.notifyForOperationUndelete(active)
+				.notifyForOperationUpdate(active)
+				.source(source)
+				.build();
+		
+		ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
+		
+		response.header("location", Path.Route.EVENT_STREAMS);
+		
+		return "";
+	}
 	
 	/**
 	 * 
