@@ -26,10 +26,11 @@ public abstract class AbstractStreamingEventListener {
 	public abstract String getName();
 	public abstract String getDescription();
 	public abstract @Nullable UserInfo getCreatedBy();
-	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @Nullable UserInfo getLastUpdatedBy();
+	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getCreatedOn();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getLastUpdatedOn();
 	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getStartedOn();
+	public abstract @Nullable @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getStoppedOn();
 	public abstract @Nullable Meta getMeta();
 	
 	private static final String QUERY = "SELECT Id, Name, CreatedById, CreatedDate, LastModifiedById, LastModifiedDate FROM %s";
@@ -109,6 +110,7 @@ public abstract class AbstractStreamingEventListener {
 				.notifyForOperationUpdate(source.getNotifyForOperationUpdate())
 				.source(source.getSource())
 				.startedOn(source.getStartedOn())
+				.stoppedOn(source.getStoppedOn())
 				.prefix(source.getPrefix())
 				.topicId(source.getTopicId())
 				.build();

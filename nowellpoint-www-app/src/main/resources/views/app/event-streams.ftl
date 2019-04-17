@@ -36,9 +36,12 @@
                                 ${labels['action']}
                             </div>
                         </div>
-                        <hr>
+                        <#if organization.streamingEventListeners?size == 0>
+                            <hr>
+                        </#if>
                         <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
                             <#if ! eventListener.custom>
+                                <hr>
                                 <div class="row align-items-center">
                                     <div class="col-2">
                                         <a href="${eventListener.href}">${eventListener.source}</a>
@@ -59,7 +62,6 @@
                                         <button id='action-button' name='action-button' class='btn btn-sm btn-success' data-href='${EVENT_STREAMS_URI}${eventListener.source}/start/' type='button'><i class='fas fa-play-circle'></i>&nbsp;${labels['start']}</button>")}
                                     </div>
                                 </div>
-                                <hr>
                             </#if>
                         </#list>
                     </div>

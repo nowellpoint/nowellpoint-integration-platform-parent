@@ -43,6 +43,8 @@ public class StreamingEventListener implements Serializable {
 	
 	private Date startedOn;
 	
+	private Date stoppedOn;
+	
 	public StreamingEventListener() {
 		
 	}
@@ -173,5 +175,13 @@ public class StreamingEventListener implements Serializable {
 
 	public void setStartedOn(Date startedOn) {
 		this.startedOn = startedOn;
+	}
+
+	public Date getStoppedOn() {
+		return stoppedOn;
+	}
+
+	public void setStoppedOn(Date stoppedOn) {
+		this.stoppedOn = stoppedOn;
 	}
 }

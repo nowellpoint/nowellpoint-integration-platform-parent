@@ -260,7 +260,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			Token token = ServiceClient.getInstance()
 	        		.salesforce()
 	        		.refreshToken(instance.getConnection().getRefreshToken());
-			
+
 			StreamingEventListener listener = StreamingEventListener.builder()
 					.from(listenerOptional.get())
 					.active(request.isActive())
@@ -270,10 +270,11 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 					.notifyForOperationUndelete(request.getNotifyForOperationUndelete())
 					.notifyForOperationUpdate(request.getNotifyForOperationUpdate())
 					.startedOn(request.isActive() && ! listenerOptional.get().getActive() ? new Date() : listenerOptional.get().getStartedOn())
+					.stoppedOn(! request.isActive() && listenerOptional.get().getActive() ? new Date() : listenerOptional.get().getStoppedOn())
 					.build();
 			
 			String topicId = savePushTopic(token, listener);
-			
+
 			listeners.removeIf(l -> listenerOptional.get().getSource().equals(l.getSource()));
 			
 			UserInfo user = UserInfo.of(UserContext.get());
@@ -281,9 +282,9 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			Date now = getCurrentDateTime();
 			
 			Salesforce client = SalesforceClientBuilder.defaultClient(token);
-			
+
 			PushTopic pushTopic = client.getPushTopic(topicId);
-			
+
 			if (pushTopic.getCreatedDate().equals(pushTopic.getLastModifiedDate())) {
 				
 				listeners.add(StreamingEventListener.builder()

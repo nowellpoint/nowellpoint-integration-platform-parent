@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
-import com.nowellpoint.client.sforce.model.Identity;
+//import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.http.HttpResponse;
@@ -45,9 +45,9 @@ public class Authenticators {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
-			Identity identity = getIdentity(token.getId(), token.getAccessToken());
+			//Identity identity = getIdentity(token.getId(), token.getAccessToken());
 	    	
-			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 			return response;
 		}
 	}
@@ -80,9 +80,9 @@ public class Authenticators {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
-			Identity identity = getIdentity(token.getId(), token.getAccessToken());
+			//Identity identity = getIdentity(token.getId(), token.getAccessToken());
 			
-			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 			return response;
 		}
 	}
@@ -112,29 +112,29 @@ public class Authenticators {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
 			
-			Identity identity = getIdentity(token.getId(), token.getAccessToken());
+			//Identity identity = getIdentity(token.getId(), token.getAccessToken());
 	    	
-			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token, identity);
+			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 			return response;
 		}
 	}
 	
-	private static Identity getIdentity(String id, String accessToken) {
-		HttpResponse httpResponse = RestResource.get(id)
-				.acceptCharset(StandardCharsets.UTF_8)
-				.bearerAuthorization(accessToken)
-				.accept(MediaType.APPLICATION_JSON)
-				.queryParameter("version", "latest")
-				.execute();
-    	
-		Identity identity = null;
-    	
-    	if (httpResponse.getStatusCode() == Status.OK) {
-    		identity = httpResponse.getEntity(Identity.class);
-		} else {
-			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
-		}
-    	
-    	return identity;
-	}
+//	private static Identity getIdentity(String id, String accessToken) {
+//		HttpResponse httpResponse = RestResource.get(id)
+//				.acceptCharset(StandardCharsets.UTF_8)
+//				.bearerAuthorization(accessToken)
+//				.accept(MediaType.APPLICATION_JSON)
+//				.queryParameter("version", "latest")
+//				.execute();
+//    	
+//		Identity identity = null;
+//    	
+//    	if (httpResponse.getStatusCode() == Status.OK) {
+//    		identity = httpResponse.getEntity(Identity.class);
+//		} else {
+//			throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
+//		}
+//    	
+//    	return identity;
+//	}
 }
