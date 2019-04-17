@@ -6,7 +6,7 @@
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${messages["event.streams"]}</h6>
-                        <h3 class="dashhead-title">${messages["dashboard"]}</h3>
+                        <h3 class="dashhead-title">${eventListener.source}</h3>
                     </div>
                     <div class="dashhead-toolbar">
                         <div class="dashhead-toolbar-item">

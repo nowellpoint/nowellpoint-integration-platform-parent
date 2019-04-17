@@ -184,7 +184,7 @@ public class EventStreamsController extends BaseController {
     	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(EventStreamsController.class)
 				.model(model)
-				.templateName(Templates.EVENT_STREAM_SETUP)
+				.templateName(Templates.EVENT_STREAM)
 				.build();
 		
 		return processTemplate(templateProcessRequest);

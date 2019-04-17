@@ -74,7 +74,7 @@ public class TemplateManager {
 				model.put("START", Boolean.TRUE);
 			} else if (Templates.ORGANIZATION.equals(request.getTemplateName())) {
 				model.put("ORGANIZATION", Boolean.TRUE);
-			} else if (Templates.EVENT_STREAMS.equals(request.getTemplateName())) {
+			} else if (Templates.EVENT_STREAMS.equals(request.getTemplateName()) || Templates.EVENT_STREAM.equals(request.getTemplateName())) {
 				model.put("EVENT_STREAMS", Boolean.TRUE);
 			} else if (Templates.NOTIFICATIONS.equals(request.getTemplateName())) {
 				model.put("NOTIFICATIONS", Boolean.TRUE);
