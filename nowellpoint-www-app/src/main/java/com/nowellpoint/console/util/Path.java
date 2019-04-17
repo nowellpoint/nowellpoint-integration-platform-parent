@@ -61,7 +61,7 @@ public class Path {
 		
 		public static final String EVENT_STREAMS = String.format(APPLICATION_CONTEXT, "event-streams");
 		public static final String EVENT_STREAMS_ACTION = String.format(APPLICATION_CONTEXT, "event-streams/:source/:action");
-		public static final String EVENT_STREAMS_SETUP = String.format(APPLICATION_CONTEXT, "event-streams-setup");
+		public static final String EVENT_STREAM_VIEW = String.format(APPLICATION_CONTEXT, "event-streams/:source");
 	}
 	
 	public static class Resource {

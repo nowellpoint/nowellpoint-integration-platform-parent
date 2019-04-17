@@ -38,7 +38,7 @@ public abstract class AbstractStreamingEventListener {
 	@Value.Derived
 	@JsonIgnore
 	public String getHref() {
-		return Path.Route.EVENT_STREAMS_SETUP.replace(":source", getSource());
+		return Path.Route.EVENT_STREAM_VIEW.replace(":source", getSource());
 	}
 	
 	@Value.Derived

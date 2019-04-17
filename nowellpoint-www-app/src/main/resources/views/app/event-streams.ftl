@@ -13,7 +13,6 @@
                         </div>
                     </div>
                 </div>
-                <!--<div class="p-3 mb-2 unique-color text-light rounded"><span class="h6">${labels['standard.objects']}</span></div>-->
                 <div class="card w-100">
                     <div class="card-header unique-color">
                         <span class="h5 text-white">${labels['standard.objects']}</span>

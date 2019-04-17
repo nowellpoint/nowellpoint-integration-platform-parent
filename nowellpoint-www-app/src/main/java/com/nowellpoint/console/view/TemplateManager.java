@@ -63,7 +63,7 @@ public class TemplateManager {
 			model.put("NOTIFICATIONS_URI", Path.Route.NOTIFICATIONS);
 			model.put("ORGANIZATION_URI", Path.Route.ORGANIZATION);
 			model.put("EVENT_STREAMS_URI", Path.Route.EVENT_STREAMS);
-			model.put("EVENT_STREAMS_SETUP_URI", Path.Route.EVENT_STREAMS_SETUP);
+			model.put("EVENT_STREAM_VIEW_URI", Path.Route.EVENT_STREAM_VIEW);
 			
 			model.put("START", Boolean.FALSE);
 			model.put("ORGANIZATION", Boolean.FALSE);
