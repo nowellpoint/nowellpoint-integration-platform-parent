@@ -19,10 +19,12 @@
                     &nbsp;
                 </div>
             </div>
-            <hr>
-
+            <#if organization.dashboard.userLicenses?size == 0>
+                <hr>
+            </#if>
             <#list organization.dashboard.userLicenses?sort_by( "name") as license>
                 <#if license.status=="Active">
+                    <hr>
                     <div class="row">
                         <div class="col-4">
                             <span class="text-muted">${license.name}</span>
@@ -41,7 +43,6 @@
                             <@usage percent=license.percentAvailable max=license.max/>   
                         </div>
                     </div>
-                    <hr>
                 </#if>
             </#list>
         </div>

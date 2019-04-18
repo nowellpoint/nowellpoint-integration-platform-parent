@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -57,7 +56,6 @@ import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.entity.OrganizationDAO;
 import com.nowellpoint.console.exception.ServiceException;
 import com.nowellpoint.console.model.Address;
@@ -67,14 +65,13 @@ import com.nowellpoint.console.model.ContactRequest;
 import com.nowellpoint.console.model.CreditCard;
 import com.nowellpoint.console.model.CreditCardRequest;
 import com.nowellpoint.console.model.Dashboard;
-import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Limits;
 import com.nowellpoint.console.model.MetadataComponent;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.OrganizationRequest;
 import com.nowellpoint.console.model.Plan;
-import com.nowellpoint.console.model.StreamingEventListener;
-import com.nowellpoint.console.model.StreamingEventListenerRequest;
+import com.nowellpoint.console.model.EventStreamListener;
+import com.nowellpoint.console.model.EventStreamListenerRequest;
 import com.nowellpoint.console.model.Subscription;
 import com.nowellpoint.console.model.SubscriptionRequest;
 import com.nowellpoint.console.model.Transaction;
@@ -157,7 +154,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				.address(address)
 				.dashboard(dashboard)
 				.domain(request.getDomain())
-				.streamingEventListeners(plan.getStreamingEventListeners())
+				.eventStreamListeners(plan.getEventStreamListeners())
 				.name(request.getName())
 				.number(customerResult.getTarget().getId())
 				.subscription(subscription)
@@ -245,15 +242,15 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public Organization update(String id, StreamingEventListenerRequest request) {
+	public Organization update(String id, EventStreamListenerRequest request) {
 		Organization instance = get(id);
 		
-		Optional<StreamingEventListener> listenerOptional = instance.getStreamingEventListeners()
+		Optional<EventStreamListener> listenerOptional = instance.getEventStreamListeners()
 				.stream()
 				.filter(l -> request.getSource().equals(l.getSource()))
 				.findFirst();
 		
-		List<StreamingEventListener> listeners = new ArrayList<StreamingEventListener>(instance.getStreamingEventListeners());
+		List<EventStreamListener> listeners = new ArrayList<EventStreamListener>(instance.getEventStreamListeners());
 		
 		if (listenerOptional.isPresent()) {
 			
@@ -261,7 +258,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	        		.salesforce()
 	        		.refreshToken(instance.getConnection().getRefreshToken());
 
-			StreamingEventListener listener = StreamingEventListener.builder()
+			EventStreamListener listener = EventStreamListener.builder()
 					.from(listenerOptional.get())
 					.active(request.isActive())
 					.apiVersion(instance.getConnection().getApiVersion())
@@ -287,7 +284,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 
 			if (pushTopic.getCreatedDate().equals(pushTopic.getLastModifiedDate())) {
 				
-				listeners.add(StreamingEventListener.builder()
+				listeners.add(EventStreamListener.builder()
 						.from(listener)
 						.createdBy(user)
 						.createdOn(now)
@@ -298,7 +295,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 				
 			} else {
 				
-				listeners.add(StreamingEventListener.builder()
+				listeners.add(EventStreamListener.builder()
 						.from(listener)
 						.lastUpdatedBy(user)
 						.lastUpdatedOn(now)
@@ -308,7 +305,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.streamingEventListeners(listeners)
+				.eventStreamListeners(listeners)
 				.build();
 		
 		saveConfiguration(organization);
@@ -430,7 +427,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.streamingEventListeners(plan.getStreamingEventListeners())
+				.eventStreamListeners(plan.getEventStreamListeners())
 				.subscription(subscription)
 				.build();
 		
@@ -511,7 +508,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		Organization organization = Organization.builder()
 				.from(instance)
-				.streamingEventListeners(plan.getStreamingEventListeners())
+				.eventStreamListeners(plan.getEventStreamListeners())
 				.subscription(subscription)
 				.build();
 		
@@ -609,29 +606,17 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	}
 	
 	@Override
-	public List<AggregationResult> getEventsLastDays(String id, Integer days, TimeZone timeZone) {
-		return dao.getEventsLastDays(new ObjectId(id), days, timeZone);
-	}
-	
-	@Override
-	public List<AggregationResult> getEventsBySourceByDays(String id, String source, Integer days, TimeZone timeZone) {
-		return dao.getEventsBySourceByDays(new ObjectId(id), source, days, timeZone);
-	}
-	
-	@Override
-	public List<FeedItem> getStreamingEventsFeed(String id) {
-		return dao.getStreamingEvents(new ObjectId(id))
+	public List<Organization> refreshAll() {
+		List<Organization> organizations = dao.getOrganizations()
 				.stream()
-				.map(s -> FeedItem.of(s))
+				.filter(organization -> organization.getConnection().getIsConnected())
+				.map(organization -> {
+					refresh(organization.getId().toString());
+					return Organization.of(organization);
+				})
 				.collect(Collectors.toList());
-	}
-	
-	@Override
-	public List<FeedItem> getStreamingEventsFeed(String id, String source){
-		return dao.getStreamingEventsBySource(new ObjectId(id), source)
-				.stream()
-				.map(s -> FeedItem.of(s))
-				.collect(Collectors.toList());
+		
+		return organizations;
 	}
 	
 	@Override
@@ -906,7 +891,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 	}
 	
-	private String savePushTopic(Token token, StreamingEventListener listener) {
+	private String savePushTopic(Token token, EventStreamListener listener) {
 		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
 				.isActive(listener.getActive())
 				.apiVersion(listener.getApiVersion())
@@ -959,7 +944,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 		
-		organization.getStreamingEventListeners().forEach(l -> {
+		organization.getEventStreamListeners().forEach(l -> {
 			builder.add(Json.createObjectBuilder()
 					.add("channel", l.getChannel())
 					.add("active", l.getActive())

@@ -19,7 +19,6 @@
                     &nbsp;
                 </div>
             </div>
-            <hr>
             <@limitsView limit=organization.dashboard.limits.dailyAnalyticsDataflowJobExecutions
                          label=labels['daily.analytics.dataflow.job.executions']/>
             <@limitsView limit=organization.dashboard.limits.dailyApiRequests

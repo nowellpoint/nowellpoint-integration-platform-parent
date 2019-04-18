@@ -35,10 +35,10 @@
                                 ${labels['action']}
                             </div>
                         </div>
-                        <#if organization.streamingEventListeners?size == 0>
+                        <#if organization.eventStreamListeners?size == 0>
                             <hr>
                         </#if>
-                        <#list organization.streamingEventListeners?sort_by( "source") as eventListener>
+                        <#list organization.eventStreamListeners?sort_by( "source") as eventListener>
                             <#if ! eventListener.custom>
                                 <hr>
                                 <div class="row align-items-center">
@@ -58,7 +58,8 @@
                                     <div class="col-3 text-right">
                                         ${eventListener.active?then("
                                         <button id='action-button' name='action-button' class='btn btn-sm btn-danger' data-href='${EVENT_STREAMS_URI}${eventListener.source}/stop/' type='button'><i class='fas fa-stop-circle'></i>&nbsp;${labels['stop']}</button>", "
-                                        <button id='action-button' name='action-button' class='btn btn-sm btn-success' data-href='${EVENT_STREAMS_URI}${eventListener.source}/start/' type='button'><i class='fas fa-play-circle'></i>&nbsp;${labels['start']}</button>")}
+                                        <button id='action-button' name='action-button' class='btn btn-sm btn-success' data-href='${EVENT_STREAMS_URI}${eventListener.source}/start/' type='button'><i class='fas fa-play-circle'></i>&nbsp;${labels['start']}</button>"
+                                        )}
                                     </div>
                                 </div>
                             </#if>

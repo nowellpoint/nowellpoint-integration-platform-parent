@@ -23,7 +23,7 @@ public class Plan extends BaseEntity {
 	
 	private Price price;
 	
-	private Set<StreamingEventListener> streamingEventListeners;
+	private Set<EventStreamListener> eventStreamListeners;
 	
 	private Set<Feature> features;
 	
@@ -95,11 +95,11 @@ public class Plan extends BaseEntity {
 		this.features = features;
 	}
 
-	public Set<StreamingEventListener> getStreamingEventListeners() {
-		return streamingEventListeners;
+	public Set<EventStreamListener> getEventStreamListeners() {
+		return eventStreamListeners;
 	}
 
-	public void setStreamingEventListeners(Set<StreamingEventListener> streamingEventListeners) {
-		this.streamingEventListeners = streamingEventListeners;
+	public void setEventStreamListeners(Set<EventStreamListener> eventStreamListeners) {
+		this.eventStreamListeners = eventStreamListeners;
 	}
 }

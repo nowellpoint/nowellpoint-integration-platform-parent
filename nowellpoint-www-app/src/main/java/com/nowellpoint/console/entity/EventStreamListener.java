@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.mongodb.morphia.annotations.Reference;
 
-public class StreamingEventListener implements Serializable {
+public class EventStreamListener implements Serializable {
 	
 	private static final long serialVersionUID = 1631326328342999076L;
 
@@ -45,7 +45,7 @@ public class StreamingEventListener implements Serializable {
 	
 	private Date stoppedOn;
 	
-	public StreamingEventListener() {
+	public EventStreamListener() {
 		
 	}
 

@@ -79,7 +79,7 @@ public class TestSalesforceServices {
 		
 		JsonArrayBuilder builder = Json.createArrayBuilder();
 		
-		organization.getStreamingEventListeners().forEach(l -> {
+		organization.getEventStreamListeners().forEach(l -> {
 			builder.add(Json.createObjectBuilder()
 					.add("channel", "/topic/".concat(l.getName()))
 					.add("active", l.getActive())

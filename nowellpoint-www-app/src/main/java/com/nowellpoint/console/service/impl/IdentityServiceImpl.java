@@ -156,10 +156,12 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return identity;
 	}
 	
+	@Override
 	public Identity getByUsername(String username) {
 		return queryByUsername(username);
 	}
 	
+	@Override
 	public Identity activate(String activationToken) {
 		
 		Identity instance = getBySubject(activationToken);
@@ -175,6 +177,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
+	@Override
 	public Identity setPassword(String id, char[] password) {
 		
 		Identity instance = get(id);
@@ -202,6 +205,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
+	@Override
 	public Identity update(String id, IdentityRequest request) {
 		Identity instance = get(id);
 		
@@ -230,6 +234,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
+	@Override
 	public Identity resendActivationEmail(String id) {
 		Identity identity = get(id);
 		
@@ -241,6 +246,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return identity;
 	}
 	
+	@Override
 	public Identity deactivate(String id) {
 		Identity instance = get(id);
 		
@@ -255,6 +261,7 @@ public class IdentityServiceImpl extends AbstractService implements IdentityServ
 		return update(identity);
 	}
 	
+	@Override
 	public void delete(String id) {
 		Identity identity = get(id);
 		deleteUser(identity.getSubject());

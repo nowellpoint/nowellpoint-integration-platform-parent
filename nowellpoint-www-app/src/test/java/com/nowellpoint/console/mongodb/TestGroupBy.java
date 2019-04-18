@@ -28,8 +28,9 @@ import com.mongodb.MongoClientURI;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.console.entity.AggregationResult;
+import com.nowellpoint.console.entity.StreamingEventDAO;
 import com.nowellpoint.console.entity.Organization;
-import com.nowellpoint.console.entity.OrganizationDAO;
+import com.nowellpoint.console.entity.StreamingEvent;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.util.SecretsManager;
 
@@ -65,7 +66,7 @@ public class TestGroupBy {
 		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
-				.organization()
+				.eventStream()
 				.getEventsBySourceByDays(organization.getId().toString(), "Account", daysBetween.intValue(), TimeZone.getDefault());
 		
 		AtomicLong eventsToday = new AtomicLong(0);
@@ -143,7 +144,7 @@ public class TestGroupBy {
 	@Test
 	public void testGroupBy() throws IOException {
 		
-		OrganizationDAO dao = new OrganizationDAO(Organization.class, datastore);
+		StreamingEventDAO dao = new StreamingEventDAO(StreamingEvent.class, datastore);
 		
 		List<AggregationResult> results = dao.getEventsLastDays(new ObjectId(ORGANIZATION_ID), 7, TimeZone.getDefault());
 		

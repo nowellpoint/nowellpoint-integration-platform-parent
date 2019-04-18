@@ -16,9 +16,9 @@ import com.nowellpoint.console.util.Path;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true, get = {"is*", "get*"})
-@JsonSerialize(as = StreamingEventListener.class)
-@JsonDeserialize(as = StreamingEventListener.class)
-public abstract class AbstractStreamingEventListener {
+@JsonSerialize(as = EventStreamListener.class)
+@JsonDeserialize(as = EventStreamListener.class)
+public abstract class AbstractEventStreamListener {
 	public abstract @Nullable String getTopicId();
 	public abstract @Nullable String getApiVersion();
 	public abstract String getPrefix();
@@ -85,7 +85,7 @@ public abstract class AbstractStreamingEventListener {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final StreamingEventListener listener = (StreamingEventListener) o;
+        final EventStreamListener listener = (EventStreamListener) o;
         return Objects.equals(getPrefix(), listener.getPrefix());
     }
 	
@@ -94,8 +94,8 @@ public abstract class AbstractStreamingEventListener {
        return Objects.hash(getPrefix());
     }
 	
-	public static StreamingEventListener of(com.nowellpoint.console.entity.StreamingEventListener source) {
-		return source == null ? null : StreamingEventListener.builder()
+	public static EventStreamListener of(com.nowellpoint.console.entity.EventStreamListener source) {
+		return source == null ? null : EventStreamListener.builder()
 				.active(source.getActive())
 				.createdBy(UserInfo.of(source.getCreatedBy()))
 				.createdOn(source.getCreatedOn())

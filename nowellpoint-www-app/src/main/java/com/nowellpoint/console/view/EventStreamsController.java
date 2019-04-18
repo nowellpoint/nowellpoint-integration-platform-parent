@@ -26,8 +26,8 @@ import com.nowellpoint.console.entity.AggregationResult;
 import com.nowellpoint.console.model.FeedItem;
 import com.nowellpoint.console.model.Organization;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
-import com.nowellpoint.console.model.StreamingEventListener;
-import com.nowellpoint.console.model.StreamingEventListenerRequest;
+import com.nowellpoint.console.model.EventStreamListener;
+import com.nowellpoint.console.model.EventStreamListenerRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.MessageProvider;
 import com.nowellpoint.console.util.Path;
@@ -103,13 +103,13 @@ public class EventStreamsController extends BaseController {
 				.organization()
 				.get(organizationId);
 		
-		Optional<StreamingEventListener> eventListener = organization.getStreamingEventListeners()
+		Optional<EventStreamListener> eventListener = organization.getEventStreamListeners()
 				.stream()
 				.filter(e -> source.equals(e.getSource()))
 				.findFirst();
 		
 		List<AggregationResult> results = ServiceClient.getInstance()
-				.organization()
+				.eventStream()
 				.getEventsBySourceByDays(organizationId, source, 7, TimeZone.getTimeZone(ZoneId.of( "UTC" )));
 				//.getEventsLastDays(organizationId, 7, TimeZone.getTimeZone(ZoneId.of( "UTC" )));
 		
@@ -123,7 +123,7 @@ public class EventStreamsController extends BaseController {
 //				.getStreamingEventsFeed(organizationId, getIdentity(request).getTimeZone());
 		
 		List<FeedItem> feedItems = ServiceClient.getInstance()
-				.organization()
+				.eventStream()
 				.getStreamingEventsFeed(organizationId, source);
 		
 		LocalDate today = LocalDate.now( zoneId );
@@ -133,7 +133,7 @@ public class EventStreamsController extends BaseController {
 		Long daysBetween = ChronoUnit.DAYS.between(today.minusYears(1).plusDays(1), today);
 		
 		List<AggregationResult> aggregation = ServiceClient.getInstance()
-				.organization()
+				.eventStream()
 				.getEventsBySourceByDays(organization.getId().toString(), source, daysBetween.intValue(), TimeZone.getTimeZone(zoneId));
 		
 		AtomicLong eventsToday = new AtomicLong(0);
@@ -215,7 +215,7 @@ public class EventStreamsController extends BaseController {
 		Boolean notifyForOperationUndelete = Boolean.valueOf(map.getOrDefault("notifyForOperationUndelete", "false"));
 		Boolean notifyForOperationUpdate = Boolean.valueOf(map.getOrDefault("notifyForOperationUpdate", "false"));
 		
-		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
+		EventStreamListenerRequest eventListenerRequest = EventStreamListenerRequest.builder()
 				.active(active)
 				.notifyForOperationCreate(notifyForOperationCreate)
 				.notifyForOperationDelete(notifyForOperationDelete)
@@ -238,7 +238,7 @@ public class EventStreamsController extends BaseController {
 		
 		Boolean active = "start".equals(action) ? Boolean.TRUE : Boolean.FALSE;
 		
-		StreamingEventListenerRequest eventListenerRequest = StreamingEventListenerRequest.builder()
+		EventStreamListenerRequest eventListenerRequest = EventStreamListenerRequest.builder()
 				.active(active)
 				.notifyForOperationCreate(active)
 				.notifyForOperationDelete(active)

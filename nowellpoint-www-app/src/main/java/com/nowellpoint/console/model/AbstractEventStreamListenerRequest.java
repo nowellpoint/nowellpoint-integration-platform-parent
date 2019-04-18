@@ -5,7 +5,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @Value.Style(typeImmutable = "*", jdkOnly=true, get = {"is*", "get*"})
-public abstract class AbstractStreamingEventListenerRequest {
+public abstract class AbstractEventStreamListenerRequest {
 	public abstract String getSource();
 	public abstract Boolean getNotifyForOperationUpdate();
 	public abstract Boolean getNotifyForOperationCreate();

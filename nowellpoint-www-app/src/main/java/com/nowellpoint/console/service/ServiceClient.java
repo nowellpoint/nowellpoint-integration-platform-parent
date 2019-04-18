@@ -7,6 +7,7 @@ import com.nowellpoint.console.service.impl.OrganizationServiceImpl;
 import com.nowellpoint.console.service.impl.PlanServiceImpl;
 import com.nowellpoint.console.service.impl.SalesforceServiceImpl;
 import com.nowellpoint.console.service.impl.ConsoleServiceImpl;
+import com.nowellpoint.console.service.impl.EventStreamServiceImpl;
 
 public class ServiceClient {
 	
@@ -19,6 +20,7 @@ public class ServiceClient {
 	private NotificationService notification;
 	private PlanService plan;
 	private SalesforceService salesforce;
+	private EventStreamService eventStream;
 	
 	private ServiceClient() {
 		
@@ -75,5 +77,12 @@ public class ServiceClient {
 			salesforce = new SalesforceServiceImpl();
 		}
 		return salesforce;
+	}
+	
+	public EventStreamService eventStream() {
+		if (eventStream == null) {
+			eventStream = new EventStreamServiceImpl();
+		}
+		return eventStream;
 	}
 }

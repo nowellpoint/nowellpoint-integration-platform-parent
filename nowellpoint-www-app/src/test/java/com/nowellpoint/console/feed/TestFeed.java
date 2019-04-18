@@ -16,7 +16,7 @@ public class TestFeed {
 	@Test
 	public void testFeed() {
 		List<FeedItem> list = ServiceClient.getInstance()
-				.organization()
+				.eventStream()
 				.getStreamingEventsFeed(ORGANIZATION_ID);
 		
 		try {

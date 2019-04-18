@@ -1,10 +1,13 @@
 package com.nowellpoint.console.util;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 
+import com.nowellpoint.console.model.Organization;
+import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.util.SecretsManager;
 import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.Client;
@@ -27,5 +30,17 @@ public class Scheduler {
 		Group group = client.getGroup(SecretsManager.getOktaDefaultGroupId());
 		
 		LOGGER.info("**** Identity Group: " + group.getResourceHref());
+	}
+	
+	@Schedule(hour="1", minute="0")
+	public void refreshOrganizations() {
+		
+		List<Organization> organizations = ServiceClient.getInstance()
+				.organization()
+				.refreshAll();
+		
+		organizations.stream().forEach(organization -> {
+			LOGGER.info("**** Refreshed Organization: " + organization.getId());
+		});
 	}
 }
