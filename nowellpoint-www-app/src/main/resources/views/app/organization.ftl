@@ -2,7 +2,7 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <div id="content">
-            <div class="container-fluid mt-2 pt-3 pr-5 pl-5 mb-3">
+            <div class="container-fluid mt-2 pt-3 pr-3 pl-3 mb-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${labels["organization"]}</h6>
@@ -28,17 +28,19 @@
             <#include "organization-limits.ftl" />
         </div>
         <#macro usage percent max>
-            <div class="progress" style="height:20px">
-                <#if max == 0>
-                    <span class="text-muted"><small>${labels["not.available"]}</small></span>
-                <#elseif percent lt 6>
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
-                <#elseif percent gt 10>
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
-                <#else>
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
-                </#if>
-            </div>
+            <#if max==0>
+                <span class="text-muted text-center">${labels["not.available"]}</span>
+            <#else>
+                <div class="progress" style="height:20px">
+                    <#if percent lt 6>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                    <#elseif percent gt 10>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                    <#else>
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 100%; height: 20px;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">${percent}&#37;</div>
+                    </#if>
+                </div>
+            </#if>            
         </#macro>
         <#macro limitsView label limit>
             <hr>
@@ -55,12 +57,11 @@
                 <div class="col-2 text-right">
                     <span class="text-muted">${limit.max?string(",##0")}</span>
                 </div>
-                <div class="col-1"></div>    
+                <div class="col-1"></div>
                 <div class="col-1">
-                    <@usage percent=limit.percentAvailable
-                            max=limit.max/> 
+                    <@usage percent=limit.percentAvailable max=limit.max/>
                 </div>
             </div>
-        </#macro>    
+        </#macro>
         <script type="text/javascript" src="/js/organization.js"></script>
     </@t.page>

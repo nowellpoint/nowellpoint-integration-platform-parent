@@ -24,7 +24,7 @@ import com.mongodb.client.model.Filters;
 
 public class StreamingEventHandler implements RequestStreamHandler {
 	
-	private MongoClient mongoClient;
+	private static MongoClient mongoClient;
 
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {

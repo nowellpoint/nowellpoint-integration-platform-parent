@@ -210,23 +210,23 @@ public class EventStreamsController extends BaseController {
 		Map<String,String> map = params.stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
 		
 		Boolean active = Boolean.valueOf(map.getOrDefault("active", "false"));
-		Boolean notifyForOperationCreate = Boolean.valueOf(map.getOrDefault("notifyForOperationCreate", "false"));
-		Boolean notifyForOperationDelete = Boolean.valueOf(map.getOrDefault("notifyForOperationDelete", "false"));
-		Boolean notifyForOperationUndelete = Boolean.valueOf(map.getOrDefault("notifyForOperationUndelete", "false"));
-		Boolean notifyForOperationUpdate = Boolean.valueOf(map.getOrDefault("notifyForOperationUpdate", "false"));
+		Boolean create = Boolean.valueOf(map.getOrDefault("notifyForOperationCreate", "false"));
+		Boolean delete = Boolean.valueOf(map.getOrDefault("notifyForOperationDelete", "false"));
+		Boolean undelete = Boolean.valueOf(map.getOrDefault("notifyForOperationUndelete", "false"));
+		Boolean update = Boolean.valueOf(map.getOrDefault("notifyForOperationUpdate", "false"));
 		
 		EventStreamListenerRequest eventListenerRequest = EventStreamListenerRequest.builder()
 				.active(active)
-				.notifyForOperationCreate(notifyForOperationCreate)
-				.notifyForOperationDelete(notifyForOperationDelete)
-				.notifyForOperationUndelete(notifyForOperationUndelete)
-				.notifyForOperationUpdate(notifyForOperationUpdate)
+				.notifyForOperationCreate(create)
+				.notifyForOperationDelete(delete)
+				.notifyForOperationUndelete(undelete)
+				.notifyForOperationUpdate(update)
 				.source(source)
 				.build();
 		
 		ServiceClient.getInstance().organization().update(getIdentity(request).getOrganization().getId(), eventListenerRequest);
 		
-		response.header("location", Path.Route.EVENT_STREAMS);
+		response.header("location", Path.Route.EVENT_STREAM_VIEW.replace(":source", source));
 		
 		return "";
 	};	

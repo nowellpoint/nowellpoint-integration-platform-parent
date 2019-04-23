@@ -1,4 +1,4 @@
-<div class="container-fluid pr-5 pl-5 mb-3">
+<div class="container-fluid pr-3 pl-3 mb-3">
     <div class="card w-100">
         <div class="card-body">
             <h5 class="card-title">${labels['user.licenses']}</h5>

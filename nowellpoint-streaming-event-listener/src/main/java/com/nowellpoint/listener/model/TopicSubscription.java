@@ -21,8 +21,6 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
-import com.amazonaws.services.lambda.AWSLambdaAsync;
-import com.amazonaws.services.lambda.AWSLambdaAsyncClientBuilder;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
@@ -32,6 +30,7 @@ import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.listener.connection.LambdaAsyncClient;
 import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
@@ -42,7 +41,12 @@ import lombok.Builder;
 public class TopicSubscription {
 	
 	private static final Logger LOGGER = Logger.getLogger(TopicSubscription.class);
+	
+	private static final String NOTIFICATIONS = "notifications";
+	private static final String STREAMING_EVENTS = "streaming.events";
+	private static final String STREAMING_EVENT_HANDLER = "streaming-event-handler";
 	private static final String REPLAY = "replay";
+	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 
     private static final int STOP_TIMEOUT = 120 * 1000;
@@ -104,8 +108,6 @@ public class TopicSubscription {
 	
 	private void subscribe() {
 		
-		final AWSLambdaAsync lambda = AWSLambdaAsyncClientBuilder.defaultClient();
-		
 		configuration.getTopics().stream().filter(t -> t.getActive()).forEach(t -> {
 			
 			client.getChannel(t.getChannel()).subscribe(new ClientSessionChannel.MessageListener() {
@@ -139,12 +141,6 @@ public class TopicSubscription {
 								.append("payload", payload);
 						
 						writeStreamingEvent(streamingEvent);
-						
-						InvokeRequest request = new InvokeRequest()
-								.withFunctionName("streaming-event-handler")
-								.withPayload(streamingEvent.toJson());
-						
-						lambda.invokeAsync(request);
 						
 					} catch (IOException e) {
 						LOGGER.error(e);
@@ -303,12 +299,19 @@ public class TopicSubscription {
 	}
 	
 	private void writeNotification(Document notification) {
-		MongoConnection.getInstance().getMongoDatabase().getCollection("notifications").insertOne(notification);
+		MongoConnection.getInstance().getMongoDatabase().getCollection(NOTIFICATIONS).insertOne(notification);
 	}
 	
 	private void writeStreamingEvent(Document streamingEvent) {
 		try {
-			MongoConnection.getInstance().getMongoDatabase().getCollection("streaming.events").insertOne(streamingEvent);
+			MongoConnection.getInstance().getMongoDatabase().getCollection(STREAMING_EVENTS).insertOne(streamingEvent);
+			
+			InvokeRequest request = new InvokeRequest()
+					.withFunctionName(STREAMING_EVENT_HANDLER)
+					.withPayload(streamingEvent.toJson());
+			
+			LambdaAsyncClient.getInstance().invokeAsync(request);
+			
 		} catch (MongoWriteException e) {
             if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
             	LOGGER.warn(e.getMessage());

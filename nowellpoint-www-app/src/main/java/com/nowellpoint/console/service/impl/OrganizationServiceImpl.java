@@ -609,7 +609,7 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	public List<Organization> refreshAll() {
 		List<Organization> organizations = dao.getOrganizations()
 				.stream()
-				.filter(organization -> organization.getConnection().getIsConnected())
+				.filter(organization -> Optional.ofNullable(organization.getConnection()).isPresent() && organization.getConnection().getIsConnected())
 				.map(organization -> {
 					refresh(organization.getId().toString());
 					return Organization.of(organization);

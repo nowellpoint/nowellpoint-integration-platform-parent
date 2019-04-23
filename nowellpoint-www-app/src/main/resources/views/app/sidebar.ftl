@@ -9,5 +9,8 @@
         <li class="nav-item">
             <a class="nav-link ${EVENT_STREAMS?then('active','')}" href="${EVENT_STREAMS_URI}">${messages["event.streams"]}</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link ${NOTIFICATIONS?then('active','')}" href="${NOTIFICATIONS_URI}">${messages["notifications"]}</a>
+        </li>
     </ul>
 </nav>

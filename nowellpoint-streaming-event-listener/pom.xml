@@ -60,6 +60,11 @@
 			<version>${version.aws.sdk}</version>
 		</dependency>
 		<dependency>
+   			<groupId>com.amazonaws</groupId>
+    		<artifactId>aws-java-sdk-dynamodb</artifactId>
+    		<version>${version.aws.sdk}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>amazon-sqs-java-messaging-lib</artifactId>
 			<version>1.0.4</version>

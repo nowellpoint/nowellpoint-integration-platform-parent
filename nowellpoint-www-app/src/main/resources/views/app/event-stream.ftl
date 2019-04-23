@@ -2,7 +2,7 @@
     <@t.page>
         <#include "sidebar.ftl" />
         <div id="content">
-            <div class="container-fluid pt-3 pr-5 pl-5 mb-3">
+            <div class="container-fluid pt-3 pr-3 pl-3 mb-3">
                 <div class="dashhead">
                     <div class="dashhead-titles">
                         <h6 class="dashhead-subtitle">${messages["event.streams"]}</h6>
@@ -34,7 +34,7 @@
                                             <label for="notifyForOperationCreate">${labels["streaming.event.listener.status"]}</label>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['start']}" data-off="${labels['stop']}" data-width="100" ${eventListener.active?then( 'checked', '')}>
+                                            <input type="checkbox" id="active" name="active" value="true" data-toggle="toggle" data-onstyle="success" data-on="${labels['started']}" data-off="${labels['stopped']}" data-width="100" ${eventListener.active?then( 'checked', '')}>
                                         </div>
                                     </div>
                                 </div>
@@ -79,9 +79,7 @@
                                     </div>
                                 </div>
                             </div>
-
                             <br>
-
                             <#if eventListener.topicId??>
                                 <div class="card bg-light">
                                     <div class="card-body">
@@ -201,71 +199,5 @@
                 </div>
             </div>
         </div>
-
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript">
-            google.charts.load('current', {
-                'packages': ['corechart', 'bar']
-            });
-            google.charts.setOnLoadCallback(drawChart);
-
-            function drawChart() {
-                var data = new google.visualization.DataTable();
-                data.addColumn('string', 'Days');
-                data.addColumn('number', 'Events');
-                data.addRows([
-                    $ {
-                        data
-                    }
-                ]);
-
-                var options = {
-                    title: "${labels['streaming.events.received.last.n.days']?replace(':s1','7')}",
-                    focusTarget: 'category',
-                    backgroundColor: 'transparent',
-                    animation: {
-                        "startup": true
-                    },
-                    hAxis: {
-                        viewWindow: {
-                            min: [7, 30, 0],
-                            max: [17, 30, 0]
-                        },
-                        textStyle: {
-                            fontSize: 14,
-                            color: '#053061',
-                            bold: true,
-                            italic: false
-                        }
-                    },
-                    vAxis: {
-                        textStyle: {
-                            //fontSize: 18,
-                            //color: '#67001f',
-                            bold: false,
-                            italic: false
-                        }
-                    }
-                };
-
-                var chart = new google.visualization.ColumnChart(document.getElementById('events-last-7-days'));
-
-                google.visualization.events.addListener(chart, 'select', function () {
-                    var selectedItem = chart.getSelection()[0];
-                    if (selectedItem) {
-                        var value = data.getValue(selectedItem.row, 0);
-                        alert('The user selected ' + value);
-                    }
-                });
-
-                chart.draw(data, options);
-            }
-
-            $(document).ready(function () {
-                $(window).resize(function () {
-                    drawChart();
-                });
-            });
-        </script>
-
+        <script type="text/javascript" src="/js/event-stream.js"></script>
     </@t.page>
