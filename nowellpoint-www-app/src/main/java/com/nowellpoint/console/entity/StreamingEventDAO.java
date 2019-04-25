@@ -36,6 +36,19 @@ public class StreamingEventDAO extends BasicDAO<StreamingEvent,String> {
 		super(entityClass, ds);
 	}
 	
+	public Long streamingEventsCount(ObjectId organizationId, String source, LocalDate from, ZoneId zoneId) {
+		return getDatastore().createQuery(StreamingEvent.class)
+				.field("organizationId")
+				.equal(organizationId)
+				.field("source")
+				.equal(source)
+				.field("eventDate")
+				.greaterThanOrEq(Date.from(from.atStartOfDay()
+						.atZone(zoneId)
+						.toInstant()))
+				.count();
+	}
+	
 	public List<StreamingEvent> getStreamingEvents(ObjectId organizationId) {
 		
 		FindOptions options = new FindOptions().limit(50);

@@ -1,14 +1,20 @@
 /*-----------------------------------------------------------
-*
-*
-*/
+ *
+ *
+ */
 
-$(document).on('click', 'button#action', function () {
+$(document).on("click", function () {
+    $(this).find("dropdown-menu").toggle();
+});
 
-    $(".dropdown-toggle").dropdown('toggle');
-   
+/*-----------------------------------------------------------
+ *
+ *
+ */
+
+$(document).on("click", "button#action", function () {
     $.ajax({
-        type: 'POST',
+        type: "POST",
         url: $(this).data("href"),
         dataType: "html",
         complete: function (response) {
@@ -35,7 +41,7 @@ $(document).on('click', 'button#action', function () {
 $(document).on('click', 'button#save-streaming-event-listener', function () {
 
     $form = $("#streaming-event-listener-form");
-   
+
     $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),

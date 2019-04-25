@@ -20,10 +20,10 @@
                     <div class="col-3">
                         ${labels['topic.id']}
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         ${labels['last.updated']}
                     </div>
-                    <div class="col-2 text-center">
+                    <div class="col-3 text-center">
                         ${labels['status']}
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                             <div class="col-3">
                                 <span class="text-muted">${eventListener.topicId!''}</span>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <span class="text-muted">
                                     <#if eventListener.active>
                                         ${(eventListener.startedOn?date?string.medium)!}&nbsp;${(eventListener.startedOn?time?string.medium)!}</span>
@@ -48,20 +48,20 @@
                                         ${(eventListener.stoppedOn?date?string.medium)!}&nbsp;${(eventListener.stoppedOn?time?string.medium)!}
                                     </#if>
                             </div>
-                            <div class="col-2 text-center">
+                            <div class="col-3 text-center">
                                 <#if ! eventListener.topicId??>
-                                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["not.started"]}</button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["not.started"]}</button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <button type="button" class="btn btn-link dropdown-item" id="action" data-href="${EVENT_STREAMS_URI}${eventListener.source}/start/">${labels["create.topic"]}</button>
                                     </div>
                                 <#else>    
                                     <#if eventListener.active>
-                                        <button type="button" class="btn btn-success btn-sm dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["subscribed"]}</button>
+                                        <button type="button" class="btn btn-success dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["subscribed"]}</button>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <button type="button" class="btn btn-link dropdown-item" id="action" data-href="${EVENT_STREAMS_URI}${eventListener.source}/stop/">${labels["stop.listener"]}</button>
                                         </div>
                                     <#else>
-                                        <button type="button" class="btn btn-danger btn-sm dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["unsubscribed"]}</button>
+                                        <button type="button" class="btn btn-danger dropdown-toggle w-75" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${labels["unsubscribed"]}</button>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <button type="button" class="btn btn-link dropdown-item" id="action" data-href="${EVENT_STREAMS_URI}${eventListener.source}/start/">${labels["start.listener"]}</button>
                                         </div>

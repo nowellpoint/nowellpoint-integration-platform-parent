@@ -12,9 +12,10 @@ import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexes;
 
 @Entity(value = "streaming.events")
-@Indexes(
-		@Index(fields = { @Field("replayId"), @Field("organizationId"), @Field("source") }, options = @IndexOptions(unique = true))
-)
+@Indexes({
+		@Index(fields = { @Field("replayId"), @Field("organizationId"), @Field("source") }, options = @IndexOptions(unique = true)),
+		@Index(fields = { @Field("organizationId"), @Field("eventDate") })
+})
 public class StreamingEvent implements Serializable {
 
 	private static final long serialVersionUID = -226649098013040674L;
