@@ -21,18 +21,12 @@ package com.nowellpoint.console;
 import static com.nowellpoint.console.util.Exceptions.configureExceptionRoutes;
 import static com.nowellpoint.console.util.Filters.setupFilters;
 import static com.nowellpoint.console.util.Routes.configureRoutes;
-import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import com.nowellpoint.console.util.Path;
-
 import freemarker.template.Configuration;
-import spark.Request;
-import spark.Response;
 import spark.servlet.SparkApplication;
 
 public class Bootstrap implements SparkApplication {	
@@ -69,38 +63,11 @@ public class Bootstrap implements SparkApplication {
 		// setup routes
 		//
 		
-		configureRoutes(configuration);
-
-		//
-		// health check route
-		//
-
-		get(Path.Route.HEALTH_CHECK, (request, response) 
-				-> healthCheck(request, response));
-		
-		exception(BadRequestException.class, (exception, request, response) -> {
-			response.status(400);
-			response.body(exception.getMessage());
-		});
-		
-		exception(NotFoundException.class, (exception, request, response) -> {
-			response.status(404);
-			response.body(exception.getMessage());
-		});
-		
+		configureRoutes(configuration);		
 		configureExceptionRoutes();
-		
-	}
-
-	/**
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 */
-
-	private static String healthCheck(Request request, Response response) {
-		response.status(200);
-		return "";
+	
+		get("*", (request, response) -> {
+			throw new NotFoundException();
+		});
 	}
 }

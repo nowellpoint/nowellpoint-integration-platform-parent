@@ -10,9 +10,6 @@ public class Routes implements ServletContextListener {
 	@Override
     public void contextInitialized(ServletContextEvent event) { 
 		
-		
-		
-		System.out.println("context init");
 	}
 	
 	@Override

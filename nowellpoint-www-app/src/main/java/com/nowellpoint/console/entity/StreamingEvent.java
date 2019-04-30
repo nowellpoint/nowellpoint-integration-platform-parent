@@ -14,7 +14,7 @@ import org.mongodb.morphia.annotations.Indexes;
 @Entity(value = "streaming.events")
 @Indexes({
 		@Index(fields = { @Field("replayId"), @Field("organizationId"), @Field("source") }, options = @IndexOptions(unique = true)),
-		@Index(fields = { @Field("organizationId"), @Field("eventDate") })
+		@Index(fields = { @Field("organizationId"), @Field("source"), @Field("eventDate") })
 })
 public class StreamingEvent implements Serializable {
 

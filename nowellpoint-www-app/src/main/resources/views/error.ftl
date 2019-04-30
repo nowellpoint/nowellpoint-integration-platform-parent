@@ -3,53 +3,57 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="">
-    <meta name="author" content="">
-
     <title>${messages["application.title"]}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
 
-    <!-- Bootstrap Core CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Include the CSS -->
-    <link rel="stylesheet" href="/dist/toolkit-light.min.css" type="text/css">
-    <link rel="stylesheet" href="/css/custom.css" type="text/css" />
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+    <!-- Bootstrap theme -->
+    <link href="/css/toolkit-light.min.css" rel="stylesheet">
+    <!-- Bootstrap toggle -->
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.4.0/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="/css/custom.css" rel="stylesheet">
+        
+    <!-- JQuery -->
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <!-- Bootstrap toggle JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.4.0/js/bootstrap4-toggle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script type="text/javascript" src="/js/common.js"></script>
 
 </head>
 
 <body>
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <div class="navbar-brand">
-                <a href="/"><b>${messages["application.title"]}</b></a>
+    <main>
+        <nav class="navbar navbar-expand-lg navbar-dark unique-color-dark fixed-top scrolling-navbar">
+            <button id="toggleSidebar" type="button" class="btn btn-link"><i class="fa fa-bars fa-1x text-white"></i></button>&emsp;
+            <span class="navbar-brand">${messages["application.title"]}</span>
+            <div class="collapse navbar-collapse" id="navbarContent"></div>
+        </nav>
+        <div id="content">
+            <div class="row">
+                <div>
+                    <br>
+                    <#if errorMessage??>
+                        <div id="error" class="alert alert-danger">
+                            <div class="text-center">${errorMessage}</div>
+                        </div>
+                    </#if>
+                </div>
             </div>
         </div>
-    </nav>
-    <div class="container p-t-lg">
-        <div class="row">
-            <div>
-                <br>
-                <#if errorMessage??>
-                    <div id="error" class="alert alert-danger">
-                        <div class="text-center">${errorMessage}</div>
-                    </div>
-                </#if>
-            </div>
-        </div>
-    </div>
+    </main>
 </body>
 
 </html>

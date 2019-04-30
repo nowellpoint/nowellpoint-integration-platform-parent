@@ -94,11 +94,11 @@ public class EventStreamsController extends BaseController {
 	
 	private static String viewEventStream(Request request, Response response) {
 		
+		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
+		
 		String organizationId = getIdentity(request).getOrganization().getId();
 		
 		String source = request.params(":source");
-		
-		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
 		
 		Organization organization = ServiceClient.getInstance()
 				.organization()

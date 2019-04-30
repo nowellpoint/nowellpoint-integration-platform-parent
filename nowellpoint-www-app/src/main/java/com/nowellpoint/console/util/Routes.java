@@ -1,10 +1,13 @@
 package com.nowellpoint.console.util;
 
+import static spark.Spark.get;
 import static spark.Spark.halt;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import org.eclipse.jetty.http.HttpStatus;
 
 import com.nowellpoint.console.api.IdentityResource;
 import com.nowellpoint.console.api.OrganizationResource;
@@ -24,6 +27,8 @@ import com.nowellpoint.content.service.ContentService;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateModelException;
+import spark.Request;
+import spark.Response;
 
 public class Routes {
 	
@@ -47,6 +52,9 @@ public class Routes {
 			}
 		}
 		
+		get(Path.Route.HEALTH_CHECK, (request, response) 
+				-> healthCheck(request, response));
+		
 		AdministrationController.configureRoutes();
 		IndexController.configureRoutes(configuration);
 		SignUpController.configureRoutes();
@@ -59,6 +67,18 @@ public class Routes {
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
 		SalesforceOauthController.configureRoutes();
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	
+	private static String healthCheck(Request request, Response response) {
+		response.status(HttpStatus.OK_200);
+		return "";
 	}
 	
 	/**
