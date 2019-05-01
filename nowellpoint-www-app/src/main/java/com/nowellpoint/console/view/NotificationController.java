@@ -11,13 +11,12 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class NotificationController extends BaseController {
 	
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		get(Path.Route.NOTIFICATIONS, (request, response)
 				-> viewNotifications(request, response));
 	}

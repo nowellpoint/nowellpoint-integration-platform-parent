@@ -4,14 +4,12 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import com.nowellpoint.console.model.Template;
 import com.nowellpoint.console.model.Identity;
 import com.nowellpoint.console.model.IdentityRequest;
 import com.nowellpoint.console.model.ProcessTemplateRequest;
@@ -19,19 +17,18 @@ import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
 public class UserProfileController extends BaseController {
 		
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		
 		get(Path.Route.USER_PROFILE, (request, response) 
 				-> viewUserProfile(request, response));
 		
 		post(Path.Route.USER_PROFILE, (request, response) 
-				-> updateUserProfile(configuration, request, response));
+				-> updateUserProfile(request, response));
 	}
 	
 	/**
@@ -66,13 +63,12 @@ public class UserProfileController extends BaseController {
 	
 	/**
 	 * 
-	 * @param configuration
 	 * @param request
 	 * @param response
 	 * @return
 	 */
 	
-	private static String updateUserProfile(Configuration configuration, Request request, Response response) {
+	private static String updateUserProfile(Request request, Response response) {
 		
 		String id = request.params(":id");
 		
@@ -94,18 +90,16 @@ public class UserProfileController extends BaseController {
 				.identity()
 				.update(id, identityRequest);
 		
-		Map<String, Object> model = new HashMap<>();
+		Map<String, Object> model = getModel();
 		model.put("userProfile", identity);
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(UserProfileController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.USER_PROFILE)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**

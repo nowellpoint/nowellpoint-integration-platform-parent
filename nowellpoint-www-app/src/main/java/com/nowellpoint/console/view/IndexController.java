@@ -3,29 +3,35 @@ package com.nowellpoint.console.view;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import com.nowellpoint.console.model.Lead;
 import com.nowellpoint.console.model.LeadRequest;
-import com.nowellpoint.console.model.Template;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
 import com.nowellpoint.console.service.ServiceClient;
 import com.nowellpoint.console.util.Path;
 import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.content.model.IsoCountry;
+import com.nowellpoint.content.model.Plan;
+import com.nowellpoint.content.service.ContentService;
 
-import freemarker.template.Configuration;
 import spark.Request;
 import spark.Response;
 
-public class IndexController {
+public class IndexController extends BaseController {
 	
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		
 		get(Path.Route.INDEX, (request, response) 
-				-> serveIndexPage(configuration, request, response));
+				-> serveIndexPage(request, response));
 		
 		get(Path.Route.CONTACT, (request, response) 
-				-> serveContactPage(configuration, request, response));
+				-> serveContactPage(request, response));
 		
 		post(Path.Route.CONTACT, (request, response) 
-				-> contact(configuration, request, response));
+				-> contact(request, response));
 	}
 	
 	/**
@@ -36,16 +42,22 @@ public class IndexController {
 	 * @return
 	 */
 	
-	private static String serveIndexPage(Configuration configuration, Request request, Response response) {
+	private static String serveIndexPage(Request request, Response response) {
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		List<Plan> plans = ContentService.getInstance()
+				.getPlans()
+				.getItems();
+		
+		Map<String, Object> model = getModel();
+		model.put("planList", plans);
+		
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(IndexController.class)
-				.request(request)
+				.model(model)
 				.templateName(Templates.INDEX)
 				.build();
-    	
-    	return template.render();
+		
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
@@ -56,16 +68,15 @@ public class IndexController {
 	 * @return
 	 */
 	
-	private static String serveContactPage(Configuration configuration, Request request, Response response) {
+	private static String serveContactPage(Request request, Response response) {
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(IndexController.class)
-				.request(request)
+				.model(getModel())
 				.templateName(Templates.CONTACT)
 				.build();
-    	
-    	return template.render();
+		
+		return processTemplate(templateProcessRequest);
 	}
 	
 	/**
@@ -76,7 +87,7 @@ public class IndexController {
 	 * @return
 	 */
 	
-	private static String contact(Configuration configuration, Request request, Response response) {
+	private static String contact(Request request, Response response) {
 		
 		String firstName = request.queryParams("firstName");
 		String lastName = request.queryParams("lastName");
@@ -87,7 +98,7 @@ public class IndexController {
     			.email(email)
     			.firstName(firstName)
     			.lastName(lastName)
-    			.locale(configuration.getLocale())
+    			.locale(Locale.getDefault())
     			.message(message)
     			.build();
     	
@@ -95,14 +106,39 @@ public class IndexController {
     			.lead()
     			.create(leadRequest);
     	
-    	Template template = Template.builder()
-				.configuration(configuration)
+    	Map<String,Object> model = getModel();
+    	model.put("lead", lead);
+    	
+    	ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(IndexController.class)
-				.request(request)
-				.putModel("lead", lead)
+				.model(model)
 				.templateName(Templates.CONTACT)
 				.build();
-    	
-    	return template.render();
+		
+		return processTemplate(templateProcessRequest);
 	};
+	
+	/**
+	 * 
+	 * @param locale
+	 * @return List of IsoCountries
+	 */
+	
+	private static List<IsoCountry> loadCountries(Locale locale) {	
+		System.out.println("countries");
+		return ContentService.getInstance()
+				.getCountries()
+				.getItems();
+	}
+	
+	/**
+	 * 
+	 * @return List of Plans
+	 */
+	
+	private static List<Plan> loadPlans(Locale locale) {				
+		return ContentService.getInstance()
+				.getPlans()
+				.getItems();
+	}
 }

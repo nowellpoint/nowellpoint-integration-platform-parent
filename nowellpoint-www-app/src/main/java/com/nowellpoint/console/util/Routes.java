@@ -1,11 +1,8 @@
 package com.nowellpoint.console.util;
 
 import static spark.Spark.get;
-import static spark.Spark.halt;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import javax.ws.rs.NotFoundException;
 
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -21,12 +18,8 @@ import com.nowellpoint.console.view.StartController;
 import com.nowellpoint.console.view.EventStreamsController;
 import com.nowellpoint.console.view.UserProfileController;
 import com.nowellpoint.console.view.SalesforceOauthController;
-import com.nowellpoint.content.model.IsoCountry;
-import com.nowellpoint.content.model.Plan;
-import com.nowellpoint.content.service.ContentService;
 
 import freemarker.template.Configuration;
-import freemarker.template.TemplateModelException;
 import spark.Request;
 import spark.Response;
 
@@ -34,39 +27,43 @@ public class Routes {
 	
 	public static void configureRoutes(Configuration configuration) {
 		
-		if (! Optional.ofNullable(configuration.getSharedVariable("countryList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("countryList", loadCountries(configuration.getLocale()));
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
-		
-		if (! Optional.ofNullable(configuration.getSharedVariable("planList")).isPresent()) {
-			try {
-				configuration.setSharedVariable("planList", loadPlans(configuration.getLocale()));
-			} catch (TemplateModelException e) {
-				e.printStackTrace();
-				halt();
-			}
-		}
-		
-		get(Path.Route.HEALTH_CHECK, (request, response) 
-				-> healthCheck(request, response));
+//		if (! Optional.ofNullable(configuration.getSharedVariable("countryList")).isPresent()) {
+//			try {
+//				configuration.setSharedVariable("countryList", loadCountries(configuration.getLocale()));
+//			} catch (TemplateModelException e) {
+//				e.printStackTrace();
+//				halt();
+//			}
+//		}
+//		
+//		if (! Optional.ofNullable(configuration.getSharedVariable("planList")).isPresent()) {
+//			try {
+//				configuration.setSharedVariable("planList", loadPlans(configuration.getLocale()));
+//			} catch (TemplateModelException e) {
+//				e.printStackTrace();
+//				halt();
+//			}
+//		}
 		
 		AdministrationController.configureRoutes();
-		IndexController.configureRoutes(configuration);
+		IndexController.configureRoutes();
 		SignUpController.configureRoutes();
-		AuthenticationController.configureRoutes(configuration);
+		AuthenticationController.configureRoutes();
 		StartController.configureRoutes();
-		UserProfileController.configureRoutes(configuration);
+		UserProfileController.configureRoutes();
 		OrganizationController.configureRoutes();
-		NotificationController.configureRoutes(configuration);
+		NotificationController.configureRoutes();
 		EventStreamsController.configureRoutes();
 		IdentityResource.configureRoutes();
 		OrganizationResource.configureRoutes();
 		SalesforceOauthController.configureRoutes();
+		
+		get(Path.Route.HEALTH_CHECK, (request, response) 
+				-> healthCheck(request, response));
+		
+		get("*", (request, response) -> {
+			throw new NotFoundException();
+		});
 	}
 	
 	/**
@@ -87,20 +84,20 @@ public class Routes {
 	 * @return List of IsoCountries
 	 */
 	
-	private static List<IsoCountry> loadCountries(Locale locale) {				
-		return ContentService.getInstance()
-				.getCountries()
-				.getItems();
-	}
+//	private static List<IsoCountry> loadCountries(Locale locale) {				
+//		return ContentService.getInstance()
+//				.getCountries()
+//				.getItems();
+//	}
 	
 	/**
 	 * 
 	 * @return List of Plans
 	 */
 	
-	private static List<Plan> loadPlans(Locale locale) {				
-		return ContentService.getInstance()
-				.getPlans()
-				.getItems();
-	}
+//	private static List<Plan> loadPlans(Locale locale) {				
+//		return ContentService.getInstance()
+//				.getPlans()
+//				.getItems();
+//	}
 }

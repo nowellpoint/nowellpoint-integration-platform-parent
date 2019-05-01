@@ -21,10 +21,7 @@ package com.nowellpoint.console;
 import static com.nowellpoint.console.util.Exceptions.configureExceptionRoutes;
 import static com.nowellpoint.console.util.Filters.setupFilters;
 import static com.nowellpoint.console.util.Routes.configureRoutes;
-import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
-
-import javax.ws.rs.NotFoundException;
 
 import freemarker.template.Configuration;
 import spark.servlet.SparkApplication;
@@ -65,9 +62,5 @@ public class Bootstrap implements SparkApplication {
 		
 		configureRoutes(configuration);		
 		configureExceptionRoutes();
-	
-		get("*", (request, response) -> {
-			throw new NotFoundException();
-		});
 	}
 }

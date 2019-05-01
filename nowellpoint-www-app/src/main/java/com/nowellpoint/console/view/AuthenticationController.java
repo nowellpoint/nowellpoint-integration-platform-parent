@@ -1,20 +1,5 @@
 package com.nowellpoint.console.view;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nowellpoint.console.exception.ConsoleException;
-import com.nowellpoint.console.model.Template;
-import com.nowellpoint.console.model.Token;
-import com.nowellpoint.console.service.ServiceClient;
-import com.nowellpoint.console.util.Path;
-import com.nowellpoint.console.util.RequestAttributes;
-import com.nowellpoint.console.util.Templates;
-import com.nowellpoint.oauth.model.OAuthClientException;
-import com.nowellpoint.util.Properties;
-
-import freemarker.template.Configuration;
-import spark.Request;
-import spark.Response;
-
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -28,25 +13,39 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.InternalServerErrorException;
 
-public class AuthenticationController {
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowellpoint.console.exception.ConsoleException;
+import com.nowellpoint.console.model.ProcessTemplateRequest;
+import com.nowellpoint.console.model.Token;
+import com.nowellpoint.console.service.ServiceClient;
+import com.nowellpoint.console.util.Path;
+import com.nowellpoint.console.util.RequestAttributes;
+import com.nowellpoint.console.util.Templates;
+import com.nowellpoint.oauth.model.OAuthClientException;
+import com.nowellpoint.util.Properties;
+
+import spark.Request;
+import spark.Response;
+
+public class AuthenticationController extends BaseController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String REDIRECT_URI = "redirect_uri";
 
-	public static void configureRoutes(Configuration configuration) {
+	public static void configureRoutes() {
 		
 		get(Path.Route.LOGIN, (request, response) 
-				-> serveLoginPage(configuration, request, response));
+				-> serveLoginPage(request, response));
 		
 		post(Path.Route.LOGIN, (request, response) 
-				-> login(configuration, request, response));
+				-> login(request, response));
 		
 		get(Path.Route.LOGOUT, (request, response) 
-				-> logout(configuration, request, response));
+				-> logout(request, response));
 
 	}
 	
-	private static String login(Configuration configuration, Request request, Response response) {
+	private static String login(Request request, Response response) {
 		
 		String username = request.queryParams("username");
 		String password = request.queryParams("password");
@@ -90,37 +89,33 @@ public class AuthenticationController {
 			Map<String, Object> model = new HashMap<>();
 			model.put("errorMessage", e.getErrorDescription());
 			
-			Template template = Template.builder()
-					.configuration(configuration)
+			ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 					.controllerClass(AuthenticationController.class)
 					.model(model)
-					.request(request)
 					.templateName(Templates.LOGIN)
 					.build();
 			
-			return template.render();
+			return processTemplate(templateProcessRequest);
 
 		} catch (ConsoleException e) {
 			throw new InternalServerErrorException(e);
 		}
 	}
 	
-	private static String serveLoginPage(Configuration configuration, Request request, Response response) {
-		Map<String, Object> model = new HashMap<String,Object>();
+	private static String serveLoginPage(Request request, Response response) {
+		Map<String, Object> model = getModel();
 		model.put(REDIRECT_URI, request.queryParams(REDIRECT_URI) != null ? request.queryParams(REDIRECT_URI) : "");
 		
-		Template template = Template.builder()
-				.configuration(configuration)
+		ProcessTemplateRequest templateProcessRequest = ProcessTemplateRequest.builder()
 				.controllerClass(AuthenticationController.class)
 				.model(model)
-				.request(request)
 				.templateName(Templates.LOGIN)
 				.build();
 		
-		return template.render();
+		return processTemplate(templateProcessRequest);
     };
     
-    private static String logout(Configuration configuration, Request request, Response response) {
+    private static String logout(Request request, Response response) {
     	Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 
 		if (cookie.isPresent()) {
