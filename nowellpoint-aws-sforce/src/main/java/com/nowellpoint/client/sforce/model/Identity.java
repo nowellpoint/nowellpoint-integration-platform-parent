@@ -176,9 +176,7 @@ import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nowellpoint.client.sforce.model.Identity;
-import com.nowellpoint.client.sforce.model.Photos;
-import com.nowellpoint.client.sforce.model.Status;
-import com.nowellpoint.client.sforce.model.Urls;
+
 import lombok.Getter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

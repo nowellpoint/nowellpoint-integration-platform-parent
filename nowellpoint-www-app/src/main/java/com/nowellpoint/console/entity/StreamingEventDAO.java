@@ -148,7 +148,7 @@ public class StreamingEventDAO extends BasicDAO<StreamingEvent,String> {
 					.concat(String.valueOf(referenceDate.get().getMonthValue()))
 					.concat(String.valueOf(referenceDate.get().getDayOfMonth()));
 					
-			buckets.put(key, new AggregationResult(String.valueOf(i), referenceDate.get(), new Long(0)));
+			buckets.put(key, new AggregationResult(String.valueOf(i), referenceDate.get(), Long.valueOf(0)));
 			
 			referenceDate.set(referenceDate.get().minusDays(1));
 		});

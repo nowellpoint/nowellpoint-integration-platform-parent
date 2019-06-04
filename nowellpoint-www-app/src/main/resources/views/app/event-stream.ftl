@@ -127,7 +127,7 @@
                                     <div class="card-body">
                                         <span>${labels['events.received.today']}</span>
                                         <h2>${eventStreamMonitor.countToday?string(",##0")}</h2>
-                                        <span class="text-success">${TODAY}</span>
+                                        <span class="text-muted">${TODAY}</span>
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
                                     <div class="card-body">
                                         <span>${labels['events.received.this.week']}</span>
                                         <h2>${eventStreamMonitor.countThisWeek?string(",##0")}</h2>
-                                        <span class="text-success">${FIRST_DAY_OF_WEEK}</span>
+                                        <span class="text-muted">${FIRST_DAY_OF_WEEK}</span>
                                     </div>
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                                     <div class="card-body">
                                         <span>${labels['events.received.this.month']}</span>
                                         <h2>${eventStreamMonitor.countThisMonth?string(",##0")}</h2>
-                                        <span class="text-success">${FIRST_DAY_OF_MONTH}</span>
+                                        <span class="text-muted">${FIRST_DAY_OF_MONTH}</span>
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +154,7 @@
                                     <div class="card-body">
                                         <span>${labels['events.received.this.year']}</span>
                                         <h2>${eventStreamMonitor.countThisYear?string(",##0")}</h2>
-                                        <span class="text-success">${FIRST_DAY_OF_YEAR}</span>
+                                        <span class="text-muted">${FIRST_DAY_OF_YEAR}</span>
                                     </div>
                                 </div>
                             </div>

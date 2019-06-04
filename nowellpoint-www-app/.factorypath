@@ -152,7 +152,6 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/amazonaws/jmespath-java/1.11.525/jmespath-java-1.11.525.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/nowellpoint/nowellpoint-aws-core/1.0.12/nowellpoint-aws-core-1.0.12.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/amazonaws/aws-java-sdk-secretsmanager/1.11.500/aws-java-sdk-secretsmanager-1.11.500.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/nowellpoint/nowellpoint-aws-admin/1.0.12/nowellpoint-aws-admin-1.0.12.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/nowellpoint/nowellpoint-aws-sforce/1.0.12/nowellpoint-aws-sforce-1.0.12.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar" enabled="true" runInBatchMode="false"/>

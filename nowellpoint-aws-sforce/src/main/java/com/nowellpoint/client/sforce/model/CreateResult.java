@@ -3,41 +3,15 @@ package com.nowellpoint.client.sforce.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 public class CreateResult {
-	
-	private String id;
-	
-	private Boolean success;
-	
-	private List<Error> errors;
-	
-	public CreateResult() {
-		
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Boolean getSuccess() {
-		return success;
-	}
-
-	public void setSuccess(Boolean success) {
-		this.success = success;
-	}
-
-	public List<Error> getErrors() {
-		return errors;
-	}
-
-	public void setErrors(List<Error> errors) {
-		this.errors = errors;
-	}
+	@Getter @JsonProperty(value="id") private String id;
+	@Getter @JsonProperty(value="success") private Boolean success;
+	@Getter @JsonProperty(value="errors") private List<Error> errors;
 }

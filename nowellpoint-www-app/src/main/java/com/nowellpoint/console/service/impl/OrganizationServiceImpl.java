@@ -87,6 +87,11 @@ import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
+/**
+ * @author jherson
+ *
+ */
+
 public class OrganizationServiceImpl extends AbstractService implements OrganizationService {
 	
 	private static final Logger LOGGER = Logger.getLogger(OrganizationServiceImpl.class.getName());
@@ -105,9 +110,17 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	
 	private OrganizationDAO dao;
 	
+	/**
+	 * 
+	 */
+	
 	public OrganizationServiceImpl() {
 		dao = new OrganizationDAO(com.nowellpoint.console.entity.Organization.class, datastore);
 	}
+	
+	/**
+	 *
+	 */
 	
 	@Override
 	public Organization create(OrganizationRequest request) {
@@ -163,6 +176,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return create(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public Organization update(String id, String authorizationCode) {
 		Token token = ServiceClient.getInstance()
@@ -206,6 +223,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return update(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public Organization refresh(String id) {
 		
@@ -222,6 +243,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return update(organization);
 	}
+	
+	/**
+	 * 
+	 */
 
 	@Override
 	public Organization get(String id) {
@@ -240,6 +265,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 
 		return Organization.of(entity);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public Organization update(String id, EventStreamListenerRequest request) {
@@ -313,6 +342,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return update(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public Organization update(String id, SubscriptionRequest request) {
 		Organization instance = get(id);
@@ -330,6 +363,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return update(organization);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public Organization update(String id, CreditCardRequest request) {
@@ -374,6 +411,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return update(organization);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public Organization setPlan(String id, Plan plan) {
@@ -433,6 +474,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return update(organization);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public Organization setPlan(String id, Plan plan, CreditCardRequest request) {
@@ -515,6 +560,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return update(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public Organization update(String id, AddressRequest request) {
 		
@@ -569,6 +618,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return update(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public Organization update(String id, ContactRequest request) {
 		
@@ -598,12 +651,20 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return update(organization);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	@Override
 	public void delete(String id) {
 		Organization organization = get(id);
 		deleteCustomer(organization.getNumber());
 		delete(organization);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public List<Organization> refreshAll() {
@@ -618,6 +679,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return organizations;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	@Override
 	public byte[] createInvoice(String id, String invoiceNumber) throws IOException {
@@ -673,6 +738,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		
 		return null;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private Organization syncOrganization(String id) {
 		
@@ -891,6 +960,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private String savePushTopic(Token token, EventStreamListener listener) {
 		PushTopicRequest pushTopicRequest = PushTopicRequest.builder()
 				.isActive(listener.getActive())
@@ -919,6 +992,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return topicId;
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private Organization create(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setCreatedBy(new com.nowellpoint.console.entity.Identity(UserContext.get() != null ? UserContext.get().getId() : getSystemAdmin().getId().toString()));
@@ -929,6 +1006,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return Organization.of(entity);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private Organization update(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);
 		entity.setLastUpdatedOn(getCurrentDateTime());
@@ -938,6 +1019,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		putEntry(entity.getId().toString(), entity);
 		return Organization.of(entity);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private void saveConfiguration(Organization organization) {
 		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
@@ -978,6 +1063,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
         s3client.putObject(request);
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private PdfPTable getHeader(Organization organization, Transaction transaction) {
 		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
 		PdfPTable table = new PdfPTable(2);
@@ -998,6 +1087,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return table;
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private PdfPTable getPayer(Organization organization, Transaction transaction) {
 		PdfPTable table = new PdfPTable(1);
 		table.setWidthPercentage(100);
@@ -1010,6 +1103,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		table.addCell(getCell(transaction.getBillingAddress().getCountry(), PdfPCell.ALIGN_LEFT, FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK)));
 		return table;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private PdfPTable getPlan(Plan plan, Transaction transaction) {	
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, YYYY");
@@ -1025,10 +1122,18 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 		return table;
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private Chunk getPaymentMethod(Transaction transaction) {	
 		Chunk chunk = new Chunk("Payment Method: " + transaction.getCreditCard().getCardType() + " " + transaction.getCreditCard().getLastFour(), FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK));
 		return chunk;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private PdfPCell getCell(String text, int alignment, Font font) {
 	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
@@ -1038,6 +1143,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	    cell.setBorder(PdfPCell.NO_BORDER);
 	    return cell;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private PdfPCell getHeaderCell(String text, int alignment, Font font) {
 	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
@@ -1052,6 +1161,10 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	    return cell;
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private PdfPCell getPlanCell(String text, int alignment, Font font) {
 	    PdfPCell cell = new PdfPCell(new Phrase(text, font));
 	    cell.setPadding(2f);
@@ -1063,9 +1176,17 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 	    return cell;
 	}
 	
+	/**
+	 * 
+	 */
+	
 	private void deleteCustomer(String number) {
 		gateway.customer().delete(number);
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private void delete(Organization organization) {
 		com.nowellpoint.console.entity.Organization entity = modelMapper.map(organization, com.nowellpoint.console.entity.Organization.class);

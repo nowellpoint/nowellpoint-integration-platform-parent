@@ -54,23 +54,23 @@ public class StreamingEventListener implements ServletContextListener {
 	
 	@Override
     public void contextInitialized(ServletContextEvent event) {    
-		mongoConnect();
+		connect();
+		startQueue();
 		startListeners();
-        startQueue();
 	}
 	
 	@Override
     public void contextDestroyed(ServletContextEvent event) {
 		stopQueue();
-		disconnectAll();
-		mongoDisconnect();
+		stopListeners();
+		disconnect();
 	}
 	
-	private void mongoConnect() {
+	private void connect() {
 		MongoConnection.getInstance().connect();
 	}
 	
-	private void mongoDisconnect() {
+	private void disconnect() {
 		MongoConnection.getInstance().disconnect();
 	}
 	
@@ -135,17 +135,20 @@ public class StreamingEventListener implements ServletContextListener {
 							
 							String key = record.getS3().getObject().getKey();
 							
-							disconnect(key);
-							
-							S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
-									.withBucket(record.getS3().getBucket().getName())
-									.withKey(key);
-							
-							S3Object s3object = s3client.getObject(new GetObjectRequest(builder.build()));
-							
-							TopicConfiguration configuration = readConfiguration(s3object);
-							
-							reconnect(key, configuration);
+							if (containsKey(key)) {
+								
+								stopListener(key);
+								
+								S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
+										.withBucket(record.getS3().getBucket().getName())
+										.withKey(key);
+								
+								S3Object s3object = s3client.getObject(new GetObjectRequest(builder.build()));
+								
+								TopicConfiguration configuration = readConfiguration(s3object);
+								
+								reconnect(key, configuration);
+							}
 						});
 						
 						message.acknowledge();
@@ -199,16 +202,16 @@ public class StreamingEventListener implements ServletContextListener {
 		TOPIC_SUBSCRIPTIONS.put(key, topicSubscription);
 	}
 	
-	private void disconnectAll() {
+	private void stopListeners() {
 		TOPIC_SUBSCRIPTIONS.keySet().stream().forEach(k -> {
-			TOPIC_SUBSCRIPTIONS.get(k).disconnect();
+			TOPIC_SUBSCRIPTIONS.get(k).stopListener();
 		});
 		TOPIC_SUBSCRIPTIONS.clear();
 	}
 	
-	private void disconnect(String key) {
+	private void stopListener(String key) {
 		if (containsKey(key)) {
-			get(key).disconnect();
+			get(key).stopListener();
 		}
 	}
 	

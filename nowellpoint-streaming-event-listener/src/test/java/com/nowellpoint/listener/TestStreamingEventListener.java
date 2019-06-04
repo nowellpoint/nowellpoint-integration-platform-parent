@@ -40,6 +40,7 @@ import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.RefreshTokenGrantRequest;
 import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.http.HttpResponse;
@@ -162,9 +163,13 @@ public class TestStreamingEventListener {
 		
 		int i = 0;
 		
-		while (i < 5) {
-			updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), "0013A00001YjszLQAR");
-			updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
+		while (i < 1) {
+			CreateResult createResult = createAccount(token.getAccessToken(), identity.getUrls().getSObjects());
+			
+			System.out.println(createResult.getId());
+			//updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			//deleteAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			//updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
 			i++;
 		}
 	}
@@ -178,6 +183,7 @@ public class TestStreamingEventListener {
 		
 		String body = mapper.createObjectNode()
 				.put("Rating", "Hot")
+				.put("Website", "https://www.nowellpoint.com")
 				.toString();
 		
 		HttpResponse response = RestResource.post(sobjectUrl.concat("Account/").concat(accountId).concat("/?_HttpMethod=PATCH"))
@@ -186,6 +192,42 @@ public class TestStreamingEventListener {
 				.bearerAuthorization(accessToken)
 				.body(body)
 				.contentType(MediaType.APPLICATION_JSON)
+                .execute();
+		
+		assertEquals(204, response.getStatusCode());
+	}
+	
+	private CreateResult createAccount(String accessToken, String sobjectUrl) {
+		
+		String body = mapper.createObjectNode()
+				.put("BillingStreet", "129 S. Bloodworth Street")
+				.put("BillingCity", "Raleigh")
+				.put("BillingStateCode", "NC")
+				.put("BillingPostalCode", "27601")
+				.put("BillingCountryCode", "US")
+				.put("Name", "Nowellpoint")
+				.put("Rating", "Cold")
+				.put("Website", "https://www.newsite.com")
+				.toString();
+		
+		HttpResponse response = RestResource.post(sobjectUrl.concat("Account/"))
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(accessToken)
+				.body(body)
+				.contentType(MediaType.APPLICATION_JSON)
+                .execute();
+		
+		assertEquals(201, response.getStatusCode());
+		
+		return response.getEntity(CreateResult.class);
+	}
+	
+	private void deleteAccount(String accessToken, String sobjectUrl, String accountId) {
+		HttpResponse response = RestResource.delete(sobjectUrl.concat("Account/"))
+				.path(accountId)
+				.acceptCharset(StandardCharsets.UTF_8)
+				.bearerAuthorization(accessToken)
                 .execute();
 		
 		assertEquals(204, response.getStatusCode());

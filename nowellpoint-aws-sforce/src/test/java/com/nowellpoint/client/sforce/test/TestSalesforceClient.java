@@ -96,9 +96,16 @@ public class TestSalesforceClient {
 			
 			assertNotNull(count);
 			
-			Set<Account> accounts = client.query(Account.class, Account.QUERY);
+			String query = Account.QUERY.concat("Where BillingCountryCode != null");
 			
-			System.out.println(accounts.size());
+			Set<Account> accounts = client.query(Account.class, query);
+			
+			Account account = accounts.stream().findFirst().get();
+			
+			assertNotNull(account.getName());
+			assertNotNull(account.getBillingCity());
+			assertNotNull(account.getBillingCountry());
+			assertNotNull(account.getBillingCountryCode());
 			
 			Limits limits = client.getLimits();
 			

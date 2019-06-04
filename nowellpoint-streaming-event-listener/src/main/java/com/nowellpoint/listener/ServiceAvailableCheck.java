@@ -1,13 +1,10 @@
 package com.nowellpoint.listener;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.Health;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
 @Health
-@ApplicationScoped
 public class ServiceAvailableCheck implements HealthCheck {
 
 	@Override
