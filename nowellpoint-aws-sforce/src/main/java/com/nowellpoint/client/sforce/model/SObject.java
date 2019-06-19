@@ -5,11 +5,14 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nowellpoint.client.sforce.annotation.Column;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SObject implements Serializable {
+public abstract class SObject implements Serializable {
 	
 	private static final long serialVersionUID = 8436267729392469449L;
 	
@@ -32,12 +35,10 @@ public class SObject implements Serializable {
 			+ "LastModifiedDate ";
 
 	@Getter @JsonProperty("attributes") private Attributes attributes;
-	@Getter @JsonProperty("Id") private String id;
-	@Getter @JsonProperty("Name") private String name;
-	@Getter @JsonProperty("CreatedDate") private Date createdDate;
-	@Getter @JsonProperty("LastModifiedDate") private Date lastModifiedDate;
-	@Getter @JsonProperty(value="CreatedBy") private UserInfo createdBy;
-	@Getter @JsonProperty(value="LastModifiedBy") private UserInfo lastModifiedBy;
-	
-	public SObject() { }
+	@Getter @Column(name="Id") @JsonProperty("Id") private String id;
+	@Getter @Column(name="Name") @JsonProperty("Name") private String name;
+	@Getter @Column(name="CreatedDate") @JsonProperty("CreatedDate") private Date createdDate;
+	@Getter @Column(name="LastModifiedDate") @JsonProperty("LastModifiedDate") private Date lastModifiedDate;
+	@Getter @Column(name="CreatedBy") @JsonProperty(value="CreatedBy") private UserInfo createdBy;
+	@Getter @Column(name="LastModifiedBy") @JsonProperty(value="LastModifiedBy") private UserInfo lastModifiedBy;
 }

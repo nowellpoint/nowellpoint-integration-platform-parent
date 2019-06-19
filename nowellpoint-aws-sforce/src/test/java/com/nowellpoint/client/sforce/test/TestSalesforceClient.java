@@ -2,8 +2,6 @@ package com.nowellpoint.client.sforce.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -12,8 +10,8 @@ import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.OauthRequests;
 import com.nowellpoint.client.sforce.Salesforce;
-import com.nowellpoint.client.sforce.SalesforceClientException;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
+import com.nowellpoint.client.sforce.SalesforceClientException;
 import com.nowellpoint.client.sforce.UsernamePasswordGrantRequest;
 import com.nowellpoint.client.sforce.model.Account;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
@@ -28,13 +26,10 @@ import com.nowellpoint.util.SecretsManager;
 
 public class TestSalesforceClient {
 	
+	private static Salesforce client;
+	
 	@BeforeClass
 	public static void init() {
-		
-	}
-	
-	@Test
-	public void testUsernamePasswordAuthentication() {
 		
 		UsernamePasswordGrantRequest request = OauthRequests.PASSWORD_GRANT_REQUEST.builder()
 				.setClientId(SecretsManager.getSalesforceClientId())
@@ -50,6 +45,8 @@ public class TestSalesforceClient {
 			
 			Token token = response.getToken();
 			
+			client = SalesforceClientBuilder.defaultClient(token);
+			
 			assertNotNull(token);
 			assertNotNull(token.getAccessToken());			
 			assertNotNull(token.getId());
@@ -58,8 +55,33 @@ public class TestSalesforceClient {
 			assertNotNull(token.getSignature());
 			assertNotNull(token.getTokenType());
 			
-			Salesforce client = SalesforceClientBuilder.defaultClient(token);
-			
+		} catch (OauthException e) {
+			System.out.println(e.getStatusCode());
+			System.out.println(e.getMessage());
+			System.out.println(e.getErrorDescription());
+		} 	
+		
+	}
+	
+	@Test
+	public void testReflection() {
+		Account account = client.findById(Account.class, "0013000001Fc0b0AAB");
+		
+		assertNotNull(account.getId());
+		assertNotNull(account.getName());
+		assertNotNull(account.getBillingCity());
+		assertNotNull(account.getOwnership());
+		assertNotNull(account.getNumberOfEmployees());
+		assertNotNull(account.getOwner().getName());
+		assertNotNull(account.getCreatedDate());
+		assertNotNull(account.getAttributes().getType());
+		assertNotNull(account.getAttributes().getUrl());
+
+	}
+	
+	@Test
+	public void testUsernamePasswordAuthentication() {
+		try {
 			Identity identity = client.getIdentity();
 			
 			assertNotNull(identity);
@@ -95,17 +117,6 @@ public class TestSalesforceClient {
 			Long count = client.count("Select count() from Account");
 			
 			assertNotNull(count);
-			
-			String query = Account.QUERY.concat("Where BillingCountryCode != null");
-			
-			Set<Account> accounts = client.query(Account.class, query);
-			
-			Account account = accounts.stream().findFirst().get();
-			
-			assertNotNull(account.getName());
-			assertNotNull(account.getBillingCity());
-			assertNotNull(account.getBillingCountry());
-			assertNotNull(account.getBillingCountryCode());
 			
 			Limits limits = client.getLimits();
 			

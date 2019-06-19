@@ -2,38 +2,16 @@ package com.nowellpoint.client.sforce.model;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nowellpoint.client.sforce.annotation.Column;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Attributes implements Serializable {
-
-	/**
-	 * 
-	 */
 	
 	private static final long serialVersionUID = -4180438562996624005L;
 
-	private String type;
-	
-	private String url;
-	
-	public Attributes() {
-		
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
+	@Getter @Column private String type;
+	@Getter @Column private String url;
 }

@@ -23,7 +23,12 @@
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1.jar" sourcepath="M2_REPO/joda-time/joda-time/2.8.1/joda-time-2.8.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/amazonaws/jmespath-java/1.11.525/jmespath-java-1.11.525.jar" sourcepath="M2_REPO/com/amazonaws/jmespath-java/1.11.525/jmespath-java-1.11.525-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar" sourcepath="M2_REPO/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/projectlombok/lombok/1.18.4/lombok-1.18.4.jar" sourcepath="M2_REPO/org/projectlombok/lombok/1.18.4/lombok-1.18.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" sourcepath="M2_REPO/org/projectlombok/lombok/1.18.8/lombok-1.18.8-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/maps/google-maps-services/0.9.3/google-maps-services-0.9.3.jar" sourcepath="M2_REPO/com/google/maps/google-maps-services/0.9.3/google-maps-services-0.9.3-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/squareup/okhttp3/okhttp/3.14.0/okhttp-3.14.0.jar" sourcepath="M2_REPO/com/squareup/okhttp3/okhttp/3.14.0/okhttp-3.14.0-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/squareup/okio/okio/1.17.2/okio-1.17.2.jar" sourcepath="M2_REPO/com/squareup/okio/okio/1.17.2/okio-1.17.2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar" sourcepath="M2_REPO/com/google/code/gson/gson/2.8.5/gson-2.8.5-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/pl/zankowski/iextrading4j-all/3.0.1/iextrading4j-all-3.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/pl/zankowski/iextrading4j-api/3.0.1/iextrading4j-api-3.0.1.jar" sourcepath="M2_REPO/pl/zankowski/iextrading4j-api/3.0.1/iextrading4j-api-3.0.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/27.1-jre/guava-27.1-jre.jar" sourcepath="M2_REPO/com/google/guava/guava/27.1-jre/guava-27.1-jre-sources.jar"/>
@@ -53,8 +58,6 @@
 	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.9.8/jackson-datatype-jsr310-2.9.8.jar" sourcepath="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.9.8/jackson-datatype-jsr310-2.9.8-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/socket/socket.io-client/1.0.0/socket.io-client-1.0.0.jar" sourcepath="M2_REPO/io/socket/socket.io-client/1.0.0/socket.io-client-1.0.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/io/socket/engine.io-client/1.0.0/engine.io-client-1.0.0.jar" sourcepath="M2_REPO/io/socket/engine.io-client/1.0.0/engine.io-client-1.0.0-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/squareup/okhttp3/okhttp/3.8.1/okhttp-3.8.1.jar" sourcepath="M2_REPO/com/squareup/okhttp3/okhttp/3.8.1/okhttp-3.8.1-sources.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/squareup/okio/okio/1.13.0/okio-1.13.0.jar" sourcepath="M2_REPO/com/squareup/okio/okio/1.13.0/okio-1.13.0-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/json/json/20090211/json-20090211.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/sun/xml/bind/jaxb-impl/2.3.1/jaxb-impl-2.3.1.jar" sourcepath="M2_REPO/com/sun/xml/bind/jaxb-impl/2.3.1/jaxb-impl-2.3.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/glassfish/jaxb/jaxb-runtime/2.3.1/jaxb-runtime-2.3.1.jar" sourcepath="M2_REPO/org/glassfish/jaxb/jaxb-runtime/2.3.1/jaxb-runtime-2.3.1-sources.jar"/>

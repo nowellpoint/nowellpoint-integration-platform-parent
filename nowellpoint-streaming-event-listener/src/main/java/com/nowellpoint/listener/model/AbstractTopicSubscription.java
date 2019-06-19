@@ -18,13 +18,12 @@ import com.nowellpoint.util.SecretsManager;
 public abstract class AbstractTopicSubscription {
 	
 	private static final Logger LOGGER = Logger.getLogger(AbstractTopicSubscription.class);
-	
+
 	private static final String NOTIFICATIONS = "notifications";
 	private static final String CHANGE_EVENTS = "change.events";
 	private static final String STREAMING_EVENTS = "streaming.events";
 
 	protected Token refreshToken(String refreshToken) {
-		
 		RefreshTokenGrantRequest request = OauthRequests.REFRESH_TOKEN_GRANT_REQUEST.builder()
 				.setClientId(SecretsManager.getSalesforceClientId())
 				.setClientSecret(SecretsManager.getSalesforceClientSecret())
@@ -38,12 +37,11 @@ public abstract class AbstractTopicSubscription {
     }
 	
 	protected void writeNotification(Document notification) {
-		MongoConnection.getInstance().getMongoDatabase().getCollection(NOTIFICATIONS).insertOne(notification);
+		MongoConnection.getInstance().getDatabase().getCollection(NOTIFICATIONS).insertOne(notification);
 	}
 	
 	protected Long getReplayId(String organizationId) {
-		
-		Optional<ChangeEvent> document = Optional.of(MongoConnection.getInstance().getMongoDatabase()
+		Optional<ChangeEvent> document = Optional.of(MongoConnection.getInstance().getDatabase()
 				.getCollection(CHANGE_EVENTS, ChangeEvent.class)
 				.find(new Document("organizationId", organizationId))
 				.sort(new Document("_id", -1))
@@ -56,19 +54,13 @@ public abstract class AbstractTopicSubscription {
 		}
 	}
 	
-	protected void writeChangeEvent(ChangeEvent changeEvent) {
-		try {
-			MongoConnection.getInstance().getMongoDatabase().getCollection(CHANGE_EVENTS, ChangeEvent.class).insertOne(changeEvent);
-		} catch (MongoWriteException e) {
-            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-            	LOGGER.warn(e.getMessage());
-            }
-		}
+	protected void insert(ChangeEvent changeEvent) {
+		MongoConnection.getInstance().getDatabase().getCollection(CHANGE_EVENTS, ChangeEvent.class).insertOne(changeEvent);
 	}
 	
 	protected void writeStreamingEvent(Document streamingEvent) {
 		try {
-			MongoConnection.getInstance().getMongoDatabase().getCollection(STREAMING_EVENTS).insertOne(streamingEvent);
+			MongoConnection.getInstance().getDatabase().getCollection(STREAMING_EVENTS).insertOne(streamingEvent);
 		} catch (MongoWriteException e) {
             if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
             	LOGGER.warn(e.getMessage());

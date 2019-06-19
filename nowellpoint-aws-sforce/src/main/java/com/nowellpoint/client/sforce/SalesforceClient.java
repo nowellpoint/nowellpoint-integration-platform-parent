@@ -1,17 +1,34 @@
 package com.nowellpoint.client.sforce;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.nowellpoint.client.sforce.annotation.Column;
+import com.nowellpoint.client.sforce.annotation.Entity;
 import com.nowellpoint.client.sforce.model.ApexClass;
 import com.nowellpoint.client.sforce.model.ApexTrigger;
+import com.nowellpoint.client.sforce.model.Attributes;
 import com.nowellpoint.client.sforce.model.CreateResult;
 import com.nowellpoint.client.sforce.model.DescribeGlobalResult;
 import com.nowellpoint.client.sforce.model.DescribeResult;
@@ -25,6 +42,7 @@ import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.QueryResult;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
+import com.nowellpoint.client.sforce.model.SObject;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.Token;
 import com.nowellpoint.client.sforce.model.User;
@@ -397,7 +415,6 @@ final class SalesforceClient implements Salesforce {
 	
 	@Override
 	public Resources getResources() {
-		
 		HttpResponse response = RestResource.get(getToken().getInstanceUrl().concat("/services/data/v").concat(API_VERSION))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
@@ -442,12 +459,48 @@ final class SalesforceClient implements Salesforce {
 				queryResult = queryMore(queryResult.getNextRecordsUrl());
 				records.addAll(queryResult.getRecords(type));
 			}
-			
 		} else {
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntityList(ApiError.class).get(0));
 		}
 		
 		return records;
+	}
+	
+	@Override
+	public <T extends SObject> T findById(Class<T> type, String id) {
+		List<Field> fields = getDeclaredFields(type);
+		
+		Map<String,Field> fieldMap = resolveColumns(Optional.empty(), fields);
+		
+		String query = new StringBuilder("Select ")
+				.append(String.join(", ", fieldMap.keySet()))
+				.append(" ")
+				.append("From ")
+				.append(resolveEntityName(type))
+				.append(" ")
+				.append("Where Id = '")
+				.append(id)
+				.append("'")
+				.toString();
+		
+		Identity identity = getIdentity();
+		
+		HttpResponse response = RestResource.get(identity.getUrls().getQuery())
+				.acceptCharset(StandardCharsets.UTF_8)
+				.accept(MediaType.APPLICATION_JSON)
+				.bearerAuthorization(getToken().getAccessToken())
+     			.queryParameter("q", query)
+     			.execute();
+		
+		if (response.getStatusCode() == Status.OK) {
+			JsonNode record = response.getEntity(JsonNode.class)
+					.withArray("records")
+					.get(0);
+			
+			return invokeSetters(type, record, fields);
+		}
+		
+		return null;
 	}
 	
 	@Override
@@ -487,5 +540,140 @@ final class SalesforceClient implements Salesforce {
 		} else {
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
 		}
+	}
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param clazz
+	 * @return
+	 */
+	
+	private <T> String resolveEntityName(Class<T> clazz) {
+		if (! clazz.isAnnotationPresent(Entity.class)) {
+			throw new IllegalArgumentException("Class must be annotated with the Entity annotation");
+		}
+		
+		String name = null; 
+				
+		Entity entity = clazz.getAnnotation(Entity.class);
+		if (entity.name().isBlank()) {
+			name = clazz.getSimpleName();
+		} else {
+			name = entity.name();
+		}
+		return name;
+	}
+	
+	private <T> List<Field> getDeclaredFields(Class<T> type) {
+		List<Field> fields = new ArrayList<Field>(Arrays.asList(type.getDeclaredFields()));
+		Class<?> superClass = type.getSuperclass();
+		while (true) {
+			fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
+			if (superClass.getSuperclass() != null) {
+				superClass = superClass.getSuperclass();
+			} else {
+				break;
+			}
+		}
+		
+		return fields;
+	}
+	
+	private Map<String,Field> resolveColumns(Optional<String> parent, List<Field> fields) {
+		Map<String,Field> fieldMap = new HashMap<String,Field>();
+		
+		fields.stream().filter(field -> field.isAnnotationPresent(Column.class)).forEach(field -> {
+			String name = resolveColumnName(field);
+			if (field.getType().isAssignableFrom(String.class)
+					|| field.getType().isAssignableFrom(Double.class)
+					|| field.getType().isAssignableFrom(Integer.class)
+					|| field.getType().isAssignableFrom(Date.class)
+					|| field.getType().isAssignableFrom(LocalDateTime.class)
+					|| field.getType().isAssignableFrom(Long.class)
+					|| field.getType().isAssignableFrom(Boolean.class)
+					|| field.getType().isAssignableFrom(URL.class)) {
+				
+				if (parent.isPresent()) {
+					name = parent.get().concat(".").concat(name);
+				}
+				
+				fieldMap.put(name, field);
+				
+			} else {
+				fieldMap.putAll(resolveColumns(Optional.of(name), Arrays.asList(field.getType().getDeclaredFields())));
+			}
+		});
+		
+		return fieldMap;
+	}
+	
+	private String resolveColumnName(Field field) {
+		String name = field.getAnnotation(Column.class).name();
+		return name.trim().isEmpty() ? field.getName() : name;
+	}
+	
+	private void invokeSetter(Object object, Field field, Object value) throws IllegalArgumentException, IllegalAccessException {
+		if (value != null) {
+			field.setAccessible(true);
+			field.set(object, value);
+		}
+	}
+	
+	private <T> T invokeSetters(Class<T> type, JsonNode record, List<Field> fields) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		try {
+			T entity = (T) type.getDeclaredConstructor().newInstance();
+			fields.stream().filter(field -> field.isAnnotationPresent(Column.class) || field.getType().isAssignableFrom(Attributes.class)).forEach(field -> {
+				Object value = null;
+				if (field.getType().isAssignableFrom(Attributes.class)) {
+					value = invokeSetters(field.getType(), record.get("attributes"), Arrays.asList(field.getType().getDeclaredFields()));
+				} else {
+					String name = resolveColumnName(field);
+					JsonNode node = record.get(name);
+					if (node != null) {
+						if (field.getType().isAssignableFrom(String.class)) {
+							value = node.asText();
+						} else if (field.getType().isAssignableFrom(Double.class)) {
+							value = node.asDouble();
+						} else if (field.getType().isAssignableFrom(Integer.class)) {
+							value = node.asInt();
+						} else if (field.getType().isAssignableFrom(Long.class)) {
+							value = node.asLong();
+						} else if (field.getType().isAssignableFrom(Boolean.class)) {
+							value = node.asBoolean();
+						} else if (field.getType().isAssignableFrom(URL.class)) {
+							try {
+								value = new URL(node.asText());
+							} catch (MalformedURLException e) {
+								LOGGER.severe(e.getMessage());
+							}
+						} else if (field.getType().isAssignableFrom(Date.class)) { 
+							value = Date.from(LocalDateTime.parse(node.asText(), formatter).toInstant(ZoneOffset.UTC));
+						} else if (field.getType().isAssignableFrom(LocalDateTime.class)) { 
+							value = LocalDateTime.parse(node.asText(), formatter).toInstant(ZoneOffset.UTC);
+						} else {
+							value = invokeSetters(field.getType(), node, Arrays.asList(field.getType().getDeclaredFields()));
+						}
+					}
+				}
+				
+				try {
+					invokeSetter(entity, field, value);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					LOGGER.severe(e.getMessage());
+				}
+			});
+			
+			return entity;
+		
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+		return null;	
 	}
 }

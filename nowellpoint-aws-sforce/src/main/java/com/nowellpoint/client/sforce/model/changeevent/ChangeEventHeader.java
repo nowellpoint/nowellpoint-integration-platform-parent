@@ -1,6 +1,7 @@
 package com.nowellpoint.client.sforce.model.changeevent;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,5 +21,5 @@ public class ChangeEventHeader implements Serializable {
 	@Getter @JsonProperty(value="changeOrigin") private String changeOrigin;
 	@Getter @JsonProperty(value="transactionKey") private String transactionKey;
 	@Getter @JsonProperty(value="commitTimestamp") private Long commitTimestamp;
-	@Getter @JsonProperty(value="recordIds") private String[] recordIds;
+	@Getter @JsonProperty(value="recordIds") private List<String> recordIds;
 }

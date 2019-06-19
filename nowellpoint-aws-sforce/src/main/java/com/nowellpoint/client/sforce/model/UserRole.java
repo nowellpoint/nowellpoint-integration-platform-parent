@@ -3,6 +3,10 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRole extends SObject {
 	
@@ -26,21 +30,6 @@ public class UserRole extends SObject {
 			+ "RollupDescription "
 			+ "From UserRole";
 	
-	@JsonProperty("Name")
-	private String name;
-	
-	@JsonProperty("DeveloperName")
-	private String developerName;
-	
-	public UserRole() {
-		
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDeveloperName() {
-		return developerName;
-	}
+	@Getter @JsonProperty("Name") private String name;
+	@Getter @JsonProperty("DeveloperName") private String developerName;
 }

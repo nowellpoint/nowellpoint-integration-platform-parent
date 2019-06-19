@@ -14,16 +14,6 @@ public class TestIEXCloudClient {
 	@Test
 	public void testGetQuote() {
 		
-		final IEXCloudClient iexTradingClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1, 
-				new IEXCloudTokenBuilder()
-				.withPublishableToken("")
-	                      .withSecretToken("")
-	                      .build());
 		
-		final Quote quote = iexTradingClient.executeRequest(new QuoteRequestBuilder()
-				.withSymbol("AAPL")
-				.build());
-		
-		System.out.println(quote);
 	}
 }

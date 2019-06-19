@@ -1,11 +1,17 @@
 package com.nowellpoint.client.sforce.test;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
+import java.util.Arrays;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.GeocodingResult;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
@@ -56,40 +62,76 @@ public class TestDuplicateAccount {
 	}
 	
 	@Test
-	public void testUsernamePasswordAuthentication() {
+	public void testGoogleGeocode() {
 		
 		Salesforce client = SalesforceClientBuilder.defaultClient(token);
-		
-		String query = Account.QUERY.concat("Where BillingCountryCode != null Limit 10");
-		
-		Set<Account> accounts = client.query(Account.class, query);
-		
-		Account account = accounts.stream().findFirst().get();
-		
-		System.out.println(account.getName());
-		System.out.println(account.getCreatedBy().getEmail());
-		System.out.println(account.getLastModifiedBy().getEmail());
-		System.out.println(account.getCreatedDate());
-		System.out.println(account.getLastModifiedDate());
+
+		Account account = client.findById(Account.class, "0013000001Fc0b0AAB");
 		
 		String address = new StringBuilder()
 				.append(account.getBillingStreet())
-				.append("+")
+				.append(" ")
 				.append(account.getBillingCity())
-				.append("+")
+				.append(", ")
 				.append(account.getBillingState())
+				.append(" ")
+				.append(account.getBillingPostalCode())
+				.append(" ")
+				.append(account.getBillingCountryCode())
 				.toString();
 		
-		HttpResponse response = RestResource.get("https://maps.googleapis.com")
-				.path("maps/api/geocode/json")
-				.acceptCharset(StandardCharsets.UTF_8)
-				.accept(MediaType.APPLICATION_JSON)
-     			.queryParameter("address", address)
-     			.queryParameter("key", "")
-     			.execute();
+		GeoApiContext context = new GeoApiContext.Builder()
+				.apiKey(System.getenv("GOOGLE_API_KEY"))
+			    .build();
 		
-		System.out.println(response.getStatusCode());
-		System.out.println(response.getAsString());
+		GeocodingResult[] results;
+		try {
+			results = GeocodingApi.geocode(context, address).await();
+			
+			System.out.println(new ObjectMapper().writeValueAsString((results[0])));
+			
+			Arrays.asList(results[0].addressComponents).forEach(ac -> {
+				//ac.types
+			});
+			
+		} catch (ApiException | InterruptedException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testGoogleGeocodeLimited() {
 		
+		Salesforce client = SalesforceClientBuilder.defaultClient(token);
+
+		Account account = client.findById(Account.class, "0013000001Fc0guAAB");
+		
+		String address = new StringBuilder()
+				.append(account.getShippingStreet())
+				.append(" ")
+				.append(account.getShippingCity())
+				.append(", ")
+				.append(account.getShippingState())
+				.append(" ")
+				.append(account.getShippingPostalCode())
+				.append(" ")
+				.append(account.getShippingCountryCode())
+				.toString();
+		
+		GeoApiContext context = new GeoApiContext.Builder()
+				.apiKey(System.getenv("GOOGLE_API_KEY"))
+			    .build();
+		
+		GeocodingResult[] results;
+		try {
+			results = GeocodingApi.geocode(context, address).await();
+			
+			if (results.length > 0) {
+				System.out.println(new ObjectMapper().writeValueAsString((results[0])));
+			}
+			
+		} catch (ApiException | InterruptedException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

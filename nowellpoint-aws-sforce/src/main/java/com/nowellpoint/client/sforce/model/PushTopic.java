@@ -3,7 +3,9 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class PushTopic extends SObject {
 
 	private static final long serialVersionUID = -2531020859064634486L;
@@ -39,8 +41,4 @@ public class PushTopic extends SObject {
 	@Getter @JsonProperty("NotifyForOperationUndelete") private Boolean notifyForOperationUndelete;
 	@Getter @JsonProperty("NotifyForOperationUpdate") private Boolean notifyForOperationUpdate;
 	@Getter @JsonProperty("Query") private String query;
-	
-	public PushTopic() {
-		
-	}
 }

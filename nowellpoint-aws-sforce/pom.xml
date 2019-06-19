@@ -32,11 +32,10 @@
 			<version>2.1</version>
 		</dependency>
 		<dependency>
-	<groupId>pl.zankowski</groupId>
-	<artifactId>iextrading4j-all</artifactId>
-	<version>3.0.1</version>
-	<scope>test</scope>
-</dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.9.3</version>
+		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>
 			<artifactId>opencsv</artifactId>

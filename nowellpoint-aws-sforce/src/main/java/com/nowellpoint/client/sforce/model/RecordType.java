@@ -3,6 +3,10 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RecordType extends SObject {
 	
@@ -23,28 +27,7 @@ public class RecordType extends SObject {
 			+ "SobjectType "
 			+ "From RecordType";
 	
-	@JsonProperty("Name")
-	private String name;
-	
-	@JsonProperty("IsActive")
-	private Boolean isActive;
-	
-	@JsonProperty("SobjectType")
-	private String sobjectType;
-	
-	public RecordType() {
-		
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public String getSobjectType() {
-		return sobjectType;
-	}
+	@Getter @JsonProperty("Name") private String name;
+	@Getter @JsonProperty("IsActive") private Boolean isActive;
+	@Getter @JsonProperty("SobjectType") private String sobjectType;
 }

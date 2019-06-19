@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApexClass extends SObject {
 	
@@ -30,6 +32,4 @@ public class ApexClass extends SObject {
 	@Getter @JsonProperty("IsValid") private Boolean isValid;
 	@Getter @JsonProperty("ApiVersion") private Double apiVersion;
 	@Getter @JsonProperty("Name") private String name;
-	
-	public ApexClass() { }
 }

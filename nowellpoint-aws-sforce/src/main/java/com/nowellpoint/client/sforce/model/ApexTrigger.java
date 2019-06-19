@@ -3,6 +3,10 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApexTrigger extends SObject {
 	
@@ -33,31 +37,8 @@ public class ApexTrigger extends SObject {
 			+ "UsageIsBulk "
 			+ "From ApexTrigger";
 	
-	@JsonProperty("Body")
-	private String body;
-	
-	@JsonProperty("IsValid")
-	private Boolean isValid;
-	
-	@JsonProperty("ApiVersion")
-	private Double apiVersion;
-	
-	@JsonProperty("Name")
-	private String name;
-	
-	public ApexTrigger() {
-		
-	}
-
-	public String getBody() {
-		return body;
-	}
-
-	public Boolean getIsValid() {
-		return isValid;
-	}
-
-	public String getName() {
-		return name;
-	}
+	@Getter @JsonProperty("Body") private String body;
+	@Getter @JsonProperty("IsValid") private Boolean isValid; 
+	@Getter @JsonProperty("ApiVersion") private Double apiVersion;
+	@Getter @JsonProperty("Name") private String name;
 }

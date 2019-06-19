@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User extends SObject {
 
@@ -44,8 +46,4 @@ public class User extends SObject {
 	@Getter @JsonProperty("UserType") private String userType;
 	@Getter @JsonProperty("LanguageLocaleKey") private String languageLocaleKey;
 	@Getter @JsonProperty("EmployeeNumber") private String employeeNumber;
-
-	public User() {
-
-	}
 }

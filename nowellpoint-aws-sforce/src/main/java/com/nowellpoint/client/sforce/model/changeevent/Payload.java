@@ -18,13 +18,13 @@ public class Payload implements Serializable {
 	
 	@Getter @JsonProperty(value="LastModifiedDate") private Date lastModifiedDate;
 	@Getter @JsonProperty(value="ChangeEventHeader") private ChangeEventHeader changeEventHeader;
-	@Getter Map<String, Object> changedFields;
+	@Getter Map<String, Object> attributes;
 	 
     @JsonAnySetter
-    void setDetail(String key, Object value) {
-    	if (changedFields == null) {
-    		changedFields = new LinkedHashMap<>();
+    void setAttribute(String key, Object value) {
+    	if (attributes == null) {
+    		attributes = new LinkedHashMap<>();
     	}
-    	changedFields.put(key, value);
+    	attributes.put(key, value);
     }
 }

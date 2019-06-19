@@ -1,7 +1,6 @@
 package com.nowellpoint.listener.model;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +21,11 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.listener.service.AccountService;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
@@ -127,37 +129,19 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					com.nowellpoint.client.sforce.model.changeevent.ChangeEvent source = 
 							com.nowellpoint.client.sforce.model.changeevent.ChangeEvent.of(message.getDataAsMap());
 					
-					Event event = Event.builder()
-							.replayId(source.getEvent().getReplayId())
-							.build();
+					processChangeEvent(configuration.getOrganizationId(), source);
 					
-					ChangeEventHeader changeEventHeader = ChangeEventHeader.builder()
-							.changeOrigin(source.getPayload().getChangeEventHeader().getChangeOrigin())
-							.changeType(source.getPayload().getChangeEventHeader().getChangeType())
-							.commitNumber(source.getPayload().getChangeEventHeader().getCommitNumber())
-							.commitTimestamp(source.getPayload().getChangeEventHeader().getCommitTimestamp())
-							.commitUser(source.getPayload().getChangeEventHeader().getCommitUser())
-							.entityName(source.getPayload().getChangeEventHeader().getEntityName())
-							.recordIds(Arrays.asList(source.getPayload().getChangeEventHeader().getRecordIds()))
-							.sequenceNumber(source.getPayload().getChangeEventHeader().getSequenceNumber())
-							.transactionKey(source.getPayload().getChangeEventHeader().getTransactionKey())
-							.build();
+					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
+						new AccountService().processChangeEvent(source, configuration);
+					}
 					
-					Payload payload = Payload.builder()
-							.changeEventHeader(changeEventHeader)
-							.lastModifiedDate(source.getPayload().getLastModifiedDate())
-							.build();
-					
-					ChangeEvent changeEvent = ChangeEvent.builder()
-							.event(event)
-							.organizationId(configuration.getOrganizationId())
-							.payload(payload)
-							.schema(source.getSchema())
-							.build();
-					
-					writeChangeEvent(changeEvent);
-					
-				} catch (IOException e) {
+				} catch (MongoWriteException e) {
+					if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+		            	LOGGER.warn(e.getMessage());
+		            } else {
+		            	LOGGER.error(e);
+		            }
+				} catch (IOException | SecureValueException e) {
 					LOGGER.error(e);
 				}
 			}
@@ -206,7 +190,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					.append("organizationId", new ObjectId(configuration.getOrganizationId()))
 					.append("receivedOn", new Date())
 					.append("subject", "Unable to subscribe to channel")
-					.append("receivedFrom", "StreamingEventListener");
+					.append("receivedFrom", "ChangeEventListener");
 			
 			writeNotification(notification);
 			
@@ -334,5 +318,38 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		} catch (Exception e) {
 			LOGGER.error(e);
 		}
+	}
+	
+	private void processChangeEvent(String organizationId, com.nowellpoint.client.sforce.model.changeevent.ChangeEvent source) {
+		Event event = Event.builder()
+				.replayId(source.getEvent().getReplayId())
+				.build();
+		
+		ChangeEventHeader changeEventHeader = ChangeEventHeader.builder()
+				.changeOrigin(source.getPayload().getChangeEventHeader().getChangeOrigin())
+				.changeType(source.getPayload().getChangeEventHeader().getChangeType())
+				.commitNumber(source.getPayload().getChangeEventHeader().getCommitNumber())
+				.commitTimestamp(source.getPayload().getChangeEventHeader().getCommitTimestamp())
+				.commitUser(source.getPayload().getChangeEventHeader().getCommitUser())
+				.entityName(source.getPayload().getChangeEventHeader().getEntityName())
+				.recordIds(source.getPayload().getChangeEventHeader().getRecordIds())
+				.sequenceNumber(source.getPayload().getChangeEventHeader().getSequenceNumber())
+				.transactionKey(source.getPayload().getChangeEventHeader().getTransactionKey())
+				.build();
+		
+		Payload payload = Payload.builder()
+				.attributes(source.getPayload().getAttributes())
+				.changeEventHeader(changeEventHeader)
+				.lastModifiedDate(source.getPayload().getLastModifiedDate())
+				.build();
+		
+		ChangeEvent changeEvent = ChangeEvent.builder()
+				.event(event)
+				.organizationId(organizationId)
+				.payload(payload)
+				.schema(source.getSchema())
+				.build();
+		
+		insert(changeEvent);
 	}
 }

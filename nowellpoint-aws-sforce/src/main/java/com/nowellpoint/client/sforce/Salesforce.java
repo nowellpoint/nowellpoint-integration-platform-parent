@@ -16,6 +16,7 @@ import com.nowellpoint.client.sforce.model.PushTopic;
 import com.nowellpoint.client.sforce.model.PushTopicRequest;
 import com.nowellpoint.client.sforce.model.RecordType;
 import com.nowellpoint.client.sforce.model.Resources;
+import com.nowellpoint.client.sforce.model.SObject;
 import com.nowellpoint.client.sforce.model.Theme;
 import com.nowellpoint.client.sforce.model.User;
 import com.nowellpoint.client.sforce.model.UserLicense;
@@ -49,5 +50,6 @@ public interface Salesforce {
 	public Set<Profile> getProfiles();
 	public Resources getResources();
 	public Limits getLimits();
+	public <T extends SObject> T findById(Class<T> type, String id);
 	public <T> Set<T> query(Class<T> type, String query);
 }

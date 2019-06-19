@@ -165,10 +165,9 @@ public class TestStreamingEventListener {
 		
 		while (i < 1) {
 			CreateResult createResult = createAccount(token.getAccessToken(), identity.getUrls().getSObjects());
-			
-			System.out.println(createResult.getId());
-			//updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
-			//deleteAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			deleteAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			//updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), "0013000001Fc0b0AAB");
 			//updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
 			i++;
 		}
@@ -183,7 +182,7 @@ public class TestStreamingEventListener {
 		
 		String body = mapper.createObjectNode()
 				.put("Rating", "Hot")
-				.put("Website", "https://www.nowellpoint.com")
+				.put("Website", "https://www.nowellpoint.com") //www.archon-tech.com
 				.toString();
 		
 		HttpResponse response = RestResource.post(sobjectUrl.concat("Account/").concat(accountId).concat("/?_HttpMethod=PATCH"))

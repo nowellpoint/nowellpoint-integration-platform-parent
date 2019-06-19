@@ -3,6 +3,10 @@ package com.nowellpoint.client.sforce.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Profile extends SObject {
 	
@@ -22,32 +26,7 @@ public class Profile extends SObject {
 			+ "UserType "
 			+ "From Profile ";
 	
-	@JsonProperty("Name")
-	private String name;
-	
-	@JsonProperty("Description")
-	private String description;
-	
-	@JsonProperty("UserType")
-	private String userType;
-	
-	public Profile() {
-		
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public void setUserType(String userType) {
-		this.userType = userType;
-	}
+	@Getter @JsonProperty("Name") private String name;
+	@Getter @JsonProperty("Description") private String description;
+	@Getter @JsonProperty("UserType") private String userType;
 }
