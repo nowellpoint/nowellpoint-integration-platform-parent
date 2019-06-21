@@ -21,6 +21,7 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
+import com.google.maps.errors.ApiException;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.OauthException;
@@ -143,6 +144,12 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		            }
 				} catch (IOException | SecureValueException e) {
 					LOGGER.error(e);
+				} catch (ApiException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});

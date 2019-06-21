@@ -19,7 +19,7 @@ public class Account {
 	@Getter private String accountNumber;
 	@Getter private String accountSource;
 	@Getter private Double annualRevenue;
-	@Getter private Address billingAddress;
+	@Getter private GeoCodedAddress billingAddress;
 	@Getter private String createdById;
 	@Getter private Date createdDate;
 	@Getter private String description;
@@ -33,7 +33,7 @@ public class Account {
 	@Getter private String ownership;
 	@Getter private String phone;
 	@Getter private String rating;
-	@Getter private Address shippingAddress;
+	@Getter private GeoCodedAddress shippingAddress;
 	@Getter private String sic;
 	@Getter private String sicDesc;
 	@Getter private String site;
@@ -48,7 +48,7 @@ public class Account {
 			@BsonProperty("accountNumber") String accountNumber,
 			@BsonProperty("accountSource") String accountSource,
 			@BsonProperty("annualRevenue") Double annualRevenue,
-			@BsonProperty("billingAddress") Address billingAddress,
+			@BsonProperty("billingAddress") GeoCodedAddress billingAddress,
 			@BsonProperty("createdById") String createdById,
 			@BsonProperty("createdDate") Date createdDate,
 			@BsonProperty("description") String description,
@@ -62,7 +62,7 @@ public class Account {
 			@BsonProperty("ownership") String ownership,
 			@BsonProperty("phone") String phone,
 			@BsonProperty("rating") String rating,
-			@BsonProperty("shippingAddress") Address shippingAddress,
+			@BsonProperty("shippingAddress") GeoCodedAddress shippingAddress,
 			@BsonProperty("sic") String sic,
 			@BsonProperty("sicDesc") String sicDesc,
 			@BsonProperty("site") String site,
@@ -131,7 +131,7 @@ public class Account {
 	}
 	
 	public static Account of(String organizationId, com.nowellpoint.client.sforce.model.Account source) {
-		Address billingAddress = Address.builder()
+		GeoCodedAddress billingAddress = GeoCodedAddress.builder()
 				.city(source.getBillingCity())
 				.country(source.getBillingCountry())
 				.countryCode(source.getBillingCountryCode())
@@ -143,7 +143,7 @@ public class Account {
 				.street(source.getBillingStreet())
 				.build();
 		
-		Address shippingAddress = Address.builder()
+		GeoCodedAddress shippingAddress = GeoCodedAddress.builder()
 				.city(source.getShippingCity())
 				.country(source.getShippingCountry())
 				.countryCode(source.getShippingCountryCode())

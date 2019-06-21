@@ -1,5 +1,6 @@
 package com.nowellpoint.listener.service;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,11 +10,16 @@ import java.util.Map;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
+import javax.json.bind.config.PropertyNamingStrategy;
 import javax.json.bind.config.PropertyVisibilityStrategy;
 
 import org.bson.Document;
 import org.jboss.logging.Logger;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.GeocodingResult;
 import com.nowellpoint.client.sforce.Authenticators;
 import com.nowellpoint.client.sforce.OauthAuthenticationResponse;
 import com.nowellpoint.client.sforce.OauthRequests;
@@ -25,6 +31,8 @@ import com.nowellpoint.listener.connection.MongoConnection;
 import com.nowellpoint.listener.model.Account;
 import com.nowellpoint.listener.model.AccountEvent;
 import com.nowellpoint.listener.model.AccountPayload;
+import com.nowellpoint.listener.model.Address;
+import com.nowellpoint.listener.model.GeoCodedAddress;
 import com.nowellpoint.listener.model.TopicConfiguration;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
@@ -34,24 +42,25 @@ public class AccountService {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountService.class);
 	private static final String ACCOUNTS = "accounts";
+	private static final Jsonb jsonb = JsonbBuilder.create(new JsonbConfig()
+			.withNullValues(Boolean.TRUE)
+			.withPropertyNamingStrategy(PropertyNamingStrategy.UPPER_CAMEL_CASE)
+			.withPropertyVisibilityStrategy(
+					new PropertyVisibilityStrategy() {
+						
+						@Override
+						public boolean isVisible(Field field) {
+							return true;
+						}
+						
+						@Override
+						public boolean isVisible(Method method) {
+							return false;
+						}
+						
+					}));
 	
-	public void processChangeEvent(ChangeEvent event, TopicConfiguration configuration) throws SecureValueException {
-		Jsonb jsonb = JsonbBuilder.create(new JsonbConfig()
-				.withNullValues(Boolean.TRUE)
-				.withPropertyVisibilityStrategy(
-						new PropertyVisibilityStrategy() {
-							
-							@Override
-							public boolean isVisible(Field field) {
-								return true;
-							}
-							
-							@Override
-							public boolean isVisible(Method method) {
-								return false;
-							}
-							
-						}));
+	public void processChangeEvent(ChangeEvent event, TopicConfiguration configuration) throws SecureValueException, ApiException, InterruptedException, IOException {
 		
 		String accountId = event.getPayload().getChangeEventHeader().getRecordIds().get(0);
 		
@@ -73,7 +82,7 @@ public class AccountService {
 					.accountNumber(payload.getAccountNumber())
 					.accountSource(payload.getAccountSource())
 					.annualRevenue(payload.getAnnualRevenue())
-					.billingAddress(payload.getBillingAddress())
+					.billingAddress(geoCodeAddress(payload.getBillingAddress()))
 					.createdById(payload.getCreatedById())
 					.createdDate(payload.getCreatedDate())
 					.description(payload.getDescription())
@@ -89,7 +98,7 @@ public class AccountService {
 					.ownership(payload.getOwnership())
 					.phone(payload.getPhone())
 					.rating(payload.getRating())
-					.shippingAddress(payload.getShippingAddress())
+					.shippingAddress(geoCodeAddress(payload.getShippingAddress()))
 					.sic(payload.getSic())
 					.sicDesc(payload.getSicDesc())
 					.site(payload.getSite())
@@ -137,7 +146,7 @@ public class AccountService {
 						.accountNumber(payload.getAccountNumber())
 						.accountSource(payload.getAccountSource())
 						.annualRevenue(payload.getAnnualRevenue())
-						.billingAddress(payload.getBillingAddress())
+				//		.billingAddress(payload.getBillingAddress())
 						.createdById(payload.getCreatedById())
 						.createdDate(payload.getCreatedDate())
 						.description(payload.getDescription())
@@ -151,7 +160,7 @@ public class AccountService {
 						.ownership(payload.getOwnership())
 						.phone(payload.getPhone())
 						.rating(payload.getRating())
-						.shippingAddress(payload.getShippingAddress())
+				//		.shippingAddress(payload.getShippingAddress())
 						.sic(payload.getSic())
 						.sicDesc(payload.getSicDesc())
 						.site(payload.getSite())
@@ -252,4 +261,55 @@ public class AccountService {
 		
 		return response.getToken();
     }
+	
+	private GeoCodedAddress geoCodeAddress(Address address) throws ApiException, InterruptedException, IOException {
+		if (address == null)
+			return null;
+		
+		String addressString = new StringBuilder()
+				.append(address.getStreet())
+				.append(" ")
+				.append(address.getCity())
+				.append(", ")
+				.append(address.getState())
+				.append(" ")
+				.append(address.getPostalCode())
+				.append(" ")
+				.append(address.getCountryCode())
+				.toString();
+		
+		GeoApiContext context = new GeoApiContext.Builder()
+				.apiKey(System.getenv("GOOGLE_API_KEY"))
+			    .build();
+		
+		GeocodingResult[] result = GeocodingApi.geocode(context, addressString).await();
+		
+		if (result != null) {
+			return GeoCodedAddress.builder()
+					.city(address.getCity())
+					.country(address.getCountry())
+					.countryCode(address.getCountryCode())
+					.postalCode(address.getPostalCode())
+					.state(address.getState())
+					.stateCode(address.getStateCode())
+					.street(address.getStreet())
+					.formattedAddress(result[0].formattedAddress)
+					.latitude(result[0].geometry.location.lat)
+					.longitude(result[0].geometry.location.lng)
+					.partialMatch(result[0].partialMatch)
+					.placeId(result[0].placeId)
+					.plusCode(result[0].plusCode.globalCode)
+					.build();
+		} else {
+			return GeoCodedAddress.builder()
+					.city(address.getCity())
+					.country(address.getCountry())
+					.countryCode(address.getCountryCode())
+					.postalCode(address.getPostalCode())
+					.state(address.getState())
+					.stateCode(address.getStateCode())
+					.street(address.getStreet())
+					.build();
+		}
+	}
 }

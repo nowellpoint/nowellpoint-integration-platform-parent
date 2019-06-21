@@ -2,8 +2,6 @@ package com.nowellpoint.listener.model;
 
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbProperty;
-
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
@@ -12,29 +10,29 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class AccountPayload {
-	@Getter @JsonbProperty("AccountNumber") private String accountNumber;
-	@Getter @JsonbProperty("AccountSource") private String accountSource;
-	@Getter @JsonbProperty("AnnualRevenue") private Double annualRevenue;
-	@Getter @JsonbProperty("BillingAddress") private Address billingAddress;
-	@Getter @JsonbProperty("CreatedById") private String createdById;
-	@Getter @JsonbProperty("CreatedDate") private Date createdDate;
-	@Getter @JsonbProperty("Description") private String description;
-	@Getter @JsonbProperty("Name") private String name;
-	@Getter @JsonbProperty("NumberOfEmployees") private Integer numberOfEmployees;
-	@Getter @JsonbProperty("Industry") private String industry;
-	@Getter @JsonbProperty("LastModifiedById") private String lastModifiedById;
-	@Getter @JsonbProperty("LastModifiedDate") private Date lastModifiedDate;
-	@Getter @JsonbProperty("OwnerId") private String ownerId;
-	@Getter @JsonbProperty("Ownership") private String ownership;
-	@Getter @JsonbProperty("Phone") private String phone;
-	@Getter @JsonbProperty("Rating") private String rating;
-	@Getter @JsonbProperty("ShippingAddress") private Address shippingAddress;
-	@Getter @JsonbProperty("Sic") private String sic;
-	@Getter @JsonbProperty("SicDesc") private String sicDesc;
-	@Getter @JsonbProperty("Site") private String site;
-	@Getter @JsonbProperty("TickerSymbol") private String tickerSymbol;
-	@Getter @JsonbProperty("Type") private String type;
-	@Getter @JsonbProperty("Website") private String website;
+	@Getter private String accountNumber;
+	@Getter private String accountSource;
+	@Getter private Double annualRevenue;
+	@Getter private Address billingAddress;
+	@Getter private String createdById;
+	@Getter private Date createdDate;
+	@Getter private String description;
+	@Getter private String name;
+	@Getter private Integer numberOfEmployees;
+	@Getter private String industry;
+	@Getter private String lastModifiedById;
+	@Getter private Date lastModifiedDate;
+	@Getter private String ownerId;
+	@Getter private String ownership;
+	@Getter private String phone;
+	@Getter private String rating;
+	@Getter private Address shippingAddress;
+	@Getter private String sic;
+	@Getter private String sicDesc;
+	@Getter private String site;
+	@Getter private String tickerSymbol;
+	@Getter private String type;
+	@Getter private String website;
 	
 	@BsonCreator
 	public AccountPayload(@BsonProperty("accountNumber") String accountNumber,

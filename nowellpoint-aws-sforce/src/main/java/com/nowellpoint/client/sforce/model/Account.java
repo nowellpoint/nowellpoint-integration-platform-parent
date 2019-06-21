@@ -22,8 +22,8 @@ public class Account extends SObject {
 	@Getter @Column(name="BillingCountry") private String billingCountry;
 	@Getter @Column(name="BillingCountryCode") private String billingCountryCode;
 	@Getter @Column(name="BillingPostalCode") private String billingPostalCode;
-	@Getter @Column(name="BillingLongitude") private String billingLongitude;
-	@Getter @Column(name="BillingLatitude") private String billingLatitude;
+	@Getter @Column(name="BillingLongitude") private Double billingLongitude;
+	@Getter @Column(name="BillingLatitude") private Double billingLatitude;
 	@Getter @Column(name="Description") private String description;
 	@Getter @Column(name="Industry") private String industry;
 	@Getter @Column(name="NumberOfEmployees") private Integer numberOfEmployees;
@@ -38,8 +38,8 @@ public class Account extends SObject {
 	@Getter @Column(name="ShippingCountry") private String shippingCountry;
 	@Getter @Column(name="ShippingCountryCode") private String shippingCountryCode;
 	@Getter @Column(name="ShippingPostalCode") private String shippingPostalCode;
-	@Getter @Column(name="ShippingLongitude") private String shippingLongitude;
-	@Getter @Column(name="ShippingLatitude") private String shippingLatitude;
+	@Getter @Column(name="ShippingLongitude") private Double shippingLongitude;
+	@Getter @Column(name="ShippingLatitude") private Double shippingLatitude;
 	@Getter @Column(name="Sic") private String sic;
 	@Getter @Column(name="SicDesc") private String sicDesc;
 	@Getter @Column(name="Site") private String site;

@@ -25,8 +25,8 @@ public abstract class AbstractAddress {
 	public abstract @Nullable String getState();
 	public abstract @Nullable String getStateCode();
 	public abstract @Nullable String getPostalCode();
-	public abstract @Nullable String getLatitude();
-	public abstract @Nullable String getLongitude();
+	public abstract @Nullable Double getLatitude();
+	public abstract @Nullable Double getLongitude();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getAddedOn();
 	public abstract @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date getUpdatedOn();
 	
