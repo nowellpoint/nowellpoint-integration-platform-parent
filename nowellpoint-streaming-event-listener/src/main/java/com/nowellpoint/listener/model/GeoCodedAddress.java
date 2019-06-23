@@ -1,6 +1,9 @@
 package com.nowellpoint.listener.model;
 
+import java.util.Date;
 import java.util.List;
+
+import java.time.Instant;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -21,6 +24,7 @@ public class GeoCodedAddress {
 	private String compoundCode;
 	private String globalCode;
 	private List<AddressComponent> addressComponents;
+	private @Builder.Default Date verifiedOn = Date.from(Instant.now());
 	
 	public GeoCodedAddress(@BsonId String id,
 			@BsonProperty("latitude") Double latitude,
@@ -29,7 +33,8 @@ public class GeoCodedAddress {
 			@BsonProperty("partialMatch") Boolean partialMatch,
 			@BsonProperty("globalCode") String globalCode,
 			@BsonProperty("compoundCode") String compoundCode,
-			@BsonProperty("addressComponents") List<AddressComponent> addressComponents) {
+			@BsonProperty("addressComponents") List<AddressComponent> addressComponents,
+			@BsonProperty("verifiedOn") Date verifiedOn) {
 		
 		this.id = id;
 		this.latitude = latitude;
@@ -39,5 +44,6 @@ public class GeoCodedAddress {
 		this.globalCode = globalCode;
 		this.compoundCode = compoundCode;
 		this.addressComponents = addressComponents;
+		this.verifiedOn = verifiedOn;
 	}
 }

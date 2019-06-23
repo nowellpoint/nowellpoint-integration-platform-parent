@@ -20,6 +20,7 @@ public class Address {
 	private String countryCode;
 	private Double latitude;
 	private Double longitude;
+	private String addressId;
 	
 	@BsonCreator
 	public Address(@BsonProperty("street") String street,
@@ -30,7 +31,8 @@ public class Address {
 			@BsonProperty("country") String country,
 			@BsonProperty("countryCode") String countryCode,
 			@BsonProperty("latitude") Double latitude,
-			@BsonProperty("longitude") Double longitude) {
+			@BsonProperty("longitude") Double longitude,
+			@BsonProperty("addressId") String addressId) {
 		
 		this.street = street;
 		this.city = city;
@@ -41,5 +43,6 @@ public class Address {
 		this.countryCode = countryCode;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.addressId = addressId;
 	}
 }
