@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.enterprise.inject.spi.CDI;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.cometd.bayeux.Channel;
@@ -133,7 +135,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					processChangeEvent(configuration.getOrganizationId(), source);
 					
 					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
-						new AccountService().processChangeEvent(source, configuration);
+						CDI.current().select(AccountService.class).get().processChangeEvent(source, configuration);
 					}
 					
 				} catch (MongoWriteException e) {
@@ -142,14 +144,8 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		            } else {
 		            	LOGGER.error(e);
 		            }
-				} catch (IOException | SecureValueException e) {
+				} catch (IOException | SecureValueException | ApiException | InterruptedException e) {
 					LOGGER.error(e);
-				} catch (ApiException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		});

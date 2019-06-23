@@ -13,42 +13,43 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
 @Builder(toBuilder=true)
 public class Account {
-	@Getter @BsonId private  String id;
-	@Getter private String accountNumber;
-	@Getter private String accountSource;
-	@Getter private Double annualRevenue;
-	@Getter private GeoCodedAddress billingAddress;
-	@Getter private String createdById;
-	@Getter private Date createdDate;
-	@Getter private String description;
-	@Getter private String name;
-	@Getter private Integer numberOfEmployees;
-	@Getter private String industry;
-	@Getter private String lastModifiedById;
-	@Getter private Date lastModifiedDate;
-	@Getter private String organizationId;
-	@Getter private String ownerId;
-	@Getter private String ownership;
-	@Getter private String phone;
-	@Getter private String rating;
-	@Getter private GeoCodedAddress shippingAddress;
-	@Getter private String sic;
-	@Getter private String sicDesc;
-	@Getter private String site;
-	@Getter private String tickerSymbol;
-	@Getter private String type;
-	@Getter private String website;
-	@Getter @Builder.Default private Boolean isDeleted = Boolean.FALSE;
-	@Getter private List<AccountEvent> events;
+	private @BsonId String id;
+	private String accountNumber;
+	private String accountSource;
+	private Double annualRevenue;
+	private Address billingAddress;
+	private String createdById;
+	private Date createdDate;
+	private String description;
+	private String name;
+	private Integer numberOfEmployees;
+	private String industry;
+	private String lastModifiedById;
+	private Date lastModifiedDate;
+	private String organizationId;
+	private String ownerId;
+	private String ownership;
+	private String phone;
+	private String rating;
+	private Address shippingAddress;
+	private String sic;
+	private String sicDesc;
+	private String site;
+	private String tickerSymbol;
+	private String type;
+	private String website;
+	private @Builder.Default Boolean isDeleted = Boolean.FALSE;
+	private List<AccountEvent> events;
 	
 	@BsonCreator
 	public Account(@BsonId String id,
 			@BsonProperty("accountNumber") String accountNumber,
 			@BsonProperty("accountSource") String accountSource,
 			@BsonProperty("annualRevenue") Double annualRevenue,
-			@BsonProperty("billingAddress") GeoCodedAddress billingAddress,
+			@BsonProperty("billingAddress") Address billingAddress,
 			@BsonProperty("createdById") String createdById,
 			@BsonProperty("createdDate") Date createdDate,
 			@BsonProperty("description") String description,
@@ -62,7 +63,7 @@ public class Account {
 			@BsonProperty("ownership") String ownership,
 			@BsonProperty("phone") String phone,
 			@BsonProperty("rating") String rating,
-			@BsonProperty("shippingAddress") GeoCodedAddress shippingAddress,
+			@BsonProperty("shippingAddress") Address shippingAddress,
 			@BsonProperty("sic") String sic,
 			@BsonProperty("sicDesc") String sicDesc,
 			@BsonProperty("site") String site,
@@ -131,7 +132,7 @@ public class Account {
 	}
 	
 	public static Account of(String organizationId, com.nowellpoint.client.sforce.model.Account source) {
-		GeoCodedAddress billingAddress = GeoCodedAddress.builder()
+		Address billingAddress = Address.builder()
 				.city(source.getBillingCity())
 				.country(source.getBillingCountry())
 				.countryCode(source.getBillingCountryCode())
@@ -143,7 +144,7 @@ public class Account {
 				.street(source.getBillingStreet())
 				.build();
 		
-		GeoCodedAddress shippingAddress = GeoCodedAddress.builder()
+		Address shippingAddress = Address.builder()
 				.city(source.getShippingCity())
 				.country(source.getShippingCountry())
 				.countryCode(source.getShippingCountryCode())

@@ -1,52 +1,43 @@
 package com.nowellpoint.listener.model;
 
+import java.util.List;
+
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Builder
+@Getter
 @NoArgsConstructor
 public class GeoCodedAddress {
-	@Getter private String street;
-	@Getter private String city;
-	@Getter private String state;
-	@Getter private String stateCode;
-	@Getter private String postalCode;
-	@Getter private String country;
-	@Getter private String countryCode;
-	@Getter private Double latitude;
-	@Getter private Double longitude;
-	@Getter private String formattedAddress;
-	@Getter private Boolean partialMatch;
-	@Getter private String placeId;
-	@Getter private String plusCode;
+	private @BsonId String id;
+	private Double latitude;
+	private Double longitude;
+	private String formattedAddress;
+	private Boolean partialMatch;
+	private String compoundCode;
+	private String globalCode;
+	private List<AddressComponent> addressComponents;
 	
-	public GeoCodedAddress(@BsonProperty("street") String street,
-			@BsonProperty("city") String city,
-			@BsonProperty("state") String state,
-			@BsonProperty("stateCode") String stateCode,
-			@BsonProperty("postalCode") String postalCode,
-			@BsonProperty("country") String country,
-			@BsonProperty("countryCode") String countryCode,
+	public GeoCodedAddress(@BsonId String id,
 			@BsonProperty("latitude") Double latitude,
 			@BsonProperty("longitude") Double longitude,
 			@BsonProperty("formattedAddress") String formattedAddress,
 			@BsonProperty("partialMatch") Boolean partialMatch,
-			@BsonProperty("placeId") String placeId,
-			@BsonProperty("plusCode") String plusCode) {
+			@BsonProperty("globalCode") String globalCode,
+			@BsonProperty("compoundCode") String compoundCode,
+			@BsonProperty("addressComponents") List<AddressComponent> addressComponents) {
 		
-		this.street = street;
-		this.city = city;
-		this.state = state;
-		this.stateCode = stateCode;
-		this.country = country;
+		this.id = id;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.formattedAddress = formattedAddress;
 		this.partialMatch = partialMatch;
-		this.placeId = placeId;
-		this.plusCode = plusCode;
+		this.globalCode = globalCode;
+		this.compoundCode = compoundCode;
+		this.addressComponents = addressComponents;
 	}
 }

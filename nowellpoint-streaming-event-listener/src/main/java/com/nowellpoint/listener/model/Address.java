@@ -3,22 +3,23 @@ package com.nowellpoint.listener.model;
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Builder
+@Getter
 @NoArgsConstructor
 public class Address {
-	@Getter private String street;
-	@Getter private String city;
-	@Getter private String state;
-	@Getter private String stateCode;
-	@Getter private String postalCode;
-	@Getter private String country;
-	@Getter private String countryCode;
-	@Getter private Double latitude;
-	@Getter private Double longitude;
+	private String street;
+	private String city;
+	private String state;
+	private String stateCode;
+	private String postalCode;
+	private String country;
+	private String countryCode;
+	private Double latitude;
+	private Double longitude;
 	
 	@BsonCreator
 	public Address(@BsonProperty("street") String street,
