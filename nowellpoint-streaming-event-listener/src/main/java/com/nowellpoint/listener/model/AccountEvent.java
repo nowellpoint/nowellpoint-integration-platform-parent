@@ -1,27 +1,37 @@
 package com.nowellpoint.listener.model;
 
+import java.util.Map;
+
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
 @Builder
+@AllArgsConstructor
 public class AccountEvent {
-	@Getter private String type;
-	@Getter private Long timestamp;
-	@Getter private String userId;
-	@Getter private String transactionKey;
-	@Getter private AccountPayload payload;
+	private String changeType;
+	private Long timestamp;
+	private String userId;
+	private String transactionKey;
+	private Map<String, Object> payload;
+	
+	private @BsonIgnore String accountId;
+	private @BsonIgnore String organizationId;
+	private @BsonIgnore String refreshToken;
 	
 	@BsonCreator
-	public AccountEvent(@BsonProperty("type") String type,
+	public AccountEvent(@BsonProperty("changeType") String changeType,
 			@BsonProperty("timestamp") Long timestamp,
 			@BsonProperty("userId") String userId,
 			@BsonProperty("transactionKey") String transactionKey,
-			@BsonProperty("payload") AccountPayload payload) {
+			@BsonProperty("payload") Map<String, Object> payload) {
 		
-		this.type = type;
+		this.changeType = changeType;
 		this.timestamp = timestamp;
 		this.userId = userId;
 		this.transactionKey = transactionKey;

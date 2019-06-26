@@ -9,11 +9,12 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+@Getter
 @Builder
 public class Payload {
-	@Getter private Date lastModifiedDate;
-	@Getter private ChangeEventHeader changeEventHeader;
-	@Getter private Map<String, Object> attributes;
+	private Date lastModifiedDate;
+	private ChangeEventHeader changeEventHeader;
+	private Map<String, Object> attributes;
 	
 	@BsonCreator
 	public Payload(

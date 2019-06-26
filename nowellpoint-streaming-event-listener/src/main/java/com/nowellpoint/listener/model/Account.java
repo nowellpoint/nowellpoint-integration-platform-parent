@@ -131,7 +131,7 @@ public class Account {
 		return attributes;
 	}
 	
-	public static Account of(String organizationId, com.nowellpoint.client.sforce.model.Account source) {
+	public static Account of(com.nowellpoint.client.sforce.model.Account source) {
 		Address billingAddress = Address.builder()
 				.city(source.getBillingCity())
 				.country(source.getBillingCountry())
@@ -171,7 +171,6 @@ public class Account {
 				.lastModifiedDate(source.getLastModifiedDate())
 				.name(source.getName())
 				.numberOfEmployees(source.getNumberOfEmployees())
-				.organizationId(organizationId)
 				.ownerId(source.getOwner().getId())
 				.ownership(source.getOwnership())
 				.phone(source.getPhone())

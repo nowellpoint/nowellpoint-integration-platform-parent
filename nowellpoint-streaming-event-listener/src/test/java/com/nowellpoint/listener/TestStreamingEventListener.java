@@ -165,8 +165,8 @@ public class TestStreamingEventListener {
 		
 		while (i < 1) {
 			CreateResult createResult = createAccount(token.getAccessToken(), identity.getUrls().getSObjects());
-			//updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
-			//deleteAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
+			deleteAccount(token.getAccessToken(), identity.getUrls().getSObjects(), createResult.getId());
 			//updateAccount(token.getAccessToken(), identity.getUrls().getSObjects(), "0013000001Fc0b0AAB");
 			//updateOpportunity(token.getAccessToken(), identity.getUrls().getSObjects(), "00630000002XCF9AAO");
 			i++;

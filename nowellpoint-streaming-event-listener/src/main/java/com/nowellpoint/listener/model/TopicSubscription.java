@@ -28,7 +28,7 @@ import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.service.AccountService;
+import com.nowellpoint.listener.ChangeEventHandler;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
@@ -135,7 +135,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					processChangeEvent(configuration.getOrganizationId(), source);
 					
 					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
-						CDI.current().select(AccountService.class).get().processChangeEvent(source, configuration);
+						CDI.current().select(ChangeEventHandler.class).get().handleChangeEvent(source, configuration.getOrganizationId(), configuration.getRefreshToken());
 					}
 					
 				} catch (MongoWriteException e) {
