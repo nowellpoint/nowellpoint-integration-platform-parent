@@ -19,3 +19,7 @@ streaming:
       listener:
          bucket: streaming-event-listener-us-east-1-600862814314
          queue: streaming-event-listener-configuration-events-sandbox   
+change:
+    event:
+        listener:
+            queue: https://sqs.us-east-1.amazonaws.com/600862814314/d-change-event-queue.fifo

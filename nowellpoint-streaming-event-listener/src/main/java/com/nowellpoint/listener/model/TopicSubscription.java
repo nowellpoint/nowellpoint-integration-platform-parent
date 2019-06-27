@@ -9,6 +9,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -23,6 +25,10 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.jboss.logging.Logger;
 
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.google.maps.errors.ApiException;
 import com.mongodb.ErrorCategory;
 import com.mongodb.MongoWriteException;
@@ -40,6 +46,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 	
 	private static final String REPLAY = "replay";
 	private static final String CHANNEL = "/data/ChangeEvents";
+	private static final String QUEUE = "change.event.listener.queue";
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 
@@ -119,9 +126,14 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		
 		
 		client.getChannel(CHANNEL).subscribe(new ClientSessionChannel.MessageListener() {
+			
+			final Jsonb jsonb = JsonbBuilder.create();
+			final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
 
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
+				
+				long start = System.currentTimeMillis();
 				
 				LOGGER.info(String.format("Message received for organization: %s from %s", 
 						configuration.getOrganizationId(), 
@@ -132,21 +144,47 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					com.nowellpoint.client.sforce.model.changeevent.ChangeEvent source = 
 							com.nowellpoint.client.sforce.model.changeevent.ChangeEvent.of(message.getDataAsMap());
 					
-					processChangeEvent(configuration.getOrganizationId(), source);
+					String json = jsonb.toJson(source);
 					
-					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
-						CDI.current().select(ChangeEventHandler.class).get().handleChangeEvent(source, configuration.getOrganizationId(), configuration.getRefreshToken());
-					}
+					final Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
+					messageAttributes.put("OrganizationId", new MessageAttributeValue()
+					        .withDataType("String")
+					        .withStringValue(configuration.getOrganizationId()));
 					
-				} catch (MongoWriteException e) {
-					if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-		            	LOGGER.warn(e.getMessage());
-		            } else {
-		            	LOGGER.error(e);
-		            }
-				} catch (IOException | SecureValueException | ApiException | InterruptedException e) {
+					messageAttributes.put("Token", new MessageAttributeValue()
+					        .withDataType("String")
+					        .withStringValue(configuration.getRefreshToken()));
+					
+					final SendMessageRequest sendMessageRequest = new SendMessageRequest()
+							.withMessageAttributes(messageAttributes)
+							.withMessageBody(json)
+							.withMessageDeduplicationId(configuration.getOrganizationId().concat("-").concat(String.valueOf(source.getEvent().getReplayId())))
+							.withMessageGroupId(source.getPayload().getChangeEventHeader().getCommitUser())
+							.withQueueUrl(System.getProperty(QUEUE));
+					
+					sqs.sendMessage(sendMessageRequest);
+					
+				} catch (IOException e) {
 					LOGGER.error(e);
 				}
+					
+				
+				System.out.println(System.currentTimeMillis() - start);
+//					processChangeEvent(configuration.getOrganizationId(), source);
+//					
+//					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
+//						CDI.current().select(ChangeEventHandler.class).get().handleChangeEvent(source, configuration.getOrganizationId(), configuration.getRefreshToken());
+//					}
+					
+//				} catch (MongoWriteException e) {
+//					if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+//		            	LOGGER.warn(e.getMessage());
+//		            } else {
+//		            	LOGGER.error(e);
+//		            }
+//				} catch (SecureValueException e) {
+//					LOGGER.error(e);
+//				}
 			}
 		});
 	}
