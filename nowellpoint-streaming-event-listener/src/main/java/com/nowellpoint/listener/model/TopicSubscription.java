@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.inject.spi.CDI;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
@@ -29,12 +28,8 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
-import com.google.maps.errors.ApiException;
-import com.mongodb.ErrorCategory;
-import com.mongodb.MongoWriteException;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.ChangeEventHandler;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
@@ -144,22 +139,45 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					com.nowellpoint.client.sforce.model.changeevent.ChangeEvent source = 
 							com.nowellpoint.client.sforce.model.changeevent.ChangeEvent.of(message.getDataAsMap());
 					
-					String json = jsonb.toJson(source);
+					Event event = Event.builder()
+							.replayId(source.getEvent().getReplayId())
+							.build();
+					
+					ChangeEventHeader changeEventHeader = ChangeEventHeader.builder()
+							.changeOrigin(source.getPayload().getChangeEventHeader().getChangeOrigin())
+							.changeType(source.getPayload().getChangeEventHeader().getChangeType())
+							.commitNumber(source.getPayload().getChangeEventHeader().getCommitNumber())
+							.commitTimestamp(source.getPayload().getChangeEventHeader().getCommitTimestamp())
+							.commitUser(source.getPayload().getChangeEventHeader().getCommitUser())
+							.entityName(source.getPayload().getChangeEventHeader().getEntityName())
+							.recordIds(source.getPayload().getChangeEventHeader().getRecordIds())
+							.sequenceNumber(source.getPayload().getChangeEventHeader().getSequenceNumber())
+							.transactionKey(source.getPayload().getChangeEventHeader().getTransactionKey())
+							.build();
+					
+					Payload payload = Payload.builder()
+							.attributes(source.getPayload().getAttributes())
+							.changeEventHeader(changeEventHeader)
+							.lastModifiedDate(source.getPayload().getLastModifiedDate())
+							.build();
+					
+					ChangeEvent changeEvent = ChangeEvent.builder()
+							.event(event)
+							.organizationId(configuration.getOrganizationId())
+							.payload(payload)
+							.schema(source.getSchema())
+							.build();
 					
 					final Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
-					messageAttributes.put("OrganizationId", new MessageAttributeValue()
-					        .withDataType("String")
-					        .withStringValue(configuration.getOrganizationId()));
-					
 					messageAttributes.put("Token", new MessageAttributeValue()
 					        .withDataType("String")
 					        .withStringValue(configuration.getRefreshToken()));
 					
 					final SendMessageRequest sendMessageRequest = new SendMessageRequest()
 							.withMessageAttributes(messageAttributes)
-							.withMessageBody(json)
-							.withMessageDeduplicationId(configuration.getOrganizationId().concat("-").concat(String.valueOf(source.getEvent().getReplayId())))
-							.withMessageGroupId(source.getPayload().getChangeEventHeader().getCommitUser())
+							.withMessageBody(jsonb.toJson(changeEvent))
+							.withMessageDeduplicationId(changeEvent.getOrganizationId().concat("-").concat(String.valueOf(event.getReplayId())))
+							.withMessageGroupId(changeEventHeader.getCommitUser())
 							.withQueueUrl(System.getProperty(QUEUE));
 					
 					sqs.sendMessage(sendMessageRequest);
@@ -170,21 +188,6 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					
 				
 				System.out.println(System.currentTimeMillis() - start);
-//					processChangeEvent(configuration.getOrganizationId(), source);
-//					
-//					if ("Account".equals(source.getPayload().getChangeEventHeader().getEntityName())) {
-//						CDI.current().select(ChangeEventHandler.class).get().handleChangeEvent(source, configuration.getOrganizationId(), configuration.getRefreshToken());
-//					}
-					
-//				} catch (MongoWriteException e) {
-//					if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-//		            	LOGGER.warn(e.getMessage());
-//		            } else {
-//		            	LOGGER.error(e);
-//		            }
-//				} catch (SecureValueException e) {
-//					LOGGER.error(e);
-//				}
 			}
 		});
 	}
@@ -359,38 +362,5 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		} catch (Exception e) {
 			LOGGER.error(e);
 		}
-	}
-	
-	private void processChangeEvent(String organizationId, com.nowellpoint.client.sforce.model.changeevent.ChangeEvent source) {
-		Event event = Event.builder()
-				.replayId(source.getEvent().getReplayId())
-				.build();
-		
-		ChangeEventHeader changeEventHeader = ChangeEventHeader.builder()
-				.changeOrigin(source.getPayload().getChangeEventHeader().getChangeOrigin())
-				.changeType(source.getPayload().getChangeEventHeader().getChangeType())
-				.commitNumber(source.getPayload().getChangeEventHeader().getCommitNumber())
-				.commitTimestamp(source.getPayload().getChangeEventHeader().getCommitTimestamp())
-				.commitUser(source.getPayload().getChangeEventHeader().getCommitUser())
-				.entityName(source.getPayload().getChangeEventHeader().getEntityName())
-				.recordIds(source.getPayload().getChangeEventHeader().getRecordIds())
-				.sequenceNumber(source.getPayload().getChangeEventHeader().getSequenceNumber())
-				.transactionKey(source.getPayload().getChangeEventHeader().getTransactionKey())
-				.build();
-		
-		Payload payload = Payload.builder()
-				.attributes(source.getPayload().getAttributes())
-				.changeEventHeader(changeEventHeader)
-				.lastModifiedDate(source.getPayload().getLastModifiedDate())
-				.build();
-		
-		ChangeEvent changeEvent = ChangeEvent.builder()
-				.event(event)
-				.organizationId(organizationId)
-				.payload(payload)
-				.schema(source.getSchema())
-				.build();
-		
-		insert(changeEvent);
 	}
 }

@@ -8,9 +8,11 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@NoArgsConstructor
 public class Payload {
 	private Date lastModifiedDate;
 	private ChangeEventHeader changeEventHeader;

@@ -41,7 +41,7 @@ public abstract class AbstractTopicSubscription {
 	}
 	
 	protected Long getReplayId(String organizationId) {
-		Optional<ChangeEvent> document = Optional.of(MongoConnection.getInstance().getDatabase()
+		Optional<ChangeEvent> document = Optional.ofNullable(MongoConnection.getInstance().getDatabase()
 				.getCollection(CHANGE_EVENTS, ChangeEvent.class)
 				.find(new Document("organizationId", organizationId))
 				.sort(new Document("_id", -1))
@@ -52,10 +52,6 @@ public abstract class AbstractTopicSubscription {
 		} else {
 			return Long.valueOf(-1);
 		}
-	}
-	
-	protected void insert(ChangeEvent changeEvent) {
-		MongoConnection.getInstance().getDatabase().getCollection(CHANGE_EVENTS, ChangeEvent.class).insertOne(changeEvent);
 	}
 	
 	protected void writeStreamingEvent(Document streamingEvent) {

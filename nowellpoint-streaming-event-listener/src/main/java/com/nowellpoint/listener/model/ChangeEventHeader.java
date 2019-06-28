@@ -7,18 +7,21 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Builder
+@NoArgsConstructor
 public class ChangeEventHeader {	
-	@Getter private Long commitNumber;
-	@Getter private String commitUser;
-	@Getter private Integer sequenceNumber;
-	@Getter private String entityName;
-	@Getter private String changeType;
-	@Getter private String changeOrigin;
-	@Getter private String transactionKey;
-	@Getter private Long commitTimestamp;
-	@Getter private List<String> recordIds;
+	private Long commitNumber;
+	private String commitUser;
+	private Integer sequenceNumber;
+	private String entityName;
+	private String changeType;
+	private String changeOrigin;
+	private String transactionKey;
+	private Long commitTimestamp;
+	private List<String> recordIds;
 	
 	@BsonCreator
 	public ChangeEventHeader(

@@ -5,13 +5,16 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Builder
+@NoArgsConstructor
 public class ChangeEvent {
-	@Getter private String schema;
-	@Getter private String organizationId;
-	@Getter private Payload payload;
-	@Getter private Event event;
+	private String schema;
+	private String organizationId;
+	private Payload payload;
+	private Event event;
 	
 	@BsonCreator
 	public ChangeEvent(

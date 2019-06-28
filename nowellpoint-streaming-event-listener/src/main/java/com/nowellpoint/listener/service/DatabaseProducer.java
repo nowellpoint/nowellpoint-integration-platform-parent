@@ -4,6 +4,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 
 import org.bson.codecs.configuration.CodecRegistry;
@@ -21,25 +22,23 @@ import com.nowellpoint.util.SecretsManager;
 @ApplicationScoped
 public class DatabaseProducer {
 	
-	private static Logger logger = Logger.getLogger(DatabaseProducer.class);
+	private static final Logger logger = Logger.getLogger(DatabaseProducer.class);
+	private static final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()), new MongoClientOptions.Builder());
+	
+	@Produces
+    public MongoClient createClient() {
+    	return new MongoClient(mongoClientUri);
+	}
 
 	@Produces
-	public MongoDatabase createDatabase() {
+	public MongoDatabase createDatabase(MongoClient mongoClient) {
 		
-		MongoClient mongoClient = null;
-		MongoDatabase mongoDatabase = null;
-		
-		String clientUri = String.format("mongodb://%s", SecretsManager.getMongoClientUri());
-		
-    	MongoClientOptions.Builder options = new MongoClientOptions.Builder();
-    	
-    	MongoClientURI mongoClientUri = new MongoClientURI(clientUri, options);
-    	
-    	CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+		CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		
+		MongoDatabase mongoDatabase = null;
     	
     	try {
-    		mongoClient = new MongoClient(mongoClientUri);
 			mongoDatabase = mongoClient.getDatabase(mongoClientUri.getDatabase()).withCodecRegistry(codecRegistry);
     	} catch (MongoException e) {
     		logger.error("An error occoured when connecting to MongoDB", e);
@@ -49,4 +48,8 @@ public class DatabaseProducer {
     	
     	return mongoDatabase;
 	}
+	
+	public void close(@Disposes MongoClient mongoClient) {
+		mongoClient.close();
+    }
 }
