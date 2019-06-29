@@ -28,8 +28,11 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.nowellpoint.client.sforce.Authenticator;
 import com.nowellpoint.client.sforce.OauthException;
+import com.nowellpoint.client.sforce.model.RefreshTokenRequest;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
@@ -42,6 +45,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 	private static final String REPLAY = "replay";
 	private static final String CHANNEL = "/data/ChangeEvents";
 	private static final String QUEUE = "change.event.listener.queue";
+	//private static final String STREAMING_EVENTS = "streaming.events";
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
     private static final int READ_TIMEOUT = 120 * 1000; 
@@ -128,8 +132,6 @@ public class TopicSubscription extends AbstractTopicSubscription {
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
 				
-				long start = System.currentTimeMillis();
-				
 				LOGGER.info(String.format("Message received for organization: %s from %s", 
 						configuration.getOrganizationId(), 
 						message.getChannel()));
@@ -185,9 +187,6 @@ public class TopicSubscription extends AbstractTopicSubscription {
 				} catch (IOException e) {
 					LOGGER.error(e);
 				}
-					
-				
-				System.out.println(System.currentTimeMillis() - start);
 			}
 		});
 	}
@@ -208,7 +207,13 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		
 		try {
 			
-			Token token = refreshToken(SecureValue.decryptBase64(configuration.getRefreshToken()));
+			RefreshTokenRequest refreshTokenRequest = RefreshTokenRequest.builder()
+					.clientId(SecretsManager.getSalesforceClientId())
+					.clientSecret(SecretsManager.getSalesforceClientSecret())
+					.refreshToken(SecureValue.decryptBase64(configuration.getRefreshToken()))
+					.build();
+			
+			Token token = Authenticator.refreshToken(refreshTokenRequest);
 			
 			Map<String, Object> options = new HashMap<>();
 			options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, READ_TIMEOUT);
@@ -363,4 +368,14 @@ public class TopicSubscription extends AbstractTopicSubscription {
 			LOGGER.error(e);
 		}
 	}
+	
+//	private void writeStreamingEvent(Document streamingEvent) {
+//		try {
+//			MongoConnection.getInstance().getDatabase().getCollection(STREAMING_EVENTS).insertOne(streamingEvent);
+//		} catch (MongoWriteException e) {
+//            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
+//            	LOGGER.warn(e.getMessage());
+//            }
+//		}
+//	}
 }

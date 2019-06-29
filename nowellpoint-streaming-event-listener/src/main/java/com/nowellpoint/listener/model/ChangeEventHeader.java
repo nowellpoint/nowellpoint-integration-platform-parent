@@ -8,6 +8,7 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -21,6 +22,7 @@ public class ChangeEventHeader {
 	private String changeOrigin;
 	private String transactionKey;
 	private Long commitTimestamp;
+	private @Setter Long processTimestamp;
 	private List<String> recordIds;
 	
 	@BsonCreator
@@ -33,6 +35,7 @@ public class ChangeEventHeader {
 			@BsonProperty("changeOrigin") String changeOrigin,
 			@BsonProperty("transactionKey") String transactionKey,
 			@BsonProperty("commitTimestamp") Long commitTimestamp,
+			@BsonProperty("processedTimestamp") Long processedTimestamp,
 			@BsonProperty("recordIds") List<String> recordIds) {
 		
 		this.commitNumber = commitNumber;

@@ -22,7 +22,6 @@ public class AccountEvent {
 	
 	private @BsonIgnore String accountId;
 	private @BsonIgnore String organizationId;
-	private @BsonIgnore String refreshToken;
 	
 	@BsonCreator
 	public AccountEvent(@BsonProperty("changeType") String changeType,

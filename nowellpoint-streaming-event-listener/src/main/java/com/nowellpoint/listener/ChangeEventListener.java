@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Destroyed;
 import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -27,30 +28,30 @@ import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnection;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.mongodb.ErrorCategory;
-import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
-import com.mongodb.client.MongoDatabase;
-import com.nowellpoint.listener.connection.MongoConnection;
+import com.nowellpoint.listener.connection.CacheManager;
 import com.nowellpoint.listener.model.ChangeEvent;
-import com.nowellpoint.listener.model.ChangeEventHeader;
-import com.nowellpoint.listener.model.Event;
-import com.nowellpoint.listener.model.Payload;
+import com.nowellpoint.listener.service.ChangeEventService;
 
-public class QueueInitalizer {
+@ApplicationScoped
+public class ChangeEventListener {
 	
-	private static final Logger LOGGER = Logger.getLogger(QueueInitalizer.class);
 	private static final String QUEUE = "change.event.listener.queue";
-	private static final String CHANGE_EVENTS = "change.events";
 	
 	private SQSConnectionFactory connectionFactory;
 	private SQSConnection connection;
 	private Session session;
 	
 	@Inject
-	private MongoDatabase mongoDatabase;
+	private Logger logger;
 	
-	public void onStartup(@Observes @Initialized(value = ApplicationScoped.class) ServletContext context) {
+	@Inject
+	private ChangeEventService changeEventService;
+	
+	@Inject
+    private Event<ChangeEvent> event;
+	
+	public void start(@Observes @Initialized(value = ApplicationScoped.class) ServletContext context) {
 		try {
     		connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(), AmazonSQSClientBuilder.defaultClient());
             connection = connectionFactory.createConnection();
@@ -62,6 +63,23 @@ public class QueueInitalizer {
             MessageConsumer messageConsumer = session.createConsumer(queue);
             
             messageConsumer.setMessageListener(new MessageListener() {
+            	
+            	final JsonbConfig config = new JsonbConfig()
+        				.withNullValues(Boolean.TRUE)
+        				.withPropertyVisibilityStrategy(
+        						new PropertyVisibilityStrategy() {
+        							@Override
+        							public boolean isVisible(Field field) {
+        								return true;
+        							}
+        							
+        							@Override
+        							public boolean isVisible(Method method) {
+        								return false;
+        							}
+        						});
+        		
+        		final Jsonb jsonb = JsonbBuilder.create(config);
 				
 				@Override
 				public void onMessage(Message message) {
@@ -69,69 +87,42 @@ public class QueueInitalizer {
 					try {
 						
 						String token = textMessage.getStringProperty("Token");
-						ChangeEvent changeEvent = processChangeEvent(textMessage.getText());
 						
-						message.acknowledge();
+						ChangeEvent changeEvent = jsonb.fromJson(textMessage.getText(), ChangeEvent.class);
 						
-					} catch (JMSException e) {
-						LOGGER.error(e);
-					} catch (MongoWriteException e) {
-						if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-			            	LOGGER.warn(e.getMessage());
-			            } else {
-			            	LOGGER.error(e);
-			            }
-					} 
+						CacheManager.put(changeEvent.getOrganizationId(), token);
+						
+						event.fire(changeEvent);
+						
+						changeEvent.getPayload().getChangeEventHeader().setProcessTimestamp(System.currentTimeMillis());
+						
+						changeEventService.create(changeEvent);
+						
+					} catch (JMSException | MongoWriteException e) {
+						logger.error(e);
+					} finally {
+						try {
+							message.acknowledge();
+						} catch (JMSException e) {
+							logger.error(e);
+						}
+					}
 				}
 			});
 			
 			connection.start();
 				 				
 		} catch (JMSException e) {
-			LOGGER.error(e);
+			logger.error(e);
 		} 
 	}
 	
-	public void onShutdown(@Observes @Destroyed(value = ApplicationScoped.class) ServletContext context) {
+	public void stop(@Observes @Destroyed(value = ApplicationScoped.class) ServletContext context) {
 		try {
 			session.close();
 			connection.stop();
 		} catch (JMSException e) {
-			LOGGER.error(e);
+			logger.error(e);
 		}
-	}
-	
-	private ChangeEvent processChangeEvent(String message) {
-		
-		JsonbConfig config = new JsonbConfig()
-				.withNullValues(Boolean.TRUE)
-				.withPropertyVisibilityStrategy(
-						new PropertyVisibilityStrategy() {
-							@Override
-							public boolean isVisible(Field field) {
-								return true;
-							}
-							
-							@Override
-							public boolean isVisible(Method method) {
-								return false;
-							}
-						});
-		
-		final Jsonb jsonb = JsonbBuilder.create(config);
-		
-		LOGGER.info(message);
-		
-		ChangeEvent changeEvent = jsonb.fromJson(message, ChangeEvent.class);
-		
-		LOGGER.info(jsonb.toJson(changeEvent));
-		
-		insert(changeEvent);
-		
-		return changeEvent;
-	}
-	
-	private void insert(ChangeEvent changeEvent) {
-		mongoDatabase.getCollection(CHANGE_EVENTS, ChangeEvent.class).insertOne(changeEvent);
 	}
 }
