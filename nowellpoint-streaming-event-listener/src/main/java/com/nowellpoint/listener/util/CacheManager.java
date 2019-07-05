@@ -1,11 +1,14 @@
-package com.nowellpoint.listener.connection;
+package com.nowellpoint.listener.util;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.nowellpoint.listener.model.TopicSubscription;
+
 public class CacheManager {
 
 	private static final Map<String,String> TOKEN_CACHE = new ConcurrentHashMap<>();
+	private static final Map<String,TopicSubscription> TOPIC_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 	
 	public static void put(String organizationId, String refreshToken) {
 		TOKEN_CACHE.put(organizationId, refreshToken);
@@ -21,5 +24,9 @@ public class CacheManager {
 	
 	public static void remove(String organizationId) {
 		TOKEN_CACHE.remove(organizationId);
+	}
+	
+	public static Map<String,TopicSubscription> getTopicSubscriptions() {
+		return TOPIC_SUBSCRIPTIONS;
 	}
 }

@@ -30,12 +30,15 @@ public class DatabaseProducer {
 	@Produces
 	@ApplicationScoped
     public MongoClient createClient() {
+		System.out.println("@produces createClient()" + mongoClientUri.getHosts().get(0));
     	return new MongoClient(mongoClientUri);
 	}
 
 	@Produces
 	@ApplicationScoped
 	public MongoDatabase createDatabase(MongoClient mongoClient) {
+		
+		System.out.println("@produces createDatabase" + mongoClientUri.getDatabase());
 		
 		CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));

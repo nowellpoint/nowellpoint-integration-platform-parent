@@ -8,10 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
-import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.cometd.bayeux.Channel;
 import org.cometd.bayeux.Message;
@@ -26,25 +22,28 @@ import org.jboss.logging.Logger;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.nowellpoint.client.sforce.Authenticator;
 import com.nowellpoint.client.sforce.OauthException;
 import com.nowellpoint.client.sforce.model.RefreshTokenRequest;
 import com.nowellpoint.client.sforce.model.Token;
+import com.nowellpoint.listener.util.JsonbUtil;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 import com.nowellpoint.util.SecureValueException;
 
 import lombok.Builder;
 
-public class TopicSubscription extends AbstractTopicSubscription {
+public class TopicSubscription {
 	
 	private static final Logger LOGGER = Logger.getLogger(TopicSubscription.class);
 	
 	private static final String REPLAY = "replay";
 	private static final String CHANNEL = "/data/ChangeEvents";
-	private static final String QUEUE = "change.event.listener.queue";
+	private static final String CHANGE_EVENTS_QUEUE = "change.event.listener.queue";
+	private static final String NOTIFICATIONS_QUEUE = "notifications.queue";
 	//private static final String STREAMING_EVENTS = "streaming.events";
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
@@ -54,11 +53,13 @@ public class TopicSubscription extends AbstractTopicSubscription {
 	private HttpClient httpClient;
 	private BayeuxClient client;
 	
+	private long replayId;
 	private boolean connected;
 
 	@Builder
-	private TopicSubscription(TopicConfiguration configuration) {
+	private TopicSubscription(TopicConfiguration configuration, Long replayId) {
 		this.connected = Boolean.FALSE;
+		setReplayId(replayId);
 		connect(configuration);
 	}
 	
@@ -126,8 +127,8 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		
 		client.getChannel(CHANNEL).subscribe(new ClientSessionChannel.MessageListener() {
 			
-			final Jsonb jsonb = JsonbBuilder.create();
 			final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+			final String queueUrl = getQueueUrl(System.getProperty(CHANGE_EVENTS_QUEUE));
 
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
@@ -177,12 +178,14 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					
 					final SendMessageRequest sendMessageRequest = new SendMessageRequest()
 							.withMessageAttributes(messageAttributes)
-							.withMessageBody(jsonb.toJson(changeEvent))
+							.withMessageBody(JsonbUtil.getJsonb().toJson(changeEvent))
 							.withMessageDeduplicationId(changeEvent.getOrganizationId().concat("-").concat(String.valueOf(event.getReplayId())))
 							.withMessageGroupId(changeEventHeader.getCommitUser())
-							.withQueueUrl(System.getProperty(QUEUE));
+							.withQueueUrl(queueUrl);
 					
 					sqs.sendMessage(sendMessageRequest);
+					
+					setReplayId(event.getReplayId());
 					
 				} catch (IOException e) {
 					LOGGER.error(e);
@@ -232,16 +235,17 @@ public class TopicSubscription extends AbstractTopicSubscription {
 			
 			LOGGER.error("Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")");
 			
-			Document notification = new Document()
-					.append("isRead", Boolean.FALSE)
-					.append("isUrgent", Boolean.TRUE)
-					.append("message", "Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")")
-					.append("organizationId", new ObjectId(configuration.getOrganizationId()))
-					.append("receivedOn", new Date())
-					.append("subject", "Unable to subscribe to channel")
-					.append("receivedFrom", "ChangeEventListener");
+			Notification notification = Notification.builder()
+					.isRead(Boolean.FALSE)
+					.isUrgent(Boolean.TRUE)
+					.message("Unable to connect to organization: " + configuration.getOrganizationId() + " (" + e.getMessage() + ")")
+					.organizationId(new ObjectId(configuration.getOrganizationId()))
+					.receivedOn(new Date())
+					.subject("Unable to subscribe to channel")
+					.receivedFrom("ChangeEventListener")
+					.build();
 			
-			writeNotification(notification);
+			sendNotification(notification);
 			
 			return;
 		}
@@ -255,7 +259,7 @@ public class TopicSubscription extends AbstractTopicSubscription {
 //                configuration.getTopics().stream().forEach(t -> {
 //                	dataMap.put(t.getChannel(), Long.valueOf(-1));
 //                });
-                dataMap.put(CHANNEL, getReplayId(configuration.getOrganizationId()));
+                dataMap.put(CHANNEL, getReplayId());
                 return true;
             }
         	
@@ -305,31 +309,33 @@ public class TopicSubscription extends AbstractTopicSubscription {
 					
 					LOGGER.info("Subscribed to channel: " + message.toString());
 					
-					Document notification = new Document()
-							.append("isRead", Boolean.FALSE)
-							.append("isUrgent", Boolean.FALSE)
-							.append("message", message.toString())
-							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
-							.append("receivedOn", new Date())
-							.append("subject", "Subscribed to channel")
-							.append("receivedFrom", "StreamingEventListener");
+					Notification notification = Notification.builder()
+							.isRead(Boolean.FALSE)
+							.isUrgent(Boolean.FALSE)
+							.message(message.toString())
+							.organizationId(new ObjectId(configuration.getOrganizationId()))
+							.receivedOn(new Date())
+							.subject("Subscribed to channel")
+							.receivedFrom("ChangeEventListener")
+							.build();
 					
-					writeNotification(notification);
+					sendNotification(notification);
 					
 				} else {
 					
 					LOGGER.error("Unable to subscribe to channel: " + message.toString());
 					
-					Document notification = new Document()
-							.append("isRead", Boolean.FALSE)
-							.append("isUrgent", Boolean.TRUE)
-							.append("message", message.toString())
-							.append("organizationId", new ObjectId(configuration.getOrganizationId()))
-							.append("receivedOn", new Date())
-							.append("subject", "Unable to subscribe to channel")
-							.append("receivedFrom", "StreamingEventListener");
+					Notification notification = Notification.builder()
+							.isRead(Boolean.FALSE)
+							.isUrgent(Boolean.TRUE)
+							.message(message.toString())
+							.organizationId(new ObjectId(configuration.getOrganizationId()))
+							.receivedOn(new Date())
+							.subject("Unable to subscribe to channel")
+							.receivedFrom("ChangeEventListener")
+							.build();
 					
-					writeNotification(notification);
+					sendNotification(notification);
 				}
 			}
 		});
@@ -348,16 +354,17 @@ public class TopicSubscription extends AbstractTopicSubscription {
         	
         	LOGGER.error(error);
         	
-        	Document notification = new Document()
-					.append("isRead", Boolean.FALSE)
-					.append("isUrgent", Boolean.TRUE)
-					.append("message", error)
-					.append("organizationId", new ObjectId(configuration.getOrganizationId()))
-					.append("receivedOn", new Date())
-					.append("subject", "Unable to connect")
-					.append("receivedFrom", "StreamingEventListener");
-			
-			writeNotification(notification);
+        	Notification notification = Notification.builder()
+					.isRead(Boolean.FALSE)
+					.isUrgent(Boolean.TRUE)
+					.message(error)
+					.organizationId(new ObjectId(configuration.getOrganizationId()))
+					.receivedOn(new Date())
+					.subject("Unable to connect")
+					.receivedFrom("ChangeEventListener")
+					.build();
+        	
+        	sendNotification(notification);
         }
 	}
 	
@@ -369,13 +376,27 @@ public class TopicSubscription extends AbstractTopicSubscription {
 		}
 	}
 	
-//	private void writeStreamingEvent(Document streamingEvent) {
-//		try {
-//			MongoConnection.getInstance().getDatabase().getCollection(STREAMING_EVENTS).insertOne(streamingEvent);
-//		} catch (MongoWriteException e) {
-//            if (e.getError().getCategory().equals(ErrorCategory.DUPLICATE_KEY)) {
-//            	LOGGER.warn(e.getMessage());
-//            }
-//		}
-//	}
+	private void setReplayId(long replayId) {
+		this.replayId = replayId;
+	}
+	
+	private long getReplayId() {
+		return replayId;
+	}
+	
+	private String getQueueUrl(String queueName) {
+		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+		GetQueueUrlResult result = sqs.getQueueUrl(queueName);
+		return result.getQueueUrl();
+	}
+	
+	private void sendNotification(Notification notification) {
+		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+		
+		final SendMessageRequest sendMessageRequest = new SendMessageRequest()
+				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
+				.withQueueUrl(getQueueUrl(System.getProperty(NOTIFICATIONS_QUEUE)));
+		
+		sqs.sendMessage(sendMessageRequest);
+	}
 }

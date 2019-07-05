@@ -14,6 +14,11 @@ swarm:
           port: 5993    
 secret: 
     name: /sandbox/console
+queue:
+    configuration: 
+        bucket: queue-configuration-us-east-1-600862814314/sandbox    
+notifications:
+    queue: notifications-sandbox
 streaming:
    event:
       listener:
@@ -22,4 +27,4 @@ streaming:
 change:
     event:
         listener:
-            queue: https://sqs.us-east-1.amazonaws.com/600862814314/d-change-event-queue.fifo
+            queue: d-change-event-queue.fifo

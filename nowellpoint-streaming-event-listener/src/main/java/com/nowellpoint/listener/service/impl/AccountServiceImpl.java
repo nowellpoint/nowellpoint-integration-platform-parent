@@ -16,12 +16,12 @@ import com.nowellpoint.client.sforce.Authenticator;
 import com.nowellpoint.client.sforce.SalesforceClientBuilder;
 import com.nowellpoint.client.sforce.model.RefreshTokenRequest;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.listener.connection.CacheManager;
 import com.nowellpoint.listener.model.Account;
 import com.nowellpoint.listener.model.AccountEvent;
 import com.nowellpoint.listener.model.AccountPayload;
 import com.nowellpoint.listener.model.GeoCodedAddress;
 import com.nowellpoint.listener.service.AccountService;
+import com.nowellpoint.listener.util.CacheManager;
 import com.nowellpoint.util.SecretsManager;
 import com.nowellpoint.util.SecureValue;
 

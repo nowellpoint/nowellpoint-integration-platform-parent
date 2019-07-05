@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -27,6 +28,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -120,6 +124,14 @@ public class TestStreamingEventListener {
 		PutObjectRequest request = new PutObjectRequest(BUCKET, KEY, input, metadata);
         
         s3client.putObject(request);
+	}
+	
+	@Test
+	@Ignore
+	public void testListQueues() {
+		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
+		GetQueueUrlResult result = sqs.getQueueUrl("d-change-event-queue.fifo");
+		System.out.println(result.getQueueUrl());
 	}
 	
 	@Test
