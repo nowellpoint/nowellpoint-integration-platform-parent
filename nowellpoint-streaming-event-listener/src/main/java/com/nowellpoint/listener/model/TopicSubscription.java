@@ -22,7 +22,6 @@ import org.jboss.logging.Logger;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.nowellpoint.client.sforce.Authenticator;
@@ -42,8 +41,6 @@ public class TopicSubscription {
 	
 	private static final String REPLAY = "replay";
 	private static final String CHANNEL = "/data/ChangeEvents";
-	private static final String CHANGE_EVENTS_QUEUE = "change.event.listener.queue";
-	private static final String NOTIFICATIONS_QUEUE = "notifications.queue";
 	//private static final String STREAMING_EVENTS = "streaming.events";
 	
 	private static final int CONNECTION_TIMEOUT = 20 * 1000;
@@ -126,9 +123,6 @@ public class TopicSubscription {
 		
 		
 		client.getChannel(CHANNEL).subscribe(new ClientSessionChannel.MessageListener() {
-			
-			final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
-			final String queueUrl = getQueueUrl(System.getProperty(CHANGE_EVENTS_QUEUE));
 
 			@Override
 			public void onMessage(ClientSessionChannel channel, Message message) {
@@ -171,19 +165,19 @@ public class TopicSubscription {
 							.schema(source.getSchema())
 							.build();
 					
-					final Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
+					Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
 					messageAttributes.put("Token", new MessageAttributeValue()
 					        .withDataType("String")
 					        .withStringValue(configuration.getRefreshToken()));
 					
-					final SendMessageRequest sendMessageRequest = new SendMessageRequest()
+					SendMessageRequest sendMessageRequest = new SendMessageRequest()
 							.withMessageAttributes(messageAttributes)
 							.withMessageBody(JsonbUtil.getJsonb().toJson(changeEvent))
 							.withMessageDeduplicationId(changeEvent.getOrganizationId().concat("-").concat(String.valueOf(event.getReplayId())))
 							.withMessageGroupId(changeEventHeader.getCommitUser())
-							.withQueueUrl(queueUrl);
+							.withQueueUrl(configuration.getChangeEventsQueueUrl());
 					
-					sqs.sendMessage(sendMessageRequest);
+					sendMessage(sendMessageRequest);
 					
 					setReplayId(event.getReplayId());
 					
@@ -245,7 +239,11 @@ public class TopicSubscription {
 					.receivedFrom("ChangeEventListener")
 					.build();
 			
-			sendNotification(notification);
+			SendMessageRequest sendMessageRequest = new SendMessageRequest()
+    				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
+    				.withQueueUrl(configuration.getNotificationsQueueUrl());
+        	
+        	sendMessage(sendMessageRequest);
 			
 			return;
 		}
@@ -319,7 +317,11 @@ public class TopicSubscription {
 							.receivedFrom("ChangeEventListener")
 							.build();
 					
-					sendNotification(notification);
+					SendMessageRequest sendMessageRequest = new SendMessageRequest()
+		    				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
+		    				.withQueueUrl(configuration.getNotificationsQueueUrl());
+		        	
+		        	sendMessage(sendMessageRequest);
 					
 				} else {
 					
@@ -335,7 +337,11 @@ public class TopicSubscription {
 							.receivedFrom("ChangeEventListener")
 							.build();
 					
-					sendNotification(notification);
+					SendMessageRequest sendMessageRequest = new SendMessageRequest()
+		    				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
+		    				.withQueueUrl(configuration.getNotificationsQueueUrl());
+		        	
+		        	sendMessage(sendMessageRequest);
 				}
 			}
 		});
@@ -364,7 +370,11 @@ public class TopicSubscription {
 					.receivedFrom("ChangeEventListener")
 					.build();
         	
-        	sendNotification(notification);
+        	SendMessageRequest sendMessageRequest = new SendMessageRequest()
+    				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
+    				.withQueueUrl(configuration.getNotificationsQueueUrl());
+        	
+        	sendMessage(sendMessageRequest);
         }
 	}
 	
@@ -384,19 +394,8 @@ public class TopicSubscription {
 		return replayId;
 	}
 	
-	private String getQueueUrl(String queueName) {
+	private void sendMessage(SendMessageRequest sendMessageRequest) {
 		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
-		GetQueueUrlResult result = sqs.getQueueUrl(queueName);
-		return result.getQueueUrl();
-	}
-	
-	private void sendNotification(Notification notification) {
-		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
-		
-		final SendMessageRequest sendMessageRequest = new SendMessageRequest()
-				.withMessageBody(JsonbUtil.getJsonb().toJson(notification))
-				.withQueueUrl(getQueueUrl(System.getProperty(NOTIFICATIONS_QUEUE)));
-		
 		sqs.sendMessage(sendMessageRequest);
 	}
 }

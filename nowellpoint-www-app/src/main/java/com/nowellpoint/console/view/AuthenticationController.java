@@ -27,12 +27,12 @@ import com.nowellpoint.util.Properties;
 import spark.Request;
 import spark.Response;
 
-public class AuthenticationController extends BaseController {
+public class AuthenticationController extends BaseController2 {
 	
 	private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
 	private static final String REDIRECT_URI = "redirect_uri";
 
-	public static void configureRoutes() {
+	public AuthenticationController() {
 		
 		get(Path.Route.LOGIN, (request, response) 
 				-> serveLoginPage(request, response));
@@ -45,7 +45,7 @@ public class AuthenticationController extends BaseController {
 
 	}
 	
-	private static String login(Request request, Response response) {
+	private String login(Request request, Response response) {
 		
 		String username = request.queryParams("username");
 		String password = request.queryParams("password");
@@ -102,7 +102,7 @@ public class AuthenticationController extends BaseController {
 		}
 	}
 	
-	private static String serveLoginPage(Request request, Response response) {
+	private String serveLoginPage(Request request, Response response) {
 		Map<String, Object> model = getModel();
 		model.put(REDIRECT_URI, request.queryParams(REDIRECT_URI) != null ? request.queryParams(REDIRECT_URI) : "");
 		
@@ -115,7 +115,7 @@ public class AuthenticationController extends BaseController {
 		return processTemplate(templateProcessRequest);
     };
     
-    private static String logout(Request request, Response response) {
+    private String logout(Request request, Response response) {
     	Optional<String> cookie = Optional.ofNullable(request.cookie(RequestAttributes.AUTH_TOKEN));
 
 		if (cookie.isPresent()) {

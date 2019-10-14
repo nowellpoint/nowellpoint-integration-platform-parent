@@ -191,7 +191,7 @@ public class AccountServiceImpl implements AccountService {
 	
 	private Account findOrCreate(String organizationId, String accountId) {
 		return Optional.ofNullable(findAccount(accountId))
-				.orElseGet(() -> createAccount(CacheManager.get(organizationId), accountId));
+				.orElseGet(() -> createAccount(CacheManager.getTokenCache().get(organizationId), accountId));
 	}
 	
 	private Account createAccount(String refreshToken, String accountId) {

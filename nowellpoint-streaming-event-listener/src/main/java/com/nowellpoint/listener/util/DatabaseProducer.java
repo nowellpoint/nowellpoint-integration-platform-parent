@@ -1,8 +1,9 @@
-package com.nowellpoint.listener.connection;
+package com.nowellpoint.listener.util;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -20,25 +21,28 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoDatabase;
 import com.nowellpoint.util.SecretsManager;
 
+@ApplicationScoped
 public class DatabaseProducer {
 
-	private static final MongoClientURI mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()), new MongoClientOptions.Builder());
+	private static MongoClientURI mongoClientUri;
 	
 	@Inject
 	private Logger logger;
 	
+	@PostConstruct
+	public void init() {
+		mongoClientUri = new MongoClientURI(String.format("mongodb://%s", SecretsManager.getMongoClientUri()), new MongoClientOptions.Builder());
+	}
+	
 	@Produces
 	@ApplicationScoped
     public MongoClient createClient() {
-		System.out.println("@produces createClient()" + mongoClientUri.getHosts().get(0));
     	return new MongoClient(mongoClientUri);
 	}
 
 	@Produces
 	@ApplicationScoped
 	public MongoDatabase createDatabase(MongoClient mongoClient) {
-		
-		System.out.println("@produces createDatabase" + mongoClientUri.getDatabase());
 		
 		CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));

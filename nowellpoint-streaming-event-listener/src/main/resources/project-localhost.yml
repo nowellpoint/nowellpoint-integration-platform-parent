@@ -17,14 +17,8 @@ secret:
 queue:
     configuration: 
         bucket: queue-configuration-us-east-1-600862814314/sandbox    
-notifications:
-    queue: notifications-sandbox
 streaming:
    event:
       listener:
          bucket: streaming-event-listener-us-east-1-600862814314
          queue: streaming-event-listener-configuration-events-sandbox   
-change:
-    event:
-        listener:
-            queue: d-change-event-queue.fifo

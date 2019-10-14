@@ -37,9 +37,9 @@ import com.nowellpoint.console.util.Templates;
 import spark.Request;
 import spark.Response;
 
-public class EventStreamsController extends BaseController {
+public class EventStreamsController extends BaseController2 {
 	
-	public static void configureRoutes() {
+	public void configureRoutes() {
 		
 		get(Path.Route.EVENT_STREAMS, (request, response) 
 				-> listEventStreams(request, response));
@@ -61,7 +61,7 @@ public class EventStreamsController extends BaseController {
 	 * @return
 	 */
 	
-	private static String listEventStreams(Request request, Response response) {
+	private String listEventStreams(Request request, Response response) {
 		
 		String organizationId = getIdentity(request).getOrganization().getId();
 		
@@ -92,7 +92,7 @@ public class EventStreamsController extends BaseController {
 	 * @return
 	 */
 	
-	private static String viewEventStream(Request request, Response response) {
+	private String viewEventStream(Request request, Response response) {
 		
 		ZoneId zoneId = ZoneId.of(request.queryParamOrDefault("zoneId", "UTC"));
 		
@@ -168,7 +168,7 @@ public class EventStreamsController extends BaseController {
 	 * @return
 	 */
 	
-	private static String saveEventSteamListener(Request request, Response response) {
+	private String saveEventSteamListener(Request request, Response response) {
 		
 		String source = request.params(":source");
 		
@@ -202,7 +202,7 @@ public class EventStreamsController extends BaseController {
 		return "";
 	};	
 	
-	private static String processEventStreamAction(Request request, Response response) {
+	private String processEventStreamAction(Request request, Response response) {
 		
 		String source = request.params(":source");
 		String action = request.params(":action");
@@ -232,7 +232,7 @@ public class EventStreamsController extends BaseController {
 	 * @return
 	 */
 	
-	private static String formatLabel(Locale locale, AggregationResult result) {
+	private String formatLabel(Locale locale, AggregationResult result) {
 		
 		ZoneId utc = ZoneId.of( "UTC" );
 		
@@ -255,7 +255,7 @@ public class EventStreamsController extends BaseController {
 				.toString();
 	}
 	
-	private static String formatToday(LocalDate today, Locale locale) {
+	private String formatToday(LocalDate today, Locale locale) {
 		return today.format(DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy", locale)); 
 	}
 }

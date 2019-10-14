@@ -15,6 +15,9 @@ public class TopicConfiguration {
 	private String apiVersion;
 	private String refreshToken;
 	private List<Topic> topics;
+	private Long replayId;
+	private String notificationsQueueUrl;
+	private String changeEventsQueueUrl;
 	
 	public static TopicConfiguration of(S3Object s3object) {
 		return JsonbUtil.getJsonb().fromJson(s3object.getObjectContent(), TopicConfiguration.class);

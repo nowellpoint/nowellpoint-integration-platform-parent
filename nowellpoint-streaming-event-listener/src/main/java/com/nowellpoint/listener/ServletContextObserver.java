@@ -40,6 +40,8 @@ import com.nowellpoint.util.Properties;
 public class ServletContextObserver {
 	
 	private static final String QUEUE_CONFIGURATION_BUCKET = "queue.configuration.bucket";
+	private static final String QUEUE_CONFIGURATION_FILE = "queue-configuration.json";
+	
 	private final AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
 	
 	private SQSConnectionFactory connectionFactory;
@@ -50,8 +52,9 @@ public class ServletContextObserver {
 	private Logger logger;
 	
 	public void start(@Observes @Initialized(value = ApplicationScoped.class) ServletContext context) {
-		startQueues();
-		startListeners();
+		List<QueueConfiguration> configurations = getQueueConfigurations();
+		startQueues(configurations);
+		startListeners(configurations);
 	}
 	
 	public void stop(@Observes @Destroyed(value = ApplicationScoped.class) ServletContext context) {
@@ -59,20 +62,7 @@ public class ServletContextObserver {
 		stopQueues();
 	}
 	
-	private void startQueues() {
-		String bucketName = System.getProperty(QUEUE_CONFIGURATION_BUCKET);
-		
-		S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
-				.withBucket(bucketName)
-				.withKey("queue-configuration.json");
-		
-		GetObjectRequest getObjectRequest = new GetObjectRequest(builder.build());
-		
-		S3Object s3object = s3client.getObject(getObjectRequest);
-		
-		@SuppressWarnings("serial")
-		List<QueueConfiguration> configurations = JsonbUtil.getJsonb().fromJson(s3object.getObjectContent(), new ArrayList<QueueConfiguration>(){}.getClass().getGenericSuperclass());
-		
+	private void startQueues(List<QueueConfiguration> configurations) {		
 		try {
     		connectionFactory = new SQSConnectionFactory(new ProviderConfiguration(), AmazonSQSClientBuilder.defaultClient());
             connection = connectionFactory.createConnection();
@@ -81,9 +71,12 @@ public class ServletContextObserver {
             for (QueueConfiguration configuration : configurations) {
             	Queue queue = session.createQueue(configuration.getQueueName());
                 MessageConsumer messageConsumer = session.createConsumer(queue);
-                MessageListener listener = (MessageListener) CDI.current().select(Class.forName(configuration.getListenerClass())).get();
-            	messageConsumer.setMessageListener(listener);
-            	CDI.current().destroy(listener);
+                try {
+                	MessageListener listener = toMessageListener(configuration.getListenerClass());
+                	messageConsumer.setMessageListener(listener);
+                } catch (IllegalArgumentException e) {
+                	logger.error(e);
+                }
             };
 			
 			connection.start();
@@ -93,8 +86,7 @@ public class ServletContextObserver {
 		} 
 	}
 	
-	private void startListeners() {
-		
+	private void startListeners(List<QueueConfiguration> configurations) {
 		String bucketName = System.getProperty(Properties.STREAMING_EVENT_LISTENER_BUCKET);
 		String prefix = "configuration/"
 				.concat(System.getProperty(Properties.STREAMING_EVENT_LISTENER_QUEUE))
@@ -145,13 +137,39 @@ public class ServletContextObserver {
 	}
 	
 	private void stopListeners() {
-		CacheManager.getTopicSubscriptions().keySet().stream().forEach(k -> {
-			CacheManager.getTopicSubscriptions().get(k).stopListener();
+		CacheManager.getTopicSubscriptionCache().keySet().stream().forEach(k -> {
+			CacheManager.getTopicSubscriptionCache().get(k).stopListener();
 		});
-		CacheManager.getTopicSubscriptions().clear();
+		CacheManager.getTopicSubscriptionCache().clear();
 	}
 	
 	private void put(String key, TopicSubscription topicSubscription) {
-		CacheManager.getTopicSubscriptions().put(key, topicSubscription);
+		CacheManager.getTopicSubscriptionCache().put(key, topicSubscription);
+	}
+	
+	private MessageListener toMessageListener(String className) throws ClassNotFoundException {
+		logger.info("registering message listener: " + className);
+		Class<?> clazz = Class.forName(className);
+		Object object = CDI.current().select(clazz).get();
+		if (object instanceof MessageListener) {
+			return MessageListener.class.cast(object);
+		}
+		CDI.current().destroy(object);
+		throw new IllegalArgumentException(String.format("Class %s must implement type MessageListener", className));
+	}
+	
+	@SuppressWarnings("serial")
+	private List<QueueConfiguration> getQueueConfigurations() {
+		String bucketName = System.getProperty(QUEUE_CONFIGURATION_BUCKET);
+		
+		S3ObjectIdBuilder builder = new S3ObjectIdBuilder()
+				.withBucket(bucketName)
+				.withKey(QUEUE_CONFIGURATION_FILE);
+		
+		GetObjectRequest getObjectRequest = new GetObjectRequest(builder.build());
+		
+		S3Object s3object = s3client.getObject(getObjectRequest);
+		
+		return JsonbUtil.getJsonb().fromJson(s3object.getObjectContent(), new ArrayList<QueueConfiguration>(){}.getClass().getGenericSuperclass());
 	}
 }

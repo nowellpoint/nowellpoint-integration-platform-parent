@@ -10,8 +10,8 @@ public class ApiError {
 	@Getter @JsonProperty("message") private String message;
 	@Getter @JsonProperty("errorCode") private String errorCode;
 	@Getter @JsonProperty("fields") private String[] fields;
-	@Getter @JsonProperty(value="error") private String error;
-	@Getter @JsonProperty(value="error_description") private String errorDescription;
+	@Getter @JsonProperty("error") private String error;
+	@Getter @JsonProperty("error_description") private String errorDescription;
 	
 	public ApiError() { }
 }

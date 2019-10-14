@@ -69,14 +69,14 @@ public class TopicChangeMessageListener implements MessageListener {
 	}
 	
 	private Boolean containsKey(String key) {
-		return CacheManager.getTopicSubscriptions().containsKey(key);
+		return CacheManager.getTopicSubscriptionCache().containsKey(key);
 	}
 	
 	private TopicSubscription get(String key) {
-		return CacheManager.getTopicSubscriptions().get(key);
+		return CacheManager.getTopicSubscriptionCache().get(key);
 	}
 	
 	private void put(String key, TopicSubscription topicSubscription) {
-		CacheManager.getTopicSubscriptions().put(key, topicSubscription);
+		CacheManager.getTopicSubscriptionCache().put(key, topicSubscription);
 	}
 }

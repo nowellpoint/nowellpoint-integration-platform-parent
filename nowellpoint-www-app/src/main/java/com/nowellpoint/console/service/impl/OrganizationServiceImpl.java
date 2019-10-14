@@ -1042,6 +1042,8 @@ public class OrganizationServiceImpl extends AbstractService implements Organiza
 			     .add("organizationId", organization.getId())
 			     .add("apiVersion", organization.getConnection().getApiVersion())
 			     .add("refreshToken", organization.getConnection().getRefreshToken())
+			     .add("changeEventsQueueUrl", System.getProperty("change.events.queue.url"))
+			     .add("notificationsQueueUrl", System.getProperty("notifications.queue.url"))
 			     .add("topics", builder.build())
 			     .build();
 		

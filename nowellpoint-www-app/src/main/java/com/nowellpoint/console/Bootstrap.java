@@ -23,11 +23,15 @@ import static com.nowellpoint.console.util.Filters.setupFilters;
 import static com.nowellpoint.console.util.Routes.configureRoutes;
 import static spark.Spark.staticFileLocation;
 
+import com.nowellpoint.console.view.AuthenticationController;
+import com.nowellpoint.console.view.EventStreamsController;
+
 import freemarker.template.Configuration;
 import spark.servlet.SparkApplication;
 
 public class Bootstrap implements SparkApplication {	
 
+	@SuppressWarnings("unused")
 	@Override
 	public void init() {
 		
@@ -60,7 +64,10 @@ public class Bootstrap implements SparkApplication {
 		// setup routes
 		//
 		
-		configureRoutes(configuration);		
+		AuthenticationController authenticationController = new AuthenticationController();
+		EventStreamsController eventStreamsController = new EventStreamsController();
+		
+		configureRoutes();		
 		configureExceptionRoutes();
 	}
 }

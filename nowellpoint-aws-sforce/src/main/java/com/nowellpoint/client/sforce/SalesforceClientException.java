@@ -1,6 +1,8 @@
 package com.nowellpoint.client.sforce;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import com.nowellpoint.client.sforce.model.Error;
 
 public class SalesforceClientException extends RuntimeException {
@@ -10,6 +12,7 @@ public class SalesforceClientException extends RuntimeException {
 	private int statusCode;
 	private String errorCode;
 	private String[] fields;
+	private Error[] errors;
 	
 	/**
      * Constructs an <code>SalesforceClientException</code> with the specified status code and error.
@@ -18,17 +21,23 @@ public class SalesforceClientException extends RuntimeException {
      */
 	
 	public SalesforceClientException(int statusCode, Error error) {
-		super(error.getErrorDescription());
+		super(parseError(error));
+		this.statusCode = statusCode;
+		this.errors = new Error[] {error};
 	}
 	
 	/**
-     * Constructs an <code>SalesforceClientException</code> with the specified status code and list of errors.
+     * Constructs an <code>SalesforceClientException</code> with the specified status code and array of errors.
      *
      * @param error the Salesforce API status code and array of errors.
      */
 	
-	public SalesforceClientException(int statusCode, ArrayNode error) {
-		super(error.get("errorMessage").asText());
+	public SalesforceClientException(int statusCode, Error[] errors) {
+		super(Arrays.asList(errors).stream()
+				.map(error -> parseError(error))
+				.collect(Collectors.joining(", ")));
+		this.statusCode = statusCode;
+		this.errors = errors;
 	}
 	
 	/**
@@ -54,5 +63,13 @@ public class SalesforceClientException extends RuntimeException {
 	
 	public String[] getFields() {
 		return fields;
+	}
+	
+	public Error[] getErrors() {
+		return errors;
+	}
+	
+	private static String parseError(Error error) {
+		return error.getErrorDescription() != null ? error.getErrorDescription() : error.getMessage();
 	}
 }

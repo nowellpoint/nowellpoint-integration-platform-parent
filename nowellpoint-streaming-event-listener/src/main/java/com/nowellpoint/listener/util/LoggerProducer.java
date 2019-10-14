@@ -1,4 +1,4 @@
-package com.nowellpoint.listener.connection;
+package com.nowellpoint.listener.util;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;

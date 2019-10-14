@@ -9,7 +9,12 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
 import javax.json.bind.config.PropertyVisibilityStrategy;
@@ -28,9 +33,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectIdBuilder;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -127,14 +129,59 @@ public class TestStreamingEventListener {
 	}
 	
 	@Test
-	@Ignore
 	public void testListQueues() {
-		final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
-		GetQueueUrlResult result = sqs.getQueueUrl("d-change-event-queue.fifo");
-		System.out.println(result.getQueueUrl());
+		
+		final String S3_BUCKET = "streaming-event-listener-us-east-1-600862814314";
+		
+		FindIterable<Document> query = mongoClient.getDatabase(mongoClientUri.getDatabase())
+				.getCollection("organizations")
+				.find(new Document().append("_id", new ObjectId(ORGANIZATION_ID)));
+		
+		Document organization = query.first();
+		
+		List<Document> eventStreamListeners = organization.getList("eventStreamListeners", Document.class);
+		
+		JsonArrayBuilder builder = Json.createArrayBuilder();
+		
+		eventStreamListeners.forEach(l -> {
+			builder.add(Json.createObjectBuilder()
+					.add("channel", "/topic/" + l.getString("name"))
+					.add("active", l.getBoolean("active"))
+					.add("source", l.getString("source"))
+					.add("topicId", l.getString("topicId") != null ? Json.createValue(l.getString("topicId")) : JsonValue.NULL)
+					.build());
+		});
+		
+		JsonObject json = Json.createObjectBuilder()
+			     .add("organizationId", organization.get("_id").toString())
+			     .add("apiVersion", Salesforce.API_VERSION)
+			     .add("refreshToken", organization.get("connection", Document.class).getString("refreshToken"))
+			     .add("changeEventsQueueUrl", "https://sqs.us-east-1.amazonaws.com/600862814314/d-change-event-queue.fifo")
+			     .add("notificationsQueueUrl", "https://sqs.us-east-1.amazonaws.com/600862814314/notifications-sandbox")
+			     .add("topics", builder.build())
+			     .build();
+		
+		byte[] bytes = json.toString().getBytes(StandardCharsets.UTF_8);
+		
+		InputStream input = new ByteArrayInputStream(bytes);
+		
+		ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType("application/json");
+        metadata.setContentLength(bytes.length);
+        
+        String folder = "configuration/"
+				.concat("streaming-event-listener-configuration-events-sandbox")
+				.concat("/")
+				.concat(organization.get("_id").toString());
+		
+		PutObjectRequest request = new PutObjectRequest(S3_BUCKET, folder, input, metadata);
+		
+		AmazonS3 s3client = AmazonS3ClientBuilder.defaultClient();
+        s3client.putObject(request);
 	}
 	
 	@Test
+	@Ignore
 	public void testStreamingEventListener() {
 		
 		FindIterable<Document> query = mongoClient.getDatabase(mongoClientUri.getDatabase())

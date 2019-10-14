@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.nowellpoint.client.sforce.annotation.Column;
 import com.nowellpoint.client.sforce.annotation.Entity;
 import com.nowellpoint.client.sforce.model.ApexClass;
@@ -184,7 +183,8 @@ final class SalesforceClient implements Salesforce {
 		if (response.getStatusCode() == Status.OK) {
 			organization = response.getEntity(Organization.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
+			//[{"message":"The users password has expired, you must call SetPassword before attempting any other API operations","errorCode":"INVALID_OPERATION_WITH_EXPIRED_PASSWORD"}]
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error[].class));
 		}
 		
 		return organization;
@@ -228,7 +228,7 @@ final class SalesforceClient implements Salesforce {
 		} else if (httpResponse.getStatusCode() == Status.NOT_MODIFIED) {
 			return null;
 		} else {
-			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error[].class));
 		}
 		
 		return result;
@@ -250,7 +250,7 @@ final class SalesforceClient implements Salesforce {
 		if (httpResponse.getStatusCode() == Status.OK) {
 			result = httpResponse.getEntity(Theme.class);
 		} else {
-			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(httpResponse.getStatusCode(), httpResponse.getEntity(Error[].class));
 		}
 		
 		return result;
@@ -378,7 +378,7 @@ final class SalesforceClient implements Salesforce {
 				.execute();
 		
 		if (response.getStatusCode() != Status.NO_CONTENT) {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error[].class));
 		}
 	}
 	
@@ -511,8 +511,13 @@ final class SalesforceClient implements Salesforce {
 				.collect(Collectors.toSet());
 	}
 	
+	/**
+	 * 
+	 * @param nextRecordsUrl
+	 * @return
+	 */
+	
 	private QueryResult queryMore(String nextRecordsUrl) {
-		
 		HttpResponse response = RestResource.get(getToken().getInstanceUrl().concat(nextRecordsUrl))
 				.acceptCharset(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
@@ -522,10 +527,14 @@ final class SalesforceClient implements Salesforce {
 		if (response.getStatusCode() == Status.OK) {
 			return response.getEntity(QueryResult.class);
 		} else {
-			//[{"message":"\nLastModifiedById, LastModifiedDate, From Account \n                                   ^\nERROR at Row:1:Column:78\nunexpected token: 'From'","errorCode":"MALFORMED_QUERY"}]
 			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error.class));
 		}
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	
 	private Identity queryIdentity() {
 		HttpResponse response = RestResource.get(token.getId())
@@ -538,7 +547,7 @@ final class SalesforceClient implements Salesforce {
 		if (response.getStatusCode() == Status.OK) {
 			return response.getEntity(Identity.class);
 		} else {
-			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(ArrayNode.class));
+			throw new SalesforceClientException(response.getStatusCode(), response.getEntity(Error[].class));
 		}
 	}
 	

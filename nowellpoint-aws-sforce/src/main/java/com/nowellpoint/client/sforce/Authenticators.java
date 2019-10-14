@@ -4,9 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import com.nowellpoint.client.sforce.impl.OauthAuthenticationResponseImpl;
-//import com.nowellpoint.client.sforce.model.Identity;
 import com.nowellpoint.client.sforce.model.Token;
-import com.nowellpoint.client.sforce.Salesforce;
 import com.nowellpoint.http.HttpResponse;
 import com.nowellpoint.http.MediaType;
 import com.nowellpoint.http.RestResource;
@@ -79,8 +77,6 @@ public class Authenticators {
 			} else {
 				throw new OauthException(httpResponse.getStatusCode(), httpResponse.getEntity(ApiError.class));
 			}
-			
-			//Identity identity = getIdentity(token.getId(), token.getAccessToken());
 			
 			OauthAuthenticationResponse response = new OauthAuthenticationResponseImpl(token);
 			return response;

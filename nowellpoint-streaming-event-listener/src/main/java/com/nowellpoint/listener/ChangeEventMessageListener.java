@@ -35,7 +35,7 @@ public class ChangeEventMessageListener implements MessageListener {
 			
 			ChangeEvent changeEvent = JsonbUtil.getJsonb().fromJson(textMessage.getText(), ChangeEvent.class);
 			
-			CacheManager.put(changeEvent.getOrganizationId(), token);
+			CacheManager.getTokenCache().put(changeEvent.getOrganizationId(), token);
 			
 			event.fire(changeEvent);
 			
